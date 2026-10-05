@@ -6,7 +6,6 @@ namespace App\Domains\Inspection\Tests\Unit;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Actions\AutoCompleteResultSubmittedJobs;
-use App\Domains\Inspection\Actions\CompleteJob;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Events\JobCompleted;
 use App\Domains\Inspection\Models\InspectionJob;
@@ -16,10 +15,8 @@ use App\Domains\Payment\Enums\PaymentMethod;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Enums\PaymentStatus;
 use App\Domains\Payment\Models\Payment;
-use App\Domains\Setting\Contracts\SettingsReader;
 use App\Support\Clock;
 use Carbon\Carbon;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Mockery;
@@ -63,15 +60,8 @@ it('JOB-T11 job result_submitted 3 hari: completed dan fee cair (JOB-R9), idempo
         ->once()
         ->with($payment->id, $inspector->id, 20);
 
-    $completeJob = new CompleteJob(
-        ledger: $ledgerMock,
-        events: app(Dispatcher::class),
-    );
-
-    $action = new AutoCompleteResultSubmittedJobs(
-        settings: app(SettingsReader::class),
-        completeJob: $completeJob,
-    );
+    app()->instance(Ledger::class, $ledgerMock);
+    $action = app(AutoCompleteResultSubmittedJobs::class);
 
     // 1. Pada 2 hari: belum selesai otomatis (auto_accept_days = 3)
     Carbon::setTestNow($t0->copy()->addDays(2));

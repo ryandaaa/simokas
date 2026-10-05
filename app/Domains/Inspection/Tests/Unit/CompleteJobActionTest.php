@@ -18,7 +18,6 @@ use App\Domains\Payment\Enums\PaymentStatus;
 use App\Domains\Payment\Models\Payment;
 use App\Support\Clock;
 use Carbon\Carbon;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Mockery;
@@ -61,10 +60,8 @@ it('JOB-T15 completes job, sets completed_at, posts payout to ledger (once), and
         ->once()
         ->with($payment->id, $inspector->id, 20);
 
-    $action = new CompleteJob(
-        ledger: $ledgerMock,
-        events: app(Dispatcher::class),
-    );
+    app()->instance(Ledger::class, $ledgerMock);
+    $action = app(CompleteJob::class);
 
     $completedJob = $action->handle($job);
 
