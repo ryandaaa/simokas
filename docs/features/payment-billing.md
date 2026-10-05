@@ -155,3 +155,58 @@ Domain pendengar (seperti `Inspection` pada `JOB-1`) dapat mendengarkan event in
 
 - Setelah retry dari `failed`, kunci pada baris pembayaran **berganti** ke kunci baru, sedangkan kunci lama tidak lagi merujuk ke baris aktif. Pemanggil kontrak harus mengunci keunikan tagihan aktif berdasarkan `(purpose, ref_id, payer)` di sisinya (atau lewat metode kontrak yang tersedia) sebelum membuat tagihan baru, agar tidak tercipta tagihan ganda untuk acuan yang sama.
 - Selalu bangkitkan `idempotencyKey` yang benar-benar baru (mis. UUID v4) untuk setiap tagihan baru; jangan memakai ulang kunci antar tagihan yang berbeda, karena akan ditolak dengan `409 IDEMPOTENCY_KEY_CONFLICT`.
+- **PAY-T15:** bila tagihan yang masih dapat dibayar (atau sudah `success`) sudah ada untuk `(payer, purpose, ref_id)` yang sama, `createBill` mengembalikan tagihan itu alih-alih membuat baris baru. Tagihan lama yang sudah kedaluwarsa atau `refunded` tidak dipakai ulang.
+
+## 7. Kontrak Publik: `Payment\Contracts\Ledger` (PAY-2)
+
+Interface: `App\Domains\Payment\Contracts\Ledger` (implementasi `LedgerService`, singleton).
+
+```php
+interface Ledger
+{
+    public function postAccessPayout(string $paymentId, string $inspectorId, ?int $platformFeePct = null): void;
+    public function postInspectionPayout(string $paymentId, string $inspectorId, int $platformFeePct): void;
+    public function refundPayment(string $paymentId): void;
+    public function balanceFor(string $inspectorId): int;
+}
+```
+
+Desain argumen persentase (JOB-R6, JOB-E13): fee inspeksi diposting saat job `completed`, bisa berhari-hari setelah job dibuat, sehingga persentase
+WAJIB disuplai pemanggil dari salinan `platform_fee_pct` pada job (JOB-4 memanggil `postInspectionPayout($paymentId, $inspectorId, $job->platform_fee_pct)`);
+pengaturan saat ini TIDAK dibaca untuk jalur ini, dan pemanggilan tanpa persentase ditolak (`InvalidLedgerPostingException::snapshotRequired`).
+Fee akses diposting segera setelah pembayaran `success`, sehingga pemanggil BOLEH menyuplai persentase salinan, atau `null` untuk memakai pengaturan
+saat posting. Kedua jalur memvalidasi bilangan bulat 0..100 (`InvalidLedgerPostingException::invalidPercentage`; `Money::split` memvalidasi ulang)
+dan mencatat persentase yang dipakai di `note` tiap entri untuk audit. Tanpa kolom baru: `note` yang sudah ada cukup.
+
+### 7.1 Kapan masing-masing method dipanggil
+
+| Method | Pemanggil | Kapan |
+| --- | --- | --- |
+| `postAccessPayout` | Listener `PostAccessLedger` (event `PaymentSucceeded` tujuan `access` yang membawa `beneficiaryId`), atau RES-4 eksplisit saat akses diberikan | Setelah pembayaran akses `success` |
+| `postInspectionPayout` | JOB-4 | Saat job `completed` (bukan saat bayar) |
+| `refundPayment` | JOB-3 (pembatalan setelah bayar) | Untuk pembayaran `success` yang belum diposting |
+| `balanceFor` | Halaman Pendapatan, Dashboard (DSH-1) | Saldo = jumlah entri kredit inspektor |
+
+### 7.2 Aturan posting
+
+1. Pembagian memakai `Support\Money::split(amount, pct)`; persen fee inspeksi selalu dari argumen snapshot job, persen fee akses dari argumen bila
+   disuplai atau dari `SettingsReader` saat posting bila `null`. Nilai hasil split tersimpan permanen di entri sehingga perubahan pengaturan tidak
+   memengaruhi entri lama (persen yang dipakai juga dicatat di `note` kedua entri: `Komisi platform :pct% ...`).
+2. Setiap posting menulis dua entri dalam satu statement: `platform_fee` (akun null = platform) dan fee penerima (`access_fee` / `inspection_fee`).
+3. Posting ganda ditolak: `LedgerAlreadyPostedException` (409), diperkuat batasan unik `(payment_id, entry_type)`.
+4. Hanya pembayaran `success` yang dapat diposting; pasangan tujuan–jenis entri harus cocok (`inspection` ↔ `inspection_fee`, `access` ↔ `access_fee`); tujuan `purchase` ditolak sampai TRX-2 menetapkan basis komisi.
+5. Entri ledger append-only: update dan delete ditolak di kode lewat event model (`LedgerEntryImmutableException`, kode mesin `LEDGER_ENTRY_IMMUTABLE`).
+   `ledger_entries.amount` bertipe signed sesuai PRD 18.12 (positif kredit, negatif debit).
+6. Foreign key `ledger_entries.payment_id` dan `account_user_id` memakai `restrictOnDelete`: menghapus pembayaran atau pengguna yang punya entri
+   ledger ditolak database (`QueryException`). Ledger tidak boleh hilang.
+
+### 7.3 Aturan refund
+
+1. Hanya pembayaran `success` yang belum diposting (PAY-R7). Sekali saja: pemanggilan kedua mengembalikan pembayaran apa adanya tanpa entri baru.
+2. Refund menulis tepat satu entri `refund` (akun = pembayar, nilai = nilai pembayaran, kredit kepada pembayar) dan mengubah status menjadi `refunded`. Tidak ada entri pembalik karena belum ada yang diposting.
+3. Seluruh operasi dalam satu `DB::transaction` (`lockForUpdate` + pembaruan berkondisi); kegagalan di tengah menggulirkan semuanya.
+4. Invarian tetap berlaku: jumlah semua entri per pembayaran = nilai pembayaran, termasuk pembayaran yang di-refund.
+
+## 8. Halaman Pendapatan Inspektor (PAY-2)
+
+Rute `GET /inspector/earnings` (`inspector.earnings`), komponen Livewire `Payment\Livewire\InspectorEarnings`. Middleware `auth`, `not_blocked`, `role:inspector`, `verified_inspector`; otorisasi ganda lewat `LedgerEntryPolicy::viewEarnings`. Menampilkan total saldo (`Ledger::balanceFor`), rincian per sumber (`entry_type`), dan riwayat entri (12 per halaman) dengan `x-ui.money` dan `x-ui.datetime`, plus keadaan kosong, memuat, dan galat (tombol coba lagi). Tanpa penarikan nyata. Inspektor hanya melihat entri miliknya sendiri.
