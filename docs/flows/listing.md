@@ -97,14 +97,14 @@ flowchart TD
 - [x] `LST-T03` Titik di luar Pekanbaru ditolak (LST-E1)
 - [x] `LST-T04` Admin menyetujui: `active`, menolak dengan alasan: `rejected`
 - [x] `LST-T05` Penjual memperbaiki dan mengirim ulang listing ditolak (LST-E7)
-- [ ] `LST-T06` Edit non-inti berlaku langsung tanpa mengubah status
-- [ ] `LST-T07` Edit inti mengembalikan ke `pending_review` dan mencabut lencana (LST-E5)
-- [ ] `LST-T08` Field inti terkunci saat ada job aktif, semua terkunci saat `in_transaction`
-- [ ] `LST-T09` Nonaktifkan ditolak saat ada job aktif atau transaksi (LST-E4)
-- [x] `LST-T10` Transisi status: pasangan sah diterima, selain itu ditolak
+- [x] `LST-T06` Edit non-inti berlaku langsung tanpa mengubah status
+- [x] `LST-T07` Edit inti mengembalikan ke `pending_review` dan mencabut lencana (LST-E5)
+- [x] `LST-T08` Field inti terkunci saat ada job aktif, semua terkunci saat `in_transaction`
+- [x] `LST-T09` Nonaktifkan ditolak saat ada job aktif atau transaksi (LST-E4)
+- [x] `LST-T10` Transisi status: pasangan sah diterima, selain itu ditolak (matriks penuh 7×7)
 - [x] `LST-T11` Respons publik tidak memuat `lat`, `lng`, `address_full`, `chassis_number` (LST-R4)
 - [x] `LST-T12` Pengguna lain tidak dapat mengedit (LST-E9), dataset role
 - [x] `LST-T13` Listing non-publik tidak dapat dibuka orang lain (LST-E10)
-- [ ] `LST-T14` Event `JobCompleted` mengisi `is_inspected` dan `last_inspected_at`
-- [ ] `LST-T15` Event `UserBlocked` menonaktifkan listing aktif pengguna (LST-R9)
+- [ ] `LST-T14` Event `JobCompleted` mengisi `is_inspected` dan `last_inspected_at` (menyusul di JOB-4; Action `MarkListingInspected` sudah siap, lihat `docs/features/listing-contracts.md`)
+- [ ] `LST-T15` Event `UserBlocked` menonaktifkan listing aktif pengguna (LST-R9) (menyusul di ADM-4)
 - [x] `LST-T16` Aksi admin ganda hanya berlaku sekali (LST-E8)

@@ -49,4 +49,13 @@ final class PhotoUploadException extends DomainException
             422
         );
     }
+
+    public static function coverInvalid(): self
+    {
+        return new self(
+            __('listing.validation.cover_invalid'),
+            self::CODE_VALIDATION_ERROR,
+            422
+        );
+    }
 }
