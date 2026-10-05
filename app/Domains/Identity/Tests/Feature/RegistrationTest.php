@@ -146,15 +146,47 @@ it('AUTH-E1 displays friendly duplicate email message with login and reset links
         ->assertSee(__('identity.register.duplicate_email_reset'));
 });
 
-it('requires acceptance of terms and conditions', function () {
-    Livewire::test(Register::class)
+it('AUTH-T15 rejects registration without valid terms consent', function (mixed $value) {
+    $component = Livewire::test(Register::class)
         ->set('name', 'Budi Santoso')
         ->set('email', 'budi@example.com')
         ->set('phone', '081234567890')
         ->set('password', 'Rahasia123!')
         ->set('password_confirmation', 'Rahasia123!')
         ->set('account_type', 'user')
-        ->set('accepted_terms', false)
+        ->set('accepted_terms', $value)
+        ->call('register');
+
+    $component->assertHasErrors(['accepted_terms'])
+        ->assertSee(__('identity.register.terms_required'));
+
+    expect(User::query()->where('email', 'budi@example.com')->exists())->toBeFalse();
+})->with([
+    'unchecked (false)' => [false],
+    'empty string' => [''],
+    'zero string' => ['0'],
+    'weird string' => ['maybe'],
+    'null' => [null],
+]);
+
+it('AUTH-T16 records accepted_terms_at at registration time when consent is given', function () {
+    $frozen = \Carbon\CarbonImmutable::parse('2026-10-05 10:00:00', 'UTC');
+    $this->travelTo($frozen);
+
+    Livewire::test(Register::class)
+        ->set('name', 'Siti Setuju')
+        ->set('email', 'siti@example.com')
+        ->set('phone', '081234567891')
+        ->set('password', 'Rahasia123!')
+        ->set('password_confirmation', 'Rahasia123!')
+        ->set('account_type', 'user')
+        ->set('accepted_terms', true)
         ->call('register')
-        ->assertHasErrors(['accepted_terms']);
+        ->assertRedirect(route('dashboard'));
+
+    /** @var User|null $user */
+    $user = User::query()->where('email', 'siti@example.com')->first();
+    expect($user)->not->toBeNull()
+        ->and($user->accepted_terms_at)->not->toBeNull()
+        ->and($user->accepted_terms_at->equalTo($frozen))->toBeTrue();
 });
