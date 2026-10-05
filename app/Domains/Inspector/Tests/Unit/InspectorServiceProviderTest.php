@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domains\Inspector\Tests\Unit;
 
+use App\Domains\Inspector\Contracts\InspectorEligibility;
+use App\Domains\Inspector\Contracts\InspectorVerificationContract;
 use App\Domains\Inspector\Providers\InspectorServiceProvider;
 use Illuminate\Support\Facades\View;
 use Tests\TestCase;
@@ -16,5 +18,8 @@ final class InspectorServiceProviderTest extends TestCase
 
         $this->assertInstanceOf(InspectorServiceProvider::class, $provider);
         $this->assertTrue(View::exists('inspector::index'));
+        $this->assertTrue($this->app->bound(InspectorEligibility::class));
+        $this->assertTrue($this->app->bound(InspectorVerificationContract::class));
+        $this->assertArrayHasKey('verified_inspector', $this->app['router']->getMiddleware());
     }
 }
