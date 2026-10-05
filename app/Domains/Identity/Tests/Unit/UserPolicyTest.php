@@ -58,6 +58,32 @@ final class UserPolicyTest extends TestCase
         $this->assertTrue($policy->update($admin, $user1));
     }
 
+    public function test_update_profile_policy(): void
+    {
+        $policy = new UserPolicy;
+
+        $user1 = new User(['id' => '00000000-0000-0000-0000-000000000001', 'role' => 'user']);
+        $user2 = new User(['id' => '00000000-0000-0000-0000-000000000002', 'role' => 'user']);
+        $admin = new User(['id' => '00000000-0000-0000-0000-000000000003', 'role' => 'admin']);
+
+        $this->assertTrue($policy->updateProfile($user1, $user1));
+        $this->assertFalse($policy->updateProfile($user1, $user2));
+        $this->assertFalse($policy->updateProfile($admin, $user1));
+    }
+
+    public function test_change_password_policy(): void
+    {
+        $policy = new UserPolicy;
+
+        $user1 = new User(['id' => '00000000-0000-0000-0000-000000000001', 'role' => 'user']);
+        $user2 = new User(['id' => '00000000-0000-0000-0000-000000000002', 'role' => 'user']);
+        $admin = new User(['id' => '00000000-0000-0000-0000-000000000003', 'role' => 'admin']);
+
+        $this->assertTrue($policy->changePassword($user1, $user1));
+        $this->assertFalse($policy->changePassword($user1, $user2));
+        $this->assertFalse($policy->changePassword($admin, $user1));
+    }
+
     public function test_delete_policy(): void
     {
         $policy = new UserPolicy;
