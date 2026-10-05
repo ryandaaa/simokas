@@ -69,4 +69,21 @@ it('filters verification queue using scopeReadyForVerification', function () {
     expect($queueResults)->toContain($profile1->id)
         ->and($queueResults)->not->toContain($profile2->id)
         ->and($queueResults)->not->toContain($profile3->id);
+
+    // Also test scopeInVerificationQueue alias
+    $aliasResults = InspectorProfile::query()->inVerificationQueue()->pluck('id')->toArray();
+    expect($aliasResults)->toEqual($queueResults);
+});
+
+it('tests user and verifiedBy relations on InspectorProfile', function () {
+    $admin = User::factory()->admin()->active()->create();
+    $inspector = User::factory()->inspector()->pending()->create();
+
+    $profile = InspectorProfile::factory()->create([
+        'user_id' => $inspector->id,
+        'verified_by' => $admin->id,
+    ]);
+
+    expect($profile->user->id)->toBe($inspector->id)
+        ->and($profile->verifiedBy?->id)->toBe($admin->id);
 });

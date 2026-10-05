@@ -16,5 +16,6 @@ final class AdminServiceProviderTest extends TestCase
 
         $this->assertInstanceOf(AdminServiceProvider::class, $provider);
         $this->assertTrue(View::exists('admin::index'));
+        $this->assertTrue(View::exists('admin::livewire.inspector-verification-queue'));
     }
 }
