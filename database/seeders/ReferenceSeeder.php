@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use App\Domains\Identity\Database\Seeders\AdminUserSeeder;
+use Illuminate\Database\Seeder;
+
+class ReferenceSeeder extends Seeder
+{
+    public function run(): void
+    {
+        $this->call([
+            AdminUserSeeder::class,
+        ]);
+    }
+}

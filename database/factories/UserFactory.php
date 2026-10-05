@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
-use App\Models\User;
+use App\Domains\Identity\Enums\UserRole;
+use App\Domains\Identity\Enums\UserStatus;
+use App\Domains\Identity\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -12,6 +16,8 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
+    protected $model = User::class;
+
     /**
      * The current password being used by the factory.
      */
@@ -27,8 +33,12 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
+            'phone' => '0812'.fake()->numerify('########'),
+            'role' => UserRole::User,
+            'status' => UserStatus::Active,
+            'accepted_terms_at' => now(),
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= Hash::make('Password123!'),
             'remember_token' => Str::random(10),
         ];
     }
@@ -40,6 +50,48 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+    public function user(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::User,
+        ]);
+    }
+
+    public function inspector(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Inspector,
+        ]);
+    }
+
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Admin,
+        ]);
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => UserStatus::Active,
+        ]);
+    }
+
+    public function pending(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => UserStatus::Pending,
+        ]);
+    }
+
+    public function blocked(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => UserStatus::Blocked,
         ]);
     }
 }

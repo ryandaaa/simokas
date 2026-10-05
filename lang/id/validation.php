@@ -150,6 +150,15 @@ return [
     'url' => 'Isian :attribute harus berupa URL yang valid.',
     'ulid' => 'Isian :attribute harus berupa ULID yang valid.',
     'uuid' => 'Isian :attribute harus berupa UUID yang valid.',
+    'phone_invalid' => 'Isian :attribute harus berupa nomor HP format Indonesia yang valid (dimulai dengan 08 atau +62, 9–14 digit).',
 
-    'attributes' => [],
+    'attributes' => [
+        'name' => 'nama lengkap',
+        'email' => 'alamat email',
+        'phone' => 'nomor HP',
+        'password' => 'kata sandi',
+        'password_confirmation' => 'konfirmasi kata sandi',
+        'accepted_terms' => 'syarat dan ketentuan',
+        'account_type' => 'jenis akun',
+    ],
 ];
