@@ -15,11 +15,28 @@
     $descId = $modalId . '-desc';
 @endphp
 
-<div x-data="{ open: @js($show) }"
+<div x-data="{
+        open: @js($show),
+        triggerEl: null,
+        init() {
+            this.$watch('open', value => {
+                if (value) {
+                    this.triggerEl = document.activeElement;
+                } else if (this.triggerEl) {
+                    this.$nextTick(() => {
+                        if (this.triggerEl && typeof this.triggerEl.focus === 'function') {
+                            this.triggerEl.focus();
+                        }
+                    });
+                }
+            });
+        }
+     }"
      x-on:open-modal.window="if ($event.detail === '{{ $modalId }}') open = true"
      x-on:close-modal.window="if ($event.detail === '{{ $modalId }}') open = false"
      x-on:keydown.escape.window="open = false"
      x-show="open"
+     x-trap="open"
      x-cloak
      class="fixed inset-0 z-50 overflow-y-auto"
      role="dialog"
@@ -49,6 +66,7 @@
              x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
              @click.outside="open = false"
+             @click.stop
              class="relative transform overflow-hidden rounded-xl bg-surface text-left shadow-lg transition-all w-full {{ $maxWidth }} p-6 border border-muted/20">
 
             {{-- Tombol Tutup --}}

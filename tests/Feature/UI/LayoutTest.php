@@ -45,3 +45,33 @@ it('renders application layout with desktop navbar, mobile bottom bar, skip-link
     $view->assertSee('aria-live="polite"', false);
     $view->assertSee('Pemberitahuan penting');
 });
+
+it('loads livewire and alpine scripts and styles exactly once in application layout', function () {
+    $view = $this->blade('<x-layouts.app title="Uji Script"><p>Konten</p></x-layouts.app>');
+
+    $content = (string) $view;
+
+    // Memuat style Livewire
+    expect($content)->toContain('wire\:loading');
+
+    // Memuat script Livewire/Alpine tepat satu kali
+    expect(substr_count($content, 'livewire.js'))->toBe(1);
+});
+
+it('loads livewire and alpine scripts exactly once on gallery page', function () {
+    $responseGallery = $this->get('/_ui');
+    $responseGallery->assertStatus(200);
+    $galleryContent = $responseGallery->getContent();
+
+    expect(substr_count($galleryContent, 'livewire.js'))->toBe(1)
+        ->and($galleryContent)->toContain('wire\:loading');
+});
+
+it('loads livewire and alpine scripts exactly once on 404 error page', function () {
+    $response404 = $this->get('/non-existent-route-for-404-test');
+    $response404->assertStatus(404);
+    $errorContent = $response404->getContent();
+
+    expect(substr_count($errorContent, 'livewire.js'))->toBe(1)
+        ->and($errorContent)->toContain('wire\:loading');
+});

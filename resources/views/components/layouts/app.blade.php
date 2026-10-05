@@ -14,6 +14,7 @@
     <title>{{ $title ? $title . ' — ' . config('app.name', 'SIMOKAS') : config('app.name', 'SIMOKAS') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @livewireStyles
 </head>
 <body class="min-h-full flex flex-col font-sans bg-bg text-text">
     {{-- Skip-link untuk aksesibilitas keyboard --}}
@@ -109,5 +110,7 @@
             </div>
         </nav>
     @endif
+
+    @livewireScripts
 </body>
 </html>
