@@ -68,14 +68,14 @@ sequenceDiagram
 
 ## 5. Daftar test case
 
-- [ ] `ONB-T01` Unggah dokumen valid tersimpan di disk privat
-- [ ] `ONB-T02` Berkas terlalu besar atau tipe salah ditolak (ONB-E1, ONB-E2)
-- [ ] `ONB-T03` Inspektor tanpa dokumen lengkap tidak masuk antrean (ONB-E7)
+- [x] `ONB-T01` Unggah dokumen valid tersimpan di disk privat
+- [x] `ONB-T02` Berkas terlalu besar atau tipe salah ditolak (ONB-E1, ONB-E2)
+- [x] `ONB-T03` Inspektor tanpa dokumen lengkap tidak masuk antrean (ONB-E7)
 - [ ] `ONB-T04` Admin menyetujui: status `approved`, `verified_by` dan `verified_at` terisi
 - [ ] `ONB-T05` Admin menolak tanpa alasan gagal, dengan alasan berhasil
 - [ ] `ONB-T06` Inspektor ditolak dapat mengajukan ulang, status kembali `pending` (ONB-E5)
-- [ ] `ONB-T07` Hanya pemilik dan admin yang dapat mengakses dokumen (ONB-E3), dataset role
+- [x] `ONB-T07` Hanya pemilik dan admin yang dapat mengakses dokumen (ONB-E3), dataset role
 - [ ] `ONB-T08` Inspektor `pending` mendapat 403 pada daftar job (ONB-E4)
-- [ ] `ONB-T09` Transisi status verifikasi: pasangan sah diterima, selain itu ditolak
+- [x] `ONB-T09` Transisi status verifikasi: pasangan sah diterima, selain itu ditolak
 - [ ] `ONB-T10` Aksi admin ganda pada pengajuan yang sama hanya berlaku sekali (ONB-E6)
 - [ ] `ONB-T11` Job yang tampil sesuai jenis keahlian inspektor (ONB-R5)
