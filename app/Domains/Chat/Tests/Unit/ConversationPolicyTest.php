@@ -14,7 +14,7 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class);
 
 it('CHT-T03 authorizes participants to view conversation and private channel', function () {
-    $policy = new ConversationPolicy();
+    $policy = new ConversationPolicy;
     $buyer = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
     $seller = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
 
@@ -36,7 +36,7 @@ it('CHT-T03 authorizes participants to view conversation and private channel', f
 });
 
 it('CHT-T03 denies outsiders of any role from viewing or sending', function (string $roleScenario) {
-    $policy = new ConversationPolicy();
+    $policy = new ConversationPolicy;
     $buyer = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
     $seller = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
 
@@ -47,6 +47,7 @@ it('CHT-T03 denies outsiders of any role from viewing or sending', function (str
         'outsider inspector' => User::factory()->create(['role' => UserRole::Inspector, 'status' => UserStatus::Active]),
         'admin outsider' => User::factory()->create(['role' => UserRole::Admin, 'status' => UserStatus::Active]),
         'blocked buyer' => User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Blocked]),
+        default => throw new InvalidArgumentException("Unhandled scenario: {$roleScenario}"),
     };
 
     expect($policy->view($outsider, $conversation))->toBeFalse()
@@ -62,7 +63,7 @@ it('CHT-T03 denies outsiders of any role from viewing or sending', function (str
 ]);
 
 it('CHT-T03 denies blocked participants', function () {
-    $policy = new ConversationPolicy();
+    $policy = new ConversationPolicy;
     $buyer = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Blocked]);
     $seller = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
 

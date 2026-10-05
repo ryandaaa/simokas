@@ -12,6 +12,8 @@ use App\Domains\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+use function Pest\Laravel\travel;
+
 uses(TestCase::class, RefreshDatabase::class);
 
 it('CHT-T06 increments unread count for recipient and resets to zero after marked as read (last_read_at)', function () {
@@ -34,13 +36,13 @@ it('CHT-T06 increments unread count for recipient and resets to zero after marke
         ->and($conversation->unreadCountFor($seller))->toBe(1);
 
     // Travel time forward by 1 second and send second message
-    $this->travel(1)->seconds();
+    travel(1)->seconds();
     $sendMessage->handle($buyer, $conversation, 'Pesan 2 dari pembeli');
 
     expect($conversation->unreadCountFor($seller))->toBe(2);
 
     // Seller opens conversation and marks as read
-    $this->travel(1)->seconds();
+    travel(1)->seconds();
     $markAsRead->handle($seller, $conversation);
 
     // Seller unread count resets to 0

@@ -11,6 +11,7 @@ use App\Domains\Inspection\Events\JobTaken;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+
 uses(RefreshDatabase::class);
 
 it('CHT-T13 creates job conversation upon JobTaken with inspector and seller', function () {

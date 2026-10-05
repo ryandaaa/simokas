@@ -9,6 +9,7 @@ use App\Domains\Chat\Enums\ConversationContext;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,9 +24,9 @@ use Illuminate\Support\Carbon;
  * @property string $context_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ConversationMember> $members
- * @property-read \Illuminate\Database\Eloquent\Collection<int, User> $users
- * @property-read \Illuminate\Database\Eloquent\Collection<int, Message> $messages
+ * @property-read Collection<int, ConversationMember> $members
+ * @property-read Collection<int, User> $users
+ * @property-read Collection<int, Message> $messages
  * @property-read Message|null $latestMessage
  */
 final class Conversation extends Model
