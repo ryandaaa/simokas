@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace App\Domains\Result\Livewire;
 
+use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Result\Actions\DeleteResultPhoto;
 use App\Domains\Result\Actions\GetOrCreateDraftResult;
 use App\Domains\Result\Actions\SaveDraftResult;
+use App\Domains\Result\Actions\UploadResultPhoto;
+use App\Domains\Result\DTOs\UploadPhotoData;
 use App\Domains\Result\Enums\ItemRating;
 use App\Domains\Result\Models\InspectionResult;
+use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Models\TemplateItem;
 use App\Support\Clock;
 use App\Support\Exceptions\DomainException;
@@ -18,9 +23,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 final class InspectionFormPage extends Component
 {
+    use WithFileUploads;
+
     public InspectionJob $job;
 
     public ?InspectionResult $result = null;
@@ -42,6 +50,12 @@ final class InspectionFormPage extends Component
 
     /** @var array<string> */
     public array $categories = [];
+
+    /** @var array<string, mixed> */
+    public array $tempPhotos = [];
+
+    /** @var array<string, array{id: string, url: string, captured_at: string, stamped_at: ?string}> */
+    public array $photos = [];
 
     public function mount(InspectionJob $job, GetOrCreateDraftResult $getOrCreateDraft): void
     {
@@ -90,6 +104,20 @@ final class InspectionFormPage extends Component
                 'rating' => ($existingItem !== null && $existingItem->rating !== null) ? $existingItem->rating->value : '',
                 'note' => ($existingItem !== null && $existingItem->note !== null) ? $existingItem->note : '',
             ];
+        }
+
+        // Initialize photos state from existing draft photos
+        $this->result->load('photos');
+        foreach ($this->result->photos as $photo) {
+            $resultItem = $this->result->items->firstWhere('id', $photo->result_item_id);
+            if ($resultItem !== null) {
+                $this->photos[$resultItem->template_item_id] = [
+                    'id' => $photo->id,
+                    'url' => $photo->temporaryUrl(60),
+                    'captured_at' => Clock::formatWib($photo->captured_at),
+                    'stamped_at' => $photo->stamped_at ? Clock::formatWib($photo->stamped_at) : null,
+                ];
+            }
         }
     }
 
@@ -202,6 +230,71 @@ final class InspectionFormPage extends Component
         return $this->result->template->items
             ->where('category', $currentCategory)
             ->values();
+    }
+
+    public function applyPhoto(
+        string $templateItemId,
+        UploadResultPhoto $uploadPhoto,
+        ?string $stampedAt = null
+    ): void {
+        Gate::authorize('updateDraft', $this->result);
+
+        $file = $this->tempPhotos[$templateItemId] ?? null;
+        if ($file === null) {
+            return;
+        }
+
+        $this->actionError = null;
+        $this->actionSuccess = null;
+
+        try {
+            $parsedStampedAt = $stampedAt ? Carbon::parse($stampedAt) : now();
+
+            $dto = new UploadPhotoData(
+                file: $file,
+                templateItemId: $templateItemId,
+                stampedAt: $parsedStampedAt,
+                isCameraCapture: true,
+            );
+
+            /** @var User $inspector */
+            $inspector = Auth::user();
+            $photo = $uploadPhoto->handle($inspector, $this->result, $dto);
+
+            $this->photos[$templateItemId] = [
+                'id' => $photo->id,
+                'url' => $photo->temporaryUrl(60),
+                'captured_at' => Clock::formatWib($photo->captured_at),
+                'stamped_at' => $photo->stamped_at ? Clock::formatWib($photo->stamped_at) : null,
+            ];
+
+            unset($this->tempPhotos[$templateItemId]);
+            $this->actionSuccess = __('result.photos.upload_success');
+        } catch (DomainException $e) {
+            $this->actionError = $e->getMessage();
+        }
+    }
+
+    public function retakePhoto(
+        string $templateItemId,
+        DeleteResultPhoto $deletePhoto
+    ): void {
+        Gate::authorize('updateDraft', $this->result);
+
+        $photoData = $this->photos[$templateItemId] ?? null;
+        if ($photoData !== null) {
+            /** @var ResultPhoto|null $photo */
+            $photo = ResultPhoto::query()->find($photoData['id']);
+            if ($photo !== null) {
+                /** @var User $inspector */
+                $inspector = Auth::user();
+                $deletePhoto->handle($inspector, $this->result, $photo);
+            }
+        }
+
+        unset($this->photos[$templateItemId]);
+        unset($this->tempPhotos[$templateItemId]);
+        $this->actionSuccess = __('result.photos.delete_success');
     }
 
     public function getRatings(): array

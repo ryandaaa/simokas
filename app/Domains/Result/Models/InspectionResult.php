@@ -35,6 +35,7 @@ use Illuminate\Support\Carbon;
  * @property-read User $inspector
  * @property-read InspectionTemplate $template
  * @property-read Collection<int, ResultItem> $items
+ * @property-read Collection<int, ResultPhoto> $photos
  */
 final class InspectionResult extends Model
 {
@@ -112,5 +113,13 @@ final class InspectionResult extends Model
     public function items(): HasMany
     {
         return $this->hasMany(ResultItem::class, 'result_id');
+    }
+
+    /**
+     * @return HasMany<ResultPhoto, $this>
+     */
+    public function photos(): HasMany
+    {
+        return $this->hasMany(ResultPhoto::class, 'result_id');
     }
 }
