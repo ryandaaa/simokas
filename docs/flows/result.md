@@ -106,8 +106,8 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 
 ## 7. Daftar test case
 
-- [ ] `RES-T01` Template mobil dan motor berbeda tampil sesuai jenis kendaraan
-- [ ] `RES-T02` Simpan draf dan lanjutkan setelah muat ulang (RES-E3)
+- [x] `RES-T01` Template mobil dan motor berbeda tampil sesuai jenis kendaraan
+- [x] `RES-T02` Simpan draf dan lanjutkan setelah muat ulang (RES-E3)
 - [ ] `RES-T03` Kirim ditolak bila item wajib atau foto minimal kurang, dengan daftar yang kurang (`REQUIRED_ITEMS_MISSING`, `MIN_PHOTOS_NOT_MET`)
 - [ ] `RES-T04` Foto non-kamera ditolak (RES-E5), foto kamera diterima dan bercap waktu
 - [ ] `RES-T05` Berkas > 2 MB atau bukan gambar ditolak (RES-E1)
@@ -119,7 +119,7 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 - [ ] `RES-T11` Pengguna lain mendapat ringkasan terbatas tanpa rincian (RES-E12), respons tidak memuat rincian
 - [ ] `RES-T12` Bayar akses membuat `result_access` dan posting ledger, tidak menagih dua kali (RES-E7)
 - [ ] `RES-T13` Setelah `sold`, pembeli baru tidak dapat membuka, pembayar lama tetap (RES-E8)
-- [ ] `RES-T14` Draf hanya dapat diakses inspektor pemilik job (RES-E11)
-- [ ] `RES-T15` Draf tetap memakai versi template yang tercatat (RES-E10)
+- [x] `RES-T14` Draf hanya dapat diakses inspektor pemilik job (RES-E11)
+- [x] `RES-T15` Draf tetap memakai versi template yang tercatat (RES-E10)
 - [ ] `RES-T16` Tautan foto bertanda tangan kedaluwarsa dan tidak dapat dipakai pihak lain
 - [ ] `RES-T17` Tidak ada rute unduh atau cetak (RES-R12)
