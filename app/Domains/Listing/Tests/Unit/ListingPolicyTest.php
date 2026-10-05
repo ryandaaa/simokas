@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Models\ListingPhoto;
 use App\Domains\Listing\Policies\ListingPolicy;
@@ -80,29 +81,72 @@ it('controls public and private listing visibility according to status and role'
         ->and($policy->viewPrivate($otherUser, $activeListing))->toBeFalse();
 });
 
-it('controls photo viewing permissions according to listing status', function () {
-    $policy = new ListingPolicy;
+/**
+ * Photo access matrix for LST-T17 (docs/flows/listing.md).
+ * Photos of photo-public statuses (active, in_inspection, in_transaction,
+ * sold [USULAN]) may be opened by anyone, including guests and users of any
+ * account status (active, pending, blocked). Photos of pending_review,
+ * rejected, and inactive listings stay restricted to the active owner and
+ * active admins; blocked or non-active viewers are denied and guests denied.
+ *
+ * @return array<string, array{ListingStatus, string, bool}>
+ */
+function photoAccessDataset(): array
+{
+    $photoPublic = [
+        ListingStatus::Active,
+        ListingStatus::InInspection,
+        ListingStatus::InTransaction,
+        ListingStatus::Sold,
+    ];
 
+    $dataset = [];
+
+    foreach (ListingStatus::cases() as $status) {
+        $isPhotoPublic = in_array($status, $photoPublic, true);
+        // Public statuses: everyone allowed. Non-public: only active owner
+        // and active admin allowed.
+        $dataset["{$status->value} guest ".($isPhotoPublic ? 'allowed' : 'denied')] = [$status, 'guest', $isPhotoPublic];
+        $dataset["{$status->value} owner active allowed"] = [$status, 'owner_active', true];
+        $dataset["{$status->value} owner pending ".($isPhotoPublic ? 'allowed' : 'denied')] = [$status, 'owner_pending', $isPhotoPublic];
+        $dataset["{$status->value} admin allowed"] = [$status, 'admin', true];
+        $dataset["{$status->value} other active ".($isPhotoPublic ? 'allowed' : 'denied')] = [$status, 'other_active', $isPhotoPublic];
+        $dataset["{$status->value} inspector pending ".($isPhotoPublic ? 'allowed' : 'denied')] = [$status, 'inspector_pending', $isPhotoPublic];
+        $dataset["{$status->value} inspector approved ".($isPhotoPublic ? 'allowed' : 'denied')] = [$status, 'inspector_approved', $isPhotoPublic];
+        $dataset["{$status->value} blocked ".($isPhotoPublic ? 'allowed' : 'denied')] = [$status, 'blocked', $isPhotoPublic];
+        $dataset["{$status->value} inactive ".($isPhotoPublic ? 'allowed' : 'denied')] = [$status, 'inactive', $isPhotoPublic];
+    }
+
+    return $dataset;
+}
+
+it('LST-T17 controls photo viewing for every status and role', function (ListingStatus $status, string $role, bool $allowed) {
     $owner = User::factory()->user()->create();
-    $otherUser = User::factory()->user()->create();
-    $admin = User::factory()->admin()->create();
+    $pendingOwner = User::factory()->user()->pending()->create();
+    $blockedUser = User::factory()->user()->blocked()->create();
 
-    $activeListing = Listing::factory()->active()->create(['seller_id' => $owner->id]);
-    $pendingListing = Listing::factory()->pendingReview()->create(['seller_id' => $owner->id]);
-
-    $activePhoto = ListingPhoto::factory()->create(['listing_id' => $activeListing->id]);
+    $listing = Listing::factory()->create(['seller_id' => $owner->id, 'status' => $status]);
+    $pendingListing = Listing::factory()->create(['seller_id' => $pendingOwner->id, 'status' => $status]);
+    $photo = ListingPhoto::factory()->create(['listing_id' => $listing->id]);
     $pendingPhoto = ListingPhoto::factory()->create(['listing_id' => $pendingListing->id]);
 
-    // Active photo: guest and other users allowed
-    expect($policy->viewPhoto(null, $activeListing, $activePhoto))->toBeTrue()
-        ->and($policy->viewPhoto($otherUser, $activeListing, $activePhoto))->toBeTrue();
+    [$actor, $targetListing, $targetPhoto] = match ($role) {
+        'guest' => [null, $listing, $photo],
+        'owner_active' => [$owner, $listing, $photo],
+        'owner_pending' => [$pendingOwner, $pendingListing, $pendingPhoto],
+        'admin' => [User::factory()->admin()->create(), $listing, $photo],
+        'other_active' => [User::factory()->user()->create(), $listing, $photo],
+        'inspector_pending' => [User::factory()->inspector()->pending()->create(), $listing, $photo],
+        'inspector_approved' => [User::factory()->inspector()->create(), $listing, $photo],
+        'blocked' => [$blockedUser, $listing, $photo],
+        'inactive' => [User::factory()->user()->pending()->create(), $listing, $photo],
+        default => throw new InvalidArgumentException("Unhandled role: {$role}"),
+    };
 
-    // Pending photo: only owner and admin allowed
-    expect($policy->viewPhoto(null, $pendingListing, $pendingPhoto))->toBeFalse()
-        ->and($policy->viewPhoto($otherUser, $pendingListing, $pendingPhoto))->toBeFalse()
-        ->and($policy->viewPhoto($owner, $pendingListing, $pendingPhoto))->toBeTrue()
-        ->and($policy->viewPhoto($admin, $pendingListing, $pendingPhoto))->toBeTrue();
-});
+    $policy = new ListingPolicy;
+
+    expect($policy->viewPhoto($actor, $targetListing, $targetPhoto))->toBe($allowed);
+})->with(fn (): array => photoAccessDataset());
 
 it('allows only the owner to resubmit rejected listings', function () {
     $policy = new ListingPolicy;
