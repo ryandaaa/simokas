@@ -140,6 +140,44 @@
                             :error="$errors->first('items.'.$templateItem->id.'.note')"
                             rows="2"
                         />
+
+                        {{-- Photo Capture for items requiring photo --}}
+                        @if ($templateItem->requires_photo)
+                            <div class="pt-3 border-t border-muted/20 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <label class="block text-xs font-semibold text-text uppercase tracking-wider">
+                                        {{ __('result.photos.title') }}
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    @if (! isset($photos[$templateItem->id]))
+                                        <span class="text-xs text-muted">
+                                            {{ __('result.photos.required_notice') }}
+                                        </span>
+                                    @endif
+                                </div>
+
+                                @if (isset($photos[$templateItem->id]))
+                                    <x-ui.camera-capture
+                                        :item-id="$templateItem->id"
+                                        :job-id="$job->id"
+                                        :photo-url="$photos[$templateItem->id]['url']"
+                                        :timestamp="$photos[$templateItem->id]['stamped_at'] ?? $photos[$templateItem->id]['captured_at']"
+                                        wire:retake="retakePhoto('{{ $templateItem->id }}')"
+                                    />
+                                @else
+                                    <x-ui.camera-capture
+                                        :item-id="$templateItem->id"
+                                        :job-id="$job->id"
+                                        wire:model="tempPhotos.{{ $templateItem->id }}"
+                                        wire:use="applyPhoto('{{ $templateItem->id }}')"
+                                    />
+                                @endif
+
+                                @error('tempPhotos.'.$templateItem->id)
+                                    <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>
