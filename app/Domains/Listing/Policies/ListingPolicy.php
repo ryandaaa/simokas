@@ -76,6 +76,19 @@ final class ListingPolicy
     }
 
     /**
+     * Determine whether the user can resubmit a rejected listing for review.
+     */
+    public function resubmit(User $user, Listing $listing): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return $user->id === $listing->seller_id
+            && $listing->status === ListingStatus::Rejected;
+    }
+
+    /**
      * Determine whether the user can view a photo of the listing.
      * If listing is active, public can view.
      * If listing is pending_review/rejected/inactive, only owner and admin can view.
