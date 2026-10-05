@@ -14,9 +14,8 @@ use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Exceptions\ListingLockedException;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 it('locks listing deactivation when listing has an active inspection job', function () {
     $seller = User::factory()->user()->create();

@@ -9,12 +9,11 @@ use App\Domains\Inspection\Livewire\RequestInspectionPage;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 it('shows Ajukan Inspeksi button on catalog detail for guests linking to login', function () {
     $listing = Listing::factory()->active()->create();
