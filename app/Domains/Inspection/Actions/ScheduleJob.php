@@ -11,7 +11,6 @@ use App\Domains\Inspection\Exceptions\InvalidJobStatusTransitionException;
 use App\Domains\Inspection\Exceptions\InvalidScheduleTimeException;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Support\Clock;
-use Carbon\CarbonInterface;
 use DateTimeInterface;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Carbon;

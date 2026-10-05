@@ -11,8 +11,8 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Exceptions\InvalidJobStatusTransitionException;
 use App\Domains\Inspection\Exceptions\JobAlreadyTakenException;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Inspector\Enums\VerificationStatus;
 use App\Domains\Inspector\Models\InspectorProfile;
-use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Enums\PaymentMethod;
@@ -29,7 +29,7 @@ it('JOB-E8 requester cancel wins over take-job: inspector receives 409 and no do
     $inspectorUser = User::factory()->inspector()->create();
     InspectorProfile::factory()->create([
         'user_id' => $inspectorUser->id,
-        'verification_status' => \App\Domains\Inspector\Enums\VerificationStatus::Approved,
+        'verification_status' => VerificationStatus::Approved,
         'vehicle_types' => ['car'],
     ]);
 
@@ -64,12 +64,14 @@ it('JOB-E8 requester cancel wins over take-job: inspector receives 409 and no do
     /** @var TakeJob $takeAction */
     $takeAction = app(TakeJob::class);
 
+    $thrown = false;
     try {
         $takeAction->handle($inspectorUser, $job);
-        test()->fail('Expected JobAlreadyTakenException was not thrown');
     } catch (JobAlreadyTakenException $e) {
+        $thrown = true;
         expect($e->getStatusCode())->toBe(409);
     }
+    expect($thrown)->toBeTrue();
 
     // Status remains cancelled, inspector_id remains null
     expect($job->fresh()->status)->toBe(JobStatus::Cancelled)
@@ -81,7 +83,7 @@ it('JOB-E8 inspector take-job wins over requester cancel: requester receives 409
     $inspectorUser = User::factory()->inspector()->create();
     InspectorProfile::factory()->create([
         'user_id' => $inspectorUser->id,
-        'verification_status' => \App\Domains\Inspector\Enums\VerificationStatus::Approved,
+        'verification_status' => VerificationStatus::Approved,
         'vehicle_types' => ['car'],
     ]);
 
@@ -120,12 +122,14 @@ it('JOB-E8 inspector take-job wins over requester cancel: requester receives 409
     /** @var CancelJobByRequester $cancelAction */
     $cancelAction = app(CancelJobByRequester::class);
 
+    $thrown = false;
     try {
         $cancelAction->handle($requester, $requesterJobView);
-        test()->fail('Expected InvalidJobStatusTransitionException was not thrown');
     } catch (InvalidJobStatusTransitionException $e) {
+        $thrown = true;
         expect($e->getStatusCode())->toBe(409);
     }
+    expect($thrown)->toBeTrue();
 
     // Status remains taken by the inspector
     expect($job->fresh()->status)->toBe(JobStatus::Taken)

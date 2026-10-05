@@ -13,7 +13,6 @@ use App\Domains\Inspection\Exceptions\InvalidScheduleTimeException;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Support\Clock;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 

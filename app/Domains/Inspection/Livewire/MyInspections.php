@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domains\Inspection\Livewire;
 
 use App\Domains\Inspection\Actions\CancelJobByRequester;
-use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Support\Exceptions\DomainException;
 use Illuminate\Contracts\View\View;

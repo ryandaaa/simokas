@@ -9,6 +9,10 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Livewire\MyInspections;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Payment\Enums\PaymentMethod;
+use App\Domains\Payment\Enums\PaymentPurpose;
+use App\Domains\Payment\Enums\PaymentStatus;
+use App\Domains\Payment\Models\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -139,13 +143,13 @@ it('allows requester to cancel a paid job with refund through Livewire modal', f
         'listing_id' => $listing->id,
     ]);
 
-    $payment = \App\Domains\Payment\Models\Payment::factory()->create([
+    $payment = Payment::factory()->create([
         'payer_id' => $user->id,
-        'purpose' => \App\Domains\Payment\Enums\PaymentPurpose::Inspection,
+        'purpose' => PaymentPurpose::Inspection,
         'ref_id' => $job->id,
         'amount' => 50000,
-        'status' => \App\Domains\Payment\Enums\PaymentStatus::Success,
-        'method' => \App\Domains\Payment\Enums\PaymentMethod::Qris,
+        'status' => PaymentStatus::Success,
+        'method' => PaymentMethod::Qris,
     ]);
 
     actingAs($user);
@@ -159,5 +163,5 @@ it('allows requester to cancel a paid job with refund through Livewire modal', f
         ->assertSee(__('inspection.mine.cancel_success'));
 
     expect($job->fresh()->status)->toBe(JobStatus::Cancelled)
-        ->and($payment->fresh()->status)->toBe(\App\Domains\Payment\Enums\PaymentStatus::Refunded);
+        ->and($payment->fresh()->status)->toBe(PaymentStatus::Refunded);
 });
