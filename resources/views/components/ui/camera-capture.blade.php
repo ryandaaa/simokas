@@ -5,6 +5,7 @@
     'photoUrl' => null,
     'permissionDenied' => false,
     'loading' => false,
+    'itemId' => null,
 ])
 
 @php
@@ -19,8 +20,8 @@
 
 @if ($loading)
     <div class="space-y-3">
-        <x-ui.skeleton variant="title" class="w-1/3" />
-        <x-ui.skeleton variant="image" class="aspect-[4/3] w-full" />
+        <x-ui.skeleton variant="title" class="w-1/3 animate-pulse" />
+        <x-ui.skeleton variant="image" class="aspect-[4/3] w-full animate-pulse" />
     </div>
 @elseif ($permissionDenied)
     <div class="space-y-3">
@@ -29,58 +30,66 @@
         @endif
         <x-ui.alert variant="warning"
                     :title="__('ui.camera.permission_denied')"
-                    message="Buka pengaturan peramban Anda, izinkan akses kamera untuk situs ini, lalu segarkan halaman." />
+                    :message="__('result.photos.permission_denied')" />
     </div>
 @elseif ($photoUrl)
-    {{-- Keadaan Pratinjau Foto --}}
-    <div {{ $attributes->merge(['class' => 'space-y-3']) }}>
+    {{-- Keadaan Pratinjau Foto Awal (Berasal dari URL yang sudah ada) --}}
+    <div {{ $attributes->merge(['class' => 'space-y-3']) }}
+         x-data="cameraCapture({
+             jobId: '{{ $jobId }}',
+             initialPhotoUrl: '{{ $photoUrl }}',
+             formattedTime: '{{ $formattedTime }}',
+             hasInitialPermissionDenied: false,
+             itemId: '{{ $itemId }}'
+         })">
         @if ($displayLabel)
             <label class="block text-sm font-semibold text-text">{{ $displayLabel }}</label>
         @endif
 
-        <div class="relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-muted/20 bg-muted/10">
-            <img src="{{ $photoUrl }}"
-                 alt="{{ $displayLabel }}"
-                 class="w-full h-full object-cover" />
+        {{-- Pratinjau Gambar --}}
+        <div x-show="previewUrl && !isStreaming" class="space-y-3">
+            <div class="relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-muted/20 bg-muted/10">
+                <img :src="previewUrl"
+                     src="{{ $photoUrl }}"
+                     alt="{{ $displayLabel }}"
+                     class="w-full h-full object-cover" />
 
-            {{-- Watermark / Cap Waktu & Job ID --}}
-            <div class="absolute bottom-0 inset-x-0 bg-text/60 backdrop-blur-xs text-surface p-3 text-xs flex justify-between items-center">
-                @if ($jobId)
-                    <span class="font-mono">{{ __('ui.camera.job_id', ['id' => $jobId]) }}</span>
-                @endif
-                @if ($formattedTime)
-                    <span>{{ $formattedTime }}</span>
-                @endif
+                {{-- Watermark / Cap Waktu & Job ID --}}
+                <div class="absolute bottom-0 inset-x-0 bg-text/80 backdrop-blur-xs text-surface p-3 text-xs flex justify-between items-center">
+                    @if ($jobId)
+                        <span class="font-mono font-medium">{{ __('ui.camera.job_id', ['id' => $jobId]) }}</span>
+                    @endif
+                    @if ($formattedTime)
+                        <span>{{ $formattedTime }}</span>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Tombol Aksi: Ulangi dan Pakai Foto Ini --}}
+            <div class="flex items-center gap-3">
+                <x-ui.button type="button"
+                             variant="secondary"
+                             icon="panah-putar"
+                             class="flex-1 min-h-[44px]"
+                             @click="retake()"
+                             {{ $attributes->whereStartsWith('wire:retake') }}>
+                    {{ __('ui.camera.retake') }}
+                </x-ui.button>
+
+                <x-ui.button type="button"
+                             variant="primary"
+                             icon="centang"
+                             class="flex-1 min-h-[44px]"
+                             @click="usePhoto()"
+                             ::loading="isProcessing"
+                             {{ $attributes->whereStartsWith('wire:use') }}>
+                    {{ __('ui.camera.use_this') }}
+                </x-ui.button>
             </div>
         </div>
 
-        {{-- Tombol Aksi: Ulangi dan Pakai Foto Ini --}}
-        <div class="flex items-center gap-3">
-            <x-ui.button type="button"
-                         variant="secondary"
-                         icon="panah-putar"
-                         class="flex-1"
-                         {{ $attributes->whereStartsWith('wire:retake') }}>
-                {{ __('ui.camera.retake') }}
-            </x-ui.button>
-
-            <x-ui.button type="button"
-                         variant="primary"
-                         icon="centang"
-                         class="flex-1"
-                         {{ $attributes->whereStartsWith('wire:use') }}>
-                {{ __('ui.camera.use_this') }}
-            </x-ui.button>
-        </div>
-    </div>
-@else
-    {{-- Keadaan Siap Ambil Foto (Kerangka Kamera) --}}
-    <div {{ $attributes->merge(['class' => 'space-y-3']) }}>
-        @if ($displayLabel)
-            <label class="block text-sm font-semibold text-text">{{ $displayLabel }}</label>
-        @endif
-
-        <div class="relative aspect-[4/3] w-full rounded-xl border-2 border-dashed border-muted/30 bg-muted/5 flex flex-col items-center justify-center p-6 text-center">
+        {{-- Fallback jika pengguna menekan ulangi pada URL awal --}}
+        <div x-show="!previewUrl && !isStreaming && !permissionDenied" x-cloak class="relative aspect-[4/3] w-full rounded-xl border-2 border-dashed border-muted/30 bg-muted/5 flex flex-col items-center justify-center p-6 text-center">
             <div class="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
                 <x-ui.icon name="kamera" class="w-8 h-8" />
             </div>
@@ -93,18 +102,171 @@
                 Hanya menerima tangkapan langsung dari kamera demi keabsahan inspeksi.
             </p>
 
-            {{-- Input kamera tersembunyi dengan tombol pemicu --}}
-            <label class="cursor-pointer">
-                <input type="file"
-                       accept="image/*"
-                       capture="environment"
-                       class="sr-only"
-                       {{ $attributes->whereStartsWith('wire:model') }} />
-                <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-surface hover:bg-primary/90 transition-colors focus-within:ring-2 focus-within:ring-accent">
-                    <x-ui.icon name="kamera" class="w-4 h-4" />
-                    <span>{{ __('ui.actions.take_photo') }}</span>
-                </span>
-            </label>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <x-ui.button type="button"
+                             variant="secondary"
+                             icon="kamera"
+                             class="min-h-[44px]"
+                             @click="startCamera()">
+                    {{ __('result.photos.open_camera') }}
+                </x-ui.button>
+
+                <label class="cursor-pointer">
+                    <input type="file"
+                           accept="image/*"
+                           capture="environment"
+                           class="sr-only"
+                           x-ref="fallbackInput"
+                           @change="handleFileInput($event)"
+                           {{ $attributes->whereStartsWith('wire:model') }} />
+                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-surface hover:bg-primary/90 transition-colors focus-within:ring-2 focus-within:ring-accent">
+                        <x-ui.icon name="kamera" class="w-4 h-4" />
+                        <span>{{ __('ui.actions.take_photo') }}</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        {{-- Live Stream Video --}}
+        <div x-show="isStreaming" x-cloak class="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-text flex flex-col justify-between">
+            <video x-ref="video" playsinline autoplay muted class="w-full h-full object-cover"></video>
+
+            <div class="absolute bottom-0 inset-x-0 bg-text/80 p-3 flex items-center justify-between gap-3">
+                <x-ui.button type="button" variant="ghost" class="text-surface hover:bg-surface/20 min-h-[44px]" @click="stopCamera()">
+                    {{ __('ui.actions.cancel') }}
+                </x-ui.button>
+
+                <x-ui.button type="button" variant="primary" icon="kamera" class="min-h-[44px]" @click="captureFromVideo()">
+                    {{ __('result.photos.capture') }}
+                </x-ui.button>
+            </div>
+        </div>
+
+        {{-- Permission Denied Alert --}}
+        <div x-show="permissionDenied" x-cloak class="space-y-3">
+            <x-ui.alert variant="warning"
+                        :title="__('ui.camera.permission_denied')"
+                        :message="__('result.photos.permission_denied')" />
+        </div>
+    </div>
+@else
+    {{-- Keadaan Siap Ambil Foto (Kerangka Kamera Siap Pakai) --}}
+    <div {{ $attributes->merge(['class' => 'space-y-3']) }}
+         x-data="cameraCapture({
+             jobId: '{{ $jobId }}',
+             initialPhotoUrl: null,
+             formattedTime: '{{ $formattedTime }}',
+             hasInitialPermissionDenied: false,
+             itemId: '{{ $itemId }}'
+         })">
+        @if ($displayLabel)
+            <label class="block text-sm font-semibold text-text">{{ $displayLabel }}</label>
+        @endif
+
+        {{-- Keadaan Siap Ambil / Tombol Pemicu Kamera --}}
+        <div x-show="!previewUrl && !isStreaming && !permissionDenied" class="relative aspect-[4/3] w-full rounded-xl border-2 border-dashed border-muted/30 bg-muted/5 flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
+                <x-ui.icon name="kamera" class="w-8 h-8" />
+            </div>
+
+            <p class="text-sm font-medium text-text mb-1">
+                {{ __('ui.camera.instruction') }}
+            </p>
+
+            <p class="text-xs text-muted mb-4">
+                Hanya menerima tangkapan langsung dari kamera demi keabsahan inspeksi.
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <x-ui.button type="button"
+                             variant="secondary"
+                             icon="kamera"
+                             class="min-h-[44px]"
+                             @click="startCamera()">
+                    {{ __('result.photos.open_camera') }}
+                </x-ui.button>
+
+                {{-- Input kamera tersembunyi dengan tombol pemicu bawaan HP --}}
+                <label class="cursor-pointer">
+                    <input type="file"
+                           accept="image/*"
+                           capture="environment"
+                           class="sr-only"
+                           x-ref="fallbackInput"
+                           @change="handleFileInput($event)"
+                           {{ $attributes->whereStartsWith('wire:model') }} />
+                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-surface hover:bg-primary/90 transition-colors focus-within:ring-2 focus-within:ring-accent">
+                        <x-ui.icon name="kamera" class="w-4 h-4" />
+                        <span>{{ __('ui.actions.take_photo') }}</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        {{-- Live Stream Video dari Browser Camera --}}
+        <div x-show="isStreaming" x-cloak class="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-text flex flex-col justify-between">
+            <video x-ref="video" playsinline autoplay muted class="w-full h-full object-cover"></video>
+
+            <div class="absolute bottom-0 inset-x-0 bg-text/80 p-3 flex items-center justify-between gap-3">
+                <x-ui.button type="button" variant="ghost" class="text-surface hover:bg-surface/20 min-h-[44px]" @click="stopCamera()">
+                    {{ __('ui.actions.cancel') }}
+                </x-ui.button>
+
+                <x-ui.button type="button" variant="primary" icon="kamera" class="min-h-[44px]" @click="captureFromVideo()">
+                    {{ __('result.photos.capture') }}
+                </x-ui.button>
+            </div>
+        </div>
+
+        {{-- Keadaan Pratinjau Setelah Tangkapan Kamera Berhasil --}}
+        <div x-show="previewUrl && !isStreaming" x-cloak class="space-y-3">
+            <div class="relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-muted/20 bg-muted/10">
+                <img :src="previewUrl"
+                     alt="{{ $displayLabel }}"
+                     class="w-full h-full object-cover" />
+
+                {{-- Watermark / Cap Waktu & Job ID --}}
+                <div class="absolute bottom-0 inset-x-0 bg-text/80 backdrop-blur-xs text-surface p-3 text-xs flex justify-between items-center">
+                    @if ($jobId)
+                        <span class="font-mono font-medium">{{ __('ui.camera.job_id', ['id' => $jobId]) }}</span>
+                    @endif
+                    <span x-text="formattedTime"></span>
+                </div>
+            </div>
+
+            {{-- Tombol Aksi: Ulangi dan Pakai Foto Ini --}}
+            <div class="flex items-center gap-3">
+                <x-ui.button type="button"
+                             variant="secondary"
+                             icon="panah-putar"
+                             class="flex-1 min-h-[44px]"
+                             @click="retake()"
+                             {{ $attributes->whereStartsWith('wire:retake') }}>
+                    {{ __('ui.camera.retake') }}
+                </x-ui.button>
+
+                <x-ui.button type="button"
+                             variant="primary"
+                             icon="centang"
+                             class="flex-1 min-h-[44px]"
+                             @click="usePhoto()"
+                             ::loading="isProcessing"
+                             {{ $attributes->whereStartsWith('wire:use') }}>
+                    {{ __('ui.camera.use_this') }}
+                </x-ui.button>
+            </div>
+        </div>
+
+        {{-- Izin Kamera Ditolak --}}
+        <div x-show="permissionDenied" x-cloak class="space-y-3">
+            <x-ui.alert variant="warning"
+                        :title="__('ui.camera.permission_denied')"
+                        :message="__('result.photos.permission_denied')" />
+        </div>
+
+        {{-- Galat --}}
+        <div x-show="error" x-cloak>
+            <x-ui.alert variant="danger" x-text="error" />
         </div>
     </div>
 @endif
