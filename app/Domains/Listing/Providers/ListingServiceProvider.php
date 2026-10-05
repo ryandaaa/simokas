@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Domains\Listing\Providers;
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Inspection\Events\JobPaid;
 use App\Domains\Listing\Contracts\ListingActivityChecker;
 use App\Domains\Listing\Contracts\ListingModerationContract;
+use App\Domains\Listing\Listeners\MarkListingInInspectionOnJobPaid;
 use App\Domains\Listing\Livewire\CreateListing;
 use App\Domains\Listing\Livewire\EditListing;
 use App\Domains\Listing\Livewire\SellerListings;
@@ -14,6 +16,7 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Policies\ListingPolicy;
 use App\Domains\Listing\Services\DefaultListingActivityChecker;
 use App\Domains\Listing\Services\ListingModerationService;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -35,6 +38,10 @@ final class ListingServiceProvider extends ServiceProvider
         Gate::policy(Listing::class, ListingPolicy::class);
 
         Gate::define('listing.moderate', fn (User $user): bool => ! $user->isBlocked() && $user->isActive() && $user->isAdmin());
+
+        // Perubahan shared JOB-1: Listing bereaksi pada event publik
+        // Inspection. Inspection tidak memanggil Action Listing langsung (A2/A3).
+        Event::listen(JobPaid::class, MarkListingInInspectionOnJobPaid::class);
 
         Livewire::component('listing.create-listing', CreateListing::class);
         Livewire::component('listing.seller-listings', SellerListings::class);
