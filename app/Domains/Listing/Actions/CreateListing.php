@@ -11,6 +11,7 @@ use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Enums\Transmission;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Events\ListingCreated;
+use App\Domains\Listing\Events\ListingSubmitted;
 use App\Domains\Listing\Exceptions\ListingValidationException;
 use App\Domains\Listing\Exceptions\PhotoUploadException;
 use App\Domains\Listing\Models\Listing;
@@ -237,6 +238,10 @@ final class CreateListing
                 }
 
                 $this->events->dispatch(new ListingCreated($listing));
+                $this->events->dispatch(new ListingSubmitted(
+                    listingId: $listing->id,
+                    sellerId: $listing->seller_id,
+                ));
 
                 return $listing->load(['photos', 'inspectionSlots']);
             });

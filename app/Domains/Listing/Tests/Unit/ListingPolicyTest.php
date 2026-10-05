@@ -7,6 +7,7 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Models\ListingPhoto;
 use App\Domains\Listing\Policies\ListingPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -101,4 +102,33 @@ it('controls photo viewing permissions according to listing status', function ()
         ->and($policy->viewPhoto($otherUser, $pendingListing, $pendingPhoto))->toBeFalse()
         ->and($policy->viewPhoto($owner, $pendingListing, $pendingPhoto))->toBeTrue()
         ->and($policy->viewPhoto($admin, $pendingListing, $pendingPhoto))->toBeTrue();
+});
+
+it('allows only the owner to resubmit rejected listings', function () {
+    $policy = new ListingPolicy;
+
+    $owner = User::factory()->user()->create();
+    $other = User::factory()->user()->create();
+    $admin = User::factory()->admin()->create();
+    $rejected = Listing::factory()->rejected()->create(['seller_id' => $owner->id]);
+    $pending = Listing::factory()->pendingReview()->create(['seller_id' => $owner->id]);
+
+    expect($policy->resubmit($owner, $rejected))->toBeTrue()
+        ->and($policy->resubmit($other, $rejected))->toBeFalse()
+        ->and($policy->resubmit($admin, $rejected))->toBeFalse()
+        ->and($policy->resubmit($owner, $pending))->toBeFalse();
+});
+
+it('grants listing.moderate gate only to active admins', function () {
+    $admin = User::factory()->admin()->create();
+    $user = User::factory()->user()->create();
+    $inspector = User::factory()->inspector()->create();
+    $blockedAdmin = User::factory()->admin()->blocked()->create();
+
+    $gate = Gate::class;
+
+    expect($gate::forUser($admin)->allows('listing.moderate'))->toBeTrue()
+        ->and($gate::forUser($user)->allows('listing.moderate'))->toBeFalse()
+        ->and($gate::forUser($inspector)->allows('listing.moderate'))->toBeFalse()
+        ->and($gate::forUser($blockedAdmin)->allows('listing.moderate'))->toBeFalse();
 });
