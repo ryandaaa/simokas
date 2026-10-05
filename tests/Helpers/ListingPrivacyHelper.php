@@ -13,8 +13,15 @@ final class ListingPrivacyHelper
      * Asserts that sensitive/private listing fields (lat, lng, address_full,
      * chassis_number, inspection_place) are never present in the given
      * response content or structure.
+     *
+     * Works for JSON arrays, raw JSON strings, TestResponse, and rendered
+     * HTML. Pass known sensitive values (exact address text, chassis number,
+     * exact coordinates) as $sensitiveValues to also catch leaks where the
+     * value appears without its field key, e.g. inside HTML.
+     *
+     * @param  array<int, string>  $sensitiveValues
      */
-    public static function assertNoPrivateListingData(mixed $response): void
+    public static function assertNoPrivateListingData(mixed $response, array $sensitiveValues = []): void
     {
         $forbiddenKeys = ['lat', 'lng', 'address_full', 'chassis_number', 'inspection_place'];
 
@@ -57,13 +64,33 @@ final class ListingPrivacyHelper
                     "Response raw content contains private listing key: '{$key}'"
                 );
             }
+
+            foreach ($sensitiveValues as $value) {
+                if ($value === '') {
+                    continue;
+                }
+
+                Assert::assertStringNotContainsString(
+                    $value,
+                    $content,
+                    'Response content leaks a private listing value.'
+                );
+                Assert::assertStringNotContainsString(
+                    (string) e($value),
+                    $content,
+                    'Response content leaks an HTML-escaped private listing value.'
+                );
+            }
         }
     }
 }
 
 if (! function_exists('assertNoPrivateListingData')) {
-    function assertNoPrivateListingData(mixed $response): void
+    /**
+     * @param  array<int, string>  $sensitiveValues
+     */
+    function assertNoPrivateListingData(mixed $response, array $sensitiveValues = []): void
     {
-        ListingPrivacyHelper::assertNoPrivateListingData($response);
+        ListingPrivacyHelper::assertNoPrivateListingData($response, $sensitiveValues);
     }
 }
