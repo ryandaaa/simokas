@@ -27,7 +27,7 @@ it('logs in active user successfully and redirects to dashboard', function () {
         ->set('email', 'active@example.com')
         ->set('password', 'Password123!')
         ->call('login')
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('dashboard.user'));
 
     expect(Auth::check())->toBeTrue()
         ->and(Auth::id())->toBe($user->id);
@@ -43,7 +43,7 @@ it('logs in pending inspector successfully', function () {
         ->set('email', 'inspector@example.com')
         ->set('password', 'Password123!')
         ->call('login')
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('dashboard.inspector'));
 
     expect(Auth::check())->toBeTrue()
         ->and(Auth::id())->toBe($user->id);
@@ -112,7 +112,7 @@ it('AUTH-T08 rate limits repeated login attempts', function () {
         ->set('email', 'user@example.com')
         ->set('password', 'Password123!')
         ->call('login')
-        ->assertRedirect(route('dashboard'));
+        ->assertRedirect(route('dashboard.user'));
 
     expect(Auth::check())->toBeTrue();
 
@@ -139,7 +139,7 @@ it('AUTH-E4 rejects active session if user becomes blocked and redirects to bloc
 
     // Authenticated request works when user is active
     actingAs($user);
-    get(route('dashboard'))
+    get(route('dashboard.user'))
         ->assertOk();
 
     // Admin blocks the user while logged in
@@ -149,7 +149,7 @@ it('AUTH-E4 rejects active session if user becomes blocked and redirects to bloc
     /** @var User $freshUser */
     $freshUser = $user->fresh();
     actingAs($freshUser);
-    $response = get(route('dashboard'));
+    $response = get(route('dashboard.user'));
 
     $response->assertRedirect(route('identity.blocked'));
     expect(Auth::check())->toBeFalse();
