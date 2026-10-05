@@ -31,10 +31,17 @@
                 </div>
             </div>
 
-            <div class="pt-4 flex justify-end gap-3">
+            <div class="pt-4 flex flex-wrap justify-end gap-3">
+                <x-ui.button
+                    :href="route('admin.settings')"
+                    variant="primary"
+                >
+                    {{ __('admin.settings.title') }}
+                </x-ui.button>
+
                 <x-ui.button
                     :href="route('identity.account')"
-                    variant="primary"
+                    variant="secondary"
                 >
                     {{ __('identity.account.title') }}
                 </x-ui.button>

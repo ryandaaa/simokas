@@ -78,11 +78,11 @@ flowchart TD
 
 ## 6. Daftar test case
 
-- [ ] `ADM-T01` Semua rute admin 403 untuk selain admin (dataset role)
+- [x] `ADM-T01` Semua rute admin 403 untuk selain admin (dataset role)
 - [ ] `ADM-T02` Admin menyetujui dan menolak listing (alasan wajib), memanggil Action Listing
 - [ ] `ADM-T03` Admin memverifikasi inspektor, setujui dan tolak (alasan wajib)
 - [ ] `ADM-T04` Aksi ganda pada entitas yang sama berefek sekali (ADM-E3)
-- [ ] `ADM-T05` Ubah pengaturan valid tersimpan, tidak valid ditolak seluruhnya (ADM-E2)
+- [x] `ADM-T05` Ubah pengaturan valid tersimpan, tidak valid ditolak seluruhnya (ADM-E2)
 - [ ] `ADM-T06` Perubahan pengaturan hanya memengaruhi job dan transaksi baru (ADM-E1)
 - [ ] `ADM-T07` Selesaikan manual job `result_submitted`: fee cair sekali (ADM-E4)
 - [ ] `ADM-T08` Batalkan job per status dan opsi refund (ADM-E8), dataset
