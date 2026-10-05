@@ -103,18 +103,18 @@ Alasan posting `inspection` saat selesai: PRD 8.1 menyebut fee inspektor "cair s
 
 ## 6. Daftar test case
 
-- [ ] `PAY-T01` Tagihan dibuat dengan jumlah dari server (PAY-E6)
+- [x] `PAY-T01` Tagihan dibuat dengan jumlah dari server (PAY-E6)
 - [x] `PAY-T02` `Money::split` menjumlah ke nilai awal untuk banyak nilai (dataset termasuk ganjil, PAY-E9)
-- [ ] `PAY-T03` Idempotency: dua permintaan kunci sama menghasilkan satu pembayaran (PAY-E1)
-- [ ] `PAY-T04` Hasil `success`, `failed`, `pending` mengubah status sesuai transisi (dataset)
-- [ ] `PAY-T05` Gagal tidak mengubah job, boleh coba lagi dengan kunci baru (PAY-E2)
-- [ ] `PAY-T06` Tagihan kedaluwarsa menghasilkan 410 (PAY-E4)
-- [ ] `PAY-T07` Pembayar lain mendapat 403 (PAY-E5)
+- [x] `PAY-T03` Idempotency: dua permintaan kunci sama menghasilkan satu pembayaran (PAY-E1)
+- [x] `PAY-T04` Hasil `success`, `failed`, `pending` mengubah status sesuai transisi (dataset)
+- [x] `PAY-T05` Gagal tidak mengubah job, boleh coba lagi dengan kunci baru (PAY-E2)
+- [x] `PAY-T06` Tagihan kedaluwarsa menghasilkan 410 (PAY-E4)
+- [x] `PAY-T07` Pembayar lain mendapat 403 (PAY-E5)
 - [ ] `PAY-T08` Posting ledger akses: inspektor dan platform sesuai persen (contoh tabel)
 - [ ] `PAY-T09` Posting ledger inspeksi hanya saat job `completed`
 - [ ] `PAY-T10` Refund sebelum selesai menghasilkan satu entri `refund`, idempoten (PAY-E7)
 - [ ] `PAY-T11` Perubahan tarif tidak memengaruhi tagihan atau job lama (PAY-E8)
 - [ ] `PAY-T12` Saldo inspektor sama dengan jumlah kreditnya (PAY-R8)
 - [ ] `PAY-T13` Invarian ledger: total entri per pembayaran = nilai pembayaran, di semua jalur (dataset tujuan)
-- [ ] `PAY-T14` Transaksi database: kegagalan di tengah tidak meninggalkan entri parsial (PAY-E10)
+- [x] `PAY-T14` Transaksi database: kegagalan di tengah tidak meninggalkan entri parsial (PAY-E10)
 - [ ] `PAY-T15` Akses hasil tidak membuat tagihan kedua bila sudah punya akses (PAY-E3)
