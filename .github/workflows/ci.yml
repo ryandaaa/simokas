@@ -12,8 +12,8 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-latest
-    # Berjalan setelah kerangka Laravel ada (composer.json). Sebelum itu, job ini dilewati.
-    if: ${{ hashFiles('composer.json') != '' }}
+    # Sebelum kerangka Laravel ada (composer.json), job ini lulus tanpa menjalankan apa pun.
+    # Pengecekan dilakukan di level step karena hashFiles() tidak tersedia di `if` level job.
 
     services:
       mysql:
@@ -44,35 +44,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Detect Laravel project
+        id: detect
+        run: |
+          if [ -f composer.json ]; then echo "laravel=true" >> "$GITHUB_OUTPUT"; else echo "laravel=false" >> "$GITHUB_OUTPUT"; echo "composer.json belum ada, langkah CI dilewati."; fi
+
       - uses: shivammathur/setup-php@v2
+        if: steps.detect.outputs.laravel == 'true'
         with:
           php-version: '8.3'
           extensions: mbstring, pdo_mysql, gd, intl, zip, fileinfo
           coverage: pcov
 
       - uses: actions/setup-node@v4
+        if: steps.detect.outputs.laravel == 'true'
         with:
           node-version: '22'
           cache: npm
 
       - name: Install PHP dependencies
+        if: steps.detect.outputs.laravel == 'true'
         run: composer install --no-interaction --prefer-dist --no-progress
 
       - name: Prepare environment
+        if: steps.detect.outputs.laravel == 'true'
         run: |
           cp .env.example .env
           php artisan key:generate
 
       - name: Build assets
+        if: steps.detect.outputs.laravel == 'true'
         run: |
           npm ci
           npm run build
 
       - name: Code style (Pint)
+        if: steps.detect.outputs.laravel == 'true'
         run: composer lint
 
       - name: Static analysis (Larastan)
+        if: steps.detect.outputs.laravel == 'true'
         run: composer analyse
 
       - name: Tests (Pest) with coverage threshold
+        if: steps.detect.outputs.laravel == 'true'
         run: ./vendor/bin/pest --parallel --coverage --min=80
