@@ -4,7 +4,18 @@ declare(strict_types=1);
 
 namespace App\Domains\Chat\Providers;
 
+use App\Domains\Chat\Listeners\CreateJobConversation;
+use App\Domains\Chat\Livewire\ConversationDetail;
+use App\Domains\Chat\Livewire\ConversationList;
+use App\Domains\Chat\Models\Conversation;
+use App\Domains\Chat\Policies\ConversationPolicy;
+use App\Domains\Identity\Models\User;
+use App\Domains\Inspection\Events\JobTaken;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 final class ChatServiceProvider extends ServiceProvider
 {
@@ -18,5 +29,16 @@ final class ChatServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'chat');
         $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
+
+        Gate::policy(Conversation::class, ConversationPolicy::class);
+        Broadcast::channel('conversation.{conversationId}', function (mixed $user, string $conversationId): bool {
+            return $user instanceof User
+                && app(ConversationPolicy::class)->viewChannel($user, $conversationId);
+        });
+
+        Event::listen(JobTaken::class, CreateJobConversation::class);
+
+        Livewire::component('chat.conversation-list', ConversationList::class);
+        Livewire::component('chat.conversation-detail', ConversationDetail::class);
     }
 }
