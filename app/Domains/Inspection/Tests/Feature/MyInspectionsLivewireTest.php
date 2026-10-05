@@ -9,6 +9,10 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Livewire\MyInspections;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Payment\Enums\PaymentMethod;
+use App\Domains\Payment\Enums\PaymentPurpose;
+use App\Domains\Payment\Enums\PaymentStatus;
+use App\Domains\Payment\Models\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -103,4 +107,61 @@ it('paginates results when user has more than 12 jobs', function () {
         ->assertOk()
         ->assertSee('Kendaraan Alpha-15')
         ->assertDontSee('Kendaraan Alpha-01'); // Page 1 shows newest 12
+});
+
+it('renders Batalkan button for cancellable jobs and in_progress notice for running jobs', function () {
+    $user = User::factory()->user()->create();
+    $inspector = User::factory()->inspector()->create();
+
+    $listingPaid = Listing::factory()->active()->create(['title' => 'Mobil Bayar']);
+    $listingInProgress = Listing::factory()->active()->create(['title' => 'Mobil Jalan']);
+
+    $jobPaid = InspectionJob::factory()->paid()->create([
+        'requester_id' => $user->id,
+        'listing_id' => $listingPaid->id,
+    ]);
+
+    $jobInProgress = InspectionJob::factory()->inProgress($inspector)->create([
+        'requester_id' => $user->id,
+        'listing_id' => $listingInProgress->id,
+    ]);
+
+    actingAs($user);
+
+    Livewire::test(MyInspections::class)
+        ->assertOk()
+        ->assertSee(__('inspection.mine.cancel_button'))
+        ->assertSee(__('inspection.mine.in_progress_notice'));
+});
+
+it('allows requester to cancel a paid job with refund through Livewire modal', function () {
+    $user = User::factory()->user()->create();
+    $listing = Listing::factory()->active()->create(['title' => 'Mobil Batal Refund']);
+
+    $job = InspectionJob::factory()->paid()->create([
+        'requester_id' => $user->id,
+        'listing_id' => $listing->id,
+    ]);
+
+    $payment = Payment::factory()->create([
+        'payer_id' => $user->id,
+        'purpose' => PaymentPurpose::Inspection,
+        'ref_id' => $job->id,
+        'amount' => 50000,
+        'status' => PaymentStatus::Success,
+        'method' => PaymentMethod::Qris,
+    ]);
+
+    actingAs($user);
+
+    Livewire::test(MyInspections::class)
+        ->call('confirmCancel', $job->id)
+        ->assertDispatched('open-modal', 'requester-cancel-modal')
+        ->set('cancel_reason', 'Rencana berubah')
+        ->call('cancelJob')
+        ->assertDispatched('close-modal', 'requester-cancel-modal')
+        ->assertSee(__('inspection.mine.cancel_success'));
+
+    expect($job->fresh()->status)->toBe(JobStatus::Cancelled)
+        ->and($payment->fresh()->status)->toBe(PaymentStatus::Refunded);
 });

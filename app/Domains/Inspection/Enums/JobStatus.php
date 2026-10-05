@@ -26,8 +26,8 @@ enum JobStatus: string
             self::Paid => in_array($to, [self::Taken, self::Cancelled], true),
             self::Taken => in_array($to, [self::Scheduled, self::Paid, self::Cancelled], true),
             self::Scheduled => in_array($to, [self::InProgress, self::Paid, self::Cancelled], true),
-            self::InProgress => $to === self::ResultSubmitted,
-            self::ResultSubmitted => $to === self::Completed,
+            self::InProgress => in_array($to, [self::ResultSubmitted, self::Cancelled], true),
+            self::ResultSubmitted => in_array($to, [self::Completed, self::Cancelled], true),
             self::Completed, self::Cancelled, self::Expired => false,
         };
     }
