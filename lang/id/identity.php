@@ -72,12 +72,21 @@ return [
         'notification_expire' => 'Tautan reset kata sandi ini akan kedaluwarsa dalam :count menit.',
         'notification_outro' => 'Jika Anda tidak meminta pengaturan ulang kata sandi, abaikan email ini.',
     ],
+    'errors' => [
+        'forbidden' => 'Anda tidak memiliki hak akses untuk halaman atau aksi ini.',
+        'unauthenticated' => 'Silakan masuk terlebih dahulu untuk melanjutkan.',
+    ],
     'dashboard' => [
         'title' => 'Dashboard',
+        'user_title' => 'Dashboard Pengguna',
+        'inspector_title' => 'Dashboard Inspektor',
+        'admin_title' => 'Dashboard Admin',
         'welcome' => 'Selamat datang, :name!',
         'role_label' => 'Peran akun Anda:',
         'status_label' => 'Status akun Anda:',
         'notice' => 'Ini adalah halaman dashboard sementara [USULAN] yang disediakan oleh domain Identity dan akan digantikan oleh implementasi lengkap pada kartu DSH-1.',
+        'inspector_pending_title' => 'Menunggu Verifikasi',
+        'inspector_pending_alert' => 'Akun inspektor Anda sedang menunggu verifikasi dari admin. Anda tetap dapat mengakses halaman ini, namun fitur terkait pekerjaan inspeksi akan aktif setelah akun Anda disetujui.',
         'logout' => 'Keluar',
     ],
     'blocked' => [
