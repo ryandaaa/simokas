@@ -26,10 +26,7 @@ final class ConversationMember extends Model
 
     public $incrementing = false;
 
-    /**
-     * @var list<string>
-     */
-    protected $primaryKey = ['conversation_id', 'user_id'];
+    protected $primaryKey = 'conversation_id';
 
     /**
      * @return array<string, string>

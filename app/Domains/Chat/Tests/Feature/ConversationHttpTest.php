@@ -9,15 +9,20 @@ use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Laravel\post;
 
 uses(RefreshDatabase::class);
 
 it('requires authentication to access chat routes', function () {
     $conversation = Conversation::factory()->create();
 
-    $this->get(route('conversations.index'))->assertRedirect(route('login'));
-    $this->get(route('conversations.show', $conversation))->assertRedirect(route('login'));
-    $this->post(route('conversations.start'), [
+    get(route('conversations.index'))->assertRedirect(route('login'));
+    get(route('conversations.show', $conversation))->assertRedirect(route('login'));
+    post(route('conversations.start'), [
         'context_type' => 'listing',
         'context_id' => (string) Str::uuid(),
     ])->assertRedirect(route('login'));
@@ -27,8 +32,8 @@ it('rejects blocked user from accessing conversations', function () {
     $blocked = User::factory()->create(['status' => UserStatus::Blocked]);
     $conversation = Conversation::factory()->create();
 
-    $this->actingAs($blocked)->get(route('conversations.index'))->assertRedirect('/blocked');
-    $this->actingAs($blocked)->get(route('conversations.show', $conversation))->assertRedirect('/blocked');
+    actingAs($blocked)->get(route('conversations.index'))->assertRedirect('/blocked');
+    actingAs($blocked)->get(route('conversations.show', $conversation))->assertRedirect('/blocked');
 });
 
 it('denies outsider from viewing conversation (CHT-R3, CHT-E3)', function () {
@@ -38,7 +43,7 @@ it('denies outsider from viewing conversation (CHT-R3, CHT-E3)', function () {
 
     $conversation = Conversation::factory()->withMembers($buyer, $seller)->create();
 
-    $this->actingAs($outsider)
+    actingAs($outsider)
         ->get(route('conversations.show', $conversation))
         ->assertForbidden();
 });
@@ -49,12 +54,12 @@ it('allows participant to view conversation (CHT-R3)', function () {
 
     $conversation = Conversation::factory()->withMembers($buyer, $seller)->create();
 
-    $this->actingAs($buyer)
+    actingAs($buyer)
         ->get(route('conversations.show', $conversation))
         ->assertOk()
         ->assertSee($seller->name);
 
-    $this->actingAs($seller)
+    actingAs($seller)
         ->get(route('conversations.show', $conversation))
         ->assertOk()
         ->assertSee($buyer->name);
@@ -66,7 +71,7 @@ it('starts conversation via HTTP and redirects to conversation detail', function
 
     $listing = Listing::factory()->create(['seller_id' => $seller->id]);
 
-    $response = $this->actingAs($buyer)->post(route('conversations.start'), [
+    $response = actingAs($buyer)->post(route('conversations.start'), [
         'context_type' => 'listing',
         'context_id' => $listing->id,
     ]);
@@ -97,7 +102,7 @@ it('ensures conversation responses never leak private listing data', function ()
         ->withMembers($buyer, $seller)
         ->create();
 
-    $response = $this->actingAs($buyer)->get(route('conversations.show', $conversation));
+    $response = actingAs($buyer)->get(route('conversations.show', $conversation));
     $response->assertOk();
 
     $content = $response->getContent();

@@ -10,7 +10,6 @@ use App\Domains\Chat\Models\Message;
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
-use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 

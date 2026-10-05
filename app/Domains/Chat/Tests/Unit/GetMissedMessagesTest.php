@@ -12,6 +12,8 @@ use App\Domains\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
+use function Pest\Laravel\travel;
+
 uses(TestCase::class, RefreshDatabase::class);
 
 it('CHT-T07 retrieves missed messages created after last known message (CHT-E1)', function () {
@@ -25,10 +27,10 @@ it('CHT-T07 retrieves missed messages created after last known message (CHT-E1)'
 
     $msg1 = $sendMessage->handle($buyer, $conversation, 'Pesan 1');
 
-    $this->travel(1)->seconds();
+    travel(1)->seconds();
     $msg2 = $sendMessage->handle($seller, $conversation, 'Pesan 2');
 
-    $this->travel(1)->seconds();
+    travel(1)->seconds();
     $msg3 = $sendMessage->handle($buyer, $conversation, 'Pesan 3');
 
     // Missed after msg1 should be msg2 and msg3
