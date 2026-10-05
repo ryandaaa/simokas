@@ -37,6 +37,17 @@ it('tests InspectorProfilePolicy rules', function () {
         ->and($policy->update($admin, $profile))->toBeTrue()
         ->and($policy->update($inspectorOther, $profile))->toBeFalse()
         ->and($policy->update($regularUser, $profile))->toBeFalse();
+
+    // Verify
+    expect($policy->verify($admin, $profile))->toBeTrue()
+        ->and($policy->verify($inspectorOwner, $profile))->toBeFalse()
+        ->and($policy->verify($regularUser, $profile))->toBeFalse();
+
+    // Resubmit
+    expect($policy->resubmit($inspectorOwner, $profile))->toBeTrue()
+        ->and($policy->resubmit($inspectorOther, $profile))->toBeFalse()
+        ->and($policy->resubmit($regularUser, $profile))->toBeFalse()
+        ->and($policy->resubmit($admin, $profile))->toBeFalse();
 });
 
 it('tests InspectorDocumentPolicy rules', function () {

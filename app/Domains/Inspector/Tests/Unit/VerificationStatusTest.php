@@ -19,7 +19,7 @@ it('returns labels, colors, and icons for all verification statuses', function (
     expect($status->icon())->not->toBeEmpty();
 })->with(VerificationStatus::cases());
 
-it('correctly evaluates all state transitions', function (VerificationStatus $from, VerificationStatus $to, bool $expected) {
+it('ONB-T09 correctly evaluates all state transitions', function (VerificationStatus $from, VerificationStatus $to, bool $expected) {
     expect($from->canTransitionTo($to))->toBe($expected);
 })->with([
     'pending to approved is valid' => [VerificationStatus::Pending, VerificationStatus::Approved, true],
