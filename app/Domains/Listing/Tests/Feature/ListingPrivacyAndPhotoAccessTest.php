@@ -194,7 +194,7 @@ it('allows owner and admin to view photos of non-active listing with private cac
         ->assertHeader('Cache-Control', 'must-revalidate, no-cache, no-store, private');
 });
 
-it('LST-T17 serves listing photos to guests for photo-public statuses with a public cache header', function (ListingStatus $status) {
+it('LST-T17 serves listing photos to all viewers for photo-public statuses with a public cache header', function (ListingStatus $status) {
     $seller = User::factory()->user()->create();
     $listing = Listing::factory()->create(['seller_id' => $seller->id, 'status' => $status]);
 
@@ -207,10 +207,46 @@ it('LST-T17 serves listing photos to guests for photo-public statuses with a pub
         'is_cover' => true,
     ]);
 
-    get(route('listings.photos.show', ['listing' => $listing->id, 'photo' => $photo->id]))
+    $url = route('listings.photos.show', ['listing' => $listing->id, 'photo' => $photo->id]);
+
+    // Guest -> 200
+    get($url)
         ->assertOk()
         ->assertHeader('X-Content-Type-Options', 'nosniff')
         ->assertHeader('Cache-Control', 'max-age=86400, must-revalidate, public');
+
+    // All account statuses may open public photos: active owner, pending
+    // owner, active admin, other active user, pending inspector, approved
+    // inspector, blocked user, and non-active user.
+    $pendingOwner = User::factory()->user()->pending()->create();
+    $pendingListing = Listing::factory()->create(['seller_id' => $pendingOwner->id, 'status' => $status]);
+    $pendingFilePath = 'listings/'.$pendingListing->id.'/cover.jpg';
+    Storage::disk('private')->put($pendingFilePath, 'fake image binary content');
+    $pendingPhoto = ListingPhoto::factory()->create([
+        'listing_id' => $pendingListing->id,
+        'storage_path' => $pendingFilePath,
+    ]);
+    $pendingUrl = route('listings.photos.show', ['listing' => $pendingListing->id, 'photo' => $pendingPhoto->id]);
+
+    $viewers = [
+        $seller,
+        $pendingOwner,
+        User::factory()->admin()->create(),
+        User::factory()->user()->create(),
+        User::factory()->inspector()->pending()->create(),
+        User::factory()->inspector()->create(),
+        User::factory()->user()->blocked()->create(),
+        User::factory()->user()->pending()->create(),
+    ];
+
+    foreach ($viewers as $viewer) {
+        actingAs($viewer);
+        get($url)->assertOk();
+    }
+
+    // Pending owner may open their own public photo.
+    actingAs($pendingOwner);
+    get($pendingUrl)->assertOk();
 })->with([
     ListingStatus::Active,
     ListingStatus::InInspection,
@@ -222,10 +258,12 @@ it('LST-T17 keeps photos of non-public listings private: guests get 403, others 
     $owner = User::factory()->user()->create();
     $otherUser = User::factory()->user()->create();
     $admin = User::factory()->admin()->create();
-    $blockedOwner = User::factory()->user()->blocked()->create();
+    $pendingOwner = User::factory()->user()->pending()->create();
+    $blockedUser = User::factory()->user()->blocked()->create();
+    $inspectorPending = User::factory()->inspector()->pending()->create();
 
     $listing = Listing::factory()->create(['seller_id' => $owner->id, 'status' => $status]);
-    $blockedListing = Listing::factory()->create(['seller_id' => $blockedOwner->id, 'status' => ListingStatus::Active]);
+    $pendingListing = Listing::factory()->create(['seller_id' => $pendingOwner->id, 'status' => $status]);
 
     $filePath = 'listings/'.$listing->id.'/cover.jpg';
     Storage::disk('private')->put($filePath, 'fake image binary content');
@@ -235,27 +273,35 @@ it('LST-T17 keeps photos of non-public listings private: guests get 403, others 
         'storage_path' => $filePath,
     ]);
 
-    $blockedFilePath = 'listings/'.$blockedListing->id.'/cover.jpg';
-    Storage::disk('private')->put($blockedFilePath, 'fake image binary content');
+    $pendingFilePath = 'listings/'.$pendingListing->id.'/cover.jpg';
+    Storage::disk('private')->put($pendingFilePath, 'fake image binary content');
 
-    $blockedPhoto = ListingPhoto::factory()->create([
-        'listing_id' => $blockedListing->id,
-        'storage_path' => $blockedFilePath,
+    $pendingPhoto = ListingPhoto::factory()->create([
+        'listing_id' => $pendingListing->id,
+        'storage_path' => $pendingFilePath,
     ]);
 
     $photoUrl = route('listings.photos.show', ['listing' => $listing->id, 'photo' => $photo->id]);
+    $pendingPhotoUrl = route('listings.photos.show', ['listing' => $pendingListing->id, 'photo' => $pendingPhoto->id]);
 
     // Guest -> 403
     get($photoUrl)->assertForbidden();
 
-    // Other user -> 403
+    // Other active user -> 403
     actingAs($otherUser);
     get($photoUrl)->assertForbidden();
 
-    // Blocked owner cannot open even their own active listing photo -> 403
-    actingAs($blockedOwner);
-    get(route('listings.photos.show', ['listing' => $blockedListing->id, 'photo' => $blockedPhoto->id]))
-        ->assertForbidden();
+    // Pending inspector -> 403
+    actingAs($inspectorPending);
+    get($photoUrl)->assertForbidden();
+
+    // Blocked user -> 403
+    actingAs($blockedUser);
+    get($photoUrl)->assertForbidden();
+
+    // Pending owner cannot open even their own non-public photo -> 403
+    actingAs($pendingOwner);
+    get($pendingPhotoUrl)->assertForbidden();
 
     // Owner -> 200 with private cache
     actingAs($owner);
