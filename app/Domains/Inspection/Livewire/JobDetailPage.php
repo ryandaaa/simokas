@@ -16,15 +16,12 @@ final class JobDetailPage extends Component
 
     public ?Listing $listing = null;
 
-    public function mount(string $job): void
+    public function mount(InspectionJob $job): void
     {
-        /** @var InspectionJob $jobModel */
-        $jobModel = InspectionJob::query()->findOrFail($job);
-
         // Otorisasi: hanya inspektor pengambil dan admin yang berhak (JOB-R5, JOB-T06)
-        Gate::authorize('viewDetail', $jobModel);
+        Gate::authorize('viewDetail', $job);
 
-        $this->job = $jobModel;
+        $this->job = $job;
 
         // Query data persis dijalankan HANYA setelah otorisasi lolos
         $this->listing = Listing::query()
@@ -45,7 +42,7 @@ final class JobDetailPage extends Component
                 'transmission',
                 'fuel',
             ])
-            ->whereKey($jobModel->listing_id)
+            ->whereKey($job->listing_id)
             ->first();
     }
 
