@@ -79,7 +79,7 @@ flowchart TD
 ## 6. Daftar test case
 
 - [x] `ADM-T01` Semua rute admin 403 untuk selain admin (dataset role)
-- [ ] `ADM-T02` Admin menyetujui dan menolak listing (alasan wajib), memanggil Action Listing
+- [x] `ADM-T02` Admin menyetujui dan menolak listing (alasan wajib), memanggil Action Listing
 - [x] `ADM-T03` Admin memverifikasi inspektor, setujui dan tolak (alasan wajib)
 - [x] `ADM-T04` Aksi ganda pada entitas yang sama berefek sekali (ADM-E3)
 - [x] `ADM-T05` Ubah pengaturan valid tersimpan, tidak valid ditolak seluruhnya (ADM-E2)
