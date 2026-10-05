@@ -8,7 +8,7 @@ Bila diminta mengerjakan sebuah issue/kartu, ikuti [`docs/AGENT_TASK.md`](docs/A
 
 ## Stack
 
-Laravel 12 (PHP 8.3), Blade + Livewire + Tailwind, MySQL/MariaDB, Pest, Pusher (cadangan polling). Hosting Hostinger Cloud Startup. Alasan: [`docs/decisions/0001-stack.md`](docs/decisions/0001-stack.md).
+Laravel 13 (PHP 8.3), Blade + Livewire + Tailwind, MySQL/MariaDB, Pest, Pusher (cadangan polling). Hosting Hostinger Cloud Startup. Alasan: [`docs/decisions/0001-stack.md`](docs/decisions/0001-stack.md).
 
 ## Wajib dibaca sebelum menulis kode
 

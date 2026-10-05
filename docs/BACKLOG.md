@@ -44,7 +44,7 @@ Milestone: **P0 – Deploy 8 Okt**, **P1 – Pengumpulan 12 Okt**, **P2 – Sete
 
 | ID | Judul | Domain | Flow & test | Butuh | Uk. |
 | --- | --- | --- | --- | --- | :-: |
-| F1 (#1) | Kerangka Laravel 12, Pest, Pint, Larastan, CI, skeleton domain + ServiceProvider, arch test, skrip `composer check`. Validasi seluruh contoh di TESTING.md | foundation | ARCHITECTURE, TESTING. CI hijau, arch test hijau | - | L |
+| F1 (#1) | Kerangka Laravel 13, Pest, Pint, Larastan, CI, skeleton domain + ServiceProvider, arch test, skrip `composer check`. Validasi seluruh contoh di TESTING.md | foundation | ARCHITECTURE, TESTING. CI hijau, arch test hijau | - | L |
 | F2 (#2) | UI kit: token Tailwind, layout (bilah atas, menu bawah HP), semua komponen `x-ui.*`, halaman 403/404/500, `lang/id` | foundation | UI_GUIDELINES. Test render setiap komponen | F1 | L |
 | F3 (#3) | Support: `Money` (split, format), `Clock` (UTC/WIB), handler exception domain, kelas dasar exception | foundation | CONVENTIONS 4, 5, 7. `PAY-T02` | F1 | S |
 | F4 (#4) | Verifikasi dan deploy Hostinger: PHP 8.3, SSH/Composer, cron `schedule:run`, versi MySQL (kolom virtual berindeks unik), koneksi Pusher. Panduan deploy dan daftar `.env` | foundation | decisions/0001 bagian "yang harus diverifikasi". Dokumen `docs/DEPLOY.md` | - | M |
