@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $id
@@ -76,6 +77,14 @@ final class Payment extends Model
     public function payer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'payer_id');
+    }
+
+    /**
+     * @return HasMany<LedgerEntry, $this>
+     */
+    public function ledgerEntries(): HasMany
+    {
+        return $this->hasMany(LedgerEntry::class, 'payment_id');
     }
 
     public function isExpired(): bool
