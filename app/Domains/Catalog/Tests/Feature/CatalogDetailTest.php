@@ -162,7 +162,7 @@ it('CAT-T09 shows only the allowed action buttons per role and status', function
 })->with([
     // role, status, sees request-inspection, sees edit
     'guest on active sees request only' => ['guest', 'active', true, false],
-    'other user on active sees none yet (JOB-1 route missing)' => ['other', 'active', false, false],
+    'other user on active sees request' => ['other', 'active', true, false],
     'owner on active sees edit only' => ['owner', 'active', false, true],
     'admin on active sees edit only' => ['admin', 'active', false, true],
     'inspector on active sees neither (D-06)' => ['inspector', 'active', false, false],

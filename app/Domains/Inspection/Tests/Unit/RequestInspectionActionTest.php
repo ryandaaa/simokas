@@ -123,13 +123,13 @@ it('JOB-E2 throws ListingHasActiveJobException (409) when a second requester app
 
     $action->handle($requester1, $listing);
 
-    expect(fn () => $action->handle($requester2, $listing))
-        ->toThrow(function (\Throwable $e) {
-            expect($e)->toBeInstanceOf(ListingHasActiveJobException::class);
-            /** @var ListingHasActiveJobException $e */
-            expect($e->statusCode())->toBe(409)
-                ->and($e->errorCode())->toBe('LISTING_HAS_ACTIVE_JOB');
-        });
+    try {
+        $action->handle($requester2, $listing);
+        expect(false)->toBeTrue();
+    } catch (ListingHasActiveJobException $e) {
+        expect($e->statusCode())->toBe(409)
+            ->and($e->errorCode())->toBe('LISTING_HAS_ACTIVE_JOB');
+    }
 });
 
 it('JOB-T16, ADM-T06, PAY-T11 keeps old job and bill fee unchanged when admin changes settings afterwards', function () {
