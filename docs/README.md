@@ -11,6 +11,7 @@
 | `flows/<modul>.md` | Flow per modul: diagram, edge case, daftar test case |
 | [BACKLOG.md](BACKLOG.md) | Daftar kartu kanban (ID, test case, prasyarat, jalur paralel) |
 | [AGENT_TASK.md](AGENT_TASK.md) | Cara menyuruh agen mengerjakan satu kartu, dan alur kerja agen |
+| [PROMPT_KERJAKAN.md](PROMPT_KERJAKAN.md) | Prompt siap pakai (input hanya nomor issue), varian, dan prompt review |
 | [features/_TEMPLATE.md](features/_TEMPLATE.md) | Template spesifikasi untuk fitur baru |
 | [decisions/](decisions/) | Catatan keputusan (ADR) |
 
