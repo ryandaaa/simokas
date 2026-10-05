@@ -7,11 +7,6 @@ namespace App\Domains\Inspection\Tests\Unit;
 use App\Domains\Inspection\Events\JobCancelled;
 use App\Domains\Inspection\Events\JobCompleted;
 use App\Domains\Inspection\Events\JobExpired;
-use App\Domains\Inspection\Events\JobPaid;
-use App\Domains\Inspection\Events\JobScheduled;
-use App\Domains\Inspection\Events\JobStarted;
-use App\Domains\Inspection\Events\JobTaken;
-use Illuminate\Support\Carbon;
 use Tests\TestCase;
 
 uses(TestCase::class);

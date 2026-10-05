@@ -11,14 +11,18 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Events\JobCancelled;
 use App\Domains\Inspection\Exceptions\JobAlreadyTakenException;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Inspector\Models\InspectorProfile;
+use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Contracts\Ledger;
 use App\Domains\Payment\Enums\PaymentMethod;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Enums\PaymentStatus;
 use App\Domains\Payment\Models\Payment;
+use App\Domains\Setting\Contracts\SettingsReader;
 use App\Support\Clock;
 use Carbon\Carbon;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Mockery;
@@ -61,9 +65,9 @@ it('JOB-T10 job paid 7 hari: refund dan listing active (6 hari belum, 7 hari sud
         ->with($payment->id);
 
     $action = new CancelUnclaimedPaidJobs(
-        settings: app(\App\Domains\Setting\Contracts\SettingsReader::class),
+        settings: app(SettingsReader::class),
         ledger: $ledgerMock,
-        events: app(\Illuminate\Contracts\Events\Dispatcher::class),
+        events: app(Dispatcher::class),
     );
 
     // 1. Pada 6 hari: belum dibatalkan (timeout 7 hari)
@@ -102,15 +106,15 @@ it('handles race condition when inspector attempts to take job at cancellation t
 
     $user = User::factory()->user()->create();
     $inspector = User::factory()->inspector()->create();
-    \App\Domains\Inspector\Models\InspectorProfile::factory()->approved()->create([
+    InspectorProfile::factory()->approved()->create([
         'user_id' => $inspector->id,
-        'vehicle_types' => [\App\Domains\Listing\Enums\VehicleType::Car->value],
+        'vehicle_types' => [VehicleType::Car->value],
     ]);
 
     $seller = User::factory()->user()->create();
     $listing = Listing::factory()->inInspection()->create([
         'seller_id' => $seller->id,
-        'vehicle_type' => \App\Domains\Listing\Enums\VehicleType::Car,
+        'vehicle_type' => VehicleType::Car,
     ]);
 
     $job = InspectionJob::factory()->create([
