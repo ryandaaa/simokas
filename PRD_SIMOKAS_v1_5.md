@@ -1,8 +1,8 @@
 # PRD — Aplikasi SIMOKAS
 
-**Versi:** 1.4
+**Versi:** 1.5
 
-**Status:** Draft, diperbarui 5 Oktober 2026
+**Status:** Draft, diperbarui 5 Oktober 2026 (stack diganti ke Laravel + MySQL)
 
 **Platform:** Web responsif (mobile-first)
 
@@ -30,6 +30,7 @@
 | 1.1 | Klarifikasi tim: chat real-time masuk lingkup (P1). Tarif inspeksi Rp15.000 (motor) dan Rp50.000 (mobil), berlaku sama untuk inspeksi baru maupun membuka hasil yang sudah ada. Komisi inspektor dari transaksi di platform 3%. Rating hanya setelah pembeli deal melalui aplikasi. Pembayaran tetap simulasi. Notifikasi hanya di web. Mode gelap ditunda |
 | 1.2–1.3 | Tidak tercatat pada draf sebelumnya (nomor versi pada nama file dan isi dokumen tidak sinkron) |
 | 1.4 | Penyusunan ulang agar konsisten dan mudah dipakai tim: format tabel dan daftar diperbaiki, istilah uang diseragamkan, tanggal rencana disesuaikan dengan 5 Oktober, celah aturan bisnis ditutup (konflik kepentingan inspektor, kedaluwarsa tagihan, pembulatan, nomor rangka), spesifikasi fungsional transaksi, chat, rating, dan notifikasi ditambahkan, serta endpoint API yang kurang dilengkapi. Rincian ada di lampiran "Catatan Perubahan" pada akhir dokumen |
+| 1.5 | Stack diganti dari Next.js + Supabase ke **Laravel + MySQL** (hosting Hostinger Cloud Startup). Bagian 6.2, 13.13, 17, 18, 19, 20.4, 24, 25, dan 26 disesuaikan. Row Level Security diganti Policy/Gate Laravel, Supabase Realtime diganti Pusher (cadangan: polling), indeks unik parsial diganti kolom virtual. Rincian di lampiran E |
 
 ---
 
@@ -193,7 +194,7 @@ Tugas utama: memvalidasi listing, memverifikasi inspektor, mengatur tarif dan pe
 * Aplikasi web responsif, dapat diakses dari semua perangkat melalui browser.
 * Tidak ada aplikasi mobile native (APK/iOS).
 * Tidak ada mode offline. Seluruh fitur memerlukan internet.
-* Distribusi melalui hosting dan domain yang sudah dimiliki tim. **Jenis hosting belum diketahui** dan menentukan pilihan stack [OPEN, prioritas tinggi].
+* Distribusi melalui hosting dan domain yang sudah dimiliki tim: paket **Hostinger Cloud Startup** (PHP, MySQL, SSH, cron lewat hPanel). Kemampuan paket yang belum terverifikasi dicatat di Catatan hosting pada 6.2 [OPEN].
 
 ### 6.2 Stack yang Direkomendasikan
 
@@ -201,16 +202,19 @@ Tim menyerahkan pemilihan stack kepada rekomendasi penyusun. Prioritas tim adala
 
 | Lapisan | Pilihan | Alasan |
 | --- | --- | --- |
-| Frontend dan API | Next.js (React) + Tailwind CSS | Cepat dibangun, server-side rendering membantu performa, API internal dalam satu proyek |
-| Database | PostgreSQL (Supabase) | Relasional cocok untuk transaksi dan ledger, ada Row Level Security |
-| Autentikasi | Supabase Auth (email + password) | Tidak perlu membangun login dari nol |
-| Penyimpanan foto | Supabase Storage | Satu platform dengan database, mendukung akses privat |
+| Framework | Laravel 12 (PHP 8.3) | Berjalan di hosting PHP, auth, validasi, policy, antrean, dan scheduler sudah bawaan |
+| Frontend | Blade + Livewire + Tailwind CSS | Satu proyek tanpa API dan build SPA terpisah, cepat dikerjakan dua orang, ringan di perangkat murah |
+| Database | MySQL/MariaDB (Hostinger) | Tersedia di paket hosting. PostgreSQL tidak tersedia di paket Cloud Hostinger, dan PostgreSQL eksternal (Neon) menambah latensi dan titik gagal |
+| Autentikasi | Laravel Breeze (email + password), role di tabel `users` | Tidak perlu membangun login dari nol |
+| Hak akses | Policy, Gate, dan middleware role | Pengganti Row Level Security. Seluruh akses data lewat Eloquent di server |
+| Penyimpanan foto dan dokumen | Filesystem Laravel, disk privat + tautan bertanda tangan sementara | Dokumen KTP dan foto inspeksi tidak dapat diakses publik |
 | Peta | Leaflet + OpenStreetMap | Gratis, tanpa kartu kredit atau API key |
 | Pembayaran | Modul simulasi internal (*mock gateway*) | Sesuai keputusan tim. Midtrans Sandbox bisa menjadi jalur nyata kelak |
-| Chat dan notifikasi real-time | Supabase Realtime | Berlangganan perubahan tabel pesan dan notifikasi, tetap tunduk pada Row Level Security |
-| Hosting | Vercel (jika hosting yang ada tidak bisa menjalankan Next.js) | Paket gratis cukup untuk lomba |
+| Chat dan notifikasi real-time | Laravel Echo + Pusher (paket gratis). Cadangan: polling Livewire tiap 3–5 detik | Hostinger Cloud kemungkinan tidak dapat menjalankan proses background untuk Laravel Reverb |
+| Tugas terjadwal | Laravel Scheduler lewat cron hPanel | Kedaluwarsa tagihan 30 menit dan penandaan job "perlu tindakan" 48 jam |
+| Hosting | Hostinger Cloud Startup (domain yang sudah dimiliki) | Sudah dimiliki tim |
 
-> **Catatan hosting.** Jika hosting yang sudah dimiliki adalah hosting PHP/cPanel biasa, Next.js dengan server-side rendering tidak dapat dijalankan di sana. Pilihannya: pakai Vercel untuk aplikasi dan arahkan domain yang sudah ada ke sana, atau ganti stack (misalnya Laravel). Keputusan ini harus diambil sebelum pengerjaan dimulai.
+> **Catatan hosting.** Kemampuan paket Cloud Startup belum diverifikasi langsung. Yang perlu dicek di hPanel sebelum 8 Oktober: versi PHP 8.3, akses SSH dan Composer, cron job berjalan tiap menit untuk `schedule:run`, dan koneksi keluar ke Pusher. Proses yang harus terus hidup (Laravel Reverb, queue worker) tidak diandalkan. Antrean memakai driver `database` yang diproses oleh scheduler, atau pekerjaan dijalankan sinkron.
 
 ### 6.3 Batasan
 
@@ -703,9 +707,9 @@ Aturan:
 
 * Pesan teks, maksimal 1.000 karakter per pesan.
 * Percakapan unik per pasangan peserta dan konteks (listing atau job).
-* Pesan baru, penanda belum dibaca, dan status koneksi diperbarui real-time lewat Supabase Realtime. Target tampil di lawan bicara kurang dari 2 detik.
+* Pesan baru, penanda belum dibaca, dan status koneksi diperbarui real-time lewat Laravel Echo + Pusher (cadangan: polling Livewire 3–5 detik). Target tampil di lawan bicara kurang dari 2 detik dengan Pusher.
 * Koneksi terputus: tampil indikator "menyambung ulang", sambung ulang otomatis, lalu pesan yang terlewat diambil. Pesan yang gagal terkirim ditandai dan dapat dikirim ulang.
-* Pengguna hanya menerima pesan dari percakapan yang diikutinya (Row Level Security).
+* Pengguna hanya menerima pesan dari percakapan yang diikutinya (Policy Laravel dan kanal Echo privat).
 * Tidak ada pengiriman berkas atau gambar pada versi lomba.
 
 ### 13.14 Rating Inspektor (P1)
@@ -853,11 +857,11 @@ Seluruh waktu disimpan dalam UTC dan ditampilkan dalam **WIB**. Waktu server men
 
 ## 17. Autentikasi dan Keamanan Akun
 
-* Login dengan **email dan password** (Supabase Auth). "Username" diwujudkan sebagai nama tampilan.
+* Login dengan **email dan password** (Laravel Breeze). "Username" diwujudkan sebagai nama tampilan.
 * Password minimal 8 karakter, disimpan sebagai hash oleh penyedia autentikasi.
 * **Reset password** melalui tautan email.
 * Verifikasi email: dimatikan pada P0 agar demo tidak terhambat, dan dinyalakan ketika pengiriman email produksi sudah disiapkan [ASUMSI] [OPEN]. Lihat risiko R3 di Bagian 25.
-* Tingkat keamanan: **menengah**. Seluruh akses data dibatasi **Row Level Security** per role, pembatasan laju (*rate limit*) pada login dan API sensitif, dan validasi input di server.
+* Tingkat keamanan: **menengah**. Seluruh akses data dibatasi **Policy dan Gate** Laravel per role, pembatasan laju (*rate limit*) pada login dan API sensitif, dan validasi input di server.
 * Akun admin hanya dibuat manual.
 * Akun demo (Bagian 23.4) dinonaktifkan atau diganti passwordnya setelah lomba berakhir.
 * Satu akun dapat dipakai di banyak perangkat. Fitur logout dari semua perangkat termasuk P2.
@@ -868,28 +872,31 @@ Seluruh waktu disimpan dalam UTC dan ditampilkan dalam **WIB**. Waktu server men
 
 Nama tabel dan kolom memakai bahasa Inggris snake_case. `id` memakai UUID, dan setiap tabel memiliki `created_at` dan `updated_at` (tidak diulang di bawah).
 
-### 18.1 profiles
+### 18.1 users
+
+Tabel `users` bawaan Laravel diperluas dengan kolom di bawah, sehingga tidak ada tabel `profiles` terpisah.
 
 | Kolom | Tipe | Keterangan |
 | --- | --- | --- |
-| id | uuid | Sama dengan id akun autentikasi |
+| id | uuid | Primary key |
+| email, password | string | Bawaan Laravel. Email unik |
 | full_name | text | |
 | phone | text | |
 | role | enum | `user`, `inspector`, `admin` |
 | status | enum | `active`, `blocked` |
 | avatar_url | text | Opsional |
-| accepted_terms_at | timestamptz | Waktu menyetujui syarat (P1) |
+| accepted_terms_at | timestamp (UTC) | Waktu menyetujui syarat (P1) |
 
 ### 18.2 inspector_profiles
 
 | Kolom | Tipe | Keterangan |
 | --- | --- | --- |
-| user_id | uuid | FK ke profiles |
-| vehicle_types | text[] | `car`, `motorcycle` |
+| user_id | uuid | FK ke users |
+| vehicle_types | json (array) | `car`, `motorcycle` |
 | experience_years | int | |
 | verification_status | enum | `pending`, `approved`, `rejected` |
 | rejection_reason | text | |
-| verified_by, verified_at | uuid, timestamptz | Admin dan waktu verifikasi |
+| verified_by, verified_at | uuid, timestamp | Admin dan waktu verifikasi |
 | rating_avg | numeric(3,2) | Dihitung dari ratings |
 | rating_count | int | |
 | completed_jobs | int | |
@@ -908,7 +915,7 @@ Nama tabel dan kolom memakai bahasa Inggris snake_case. `id` memakai UUID, dan s
 | Kolom | Tipe | Keterangan |
 | --- | --- | --- |
 | id | uuid | |
-| seller_id | uuid | FK profiles |
+| seller_id | uuid | FK users |
 | vehicle_type | enum | `car`, `motorcycle` |
 | title, brand, model | text | |
 | year | int | |
@@ -925,8 +932,8 @@ Nama tabel dan kolom memakai bahasa Inggris snake_case. `id` memakai UUID, dan s
 | status | enum | Lihat 14.1 |
 | rejection_reason | text | |
 | is_inspected | bool | Dipakai untuk lencana |
-| last_inspected_at | timestamptz | |
-| validated_by, validated_at | uuid, timestamptz | |
+| last_inspected_at | timestamp (UTC) | |
+| validated_by, validated_at | uuid, timestamp | |
 
 ### 18.5 listing_photos
 
@@ -942,7 +949,7 @@ Nama tabel dan kolom memakai bahasa Inggris snake_case. `id` memakai UUID, dan s
 | Kolom | Tipe | Keterangan |
 | --- | --- | --- |
 | id, listing_id | uuid | |
-| slot_start | timestamptz | Opsi waktu dari penjual |
+| slot_start | timestamp (UTC) | Opsi waktu dari penjual |
 | note | text | |
 
 ### 18.7 inspection_jobs
@@ -956,14 +963,14 @@ Nama tabel dan kolom memakai bahasa Inggris snake_case. `id` memakai UUID, dan s
 | status | enum | Lihat 14.2 |
 | fee_amount | bigint | Tarif saat dibuat (disalin agar perubahan tarif tidak memengaruhi job lama) |
 | platform_fee_pct | numeric | Persentase komisi saat dibuat (disalin) |
-| expires_at | timestamptz | Batas pembayaran tagihan |
-| scheduled_at | timestamptz | Jadwal final |
-| taken_at, started_at, submitted_at, completed_at | timestamptz | |
-| needs_attention_at | timestamptz | Ditandai bila jadwal belum ditetapkan (E8) |
+| expires_at | timestamp (UTC) | Batas pembayaran tagihan |
+| scheduled_at | timestamp (UTC) | Jadwal final |
+| taken_at, started_at, submitted_at, completed_at | timestamp (UTC) | |
+| needs_attention_at | timestamp (UTC) | Ditandai bila jadwal belum ditetapkan (E8) |
 | cancel_reason | text | |
 | cancelled_by | uuid | |
 
-Pembatas basis data: **hanya satu job aktif per listing** (indeks unik parsial pada status non-final).
+Pembatas basis data: **hanya satu job aktif per listing**. MySQL tidak mendukung indeks unik parsial, sehingga dipakai kolom virtual `active_listing_id` (bernilai `listing_id` bila status bukan `completed`, `cancelled`, atau `expired`, selain itu `NULL`) dengan **indeks unik**. MySQL mengizinkan banyak nilai `NULL`, sehingga job berstatus akhir tidak bentrok. Enum disimpan sebagai string yang dibatasi validasi dan `CHECK`, dan kolom berisi array disimpan sebagai JSON.
 
 ### 18.8 inspection_templates dan template_items
 
@@ -980,7 +987,7 @@ Pembatas basis data: **hanya satu job aktif per listing** (indeks unik parsial p
 | recommendation | enum | `recommended`, `caution`, `not_recommended` |
 | summary_note | text | |
 | status | enum | `draft`, `submitted` |
-| submitted_at | timestamptz | |
+| submitted_at | timestamp (UTC) | |
 
 ### 18.10 result_items dan result_photos
 
@@ -994,7 +1001,7 @@ Pembatas basis data: **hanya satu job aktif per listing** (indeks unik parsial p
 | id, result_id, user_id | uuid | |
 | source | enum | `requester`, `paid_access` |
 | payment_id | uuid | FK payments |
-| granted_at | timestamptz | |
+| granted_at | timestamp (UTC) | |
 
 Unik pada (`result_id`, `user_id`).
 
@@ -1013,7 +1020,7 @@ Unik pada (`result_id`, `user_id`).
 * **conversation_members:** `conversation_id`, `user_id`, `last_read_at`.
 * **messages:** `id`, `conversation_id`, `sender_id`, `body`.
 
-Tabel `messages` dan `notifications` dipublikasikan ke Supabase Realtime. Row Level Security memastikan hanya peserta percakapan atau pemilik notifikasi yang menerima data.
+Pesan dan notifikasi baru disiarkan lewat Laravel Echo pada **kanal privat** (`private-conversation.{id}`, `private-user.{id}`). Otorisasi kanal memastikan hanya peserta percakapan atau pemilik notifikasi yang menerima data.
 
 ### 18.15 ratings (P1)
 
@@ -1025,17 +1032,17 @@ Tabel `messages` dan `notifications` dipublikasikan ke Supabase Realtime. Row Le
 
 ### 18.17 app_settings
 
-`key`, `value` (jsonb). Berisi: `inspection_fee_car` (50000), `inspection_fee_motorcycle` (15000), `platform_fee_pct` (10), `sale_commission_pct` (3). Biaya akses hasil memakai tarif inspeksi yang sama, sehingga tidak ada kunci terpisah.
+`key`, `value` (json). Berisi: `inspection_fee_car` (50000), `inspection_fee_motorcycle` (15000), `platform_fee_pct` (10), `sale_commission_pct` (3). Biaya akses hasil memakai tarif inspeksi yang sama, sehingga tidak ada kunci terpisah.
 
 ### 18.18 audit_logs (P2)
 
-`id`, `actor_id`, `action`, `entity`, `entity_id`, `meta` (jsonb).
+`id`, `actor_id`, `action`, `entity`, `entity_id`, `meta` (json).
 
 ---
 
 ## 19. API Contract Awal
 
-Endpoint internal Next.js di bawah `/api/v1`. Operasi baca sederhana dapat langsung memakai klien Supabase dengan Row Level Security. **Operasi yang mengubah uang, status job, atau akses data sensitif wajib lewat API server** agar aturan bisnis tidak dapat dilewati dari browser. Login dan logout ditangani langsung oleh Supabase Auth.
+Endpoint internal Laravel di bawah `/api/v1`. Halaman utama dirender server (Blade + Livewire) dan memakai service/action yang sama dengan endpoint ini, sehingga aturan bisnis hanya ada di satu tempat. **Operasi yang mengubah uang, status job, atau akses data sensitif selalu dijalankan di server** dan dilindungi Policy, agar aturan bisnis tidak dapat dilewati dari browser. Login dan logout ditangani Laravel Breeze (sesi dan CSRF).
 
 Format respons: `{ "data": ..., "error": null }` atau `{ "data": null, "error": { "code": "...", "message": "..." } }`.
 
@@ -1069,7 +1076,7 @@ Format respons: `{ "data": ..., "error": null }` atau `{ "data": null, "error": 
 | GET | `/me/earnings` | Inspektor | Saldo dan rincian pendapatan |
 | POST | `/transactions` | User | Ajukan pembelian (P1) |
 | PATCH | `/transactions/{id}` | Penjual, pembeli | Setuju, tolak, bayar, serah terima (P1) |
-| GET/POST | `/conversations`, `/messages` | Peserta | Chat real-time (P1). Pesan baru diterima lewat langganan Supabase Realtime |
+| GET/POST | `/conversations`, `/messages` | Peserta | Chat real-time (P1). Pesan baru diterima lewat Laravel Echo (Pusher), cadangan polling |
 | POST | `/ratings` | Pembeli | Beri rating (P1) |
 | GET | `/notifications` | Semua | Daftar notifikasi (P1) |
 | PATCH | `/notifications/{id}/read` | Pemilik | Tandai dibaca (P1) |
@@ -1337,8 +1344,8 @@ Strategi: pagination, *lazy load* gambar, kompresi foto di klien, format WebP bi
 
 ### 20.4 Keamanan
 
-* **Row Level Security** pada semua tabel. Tidak ada tabel yang dapat dibaca tanpa kebijakan eksplisit.
-* Kunci layanan (*service role*) tidak pernah dikirim ke browser.
+* **Policy** Laravel untuk setiap model dan aksi (`authorize` pada setiap controller dan komponen Livewire). Tidak ada rute data privat tanpa middleware autentikasi dan policy eksplisit. Query data milik pengguna selalu dibatasi lewat relasi atau *global scope*.
+* Kredensial (`.env`, kunci Pusher, `APP_KEY`) tidak pernah dikirim ke browser atau dimasukkan ke repositori.
 * Validasi input di server (tipe, panjang, rentang), bukan hanya di formulir.
 * Perlindungan terhadap XSS (teks pengguna di-*escape*), CSRF, dan unggahan berbahaya (periksa tipe MIME dan ukuran).
 * Pembatasan laju pada login, registrasi, reset password, dan pembayaran simulasi.
@@ -1467,7 +1474,7 @@ Per 5 Oktober, waktu untuk P0 tersisa empat hari kerja (5–8 Oktober).
 
 | Tanggal | Fokus | Hasil |
 | --- | --- | --- |
-| 5 Okt | Keputusan hosting, repo, skema database dan RLS, autentikasi, data seed. Listing: CRUD, unggah foto, pin lokasi | Fondasi dan sisi penjual siap |
+| 5 Okt | Keputusan hosting, repo, skema database dan Policy, autentikasi, data seed. Listing: CRUD, unggah foto, pin lokasi | Fondasi dan sisi penjual siap |
 | 6 Okt | Validasi listing oleh admin, pendaftaran dan verifikasi inspektor, ajukan inspeksi, pembayaran simulasi, daftar dan ambil job | Alur inspeksi berjalan sampai job diambil |
 | 7 Okt | Form inspeksi berbasis template dengan foto kamera, tampilan hasil, akses berbayar, ledger, dashboard per role, pengaturan admin | **Alur P0 lengkap** |
 | 8 Okt | Deploy, uji asap, perbaikan galat, data demo, uji lintas perangkat | **P0 live** |
@@ -1508,7 +1515,7 @@ Halaman **Cara Kerja** di beranda dan teks bantuan singkat pada formulir. Pandua
 
 ### 24.1 Asumsi
 
-1. Hosting yang sudah dimiliki tim dapat menjalankan stack yang dipilih, atau tim memakai Vercel [OPEN].
+1. Paket Hostinger Cloud Startup dapat menjalankan Laravel 12 (PHP 8.3), cron per menit, dan koneksi keluar ke Pusher [OPEN: verifikasi di hPanel].
 2. Tim sudah terdaftar pada lomba. Pendaftaran sudah ditutup pada 4 Oktober, sehingga status pendaftaran perlu dikonfirmasi.
 3. Seluruh pembayaran adalah simulasi dan tidak ada uang nyata berpindah.
 4. Tarif dan komisi pada Bagian 8 sudah ditetapkan tim, kecuali yang ditandai [ASUMSI], dan semuanya dapat diubah admin.
@@ -1521,8 +1528,8 @@ Halaman **Cara Kerja** di beranda dan teks bantuan singkat pada formulir. Pandua
 
 | Dependensi | Dampak jika bermasalah |
 | --- | --- |
-| Penyedia database dan penyimpanan (Supabase) | Seluruh aplikasi berhenti. Perlu cadangan |
-| Penyedia hosting (Vercel atau yang sudah ada) | Aplikasi tidak dapat diakses |
+| Hosting dan MySQL (Hostinger) | Seluruh aplikasi berhenti. Perlu cadangan (`mysqldump` terjadwal) |
+| Pusher (paket gratis) | Chat dan notifikasi tidak real-time. Cadangan polling Livewire |
 | Pengiriman email (reset password, verifikasi) | Reset password tidak berfungsi. Lihat risiko R3 |
 | Layanan peta OpenStreetMap | Peta tidak tampil. Alamat teks tetap tersedia |
 | Indikator inspeksi dari tim | Tanpa itu template sementara dipakai |
@@ -1535,19 +1542,19 @@ Halaman **Cara Kerja** di beranda dan teks bantuan singkat pada formulir. Pandua
 | # | Risiko | Dampak | Mitigasi |
 | --- | --- | --- | --- |
 | R1 | **Waktu sangat sempit** (P0 dalam 4 hari, 3 orang) | Fitur tidak selesai atau berkualitas rendah | Disiplin prioritas P0/P1/P2, form berbasis template, pembayaran simulasi sederhana, hindari fitur di luar rencana |
-| R2 | **Jenis hosting tidak cocok** dengan stack | Pengerjaan mundur atau harus diulang | Putuskan hari ini. Pakai Vercel dan arahkan domain bila perlu |
+| R2 | **Jenis hosting tidak cocok** dengan stack | Pengerjaan mundur atau harus diulang | Stack sudah disesuaikan dengan hosting (Laravel + MySQL). Verifikasi PHP 8.3, cron, SSH, dan koneksi Pusher di hPanel sebelum 8 Oktober |
 | R3 | **Batas pengiriman email** pada layanan bawaan penyedia autentikasi sangat rendah | Reset password dan verifikasi email gagal saat demo | Matikan verifikasi email di P0. Siapkan SMTP khusus (penyedia email gratis) sebelum P1. Sediakan akun demo yang sudah aktif |
 | R4 | **Foto inspeksi dapat dimanipulasi** (bukan dari kamera) | Kepercayaan terhadap hasil menurun | Komponen kamera dalam halaman, cap waktu server, tinjauan admin acak |
-| R5 | **Kebocoran lokasi persis, nomor rangka, atau data inspektor** | Risiko privasi dan penilaian keamanan | Row Level Security, respons API terpisah publik dan privat, uji hak akses |
+| R5 | **Kebocoran lokasi persis, nomor rangka, atau data inspektor** | Risiko privasi dan penilaian keamanan | Policy Laravel, resource/respons terpisah publik dan privat, uji hak akses |
 | R6 | **Perhitungan uang salah** (komisi, pembagian, pengembalian) | Laporan keuangan tidak konsisten, juri mempertanyakan | Ledger tunggal, aturan pembulatan 8.1, uji perhitungan, nilai disalin pada job |
-| R7 | **Race condition** pada ambil job dan pembayaran | Dua inspektor di satu job, tagihan ganda | Pembaruan atomik berkondisi, indeks unik parsial, *idempotency key* |
+| R7 | **Race condition** pada ambil job dan pembayaran | Dua inspektor di satu job, tagihan ganda | Pembaruan atomik berkondisi, kolom virtual dengan indeks unik, `lockForUpdate()`, *idempotency key* |
 | R8 | **Rating hanya setelah transaksi** membuat banyak inspektor tidak pernah dinilai | Sistem reputasi tidak berjalan | Usulan tambahan rating oleh pemohon inspeksi [OPEN] |
 | R9 | **Nama "jaminan"** pada hasil inspeksi menimbulkan klaim tanggung jawab | Risiko hukum pada produksi | Disclaimer jelas, rating, dan syarat ketentuan. Konsultasi hukum sebelum rilis komersial |
 | R10 | **Dana ditahan dan komisi** pada produksi memerlukan penyedia pembayaran berizin | Tidak dapat dioperasikan secara komersial sebagaimana prototype | Tetap simulasi untuk lomba. Pada roadmap gunakan payment gateway berizin |
 | R11 | **Cadangan data** tidak tersedia pada paket gratis | Kehilangan data | Ekspor terjadwal, uji pemulihan sekali |
 | R12 | **Pasar dua sisi** (kurang inspektor atau kurang listing) | Job menumpuk atau listing sepi | Data demo cukup untuk lomba. Pilot pada komunitas mekanik di Pekanbaru |
 | R13 | **Kerangka SaaS** terlalu dini | Menambah kompleksitas | Tidak untuk MVP. Catat di roadmap |
-| R14 | **Chat real-time** menambah kompleksitas (langganan, sambung ulang, RLS) di tengah waktu sempit | Fitur P1 terlambat atau tidak stabil saat demo | Jadwalkan di P1 setelah P0 stabil. Pakai Supabase Realtime, bukan server WebSocket sendiri. Siapkan cadangan pemuatan ulang berkala bila langganan gagal |
+| R14 | **Chat real-time** menambah kompleksitas (langganan, sambung ulang, otorisasi kanal) di tengah waktu sempit | Fitur P1 terlambat atau tidak stabil saat demo | Jadwalkan di P1 setelah P0 stabil. Pakai Pusher paket gratis, bukan server WebSocket sendiri (Reverb tidak dapat diandalkan di Hostinger Cloud). Siapkan cadangan polling Livewire bila Pusher gagal |
 | R15 | **Komisi 3% dari harga jual** jauh lebih besar daripada tarif inspeksi | Penjual atau pembeli keberatan, juri mempertanyakan keadilan model | Tampilkan rincian potongan sebelum persetujuan. Siapkan alasan bisnisnya (insentif inspektor jangka panjang) untuk presentasi |
 | R16 | **Konflik kepentingan inspektor**: komisi 3% hanya cair bila kendaraan terjual, sehingga inspektor terdorong menilai terlalu baik. Inspektor juga dapat berkolusi dengan penjual | Hasil inspeksi bias dan kepercayaan pembeli turun | Larangan inspeksi atas listing sendiri (8.3), rating, tinjauan admin acak atas hasil, komisi tidak dikaitkan dengan skor. Kebijakan lanjutan [OPEN] |
 
@@ -1559,7 +1566,7 @@ Urutan berdasarkan dampak pada pengerjaan 8 Oktober. Pertanyaan yang sudah dijaw
 
 ### Prioritas tinggi (jawab hari ini, 5 Oktober)
 
-1. **Jenis hosting yang sudah dimiliki** (cPanel/PHP, VPS, Vercel, lainnya)? Menentukan stack.
+1. ~~Jenis hosting~~ **Terjawab:** Hostinger Cloud Startup, stack Laravel + MySQL. Masih perlu verifikasi kemampuan paket di hPanel (versi PHP, SSH, cron, koneksi keluar).
 2. **Konfirmasi status pendaftaran lomba.** Pendaftaran sudah ditutup 4 Oktober.
 3. **Pembagian peran** tiga orang dan jam kerja per hari.
 4. **Indikator inspeksi** mobil dan motor dari tim. Dibutuhkan paling lambat 6 Oktober.
@@ -1701,7 +1708,7 @@ Jika waktu habis, korbankan **kelengkapan fitur P1**, bukan **kualitas alur P0**
 
 ### 28.8 Keamanan dan Performa (P0)
 
-- [ ] Pengguna role A tidak dapat membaca data privat role B melalui API maupun klien database.
+- [ ] Pengguna role A tidak dapat membaca data privat role B melalui rute, endpoint, maupun kanal real-time.
 - [ ] Dokumen inspektor tidak dapat diakses tanpa autentikasi yang berhak.
 - [ ] Halaman daftar barang mencapai Lighthouse mobile Performance ≥ 80.
 - [ ] Alur utama berjalan di Chrome Android, Safari iPhone, dan Chrome desktop.
@@ -1740,7 +1747,7 @@ Jika waktu habis, korbankan **kelengkapan fitur P1**, bukan **kualitas alur P0**
 | **Item kritis** | Item yang jika Buruk otomatis menjadikan rekomendasi Tidak Direkomendasikan |
 | **MVP** | Versi minimum yang dapat dipakai dan didemokan |
 | **P0 / P1 / P2** | Tingkat prioritas pengerjaan |
-| **RLS** | *Row Level Security*, aturan akses per baris data di basis data |
+| **Policy** | Kelas otorisasi Laravel yang menentukan siapa boleh melakukan aksi apa pada suatu model |
 | **Idempotency key** | Kunci unik agar permintaan yang diulang tidak menghasilkan efek ganda |
 | **Seed** | Data awal yang dimasukkan ke basis data untuk demo dan pengujian |
 | **SaaS** | *Software as a Service*, produk aplikasi yang dilanggan pelanggan |
@@ -1807,3 +1814,16 @@ Daftar ini membantu tim meninjau apa saja yang berubah dari draf sebelumnya. Per
 | Acceptance criteria | Ditambahkan kriteria untuk kedaluwarsa tagihan, larangan inspeksi listing sendiri, nomor rangka, pembulatan, dan notifikasi |
 | Akun demo | Ditambahkan aturan menonaktifkan akun demo setelah lomba |
 | Open Questions | Ditambahkan pertanyaan 15 (konflik kepentingan), 24 (pemicu notifikasi, disesuaikan), dan 25 (nomor rangka) |
+
+### E. Perubahan v1.5 (penggantian stack)
+
+| Area | Perubahan |
+| --- | --- |
+| Stack (6.2) | Next.js + Supabase + Vercel diganti Laravel 12 + Blade/Livewire/Tailwind + MySQL di Hostinger Cloud Startup |
+| Database | PostgreSQL tidak tersedia di paket Cloud Hostinger dan PostgreSQL eksternal menambah latensi. Dipilih MySQL. Indeks unik parsial diganti kolom virtual `active_listing_id` + indeks unik. `timestamptz` menjadi `timestamp` (UTC), `text[]` dan `jsonb` menjadi `json`, enum menjadi string |
+| Hak akses | Row Level Security diganti Policy/Gate Laravel. Tabel `profiles` digabung ke `users` |
+| Real-time | Supabase Realtime diganti Laravel Echo + Pusher, dengan cadangan polling Livewire |
+| Penyimpanan | Supabase Storage diganti disk privat Laravel dan tautan bertanda tangan sementara |
+| Tugas terjadwal | Kedaluwarsa tagihan dan penandaan job memakai Laravel Scheduler lewat cron hPanel |
+| Tidak berubah | Seluruh aturan bisnis (Bagian 8), alur pengguna (12), status (14), template inspeksi (15), dan acceptance criteria (28) |
+
