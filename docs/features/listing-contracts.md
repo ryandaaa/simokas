@@ -54,4 +54,7 @@ domain Listing; listener milik domain pemancar event.
 - Foto publik: `ListingPolicy::viewPhoto` dan `ViewListingPhotoController`
   memakai `ListingStatus::isPhotoPubliclyVisible()` (`active`,
   `in_inspection`, `in_transaction`, `sold` [USULAN]; LST-R11), sehingga
-  galeri di etalase dan halaman detail publik tidak 403.
+  galeri di etalase dan halaman detail publik tidak 403 untuk siapa pun
+  (tamu maupun login dengan status akun apa pun). Foto non-publik
+  (`pending_review`, `rejected`, `inactive`) tetap hanya untuk pemilik aktif
+  dan admin aktif.

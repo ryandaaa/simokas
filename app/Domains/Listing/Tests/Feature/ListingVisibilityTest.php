@@ -87,9 +87,10 @@ it('LST-T13 forbids guests and strangers from opening photos of non-public listi
     [ListingStatus::Inactive],
 ]);
 
-it('LST-T17 allows guests and strangers to open photos of photo-public listings with a public cache header', function (ListingStatus $status) {
+it('LST-T17 allows all viewers to open photos of photo-public listings with a public cache header', function (ListingStatus $status) {
     $owner = User::factory()->user()->create();
     $other = User::factory()->user()->create();
+    $pendingOwner = User::factory()->user()->pending()->create();
     $listing = Listing::factory()->create(['seller_id' => $owner->id, 'status' => $status]);
     $photo = $listing->photos()->create([
         'storage_path' => 'listings/'.$listing->id.'/cover.jpg',
@@ -105,8 +106,23 @@ it('LST-T17 allows guests and strangers to open photos of photo-public listings 
         ->assertOk()
         ->assertHeader('Cache-Control', 'max-age=86400, must-revalidate, public');
 
-    \Pest\Laravel\actingAs($other);
-    \Pest\Laravel\get($url)->assertOk();
+    // Every account status may open public photos: active stranger, pending
+    // owner, active admin, pending inspector, approved inspector, blocked
+    // user, and non-active user.
+    $viewers = [
+        $other,
+        $pendingOwner,
+        User::factory()->admin()->create(),
+        User::factory()->inspector()->pending()->create(),
+        User::factory()->inspector()->create(),
+        User::factory()->user()->blocked()->create(),
+        User::factory()->user()->pending()->create(),
+    ];
+
+    foreach ($viewers as $viewer) {
+        \Pest\Laravel\actingAs($viewer);
+        \Pest\Laravel\get($url)->assertOk();
+    }
 })->with([
     [ListingStatus::Active],
     [ListingStatus::InInspection],
