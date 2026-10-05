@@ -92,3 +92,27 @@ it('ensures app.css defines x-cloak rule with display none important', function 
         ->and($cssContent)->toContain('[x-cloak]')
         ->and($cssContent)->toMatch('/\[x-cloak\]\s*\{\s*display:\s*none\s*!important;\s*\}/');
 });
+
+it('ensures app.css declares satoshi font-face locally without external urls', function () {
+    $cssContent = file_get_contents(resource_path('css/app.css'));
+
+    expect($cssContent)->not->toBeFalse();
+
+    // Pastikan font-family Satoshi dideklarasikan di @font-face
+    expect($cssContent)->toContain("font-family: 'Satoshi'");
+
+    // Pastikan tidak ada URL http(s) eksternal
+    expect($cssContent)->not->toMatch('/url\(["\']?https?:\/\//i');
+
+    // Ekstrak URL font yang dirujuk
+    preg_match_all('/url\(["\']?([^"\')]+)["\']?\)/i', (string) $cssContent, $matches);
+
+    expect($matches[1])->not->toBeEmpty();
+
+    foreach ($matches[1] as $fontUrl) {
+        $resolvedPath = realpath(resource_path('css/'.$fontUrl));
+
+        expect($resolvedPath)->not->toBeFalse("Berkas font '{$fontUrl}' tidak ditemukan di disk.")
+            ->and($resolvedPath)->toStartWith(resource_path('fonts/satoshi'));
+    }
+});
