@@ -5,16 +5,21 @@ declare(strict_types=1);
 use App\Domains\Listing\Contracts\ListingActivityChecker;
 use App\Domains\Listing\Services\DefaultListingActivityChecker;
 use App\Domains\Listing\Tests\Fakes\FakeListingActivityChecker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-uses(TestCase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
-it('binds the activity checker contract to a default that reports no activity', function () {
+it('binds the activity checker contract to an implementation that reports no activity when clean', function () {
     $checker = app(ListingActivityChecker::class);
 
-    expect($checker)->toBeInstanceOf(DefaultListingActivityChecker::class)
+    expect($checker)->toBeInstanceOf(ListingActivityChecker::class)
         ->and($checker->hasActiveJob('any-listing-id'))->toBeFalse()
         ->and($checker->hasActiveTransaction('any-listing-id'))->toBeFalse();
+
+    $default = new DefaultListingActivityChecker;
+    expect($default->hasActiveJob('any-listing-id'))->toBeFalse()
+        ->and($default->hasActiveTransaction('any-listing-id'))->toBeFalse();
 });
 
 it('locks listing edits when the fake reports an active job or transaction', function () {
