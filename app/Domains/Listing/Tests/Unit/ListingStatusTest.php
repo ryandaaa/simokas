@@ -31,54 +31,38 @@ it('returns labels, colors, and icons matching UI_GUIDELINES section 4', functio
     [ListingStatus::Inactive, 'muted', 'jeda'],
 ]);
 
-it('LST-T10 correctly evaluates all state transitions', function (ListingStatus $from, ListingStatus $to, bool $expected) {
+/**
+ * Full from-to matrix for docs/flows/listing.md section 1.
+ * Every valid pair is accepted, every other pair is rejected.
+ *
+ * @return array<string, array{ListingStatus, ListingStatus, bool}>
+ */
+function listingStatusMatrixDataset(): array
+{
+    $valid = [
+        ListingStatus::PendingReview->value => [ListingStatus::Active, ListingStatus::Rejected],
+        ListingStatus::Rejected->value => [ListingStatus::PendingReview],
+        ListingStatus::Active->value => [ListingStatus::PendingReview, ListingStatus::InInspection, ListingStatus::InTransaction, ListingStatus::Inactive],
+        ListingStatus::InInspection->value => [ListingStatus::Active],
+        ListingStatus::InTransaction->value => [ListingStatus::Active, ListingStatus::Sold],
+        ListingStatus::Inactive->value => [ListingStatus::Active],
+        ListingStatus::Sold->value => [],
+    ];
+
+    $dataset = [];
+    foreach (ListingStatus::cases() as $from) {
+        foreach (ListingStatus::cases() as $to) {
+            $expected = in_array($to, $valid[$from->value], true);
+            $dataset["{$from->value} to {$to->value} is ".($expected ? 'valid' : 'invalid')] = [$from, $to, $expected];
+        }
+    }
+
+    return $dataset;
+}
+
+it('LST-T10 accepts every valid transition and rejects every other pair', function (ListingStatus $from, ListingStatus $to, bool $expected) {
     expect($from->canTransitionTo($to))->toBe($expected);
-})->with([
-    // From pending_review
-    'pending_review to active is valid' => [ListingStatus::PendingReview, ListingStatus::Active, true],
-    'pending_review to rejected is valid' => [ListingStatus::PendingReview, ListingStatus::Rejected, true],
-    'pending_review to in_inspection is invalid' => [ListingStatus::PendingReview, ListingStatus::InInspection, false],
-    'pending_review to in_transaction is invalid' => [ListingStatus::PendingReview, ListingStatus::InTransaction, false],
-    'pending_review to sold is invalid' => [ListingStatus::PendingReview, ListingStatus::Sold, false],
-    'pending_review to inactive is invalid' => [ListingStatus::PendingReview, ListingStatus::Inactive, false],
-    'pending_review to pending_review is invalid' => [ListingStatus::PendingReview, ListingStatus::PendingReview, false],
-
-    // From rejected
-    'rejected to pending_review is valid (seller fixes and resubmits)' => [ListingStatus::Rejected, ListingStatus::PendingReview, true],
-    'rejected to active is invalid' => [ListingStatus::Rejected, ListingStatus::Active, false],
-    'rejected to in_inspection is invalid' => [ListingStatus::Rejected, ListingStatus::InInspection, false],
-    'rejected to sold is invalid' => [ListingStatus::Rejected, ListingStatus::Sold, false],
-
-    // From active
-    'active to pending_review is valid (D-05 core field edit)' => [ListingStatus::Active, ListingStatus::PendingReview, true],
-    'active to in_inspection is valid (job paid)' => [ListingStatus::Active, ListingStatus::InInspection, true],
-    'active to in_transaction is valid (purchase payment)' => [ListingStatus::Active, ListingStatus::InTransaction, true],
-    'active to inactive is valid (deactivated)' => [ListingStatus::Active, ListingStatus::Inactive, true],
-    'active to rejected is invalid' => [ListingStatus::Active, ListingStatus::Rejected, false],
-    'active to sold is invalid (must go through in_transaction)' => [ListingStatus::Active, ListingStatus::Sold, false],
-
-    // From in_inspection
-    'in_inspection to active is valid (inspection completed, cancelled, or expired)' => [ListingStatus::InInspection, ListingStatus::Active, true],
-    'in_inspection to sold is invalid' => [ListingStatus::InInspection, ListingStatus::Sold, false],
-    'in_inspection to pending_review is invalid' => [ListingStatus::InInspection, ListingStatus::PendingReview, false],
-    'in_inspection to inactive is invalid' => [ListingStatus::InInspection, ListingStatus::Inactive, false],
-
-    // From in_transaction
-    'in_transaction to active is valid (transaction cancelled)' => [ListingStatus::InTransaction, ListingStatus::Active, true],
-    'in_transaction to sold is valid (delivery confirmed)' => [ListingStatus::InTransaction, ListingStatus::Sold, true],
-    'in_transaction to pending_review is invalid' => [ListingStatus::InTransaction, ListingStatus::PendingReview, false],
-    'in_transaction to inactive is invalid' => [ListingStatus::InTransaction, ListingStatus::Inactive, false],
-
-    // From inactive
-    'inactive to active is valid (reactivated)' => [ListingStatus::Inactive, ListingStatus::Active, true],
-    'inactive to pending_review is invalid' => [ListingStatus::Inactive, ListingStatus::PendingReview, false],
-    'inactive to sold is invalid' => [ListingStatus::Inactive, ListingStatus::Sold, false],
-
-    // From sold (terminal state)
-    'sold to active is invalid' => [ListingStatus::Sold, ListingStatus::Active, false],
-    'sold to pending_review is invalid' => [ListingStatus::Sold, ListingStatus::PendingReview, false],
-    'sold to inactive is invalid' => [ListingStatus::Sold, ListingStatus::Inactive, false],
-]);
+})->with(fn (): array => listingStatusMatrixDataset());
 
 it('correctly evaluates boolean status helpers and visibility', function () {
     expect(ListingStatus::PendingReview->isPendingReview())->toBeTrue()
