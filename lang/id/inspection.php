@@ -28,6 +28,9 @@ return [
         'max_active_jobs' => 'Anda telah mencapai batas maksimal 3 job aktif.',
         'specialty_mismatch' => 'Jenis kendaraan tidak sesuai dengan keahlian inspeksi Anda.',
         'not_authorized' => 'Anda tidak memiliki hak akses untuk tindakan ini.',
+        'schedule_must_be_in_future' => 'Jadwal inspeksi harus di masa depan.',
+        'cannot_cancel_in_progress' => 'Inspeksi yang sedang berjalan tidak dapat dibatalkan oleh pemohon. Hubungi admin.',
+        'cancel_reason_required' => 'Alasan pembatalan wajib diisi.',
     ],
     'request' => [
         'title' => 'Ajukan Inspeksi',
