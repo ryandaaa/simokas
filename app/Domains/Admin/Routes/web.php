@@ -1,3 +1,10 @@
 <?php
 
 declare(strict_types=1);
+
+use App\Domains\Admin\Livewire\Settings;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['web', 'auth', 'not_blocked', 'role:admin'])->group(function () {
+    Route::get('/admin/settings', Settings::class)->name('admin.settings');
+});
