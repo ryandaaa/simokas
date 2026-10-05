@@ -16,7 +16,6 @@ use App\Domains\Inspection\Exceptions\JobAlreadyTakenException;
 use App\Domains\Inspection\Exceptions\MaxActiveJobsException;
 use App\Domains\Inspection\Exceptions\OwnListingJobException;
 use App\Domains\Inspection\Models\InspectionJob;
-use App\Domains\Inspector\Contracts\InspectorEligibility;
 use App\Domains\Inspector\Enums\VerificationStatus;
 use App\Domains\Inspector\Models\InspectorProfile;
 use App\Domains\Listing\Enums\VehicleType;

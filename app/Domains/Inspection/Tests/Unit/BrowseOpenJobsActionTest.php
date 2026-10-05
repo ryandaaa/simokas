@@ -10,7 +10,6 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Actions\BrowseOpenJobs;
 use App\Domains\Inspection\DTOs\OpenJobCard;
 use App\Domains\Inspection\DTOs\OpenJobFilter;
-use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Exceptions\InspectorNotVerifiedException;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Enums\VerificationStatus;
@@ -18,6 +17,7 @@ use App\Domains\Inspector\Models\InspectorProfile;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Helpers\ListingPrivacyHelper;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -182,11 +182,8 @@ it('returns OpenJobCard without any private listing columns', function () {
     $card = $results->items()[0];
 
     expect($card)->toBeInstanceOf(OpenJobCard::class);
-    $cardArray = (array) $card;
-
-    expect(array_key_exists('address_full', $cardArray))->toBeFalse()
-        ->and(array_key_exists('lat', $cardArray))->toBeFalse()
-        ->and(array_key_exists('lng', $cardArray))->toBeFalse()
-        ->and(array_key_exists('chassis_number', $cardArray))->toBeFalse()
-        ->and(array_key_exists('inspection_place', $cardArray))->toBeFalse();
+    ListingPrivacyHelper::assertNoPrivateListingData(
+        (string) json_encode($card),
+        ['Jl. Rahasia No. 99', '0.5071000', '101.4478000', 'MHKA1234567890123', 'seller_home']
+    );
 });

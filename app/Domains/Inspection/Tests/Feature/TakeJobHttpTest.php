@@ -16,6 +16,7 @@ use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\post;
 
@@ -56,7 +57,7 @@ it('JOB-T03 lets only one inspector take a paid job via HTTP; the second receive
     ]);
 
     // First inspector takes job
-    $response1 = $this->actingAs($firstInspector)
+    $response1 = actingAs($firstInspector)
         ->post(route('jobs.take', ['job' => $job->id]));
 
     $response1->assertOk()
@@ -77,7 +78,7 @@ it('JOB-T03 lets only one inspector take a paid job via HTTP; the second receive
     Event::assertDispatched(JobTaken::class, 1);
 
     // Second inspector attempts to take same job -> 409 Conflict
-    $response2 = $this->actingAs($secondInspector)
+    $response2 = actingAs($secondInspector)
         ->post(route('jobs.take', ['job' => $job->id]));
 
     $response2->assertStatus(409)
@@ -112,7 +113,7 @@ it('JOB-T05 rejects taking job via HTTP on dataset: unverified, own listing, max
         $listing = Listing::factory()->active()->create(['vehicle_type' => VehicleType::Car]);
         $job = InspectionJob::factory()->paid()->create(['listing_id' => $listing->id]);
 
-        $response = $this->actingAs($inspector)->post(route('jobs.take', ['job' => $job->id]));
+        $response = actingAs($inspector)->post(route('jobs.take', ['job' => $job->id]));
         $response->assertForbidden();
     } elseif ($scenario === 'own_listing') {
         $inspector = makeVerifiedInspector();
@@ -122,7 +123,7 @@ it('JOB-T05 rejects taking job via HTTP on dataset: unverified, own listing, max
         ]);
         $job = InspectionJob::factory()->paid()->create(['listing_id' => $listing->id]);
 
-        $response = $this->actingAs($inspector)->post(route('jobs.take', ['job' => $job->id]));
+        $response = actingAs($inspector)->post(route('jobs.take', ['job' => $job->id]));
         $response->assertForbidden()
             ->assertJson([
                 'data' => null,
@@ -144,7 +145,7 @@ it('JOB-T05 rejects taking job via HTTP on dataset: unverified, own listing, max
         $newListing = Listing::factory()->active()->create(['vehicle_type' => VehicleType::Car]);
         $newJob = InspectionJob::factory()->paid()->create(['listing_id' => $newListing->id]);
 
-        $response = $this->actingAs($inspector)->post(route('jobs.take', ['job' => $newJob->id]));
+        $response = actingAs($inspector)->post(route('jobs.take', ['job' => $newJob->id]));
         $response->assertStatus(409)
             ->assertJson([
                 'data' => null,
@@ -157,7 +158,7 @@ it('JOB-T05 rejects taking job via HTTP on dataset: unverified, own listing, max
         $carListing = Listing::factory()->active()->create(['vehicle_type' => VehicleType::Car]);
         $job = InspectionJob::factory()->paid()->create(['listing_id' => $carListing->id]);
 
-        $response = $this->actingAs($inspector)->post(route('jobs.take', ['job' => $job->id]));
+        $response = actingAs($inspector)->post(route('jobs.take', ['job' => $job->id]));
         $response->assertForbidden();
     }
 
@@ -181,11 +182,11 @@ it('JOB-T18 forbids unauthorized roles from POST jobs.take', function (string $r
         default => throw new \InvalidArgumentException("Unknown role type: {$roleType}"),
     };
 
-    $request = $actingUser !== null
-        ? $this->actingAs($actingUser)
-        : $this;
+    if ($actingUser !== null) {
+        actingAs($actingUser);
+    }
 
-    $response = $request->post(route('jobs.take', ['job' => $job->id]));
+    $response = post(route('jobs.take', ['job' => $job->id]));
 
     if ($roleType === 'guest') {
         $response->assertRedirect(route('login'));

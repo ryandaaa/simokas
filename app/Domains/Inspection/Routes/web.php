@@ -33,4 +33,3 @@ Route::middleware('web')->group(function () {
             ->name('jobs.show');
     });
 });
-

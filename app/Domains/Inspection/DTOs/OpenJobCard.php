@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Inspection\DTOs;
 
 use App\Domains\Inspection\Models\InspectionJob;
-use App\Domains\Listing\Enums\VehicleType;
+use App\Domains\Listing\Models\Listing;
 use Illuminate\Support\Carbon;
 
 final readonly class OpenJobCard
@@ -26,17 +26,15 @@ final readonly class OpenJobCard
     public static function fromModel(InspectionJob $job): self
     {
         $listing = $job->listing;
-        $vehicleType = $listing?->vehicle_type instanceof VehicleType
-            ? $listing->vehicle_type->value
-            : (string) ($listing?->vehicle_type ?? '');
+        $vehicleType = $listing instanceof Listing ? $listing->vehicle_type->value : '';
 
         return new self(
             id: (string) $job->getKey(),
             listingId: (string) $job->listing_id,
             vehicleType: $vehicleType,
-            brand: (string) ($listing?->brand ?? ''),
-            model: (string) ($listing?->model ?? ''),
-            year: (int) ($listing?->year ?? 0),
+            brand: $listing instanceof Listing ? $listing->brand : '',
+            model: $listing instanceof Listing ? $listing->model : '',
+            year: $listing instanceof Listing ? $listing->year : 0,
             areaName: $listing?->area_name,
             feeAmount: (int) $job->fee_amount,
             availableSince: $job->available_since,

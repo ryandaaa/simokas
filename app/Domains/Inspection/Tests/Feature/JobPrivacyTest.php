@@ -8,7 +8,6 @@ use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Actions\TakeJob;
-use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Enums\VerificationStatus;
 use App\Domains\Inspector\Models\InspectorProfile;
@@ -18,7 +17,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Helpers\ListingPrivacyHelper;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 
