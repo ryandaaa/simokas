@@ -26,6 +26,14 @@
         <x-ui.alert variant="success" :message="session('success')" dismissible />
     @endif
 
+    @if ($successMessage)
+        <x-ui.alert variant="success" :message="$successMessage" />
+    @endif
+
+    @if ($errorMessage)
+        <x-ui.alert variant="danger" :message="$errorMessage" />
+    @endif
+
     {{-- Content --}}
     @if ($listings->isEmpty())
         <x-ui.card>
@@ -92,18 +100,35 @@
                     </div>
 
                     {{-- Card Footer --}}
-                    <div class="px-4 py-3 border-t border-muted/10 bg-bg/50 flex items-center justify-between">
-                        <span class="text-xs text-muted">
-                            {{ $listing->created_at?->diffForHumans() }}
-                        </span>
+                    <div class="px-4 py-3 border-t border-muted/10 bg-bg/50 space-y-2">
+                        @if ($listing->status->isRejected() && $listing->rejection_reason)
+                            <x-ui.alert
+                                variant="danger"
+                                :title="__('listing.mine.rejection_reason')"
+                                :message="$listing->rejection_reason"
+                            />
+                            <x-ui.button
+                                type="button"
+                                variant="primary"
+                                wire:click="confirmResubmit('{{ $listing->id }}')"
+                                wire:loading.attr="disabled"
+                            >
+                                {{ __('listing.mine.resubmit') }}
+                            </x-ui.button>
+                        @endif
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-muted">
+                                {{ $listing->created_at?->diffForHumans() }}
+                            </span>
 
-                        <a
-                            href="{{ route('listings.edit', $listing) }}"
-                            class="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
-                        >
-                            <span>{{ __('listing.mine.edit') }}</span>
-                            <x-ui.icon name="panah-kanan" class="w-3.5 h-3.5" />
-                        </a>
+                            <a
+                                href="{{ route('listings.edit', $listing) }}"
+                                class="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
+                            >
+                                <span>{{ __('listing.mine.edit') }}</span>
+                                <x-ui.icon name="panah-kanan" class="w-3.5 h-3.5" />
+                            </a>
+                        </div>
                     </div>
                 </div>
             @endforeach
@@ -113,5 +138,39 @@
         <div class="pt-4">
             <x-ui.pagination :paginator="$listings" />
         </div>
+    @endif
+
+    {{-- Modal Konfirmasi Kirim Ulang --}}
+    @if ($confirmingResubmitId)
+        <x-ui.modal
+            name="modal-resubmit-listing"
+            :show="true"
+            :title="__('listing.mine.resubmit_modal_title')"
+            :description="__('listing.mine.resubmit_modal_description')"
+        >
+            <div class="p-2 text-sm text-text">
+                <p>{{ __('listing.mine.resubmit_modal_description') }}</p>
+            </div>
+
+            <x-slot:footer>
+                <x-ui.button
+                    type="button"
+                    variant="secondary"
+                    wire:click="cancelResubmit"
+                >
+                    {{ __('listing.mine.cancel') }}
+                </x-ui.button>
+                <x-ui.button
+                    type="button"
+                    variant="primary"
+                    wire:click="resubmit"
+                    wire:loading.attr="disabled"
+                    wire:target="resubmit"
+                >
+                    <span wire:loading.remove wire:target="resubmit">{{ __('listing.mine.confirm_resubmit') }}</span>
+                    <span wire:loading wire:target="resubmit">{{ __('listing.mine.processing') }}</span>
+                </x-ui.button>
+            </x-slot:footer>
+        </x-ui.modal>
     @endif
 </div>
