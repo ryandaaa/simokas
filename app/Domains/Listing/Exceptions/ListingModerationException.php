@@ -34,4 +34,13 @@ final class ListingModerationException extends DomainException
             403,
         );
     }
+
+    public static function forbidden(): self
+    {
+        return new self(
+            __('listing.errors.update_forbidden'),
+            self::CODE_NOT_ALLOWED,
+            403,
+        );
+    }
 }
