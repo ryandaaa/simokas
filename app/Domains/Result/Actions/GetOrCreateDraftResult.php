@@ -37,7 +37,7 @@ final class GetOrCreateDraftResult
                 return $existingResult->load(['template.items', 'items']);
             }
 
-            $vehicleType = (string) ($job->listing?->vehicle_type?->value ?? $job->listing?->vehicle_type ?? 'car');
+            $vehicleType = $job->listing->vehicle_type->value;
 
             /** @var InspectionTemplate|null $template */
             $template = InspectionTemplate::query()

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Result\Tests\Unit;
 
+use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
@@ -23,7 +24,7 @@ final class InspectionResultPolicyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->policy = new InspectionResultPolicy();
+        $this->policy = new InspectionResultPolicy;
     }
 
     public function test_it_authorizes_fill_only_for_assigned_inspector_on_in_progress_job(): void
@@ -45,7 +46,7 @@ final class InspectionResultPolicyTest extends TestCase
         $this->assertFalse($this->policy->fill($inspector, $job->refresh()));
 
         // When inspector is blocked
-        $inspector->update(['status' => \App\Domains\Identity\Enums\UserStatus::Blocked]);
+        $inspector->update(['status' => UserStatus::Blocked]);
         $job->update(['status' => JobStatus::InProgress]);
         $this->assertFalse($this->policy->fill($inspector->refresh(), $job->refresh()));
     }

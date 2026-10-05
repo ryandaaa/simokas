@@ -11,7 +11,6 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Enums\VerificationStatus;
 use App\Domains\Inspector\Models\InspectorProfile;
-use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Result\Enums\ItemRating;
 use App\Domains\Result\Enums\ResultStatus;
@@ -24,6 +23,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 
@@ -116,16 +116,16 @@ it('RES-T02 saves draft and draft can be resumed after reload', function () {
 
     // Verify persisted in DB
     $result = InspectionResult::query()->where('job_id', $job->id)->first();
-    $this->assertNotNull($result);
-    $this->assertEquals(ResultStatus::Draft, $result->status);
+    expect($result)->not->toBeNull();
+    expect($result->status)->toBe(ResultStatus::Draft);
 
     $savedItem = ResultItem::query()
         ->where('result_id', $result->id)
         ->where('template_item_id', $templateItem->id)
         ->first();
-    $this->assertNotNull($savedItem);
-    $this->assertEquals(ItemRating::Good, $savedItem->rating);
-    $this->assertEquals('Mesin prima', $savedItem->note);
+    expect($savedItem)->not->toBeNull();
+    expect($savedItem->rating)->toBe(ItemRating::Good);
+    expect($savedItem->note)->toBe('Mesin prima');
 
     // Re-mount (simulate reload) - draft should be restored
     $reloaded = Livewire::test(InspectionFormPage::class, ['job' => $job->refresh()]);
@@ -136,7 +136,7 @@ it('RES-T02 saves draft and draft can be resumed after reload', function () {
 it('RES-T14 rejects unauthenticated user from accessing inspection form', function () {
     [$inspector, $job] = createInspectionSetup();
 
-    $response = $this->get(route('result.fill', $job->id));
+    $response = get(route('result.fill', $job->id));
     $response->assertRedirect();
 });
 
@@ -144,9 +144,7 @@ it('RES-T14 rejects regular user from accessing inspection form', function () {
     [$inspector, $job] = createInspectionSetup();
     $user = User::factory()->user()->create();
 
-    actingAs($user);
-
-    $response = $this->get(route('result.fill', $job->id));
+    $response = actingAs($user)->get(route('result.fill', $job->id));
     $response->assertStatus(403);
 });
 
@@ -155,10 +153,8 @@ it('RES-T14 rejects other inspector from accessing draft', function () {
     [$inspector, $job, $template] = createInspectionSetup();
     $otherInspector = createVerifiedInspector();
 
-    actingAs($otherInspector);
-
     // Should get 403 (the Gate::authorize will fail)
-    $response = $this->get(route('result.fill', $job->id));
+    $response = actingAs($otherInspector)->get(route('result.fill', $job->id));
     $response->assertStatus(403);
 });
 
@@ -191,8 +187,8 @@ it('RES-T15 draft continues to use the template version at creation time', funct
     // First mount creates result with v1 template
     $firstMount = Livewire::test(InspectionFormPage::class, ['job' => $job]);
     $result = InspectionResult::query()->where('job_id', $job->id)->first();
-    $this->assertNotNull($result);
-    $this->assertEquals($templateV1->id, $result->template_id);
+    expect($result)->not->toBeNull();
+    expect($result->template_id)->toBe($templateV1->id);
 
     // Deactivate v1 and create v2
     $templateV1->update(['is_active' => false]);
@@ -248,14 +244,14 @@ it('auto-saves draft when navigating to next category', function () {
 
     // Should have saved the draft automatically
     $result = InspectionResult::query()->where('job_id', $job->id)->first();
-    $this->assertNotNull($result);
+    expect($result)->not->toBeNull();
 
     $savedItem = ResultItem::query()
         ->where('result_id', $result->id)
         ->where('template_item_id', $item1->id)
         ->first();
-    $this->assertNotNull($savedItem);
-    $this->assertEquals(ItemRating::Fair, $savedItem->rating);
+    expect($savedItem)->not->toBeNull();
+    expect($savedItem->rating)->toBe(ItemRating::Fair);
 });
 
 it('shows job_not_in_progress error when job status is not in_progress', function () {
@@ -273,10 +269,8 @@ it('shows job_not_in_progress error when job status is not in_progress', functio
         'version' => 1,
     ]);
 
-    actingAs($inspector);
-
     // Should be forbidden because policy checks job status
-    $response = $this->get(route('result.fill', $job->id));
+    $response = actingAs($inspector)->get(route('result.fill', $job->id));
     $response->assertStatus(403);
 });
 
@@ -284,9 +278,7 @@ it('RES-T14 rejects job requester from accessing inspection form', function () {
     [$inspector, $job] = createInspectionSetup();
     $requester = $job->requester;
 
-    actingAs($requester);
-
-    $response = $this->get(route('result.fill', $job->id));
+    $response = actingAs($requester)->get(route('result.fill', $job->id));
     $response->assertStatus(403);
 });
 
@@ -299,9 +291,7 @@ it('does not leak private listing data such as chassis number and address on for
         'address_full' => 'Jl. Rahasia No. 123 Gedung Tersembunyi',
     ]);
 
-    actingAs($inspector);
-
-    $response = $this->get(route('result.fill', $job->id));
+    $response = actingAs($inspector)->get(route('result.fill', $job->id));
     $response->assertStatus(200);
     $response->assertDontSee('SECRET-CHASSIS-999');
     $response->assertDontSee('Jl. Rahasia No. 123 Gedung Tersembunyi');

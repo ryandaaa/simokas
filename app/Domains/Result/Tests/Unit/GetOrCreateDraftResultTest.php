@@ -7,6 +7,7 @@ namespace App\Domains\Result\Tests\Unit;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Listing\Models\Listing;
 use App\Domains\Result\Actions\GetOrCreateDraftResult;
 use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Exceptions\JobNotInProgressException;
@@ -26,14 +27,14 @@ final class GetOrCreateDraftResultTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new GetOrCreateDraftResult();
+        $this->action = new GetOrCreateDraftResult;
     }
 
-    public function test_RES_T01_creates_draft_result_from_template_for_car(): void
+    public function test_re_s_t01_creates_draft_result_from_template_for_car(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create([
-            'listing_id' => \App\Domains\Listing\Models\Listing::factory()->active()->car()->create()->id,
+            'listing_id' => Listing::factory()->active()->car()->create()->id,
         ]);
 
         InspectionTemplate::factory()->create([
@@ -50,11 +51,11 @@ final class GetOrCreateDraftResultTest extends TestCase
         $this->assertEquals($inspector->id, $result->inspector_id);
     }
 
-    public function test_RES_T01_creates_draft_result_from_template_for_motorcycle(): void
+    public function test_re_s_t01_creates_draft_result_from_template_for_motorcycle(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create([
-            'listing_id' => \App\Domains\Listing\Models\Listing::factory()->active()->motorcycle()->create()->id,
+            'listing_id' => Listing::factory()->active()->motorcycle()->create()->id,
         ]);
 
         InspectionTemplate::factory()->create([
@@ -69,7 +70,7 @@ final class GetOrCreateDraftResultTest extends TestCase
         $this->assertEquals(ResultStatus::Draft, $result->status);
     }
 
-    public function test_RES_T01_returns_existing_draft_without_creating_duplicate(): void
+    public function test_re_s_t01_returns_existing_draft_without_creating_duplicate(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -87,7 +88,7 @@ final class GetOrCreateDraftResultTest extends TestCase
         $this->assertEquals(1, InspectionResult::query()->where('job_id', $job->id)->count());
     }
 
-    public function test_RES_T14_throws_when_inspector_is_not_assigned(): void
+    public function test_re_s_t14_throws_when_inspector_is_not_assigned(): void
     {
         $inspector = User::factory()->inspector()->create();
         $otherInspector = User::factory()->inspector()->create();
@@ -115,7 +116,7 @@ final class GetOrCreateDraftResultTest extends TestCase
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create([
-            'listing_id' => \App\Domains\Listing\Models\Listing::factory()->active()->car()->create()->id,
+            'listing_id' => Listing::factory()->active()->car()->create()->id,
         ]);
 
         // No template seeded for 'car'
@@ -124,11 +125,11 @@ final class GetOrCreateDraftResultTest extends TestCase
         $this->action->handle($inspector, $job);
     }
 
-    public function test_RES_T15_draft_uses_template_version_at_creation_time(): void
+    public function test_re_s_t15_draft_uses_template_version_at_creation_time(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create([
-            'listing_id' => \App\Domains\Listing\Models\Listing::factory()->active()->car()->create()->id,
+            'listing_id' => Listing::factory()->active()->car()->create()->id,
         ]);
 
         $templateV1 = InspectionTemplate::factory()->create([

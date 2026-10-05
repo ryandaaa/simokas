@@ -8,9 +8,6 @@ use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Result\Actions\GetOrCreateDraftResult;
 use App\Domains\Result\Actions\SaveDraftResult;
 use App\Domains\Result\Enums\ItemRating;
-use App\Domains\Result\Exceptions\JobNotInProgressException;
-use App\Domains\Result\Exceptions\ResultAlreadySubmittedException;
-use App\Domains\Result\Exceptions\UnauthorizedInspectorException;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\TemplateItem;
 use App\Support\Clock;
@@ -90,8 +87,8 @@ final class InspectionFormPage extends Component
                 ->firstWhere('template_item_id', $templateItem->id);
 
             $this->items[$templateItem->id] = [
-                'rating' => $existingItem?->rating?->value ?? '',
-                'note' => $existingItem?->note ?? '',
+                'rating' => ($existingItem !== null && $existingItem->rating !== null) ? $existingItem->rating->value : '',
+                'note' => ($existingItem !== null && $existingItem->note !== null) ? $existingItem->note : '',
             ];
         }
     }
@@ -180,8 +177,8 @@ final class InspectionFormPage extends Component
         foreach ($this->items as $templateItemId => $values) {
             $data[$templateItemId] = [
                 'template_item_id' => $templateItemId,
-                'rating' => $values['rating'] ?? '',
-                'note' => $values['note'] ?? '',
+                'rating' => $values['rating'],
+                'note' => $values['note'],
             ];
         }
 
