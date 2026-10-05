@@ -47,5 +47,8 @@ final class InspectionServiceProvider extends ServiceProvider
 
         Livewire::component('inspection.request-inspection-page', RequestInspectionPage::class);
         Livewire::component('inspection.my-inspections', MyInspections::class);
+        Livewire::component('inspection.open-jobs-page', \App\Domains\Inspection\Livewire\OpenJobsPage::class);
+        Livewire::component('inspection.inspector-jobs-page', \App\Domains\Inspection\Livewire\InspectorJobsPage::class);
+        Livewire::component('inspection.job-detail-page', \App\Domains\Inspection\Livewire\JobDetailPage::class);
     }
 }
