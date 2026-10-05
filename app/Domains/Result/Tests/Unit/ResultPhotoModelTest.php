@@ -6,7 +6,6 @@ namespace App\Domains\Result\Tests\Unit;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
-use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\ResultItem;

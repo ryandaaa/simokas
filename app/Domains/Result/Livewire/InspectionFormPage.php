@@ -57,7 +57,6 @@ final class InspectionFormPage extends Component
     /** @var array<string, array{id: string, url: string, captured_at: string, stamped_at: ?string}> */
     public array $photos = [];
 
-
     public function mount(InspectionJob $job, GetOrCreateDraftResult $getOrCreateDraft): void
     {
         // Authorization: only the assigned inspector on an in_progress job (RES-R2)
