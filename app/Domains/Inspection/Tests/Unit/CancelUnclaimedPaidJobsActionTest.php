@@ -19,10 +19,8 @@ use App\Domains\Payment\Enums\PaymentMethod;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Enums\PaymentStatus;
 use App\Domains\Payment\Models\Payment;
-use App\Domains\Setting\Contracts\SettingsReader;
 use App\Support\Clock;
 use Carbon\Carbon;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Mockery;
@@ -64,11 +62,8 @@ it('JOB-T10 job paid 7 hari: refund dan listing active (6 hari belum, 7 hari sud
         ->once()
         ->with($payment->id);
 
-    $action = new CancelUnclaimedPaidJobs(
-        settings: app(SettingsReader::class),
-        ledger: $ledgerMock,
-        events: app(Dispatcher::class),
-    );
+    app()->instance(Ledger::class, $ledgerMock);
+    $action = app(CancelUnclaimedPaidJobs::class);
 
     // 1. Pada 6 hari: belum dibatalkan (timeout 7 hari)
     Carbon::setTestNow($t0->copy()->addDays(6));

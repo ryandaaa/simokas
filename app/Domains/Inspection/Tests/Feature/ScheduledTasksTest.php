@@ -14,6 +14,8 @@ use Illuminate\Console\Scheduling\Event;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+use function Pest\Laravel\artisan;
+
 uses(RefreshDatabase::class);
 
 it('registers all 4 inspection commands in the laravel scheduler with correct frequencies', function () {
@@ -54,7 +56,7 @@ it('executes inspection:expire-requested-jobs via artisan command', function () 
         'expires_at' => $t0->copy()->subMinute(),
     ]);
 
-    $this->artisan('inspection:expire-requested-jobs')
+    artisan('inspection:expire-requested-jobs')
         ->expectsOutputToContain('Berhasil mengedaluwarsakan 1 job requested.')
         ->assertSuccessful();
 
@@ -76,7 +78,7 @@ it('executes inspection:cancel-unclaimed-jobs via artisan command', function () 
         'available_since' => $t0->copy()->subDays(8),
     ]);
 
-    $this->artisan('inspection:cancel-unclaimed-jobs')
+    artisan('inspection:cancel-unclaimed-jobs')
         ->expectsOutputToContain('Berhasil membatalkan 1 job paid yang tidak diambil.')
         ->assertSuccessful();
 
@@ -102,7 +104,7 @@ it('executes inspection:auto-complete-jobs via artisan command', function () {
         'submitted_at' => $t0->copy()->subDays(4),
     ]);
 
-    $this->artisan('inspection:auto-complete-jobs')
+    artisan('inspection:auto-complete-jobs')
         ->expectsOutputToContain('Berhasil menyelesaikan 1 job result_submitted.')
         ->assertSuccessful();
 
@@ -128,7 +130,7 @@ it('executes inspection:mark-needs-attention via artisan command', function () {
         'needs_attention_at' => null,
     ]);
 
-    $this->artisan('inspection:mark-needs-attention')
+    artisan('inspection:mark-needs-attention')
         ->expectsOutputToContain('Berhasil menandai 1 job yang memerlukan tindakan.')
         ->assertSuccessful();
 
