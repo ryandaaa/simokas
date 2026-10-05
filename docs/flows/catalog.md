@@ -75,3 +75,6 @@ flowchart TD
 - [x] `CAT-T10` Empty state tampil saat tidak ada hasil
 - [x] `CAT-T11` Jumlah query pada daftar tidak bertambah seiring jumlah item (tanpa N+1)
 - [x] `CAT-T12` Lencana tidak tampil pada listing yang dicabut (CAT-E9; daftar dan detail membaca flag `is_inspected`. Pencabutan penuh via D-05/RES-4 menunggu RES-4)
+- [x] `CAT-T13` Beranda: listing unggulan hanya `active` (maks 6, terbaru), tanpa data privat, empty state bila kosong, tanpa N+1 (CAT-3; `active` saja karena foto status lain 403 untuk tamu — kebijakan Listing diperbaiki terpisah)
+- [x] `CAT-T14` Halaman Cara Kerja (`/cara-kerja`) dan Bantuan (`/bantuan`) statis berbahasa Indonesia, 200 untuk tamu dan semua role, satu `h1`, teks dari `lang/id/home.php` (CAT-3)
+- [x] `CAT-T15` Rute `/` memakai beranda katalog (view `welcome` dihapus), rute bernama `home`, `catalog.how-it-works`, `catalog.help`, navigasi 4 item lewat props layout (CAT-3)
