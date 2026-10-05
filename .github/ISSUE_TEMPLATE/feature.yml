@@ -1,0 +1,91 @@
+name: Kartu fitur
+description: Satu fitur atau tugas untuk papan kanban (lihat docs/BACKLOG.md)
+title: "[ID] Judul singkat"
+labels: ["type:feature"]
+body:
+  - type: input
+    id: card_id
+    attributes:
+      label: ID kartu
+      description: ID dari docs/BACKLOG.md, misalnya JOB-2
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Prioritas
+      options: [P0, P1, P2]
+    validations:
+      required: true
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      options:
+        - foundation
+        - identity
+        - inspector
+        - listing
+        - catalog
+        - inspection
+        - result
+        - payment
+        - transaction
+        - chat
+        - rating
+        - notification
+        - setting
+        - admin
+        - dashboard
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Ringkasan
+      description: Apa yang dibangun dan hasilnya bagi pengguna, satu paragraf.
+    validations:
+      required: true
+  - type: input
+    id: flow_doc
+    attributes:
+      label: Flow doc
+      description: Path flow doc dan bagian PRD yang dirujuk
+      placeholder: docs/flows/job.md, PRD 13.5
+    validations:
+      required: true
+  - type: textarea
+    id: tests
+    attributes:
+      label: Test case ID yang wajib lulus
+      description: Dari bagian "Daftar test case" di flow doc
+      placeholder: JOB-T03, JOB-T05, JOB-T06
+    validations:
+      required: true
+  - type: textarea
+    id: depends
+    attributes:
+      label: Butuh (prasyarat)
+      description: Kartu yang harus sudah di-merge lebih dulu
+      placeholder: "#12 JOB-1, #8 ONB-2"
+  - type: textarea
+    id: open
+    attributes:
+      label: Pertanyaan terbuka dan default sementara
+      description: Hal [OPEN] yang memengaruhi kartu ini dan default yang dipakai
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: Definition of Done
+      options:
+        - label: Unit test dan feature test ditulis, nama memuat test case ID, semua lulus
+        - label: Otorisasi lewat Policy diuji untuk semua role, data persis tidak bocor
+        - label: "`composer check` bersih dan CI hijau"
+        - label: UI memenuhi daftar periksa UI_GUIDELINES bagian 12 (bila ada UI)
+        - label: Flow doc diperbarui bila perilaku berubah
+        - label: Hanya menyentuh domain kartu ini (perubahan bersama dipisah, label `shared`)
+        - label: PR memakai template, berisi `Closes #<nomor>`
+  - type: markdown
+    attributes:
+      value: |
+        Cara menyuruh agen mengerjakan kartu ini: lihat [docs/AGENT_TASK.md](../blob/main/docs/AGENT_TASK.md).
