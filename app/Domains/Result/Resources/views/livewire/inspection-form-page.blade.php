@@ -2,7 +2,7 @@
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <x-ui.button :href="route('jobs.show', $job->id)" variant="ghost" icon="panah-kiri" class="mb-2 -ml-2">
+            <x-ui.button :href="route('jobs.show', $job->id)" variant="ghost" icon="chevron-left" class="mb-2 -ml-2">
                 {{ __('inspection.form.back_to_job') }}
             </x-ui.button>
             <h1 class="text-2xl font-bold text-text">{{ __('inspection.form.title') }}</h1>
@@ -12,8 +12,8 @@
             <div class="flex items-center gap-3">
                 <x-ui.status-chip
                     :label="$result->status->label()"
-                    variant="warning"
-                    icon="pen"
+                    :variant="$result->status->color()"
+                    :icon="$result->status->icon()"
                 />
                 @if ($lastSavedAt)
                     <span class="text-xs text-muted">
@@ -36,7 +36,7 @@
     @if ($result === null)
         <x-ui.card>
             <x-ui.empty-state
-                icon="exclamasi-lingkaran"
+                icon="exclamation-triangle"
                 :title="__('inspection.form.unauthorized')"
             />
         </x-ui.card>
@@ -118,6 +118,9 @@
                                     </button>
                                 @endforeach
                             </div>
+                            @error('items.'.$templateItem->id.'.rating')
+                                <p class="text-xs text-danger mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         {{-- Note --}}
@@ -127,6 +130,7 @@
                             :label="__('inspection.form.note_label')"
                             :placeholder="__('inspection.form.note_placeholder')"
                             wire:model.lazy="items.{{ $templateItem->id }}.note"
+                            :error="$errors->first('items.'.$templateItem->id.'.note')"
                             rows="2"
                         />
                     </div>
@@ -143,6 +147,7 @@
                     :label="__('inspection.form.summary_note_label')"
                     :placeholder="__('inspection.form.summary_note_placeholder')"
                     wire:model.lazy="summaryNote"
+                    :error="$errors->first('summaryNote')"
                     rows="4"
                 />
             </x-ui.card>
@@ -155,7 +160,7 @@
                 @if ($currentCategoryIndex > 0)
                     <x-ui.button
                         variant="secondary"
-                        icon="panah-kiri"
+                        icon="chevron-left"
                         wire:click="previousCategory"
                         wire:loading.attr="disabled"
                     >
@@ -180,7 +185,7 @@
                 @if ($currentCategoryIndex < $totalCategories - 1)
                     <x-ui.button
                         variant="primary"
-                        iconRight="panah-kanan"
+                        iconRight="chevron-right"
                         wire:click="nextCategory"
                         wire:loading.attr="disabled"
                         wire:target="nextCategory"

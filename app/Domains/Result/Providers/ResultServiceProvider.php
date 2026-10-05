@@ -27,6 +27,6 @@ final class ResultServiceProvider extends ServiceProvider
         Gate::policy(InspectionResult::class, InspectionResultPolicy::class);
         Gate::define('fill-inspection', [InspectionResultPolicy::class, 'fill']);
 
-        Livewire::component('result::inspection-form-page', InspectionFormPage::class);
+        Livewire::component('result.inspection-form-page', InspectionFormPage::class);
     }
 }

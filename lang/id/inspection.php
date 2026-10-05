@@ -174,5 +174,8 @@ return [
         'draft_badge' => 'Draf Tersimpan',
         'unauthorized' => 'Hanya inspektor yang ditugaskan dapat mengisi formulir inspeksi ini.',
         'job_not_in_progress' => 'Formulir hanya dapat diisi jika status job Sedang Diinspeksi.',
+        'invalid_rating' => 'Penilaian :rating tidak valid.',
+        'note_too_long' => 'Catatan maksimal 1.000 karakter.',
+        'summary_note_too_long' => 'Catatan ringkasan maksimal 2.000 karakter.',
     ],
 ];

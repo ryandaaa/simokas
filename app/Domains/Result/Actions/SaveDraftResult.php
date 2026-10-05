@@ -6,12 +6,15 @@ namespace App\Domains\Result\Actions;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
+use App\Domains\Result\Enums\ItemRating;
 use App\Domains\Result\Enums\ResultStatus;
+use App\Domains\Result\Exceptions\InvalidRatingException;
 use App\Domains\Result\Exceptions\JobNotInProgressException;
 use App\Domains\Result\Exceptions\ResultAlreadySubmittedException;
 use App\Domains\Result\Exceptions\UnauthorizedInspectorException;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultItem;
+use App\Support\Exceptions\DomainException;
 use Illuminate\Support\Facades\DB;
 
 final class SaveDraftResult
@@ -37,6 +40,14 @@ final class SaveDraftResult
             throw JobNotInProgressException::create();
         }
 
+        if ($summaryNote !== null && mb_strlen($summaryNote) > 2000) {
+            throw new \App\Support\Exceptions\DomainException(
+                __('inspection.form.summary_note_too_long'),
+                'SUMMARY_NOTE_TOO_LONG',
+                422,
+            );
+        }
+
         return DB::transaction(function () use ($result, $itemsData, $summaryNote): InspectionResult {
             if ($summaryNote !== null) {
                 $result->summary_note = $summaryNote;
@@ -56,9 +67,21 @@ final class SaveDraftResult
                     ? $data['rating']
                     : null;
 
+                if ($rating !== null && ItemRating::tryFrom($rating) === null) {
+                    throw \App\Domains\Result\Exceptions\InvalidRatingException::create($rating);
+                }
+
                 $note = isset($data['note']) && is_string($data['note']) && $data['note'] !== ''
                     ? $data['note']
                     : null;
+
+                if ($note !== null && mb_strlen($note) > 1000) {
+                    throw new \App\Support\Exceptions\DomainException(
+                        __('inspection.form.note_too_long'),
+                        'NOTE_TOO_LONG',
+                        422,
+                    );
+                }
 
                 ResultItem::query()->updateOrCreate(
                     [
