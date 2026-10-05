@@ -6,6 +6,7 @@ namespace App\Domains\Payment\Actions;
 
 use App\Domains\Payment\DTOs\CreateBillData;
 use App\Domains\Payment\Enums\PaymentStatus;
+use App\Domains\Payment\Exceptions\IdempotencyKeyConflictException;
 use App\Domains\Payment\Models\Payment;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -14,14 +15,6 @@ final class CreateBill
 {
     public function handle(CreateBillData $data): Payment
     {
-        $existing = Payment::query()
-            ->where('idempotency_key', $data->idempotencyKey)
-            ->first();
-
-        if ($existing !== null) {
-            return $existing;
-        }
-
         try {
             return DB::transaction(function () use ($data) {
                 return Payment::create([
@@ -37,16 +30,31 @@ final class CreateBill
                 ]);
             });
         } catch (QueryException $e) {
-            // Race condition: concurrent request with the same idempotency_key
+            // Key already used (including concurrent races): return the same
+            // bill when parameters match, reject when they differ.
             $existing = Payment::query()
                 ->where('idempotency_key', $data->idempotencyKey)
                 ->first();
 
-            if ($existing !== null) {
-                return $existing;
+            if ($existing === null) {
+                throw $e;
             }
 
-            throw $e;
+            $this->ensureIdempotencyMatch($existing, $data);
+
+            return $existing;
+        }
+    }
+
+    private function ensureIdempotencyMatch(Payment $existing, CreateBillData $data): void
+    {
+        $matches = $existing->payer_id === $data->payerId
+            && $existing->purpose === $data->purpose
+            && $existing->ref_id === $data->refId
+            && (int) $existing->amount === $data->amount;
+
+        if (! $matches) {
+            throw new IdempotencyKeyConflictException;
         }
     }
 }

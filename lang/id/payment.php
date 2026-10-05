@@ -67,5 +67,6 @@ return [
         'free_outcome_not_allowed' => 'Pilihan hasil simulasi bebas tidak tersedia di lingkungan produksi.',
         'unauthorized' => 'Anda tidak memiliki hak untuk membayar atau melihat tagihan ini.',
         'cannot_expire_processed' => 'Tagihan yang sudah berhasil atau dikembalikan tidak dapat dikedaluwarsakan.',
+        'idempotency_key_conflict' => 'Kunci idempotensi sudah dipakai untuk tagihan lain. Gunakan kunci baru yang unik untuk setiap tagihan.',
     ],
 ];
