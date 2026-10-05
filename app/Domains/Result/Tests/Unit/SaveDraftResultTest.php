@@ -6,15 +6,18 @@ namespace App\Domains\Result\Tests\Unit;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
+use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Result\Actions\SaveDraftResult;
 use App\Domains\Result\Enums\ItemRating;
 use App\Domains\Result\Enums\ResultStatus;
+use App\Domains\Result\Exceptions\InvalidRatingException;
 use App\Domains\Result\Exceptions\JobNotInProgressException;
 use App\Domains\Result\Exceptions\ResultAlreadySubmittedException;
 use App\Domains\Result\Exceptions\UnauthorizedInspectorException;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultItem;
 use App\Domains\Result\Models\TemplateItem;
+use App\Support\Exceptions\DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -27,13 +30,13 @@ final class SaveDraftResultTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->action = new SaveDraftResult();
+        $this->action = new SaveDraftResult;
     }
 
-    public function test_RES_T02_saves_draft_items_correctly(): void
+    public function test_re_s_t02_saves_draft_items_correctly(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -66,10 +69,10 @@ final class SaveDraftResultTest extends TestCase
         $this->assertEquals('Catatan ringkasan', $updatedResult->summary_note);
     }
 
-    public function test_RES_T02_updates_existing_draft_item_on_resave(): void
+    public function test_re_s_t02_updates_existing_draft_item_on_resave(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -94,11 +97,11 @@ final class SaveDraftResultTest extends TestCase
         $this->assertEquals(ItemRating::Fair, $savedItem->rating);
     }
 
-    public function test_RES_T14_throws_when_different_inspector_tries_to_save(): void
+    public function test_re_s_t14_throws_when_different_inspector_tries_to_save(): void
     {
         $inspector = User::factory()->inspector()->create();
         $otherInspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -112,7 +115,7 @@ final class SaveDraftResultTest extends TestCase
     public function test_throws_when_result_is_already_submitted(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->submitted()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -126,7 +129,7 @@ final class SaveDraftResultTest extends TestCase
     public function test_throws_when_job_is_not_in_progress(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -143,7 +146,7 @@ final class SaveDraftResultTest extends TestCase
     public function test_save_with_empty_items_only_updates_summary_note(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -158,7 +161,7 @@ final class SaveDraftResultTest extends TestCase
     public function test_throws_when_item_rating_is_invalid(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -167,7 +170,7 @@ final class SaveDraftResultTest extends TestCase
             'template_id' => $result->template_id,
         ]);
 
-        $this->expectException(\App\Domains\Result\Exceptions\InvalidRatingException::class);
+        $this->expectException(InvalidRatingException::class);
 
         $this->action->handle($inspector, $result, [
             $templateItem->id => [
@@ -180,7 +183,7 @@ final class SaveDraftResultTest extends TestCase
     public function test_throws_when_item_note_is_too_long(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
@@ -189,7 +192,7 @@ final class SaveDraftResultTest extends TestCase
             'template_id' => $result->template_id,
         ]);
 
-        $this->expectException(\App\Support\Exceptions\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $this->action->handle($inspector, $result, [
             $templateItem->id => [
@@ -202,13 +205,13 @@ final class SaveDraftResultTest extends TestCase
     public function test_throws_when_summary_note_is_too_long(): void
     {
         $inspector = User::factory()->inspector()->create();
-        $job = \App\Domains\Inspection\Models\InspectionJob::factory()->inProgress($inspector)->create();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
             'inspector_id' => $inspector->id,
         ]);
 
-        $this->expectException(\App\Support\Exceptions\DomainException::class);
+        $this->expectException(DomainException::class);
 
         $this->action->handle($inspector, $result, [], str_repeat('a', 2001));
     }

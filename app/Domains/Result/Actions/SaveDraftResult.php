@@ -41,7 +41,7 @@ final class SaveDraftResult
         }
 
         if ($summaryNote !== null && mb_strlen($summaryNote) > 2000) {
-            throw new \App\Support\Exceptions\DomainException(
+            throw new DomainException(
                 __('inspection.form.summary_note_too_long'),
                 'SUMMARY_NOTE_TOO_LONG',
                 422,
@@ -68,7 +68,7 @@ final class SaveDraftResult
                     : null;
 
                 if ($rating !== null && ItemRating::tryFrom($rating) === null) {
-                    throw \App\Domains\Result\Exceptions\InvalidRatingException::create($rating);
+                    throw InvalidRatingException::create($rating);
                 }
 
                 $note = isset($data['note']) && is_string($data['note']) && $data['note'] !== ''
@@ -76,7 +76,7 @@ final class SaveDraftResult
                     : null;
 
                 if ($note !== null && mb_strlen($note) > 1000) {
-                    throw new \App\Support\Exceptions\DomainException(
+                    throw new DomainException(
                         __('inspection.form.note_too_long'),
                         'NOTE_TOO_LONG',
                         422,
