@@ -15,7 +15,9 @@ final class ListingPublicResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
-     * Note: lat, lng, address_full, chassis_number are strictly excluded from public resources.
+     * Note: lat, lng, address_full, chassis_number, and inspection_place are
+     * strictly excluded from public resources (inspection_place may contain
+     * the seller's home address, so it is private per PRD 13.3 and 19).
      *
      * @return array<string, mixed>
      */
@@ -36,7 +38,6 @@ final class ListingPublicResource extends JsonResource
             'color' => $this->color,
             'description' => $this->description,
             'area_name' => $this->area_name,
-            'inspection_place' => $this->inspection_place,
             'status' => $this->status->value,
             'is_inspected' => $this->is_inspected,
             'last_inspected_at' => $this->last_inspected_at?->toIso8601String(),

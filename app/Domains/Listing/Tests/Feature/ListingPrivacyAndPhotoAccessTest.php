@@ -21,7 +21,7 @@ beforeEach(function () {
     Storage::fake('private');
 });
 
-it('LST-T11 ensures public listing resource never contains lat, lng, address_full, chassis_number', function () {
+it('LST-T11 ensures public listing resource never contains lat, lng, address_full, chassis_number, inspection_place', function () {
     $seller = User::factory()->user()->create();
 
     $listing = Listing::factory()->active()->create([
@@ -30,6 +30,7 @@ it('LST-T11 ensures public listing resource never contains lat, lng, address_ful
         'lng' => 101.4478000,
         'address_full' => 'Jl. Tuanku Tambusai No. 123, Pekanbaru',
         'chassis_number' => 'MHKA1234567890123',
+        'inspection_place' => 'Jl. Tuanku Tambusai No. 123, rumah penjual',
     ]);
 
     $request = Request::create('/listings/'.$listing->id);
@@ -57,7 +58,8 @@ it('LST-T11 ensures public listing resource never contains lat, lng, address_ful
     expect($responseArray)->not->toHaveKey('lat')
         ->and($responseArray)->not->toHaveKey('lng')
         ->and($responseArray)->not->toHaveKey('address_full')
-        ->and($responseArray)->not->toHaveKey('chassis_number');
+        ->and($responseArray)->not->toHaveKey('chassis_number')
+        ->and($responseArray)->not->toHaveKey('inspection_place');
 });
 
 it('includes private fields in ListingPrivateResource for owner and admin', function () {
@@ -79,7 +81,38 @@ it('includes private fields in ListingPrivateResource for owner and admin', func
         ->and($responseArray)->toHaveKey('lng')
         ->and($responseArray)->toHaveKey('address_full')
         ->and($responseArray)->toHaveKey('chassis_number')
-        ->and($responseArray['chassis_number'])->toBe('MHKA1234567890123');
+        ->and($responseArray['chassis_number'])->toBe('MHKA1234567890123')
+        ->and($responseArray)->toHaveKey('inspection_place');
+});
+
+it('hides inspection_place containing a full home address from public JSON and HTML, but keeps it for owner and admin', function () {
+    $seller = User::factory()->user()->create();
+    $homeAddress = 'Jl. Melati No. 8 RT 02, rumah penjual di Pekanbaru';
+
+    $listing = Listing::factory()->active()->create([
+        'seller_id' => $seller->id,
+        'inspection_place' => $homeAddress,
+    ]);
+
+    // Public JSON: array form and rendered JSON string must not leak it
+    $request = Request::create('/listings/'.$listing->id);
+    $publicArray = (new ListingPublicResource($listing))->toArray($request);
+    ListingPrivacyHelper::assertNoPrivateListingData($publicArray);
+    expect($publicArray)->not->toHaveKey('inspection_place');
+
+    $publicJson = (new ListingPublicResource($listing))->toJson();
+    ListingPrivacyHelper::assertNoPrivateListingData($publicJson);
+    expect($publicJson)->not->toContain($homeAddress);
+
+    // Public HTML: guests are redirected to login and see no address
+    $guestResponse = get(route('listings.mine'));
+    $guestResponse->assertRedirect(route('login'));
+    expect($guestResponse->getContent())->not->toContain($homeAddress);
+
+    // Private JSON: owner and admin still receive inspection_place
+    $privateArray = (new ListingPrivateResource($listing))->toArray($request);
+    expect($privateArray)->toHaveKey('inspection_place')
+        ->and($privateArray['inspection_place'])->toBe($homeAddress);
 });
 
 it('allows public to view photos of active listing with nosniff and public cache headers', function () {

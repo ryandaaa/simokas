@@ -10,12 +10,13 @@ use PHPUnit\Framework\Assert;
 final class ListingPrivacyHelper
 {
     /**
-     * Asserts that sensitive/private listing fields (lat, lng, address_full, chassis_number)
-     * are never present in the given response content or structure.
+     * Asserts that sensitive/private listing fields (lat, lng, address_full,
+     * chassis_number, inspection_place) are never present in the given
+     * response content or structure.
      */
     public static function assertNoPrivateListingData(mixed $response): void
     {
-        $forbiddenKeys = ['lat', 'lng', 'address_full', 'chassis_number'];
+        $forbiddenKeys = ['lat', 'lng', 'address_full', 'chassis_number', 'inspection_place'];
 
         $content = '';
         $json = null;
