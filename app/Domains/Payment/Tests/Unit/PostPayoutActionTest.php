@@ -110,7 +110,7 @@ it('PAY-T09 posts inspection payout only through the Ledger contract when the jo
     $inspector = makeInspector();
     $payment = makeSuccessPayment(PaymentPurpose::Inspection, 50000);
 
-    app(PostPayout::class)->handle($payment, $inspector->id, LedgerEntryType::InspectionFee);
+    app(PostPayout::class)->handle($payment, $inspector->id, LedgerEntryType::InspectionFee, 10);
 
     $entries = LedgerEntry::query()->where('payment_id', $payment->id)->get();
 

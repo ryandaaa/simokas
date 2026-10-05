@@ -43,4 +43,26 @@ final class InvalidLedgerPostingException extends DomainException
             ['inspector_id' => $inspectorId],
         );
     }
+
+    public static function invalidPercentage(int $pct): self
+    {
+        return new self(
+            __('payment.errors.posting_invalid_percentage', ['pct' => $pct]),
+            self::CODE_BUSINESS_RULE,
+            422,
+            null,
+            ['platform_fee_pct' => $pct],
+        );
+    }
+
+    public static function snapshotRequired(): self
+    {
+        return new self(
+            __('payment.errors.posting_snapshot_required'),
+            self::CODE_BUSINESS_RULE,
+            422,
+            null,
+            [],
+        );
+    }
 }

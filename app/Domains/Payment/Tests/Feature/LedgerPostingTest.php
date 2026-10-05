@@ -99,8 +99,8 @@ it('PAY-T13 keeps total ledger entries equal to the payment value across purpose
     $ledger = app(Ledger::class);
 
     match ($purpose) {
-        PaymentPurpose::Access => $ledger->postAccessPayout($payment->id, $inspector->id),
-        PaymentPurpose::Inspection => $ledger->postInspectionPayout($payment->id, $inspector->id),
+        PaymentPurpose::Access => $ledger->postAccessPayout($payment->id, $inspector->id, $pct),
+        PaymentPurpose::Inspection => $ledger->postInspectionPayout($payment->id, $inspector->id, $pct),
         default => null,
     };
 

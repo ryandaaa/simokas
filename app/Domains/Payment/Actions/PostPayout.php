@@ -21,9 +21,9 @@ final class PostPayout
 {
     public function __construct(private readonly SettingsReader $settings) {}
 
-    public function handle(Payment $payment, string $inspectorId, LedgerEntryType $creditType): void
+    public function handle(Payment $payment, string $inspectorId, LedgerEntryType $creditType, ?int $platformFeePct = null): void
     {
-        DB::transaction(function () use ($payment, $inspectorId, $creditType) {
+        DB::transaction(function () use ($payment, $inspectorId, $creditType, $platformFeePct) {
             /** @var Payment $fresh */
             $fresh = Payment::query()->whereKey($payment->id)->lockForUpdate()->firstOrFail();
 
@@ -44,7 +44,16 @@ final class PostPayout
                 throw LedgerAlreadyPostedException::forPayment($fresh->id);
             }
 
-            $pct = $this->settings->getPlatformFeePct();
+            if ($creditType === LedgerEntryType::InspectionFee && $platformFeePct === null) {
+                throw InvalidLedgerPostingException::snapshotRequired();
+            }
+
+            $pct = $platformFeePct ?? $this->settings->getPlatformFeePct();
+
+            if ($pct < 0 || $pct > 100) {
+                throw InvalidLedgerPostingException::invalidPercentage($pct);
+            }
+
             $split = Money::split((int) $fresh->amount, $pct);
             $now = now();
 
@@ -66,7 +75,7 @@ final class PostPayout
                     'account_user_id' => $inspector->id,
                     'entry_type' => $creditType->value,
                     'amount' => $split['recipient'],
-                    'note' => __('payment.ledger.notes.payout', ['type' => $creditType->label()]),
+                    'note' => __('payment.ledger.notes.payout', ['type' => $creditType->label(), 'pct' => $pct]),
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],

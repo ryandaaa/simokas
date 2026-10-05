@@ -7,6 +7,7 @@ namespace App\Domains\Payment\Models;
 use App\Domains\Identity\Models\User;
 use App\Domains\Payment\Database\factories\LedgerEntryFactory;
 use App\Domains\Payment\Enums\LedgerEntryType;
+use App\Domains\Payment\Exceptions\LedgerEntryImmutableException;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -48,6 +49,17 @@ final class LedgerEntry extends Model
     protected static function newFactory(): LedgerEntryFactory
     {
         return LedgerEntryFactory::new();
+    }
+
+    protected static function booted(): void
+    {
+        self::updating(function (LedgerEntry $entry): void {
+            throw LedgerEntryImmutableException::forUpdate($entry->id);
+        });
+
+        self::deleting(function (LedgerEntry $entry): void {
+            throw LedgerEntryImmutableException::forDelete($entry->id);
+        });
     }
 
     /**

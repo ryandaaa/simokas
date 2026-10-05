@@ -164,12 +164,19 @@ Interface: `App\Domains\Payment\Contracts\Ledger` (implementasi `LedgerService`,
 ```php
 interface Ledger
 {
-    public function postAccessPayout(string $paymentId, string $inspectorId): void;
-    public function postInspectionPayout(string $paymentId, string $inspectorId): void;
+    public function postAccessPayout(string $paymentId, string $inspectorId, ?int $platformFeePct = null): void;
+    public function postInspectionPayout(string $paymentId, string $inspectorId, int $platformFeePct): void;
     public function refundPayment(string $paymentId): void;
     public function balanceFor(string $inspectorId): int;
 }
 ```
+
+Desain argumen persentase (JOB-R6, JOB-E13): fee inspeksi diposting saat job `completed`, bisa berhari-hari setelah job dibuat, sehingga persentase
+WAJIB disuplai pemanggil dari salinan `platform_fee_pct` pada job (JOB-4 memanggil `postInspectionPayout($paymentId, $inspectorId, $job->platform_fee_pct)`);
+pengaturan saat ini TIDAK dibaca untuk jalur ini, dan pemanggilan tanpa persentase ditolak (`InvalidLedgerPostingException::snapshotRequired`).
+Fee akses diposting segera setelah pembayaran `success`, sehingga pemanggil BOLEH menyuplai persentase salinan, atau `null` untuk memakai pengaturan
+saat posting. Kedua jalur memvalidasi bilangan bulat 0..100 (`InvalidLedgerPostingException::invalidPercentage`; `Money::split` memvalidasi ulang)
+dan mencatat persentase yang dipakai di `note` tiap entri untuk audit. Tanpa kolom baru: `note` yang sudah ada cukup.
 
 ### 7.1 Kapan masing-masing method dipanggil
 
@@ -182,11 +189,16 @@ interface Ledger
 
 ### 7.2 Aturan posting
 
-1. Pembagian memakai `Support\Money::split(amount, platform_fee_pct)`; persen dibaca dari `SettingsReader` saat posting. Nilai hasil split tersimpan permanen di entri sehingga perubahan pengaturan tidak memengaruhi entri lama (persen yang dipakai juga dicatat di `note`).
+1. Pembagian memakai `Support\Money::split(amount, pct)`; persen fee inspeksi selalu dari argumen snapshot job, persen fee akses dari argumen bila
+   disuplai atau dari `SettingsReader` saat posting bila `null`. Nilai hasil split tersimpan permanen di entri sehingga perubahan pengaturan tidak
+   memengaruhi entri lama (persen yang dipakai juga dicatat di `note` kedua entri: `Komisi platform :pct% ...`).
 2. Setiap posting menulis dua entri dalam satu statement: `platform_fee` (akun null = platform) dan fee penerima (`access_fee` / `inspection_fee`).
 3. Posting ganda ditolak: `LedgerAlreadyPostedException` (409), diperkuat batasan unik `(payment_id, entry_type)`.
 4. Hanya pembayaran `success` yang dapat diposting; pasangan tujuan–jenis entri harus cocok (`inspection` ↔ `inspection_fee`, `access` ↔ `access_fee`); tujuan `purchase` ditolak sampai TRX-2 menetapkan basis komisi.
-5. Entri ledger append-only: tidak ada update atau delete. `ledger_entries.amount` bertipe signed sesuai PRD 18.12 (positif kredit, negatif debit).
+5. Entri ledger append-only: update dan delete ditolak di kode lewat event model (`LedgerEntryImmutableException`, kode mesin `LEDGER_ENTRY_IMMUTABLE`).
+   `ledger_entries.amount` bertipe signed sesuai PRD 18.12 (positif kredit, negatif debit).
+6. Foreign key `ledger_entries.payment_id` dan `account_user_id` memakai `restrictOnDelete`: menghapus pembayaran atau pengguna yang punya entri
+   ledger ditolak database (`QueryException`). Ledger tidak boleh hilang.
 
 ### 7.3 Aturan refund
 
