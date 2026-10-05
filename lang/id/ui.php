@@ -1,0 +1,87 @@
+<?php
+
+declare(strict_types=1);
+
+return [
+    'actions' => [
+        'submit' => 'Kirim',
+        'save' => 'Simpan',
+        'cancel' => 'Batal',
+        'confirm' => 'Konfirmasi',
+        'close' => 'Tutup',
+        'back' => 'Kembali',
+        'retry' => 'Coba lagi',
+        'loading' => 'Memuat...',
+        'search' => 'Cari',
+        'filter' => 'Filter',
+        'details' => 'Lihat Detail',
+        'take_photo' => 'Ambil Foto',
+        'retake_photo' => 'Ulangi',
+        'use_photo' => 'Pakai foto ini',
+    ],
+    'badges' => [
+        'inspected' => 'Sudah Diinspeksi',
+        'inspected_at' => 'Diinspeksi pada :date',
+        'simulation' => 'SIMULASI',
+    ],
+    'listing' => [
+        'year' => 'Tahun :year',
+        'mileage' => ':km km',
+    ],
+    'score_ring' => [
+        'score' => 'Skor',
+        'score_out_of' => ':score / :max',
+        'recommendation' => 'Rekomendasi',
+        'recommendations' => [
+            'recommended' => 'Layak',
+            'caution' => 'Perlu Perhatian',
+            'not_recommended' => 'Tidak Direkomendasikan',
+        ],
+    ],
+    'empty' => [
+        'title' => 'Tidak ada data',
+        'description' => 'Belum ada data yang dapat ditampilkan saat ini.',
+    ],
+    'alert' => [
+        'info' => 'Informasi',
+        'success' => 'Berhasil',
+        'warning' => 'Perhatian',
+        'danger' => 'Terjadi kesalahan',
+    ],
+    'stepper' => [
+        'step' => 'Langkah :step',
+    ],
+    'camera' => [
+        'title' => 'Foto Kendaraan',
+        'instruction' => 'Gunakan kamera perangkat untuk mengambil foto.',
+        'job_id' => 'ID Job: :id',
+        'timestamp' => 'Cap waktu: :time',
+        'retake' => 'Ulangi',
+        'use_this' => 'Pakai foto ini',
+        'permission_denied' => 'Izin kamera ditolak. Harap izinkan akses kamera di pengaturan browser Anda.',
+    ],
+    'layout' => [
+        'skip_link' => 'Lewati ke konten utama',
+        'home' => 'Beranda',
+        'search' => 'Cari',
+        'jobs' => 'Pekerjaan',
+        'transactions' => 'Transaksi',
+        'profile' => 'Profil',
+        'menu' => 'Menu',
+        'notifications' => 'Notifikasi',
+    ],
+    'errors' => [
+        '403_title' => 'Akses Ditolak',
+        '403_message' => 'Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.',
+        '404_title' => 'Halaman Tidak Ditemukan',
+        '404_message' => 'Maaf, halaman yang Anda cari tidak dapat ditemukan atau telah dipindahkan.',
+        '419_title' => 'Sesi Berakhir',
+        '419_message' => 'Sesi Anda telah kedaluwarsa karena tidak ada aktivitas. Silakan segarkan halaman dan coba lagi.',
+        '429_title' => 'Terlalu Banyak Permintaan',
+        '429_message' => 'Terlalu banyak permintaan dalam waktu singkat. Silakan tunggu beberapa saat sebelum mencoba kembali.',
+        '500_title' => 'Terjadi Kesalahan Server',
+        '500_message' => 'Maaf, terjadi kendala pada sistem kami. Tim kami sedang menanganinya, silakan coba beberapa saat lagi.',
+        '503_title' => 'Layanan Sedang Dalam Pemeliharaan',
+        '503_message' => 'Kami sedang melakukan pemeliharaan sistem rutin untuk meningkatkan kualitas layanan. Harap kembali lagi nanti.',
+    ],
+];
