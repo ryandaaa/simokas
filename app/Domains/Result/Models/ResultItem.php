@@ -22,6 +22,8 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read InspectionResult $result
  * @property-read TemplateItem $templateItem
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, ResultPhoto> $photos
+ * @property-read ResultPhoto|null $photo
  */
 final class ResultItem extends Model
 {
@@ -69,4 +71,21 @@ final class ResultItem extends Model
     {
         return $this->belongsTo(TemplateItem::class, 'template_item_id');
     }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<ResultPhoto, $this>
+     */
+    public function photos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ResultPhoto::class, 'result_item_id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne<ResultPhoto, $this>
+     */
+    public function photo(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ResultPhoto::class, 'result_item_id')->latestOfMany();
+    }
 }
+
