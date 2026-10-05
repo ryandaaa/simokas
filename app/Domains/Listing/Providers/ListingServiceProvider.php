@@ -6,11 +6,15 @@ namespace App\Domains\Listing\Providers;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Events\JobCancelled;
+use App\Domains\Inspection\Events\JobCompleted;
+use App\Domains\Inspection\Events\JobExpired;
 use App\Domains\Inspection\Events\JobPaid;
 use App\Domains\Listing\Contracts\ListingActivityChecker;
 use App\Domains\Listing\Contracts\ListingModerationContract;
 use App\Domains\Listing\Listeners\MarkListingInInspectionOnJobPaid;
+use App\Domains\Listing\Listeners\MarkListingInspectedOnJobCompleted;
 use App\Domains\Listing\Listeners\ReturnListingToActiveOnJobCancelled;
+use App\Domains\Listing\Listeners\ReturnListingToActiveOnJobExpired;
 use App\Domains\Listing\Livewire\CreateListing;
 use App\Domains\Listing\Livewire\EditListing;
 use App\Domains\Listing\Livewire\SellerListings;
@@ -45,6 +49,8 @@ final class ListingServiceProvider extends ServiceProvider
         // Inspection. Inspection tidak memanggil Action Listing langsung (A2/A3).
         Event::listen(JobPaid::class, MarkListingInInspectionOnJobPaid::class);
         Event::listen(JobCancelled::class, ReturnListingToActiveOnJobCancelled::class);
+        Event::listen(JobExpired::class, ReturnListingToActiveOnJobExpired::class);
+        Event::listen(JobCompleted::class, MarkListingInspectedOnJobCompleted::class);
 
         Livewire::component('listing.create-listing', CreateListing::class);
         Livewire::component('listing.seller-listings', SellerListings::class);
