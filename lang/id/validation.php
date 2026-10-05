@@ -160,5 +160,9 @@ return [
         'password_confirmation' => 'konfirmasi kata sandi',
         'accepted_terms' => 'syarat dan ketentuan',
         'account_type' => 'jenis akun',
+        'lat' => 'titik lintang',
+        'lng' => 'titik bujur',
+        'address_full' => 'alamat lengkap',
+        'area_name' => 'area',
     ],
 ];

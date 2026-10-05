@@ -52,4 +52,31 @@ final class ListingValidationException extends DomainException
             403
         );
     }
+
+    public static function locationRequired(): self
+    {
+        return new self(
+            __('listing.validation.location_required'),
+            self::CODE_VALIDATION_ERROR,
+            422
+        );
+    }
+
+    public static function locationInvalid(): self
+    {
+        return new self(
+            __('listing.validation.location_invalid'),
+            self::CODE_VALIDATION_ERROR,
+            422
+        );
+    }
+
+    public static function locationOutsidePekanbaru(): self
+    {
+        return new self(
+            __('listing.validation.location_outside_pekanbaru'),
+            self::CODE_BUSINESS_RULE,
+            422
+        );
+    }
 }
