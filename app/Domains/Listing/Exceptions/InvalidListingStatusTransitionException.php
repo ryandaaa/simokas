@@ -48,4 +48,17 @@ final class InvalidListingStatusTransitionException extends DomainException
             ['current_status' => $statusStr],
         );
     }
+
+    public static function notEditable(ListingStatus|string $currentStatus): self
+    {
+        $statusStr = $currentStatus instanceof ListingStatus ? $currentStatus->value : (string) $currentStatus;
+
+        return new self(
+            __('listing.errors.not_editable', ['status' => $statusStr]),
+            self::CODE_BUSINESS_RULE,
+            422,
+            null,
+            ['current_status' => $statusStr],
+        );
+    }
 }
