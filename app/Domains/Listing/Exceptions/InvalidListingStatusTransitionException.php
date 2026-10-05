@@ -22,4 +22,30 @@ final class InvalidListingStatusTransitionException extends DomainException
             ['from' => $fromStr, 'to' => $toStr],
         );
     }
+
+    public static function alreadyProcessed(ListingStatus|string $currentStatus): self
+    {
+        $statusStr = $currentStatus instanceof ListingStatus ? $currentStatus->value : (string) $currentStatus;
+
+        return new self(
+            __('listing.errors.already_processed', ['status' => $statusStr]),
+            self::CODE_CONFLICT,
+            409,
+            null,
+            ['current_status' => $statusStr],
+        );
+    }
+
+    public static function cannotResubmit(ListingStatus|string $currentStatus): self
+    {
+        $statusStr = $currentStatus instanceof ListingStatus ? $currentStatus->value : (string) $currentStatus;
+
+        return new self(
+            __('listing.errors.cannot_resubmit', ['status' => $statusStr]),
+            self::CODE_BUSINESS_RULE,
+            422,
+            null,
+            ['current_status' => $statusStr],
+        );
+    }
 }
