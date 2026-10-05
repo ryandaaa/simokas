@@ -7,6 +7,7 @@ namespace App\Domains\Inspector\Models;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspector\Database\factories\InspectorDocumentFactory;
 use App\Domains\Inspector\Enums\DocumentType;
+use App\Domains\Inspector\Rules\SafePortfolioUrl;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -68,13 +69,25 @@ final class InspectorDocument extends Model
 
     public function isUrl(): bool
     {
-        return ! empty($this->metadata['url'] ?? null);
+        return empty($this->storage_path) && isset($this->metadata['url']);
+    }
+
+    public function isSafeUrl(): bool
+    {
+        $url = $this->metadata['url'] ?? null;
+
+        return is_string($url) && SafePortfolioUrl::isValid($url);
+    }
+
+    public function getSafeUrl(): ?string
+    {
+        return $this->isSafeUrl() ? (string) ($this->metadata['url'] ?? '') : null;
     }
 
     public function getUrl(): ?string
     {
         if ($this->isUrl()) {
-            return (string) ($this->metadata['url'] ?? '');
+            return $this->getSafeUrl();
         }
 
         if ($this->isStoredFile()) {

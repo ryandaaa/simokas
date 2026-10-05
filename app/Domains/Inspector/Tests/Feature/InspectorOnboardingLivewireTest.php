@@ -147,6 +147,70 @@ it('uploads portfolio as file or URL link', function () {
         ->and($portfolioDoc->metadata['url'])->toBe('https://github.com/my-portfolio');
 });
 
+it('rejects dangerous portfolio URLs via Livewire validation', function (string $dangerousUrl) {
+    $inspector = User::factory()->inspector()->pending()->create();
+
+    Livewire::actingAs($inspector)
+        ->test(InspectorOnboarding::class)
+        ->set('portfolio_mode', 'url')
+        ->set('portfolio_url', $dangerousUrl)
+        ->call('uploadPortfolio')
+        ->assertHasErrors(['portfolio_url']);
+
+    expect(InspectorDocument::query()->where('user_id', $inspector->id)->where('type', DocumentType::Portfolio->value)->count())->toBe(0);
+})->with([
+    'javascript with newline xss' => ['javascript://x%0Aalert(1)'],
+    'javascript scheme' => ['javascript:alert(1)'],
+    'data scheme' => ['data://text/html,x'],
+    'userinfo url' => ['https://user:pass@evil.com'],
+    'spaces in url' => ['https://example.com/bad url'],
+]);
+
+it('renders safe portfolio url with target _blank and rel noopener noreferrer nofollow', function () {
+    $inspector = User::factory()->inspector()->pending()->create();
+    InspectorDocument::factory()->create([
+        'user_id' => $inspector->id,
+        'type' => DocumentType::Portfolio,
+        'storage_path' => null,
+        'metadata' => [
+            'original_filename' => 'https://github.com/my-profile',
+            'url' => 'https://github.com/my-profile',
+        ],
+    ]);
+
+    Livewire::actingAs($inspector)
+        ->test(InspectorOnboarding::class)
+        ->assertSeeHtml('href="https://github.com/my-profile"')
+        ->assertSeeHtml('target="_blank"')
+        ->assertSeeHtml('rel="noopener noreferrer nofollow"')
+        ->assertSee(__('inspector.documents.open_url'));
+});
+
+it('does not create active href link when unsafe portfolio url exists directly in database', function (string $unsafeUrl) {
+    $inspector = User::factory()->inspector()->pending()->create();
+    InspectorDocument::factory()->create([
+        'user_id' => $inspector->id,
+        'type' => DocumentType::Portfolio,
+        'storage_path' => null,
+        'metadata' => [
+            'original_filename' => $unsafeUrl,
+            'url' => $unsafeUrl,
+        ],
+    ]);
+
+    Livewire::actingAs($inspector)
+        ->test(InspectorOnboarding::class)
+        ->assertDontSeeHtml('href="'.$unsafeUrl.'"')
+        ->assertDontSeeHtml('href="javascript')
+        ->assertDontSeeHtml('href="data')
+        ->assertDontSee(__('inspector.documents.open_url'))
+        ->assertSee($unsafeUrl); // Rendered safely as plain text in span
+})->with([
+    'javascript newline xss' => ['javascript://x%0Aalert(1)'],
+    'javascript scheme' => ['javascript:alert(1)'],
+    'data scheme' => ['data://text/html,x'],
+]);
+
 it('handles document deletion with confirmation dialog', function () {
     $inspector = User::factory()->inspector()->pending()->create();
     $doc = InspectorDocument::factory()->ktp()->create(['user_id' => $inspector->id]);

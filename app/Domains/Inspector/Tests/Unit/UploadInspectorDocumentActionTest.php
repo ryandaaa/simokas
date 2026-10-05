@@ -107,13 +107,22 @@ it('saves portfolio as URL link correctly', function () {
         ->and($document->metadata['url'])->toBe($url);
 });
 
-it('rejects invalid portfolio URL string', function () {
+it('rejects invalid or dangerous portfolio URL strings', function (string $dangerousUrl) {
     $inspector = User::factory()->inspector()->pending()->create();
     $action = new UploadInspectorDocument;
 
-    expect(fn () => $action->handle($inspector, DocumentType::Portfolio, 'bukan-url-yang-valid'))
+    expect(fn () => $action->handle($inspector, DocumentType::Portfolio, $dangerousUrl))
         ->toThrow(DocumentUploadException::class);
-});
+})->with([
+    'plain invalid string' => ['bukan-url-yang-valid'],
+    'javascript with newline xss' => ['javascript://x%0Aalert(1)'],
+    'javascript scheme' => ['javascript:alert(1)'],
+    'data scheme' => ['data://text/html,x'],
+    'vbscript scheme' => ['vbscript:msgbox(1)'],
+    'file scheme' => ['file:///etc/passwd'],
+    'userinfo url' => ['https://user:pass@evil.com'],
+    'spaces in url' => ['https://example.com/bad url'],
+]);
 
 it('rejects document upload from non-inspector and non-admin users', function () {
     $user = User::factory()->user()->active()->create();

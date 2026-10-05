@@ -153,6 +153,7 @@
                             <x-ui.button
                                 :href="$ktpDocument->getTemporarySignedUrl()"
                                 target="_blank"
+                                rel="noopener noreferrer nofollow"
                                 variant="secondary"
                                 icon="mata"
                             >
@@ -242,6 +243,7 @@
                                     <x-ui.button
                                         :href="$cert->getTemporarySignedUrl()"
                                         target="_blank"
+                                        rel="noopener noreferrer nofollow"
                                         variant="secondary"
                                         icon="mata"
                                     >
@@ -330,6 +332,7 @@
                             <x-ui.button
                                 :href="$cvDocument->getTemporarySignedUrl()"
                                 target="_blank"
+                                rel="noopener noreferrer nofollow"
                                 variant="secondary"
                                 icon="mata"
                             >
@@ -417,18 +420,26 @@
                         </div>
                         <div class="flex items-center gap-2">
                             @if ($portfolioDocument->isUrl())
-                                <x-ui.button
-                                    :href="$portfolioDocument->metadata['url'] ?? '#'"
-                                    target="_blank"
-                                    variant="secondary"
-                                    icon="tautan"
-                                >
-                                    {{ __('inspector.documents.open_url') }}
-                                </x-ui.button>
+                                @if ($portfolioDocument->isSafeUrl())
+                                    <x-ui.button
+                                        :href="$portfolioDocument->getSafeUrl()"
+                                        target="_blank"
+                                        rel="noopener noreferrer nofollow"
+                                        variant="secondary"
+                                        icon="tautan"
+                                    >
+                                        {{ __('inspector.documents.open_url') }}
+                                    </x-ui.button>
+                                @else
+                                    <span class="text-xs text-muted font-mono truncate max-w-xs block">
+                                        {{ $portfolioDocument->metadata['url'] ?? '' }}
+                                    </span>
+                                @endif
                             @else
                                 <x-ui.button
                                     :href="$portfolioDocument->getTemporarySignedUrl()"
                                     target="_blank"
+                                    rel="noopener noreferrer nofollow"
                                     variant="secondary"
                                     icon="mata"
                                 >
