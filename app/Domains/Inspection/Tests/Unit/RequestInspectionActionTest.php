@@ -14,12 +14,10 @@ use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
-use App\Domains\Payment\Contracts\Billing;
 use App\Domains\Payment\DTOs\BillData;
-use App\Domains\Payment\Enums\PaymentMethod;
 use App\Domains\Payment\Enums\PaymentPurpose;
-use App\Domains\Payment\Enums\PaymentStatus;
 use App\Domains\Setting\Contracts\SettingsReader;
+use App\Domains\Setting\DTOs\SettingsData;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -125,13 +123,13 @@ it('JOB-E2 throws ListingHasActiveJobException (409) when a second requester app
 
     $action->handle($requester1, $listing);
 
-    try {
-        $action->handle($requester2, $listing);
-        $this->fail('Expected ListingHasActiveJobException was not thrown.');
-    } catch (ListingHasActiveJobException $e) {
-        expect($e->statusCode())->toBe(409)
-            ->and($e->errorCode())->toBe('LISTING_HAS_ACTIVE_JOB');
-    }
+    expect(fn () => $action->handle($requester2, $listing))
+        ->toThrow(function (\Throwable $e) {
+            expect($e)->toBeInstanceOf(ListingHasActiveJobException::class);
+            /** @var ListingHasActiveJobException $e */
+            expect($e->statusCode())->toBe(409)
+                ->and($e->errorCode())->toBe('LISTING_HAS_ACTIVE_JOB');
+        });
 });
 
 it('JOB-T16, ADM-T06, PAY-T11 keeps old job and bill fee unchanged when admin changes settings afterwards', function () {
@@ -145,17 +143,52 @@ it('JOB-T16, ADM-T06, PAY-T11 keeps old job and bill fee unchanged when admin ch
     expect($result['job']->fee_amount)->toBe(50000);
 
     // Mock / change settings reader to return new fees
-    $fakeSettings = new class implements SettingsReader {
-        public function getInspectionFeeCar(): int { return 90000; }
-        public function getInspectionFeeMotorcycle(): int { return 30000; }
-        public function getPlatformFeePct(): int { return 15; }
-        public function getEscrowTimeoutHours(): int { return 24; }
-        public function getAutoAcceptDays(): int { return 3; }
-        public function getPekanbaruLat(): float { return 0.5071; }
-        public function getPekanbaruLng(): float { return 101.4478; }
-        public function getPekanbaruRadiusKm(): int { return 50; }
-        public function isFeatureActive(string $key): bool { return true; }
-        public function get(string $key, mixed $default = null): mixed { return $default; }
+    $fakeSettings = new class implements SettingsReader
+    {
+        public function getInspectionFeeCar(): int
+        {
+            return 90000;
+        }
+
+        public function getInspectionFeeMotorcycle(): int
+        {
+            return 30000;
+        }
+
+        public function getPlatformFeePct(): int
+        {
+            return 15;
+        }
+
+        public function getSaleCommissionPct(): int
+        {
+            return 2;
+        }
+
+        public function getAutoAcceptDays(): int
+        {
+            return 3;
+        }
+
+        public function getPaidJobTimeoutDays(): int
+        {
+            return 7;
+        }
+
+        public function all(): SettingsData
+        {
+            return new SettingsData(
+                inspectionFeeCar: 90000,
+                inspectionFeeMotorcycle: 30000,
+                platformFeePct: 15,
+                saleCommissionPct: 2,
+                autoAcceptDays: 3,
+                paidJobTimeoutDays: 7,
+                updatedBy: null,
+                updatedByName: null,
+                updatedAt: null,
+            );
+        }
     };
     app()->instance(SettingsReader::class, $fakeSettings);
 

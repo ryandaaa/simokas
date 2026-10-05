@@ -57,17 +57,15 @@ it('locks listing core fields edit when listing has an active inspection job', f
 
     // Changing price (a core field) is rejected while active job exists
     $dto = new UpdateListingDTO(
-        actor: $seller,
-        listing: $listing,
         fields: ['price' => 120000000],
     );
 
-    expect(fn () => $updateAction->handle($dto))
+    expect(fn () => $updateAction->handle($seller, $listing, $dto))
         ->toThrow(ListingLockedException::class);
 
     // Once the job is cancelled, editing price succeeds
     $job->update(['status' => JobStatus::Cancelled]);
 
-    $updatedListing = $updateAction->handle($dto);
+    $updatedListing = $updateAction->handle($seller, $listing, $dto);
     expect($updatedListing->price)->toBe(120000000);
 });

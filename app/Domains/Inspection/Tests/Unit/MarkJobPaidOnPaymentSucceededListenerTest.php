@@ -8,7 +8,6 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Events\JobPaid;
 use App\Domains\Inspection\Listeners\MarkJobPaidOnPaymentSucceeded;
 use App\Domains\Inspection\Models\InspectionJob;
-use App\Domains\Payment\Enums\PaymentMethod;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Events\PaymentSucceeded;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,10 +25,8 @@ it('ignores PaymentSucceeded events for purposes other than Inspection', functio
         paymentId: 'pay-123',
         purpose: PaymentPurpose::Purchase,
         refId: $job->id,
-        payerId: $job->requester_id,
         amount: 50000,
-        method: PaymentMethod::BankTransfer,
-        paidAt: now(),
+        payerId: $job->requester_id,
     );
 
     $listener = new MarkJobPaidOnPaymentSucceeded;
@@ -44,15 +41,12 @@ it('marks requested job as paid, records available_since, and dispatches JobPaid
 
     $job = InspectionJob::factory()->requested()->create();
 
-    $paidAt = now();
     $event = new PaymentSucceeded(
         paymentId: 'pay-123',
         purpose: PaymentPurpose::Inspection,
         refId: $job->id,
-        payerId: $job->requester_id,
         amount: 50000,
-        method: PaymentMethod::Qris,
-        paidAt: $paidAt,
+        payerId: $job->requester_id,
     );
 
     $listener = new MarkJobPaidOnPaymentSucceeded;
@@ -78,10 +72,8 @@ it('is idempotent: duplicate PaymentSucceeded event does not dispatch second Job
         paymentId: 'pay-123',
         purpose: PaymentPurpose::Inspection,
         refId: $job->id,
-        payerId: $job->requester_id,
         amount: 50000,
-        method: PaymentMethod::Qris,
-        paidAt: now(),
+        payerId: $job->requester_id,
     );
 
     $listener = new MarkJobPaidOnPaymentSucceeded;

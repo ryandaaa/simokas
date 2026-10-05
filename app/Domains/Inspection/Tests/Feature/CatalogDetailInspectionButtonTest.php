@@ -46,6 +46,7 @@ it('does not show Ajukan Inspeksi button on catalog detail for inspector, owner,
         'inspector' => User::factory()->inspector()->create(),
         'owner' => $seller,
         'admin' => User::factory()->admin()->create(),
+        default => throw new \InvalidArgumentException("Unknown actor type: {$actorType}"),
     };
 
     actingAs($actor);

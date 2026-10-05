@@ -32,6 +32,7 @@ it('forbids inspectors and admins from accessing jobs.request', function (string
     $user = match ($role) {
         'inspector' => User::factory()->inspector()->create(),
         'admin' => User::factory()->admin()->create(),
+        default => throw new \InvalidArgumentException("Unknown role: {$role}"),
     };
     $listing = Listing::factory()->active()->create();
 
