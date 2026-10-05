@@ -225,30 +225,17 @@
                         </div>
                     </div>
 
-                    {{-- Warna & Area --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <x-ui.input
-                                id="color"
-                                name="color"
-                                wire:model="color"
-                                :label="__('listing.fields.color')"
-                                hint="Contoh: Hitam Metalik, Putih"
-                                :error="$errors->first('color')"
-                                required
-                            />
-                        </div>
-
-                        <div>
-                            <x-ui.input
-                                id="area_name"
-                                name="area_name"
-                                wire:model="area_name"
-                                :label="__('listing.fields.area_name')"
-                                :hint="__('listing.fields.area_name_hint')"
-                                :error="$errors->first('area_name')"
-                            />
-                        </div>
+                    {{-- Warna --}}
+                    <div>
+                        <x-ui.input
+                            id="color"
+                            name="color"
+                            wire:model="color"
+                            :label="__('listing.fields.color')"
+                            hint="Contoh: Hitam Metalik, Putih"
+                            :error="$errors->first('color')"
+                            required
+                        />
                     </div>
 
                     {{-- Nomor Rangka (Sensitif / Terenkripsi) --}}
@@ -444,6 +431,75 @@
         @if ($step === 3)
             <x-ui.card :title="__('listing.steps.inspection')" subtitle="Atur kesiapan waktu dan tempat bertemu dengan teknisi inspeksi SIMOKAS.">
                 <div class="space-y-6">
+                    {{-- Lokasi: peta + alamat (PRD 16.1) --}}
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-semibold text-text">
+                                {{ __('listing.fields.location_title') }}
+                            </h3>
+                            <p class="text-xs text-muted">
+                                {{ __('listing.fields.location_hint') }}
+                            </p>
+                        </div>
+
+                        @include('listing::partials.location-picker')
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <x-ui.input
+                                    id="lat"
+                                    name="lat"
+                                    type="text"
+                                    inputmode="decimal"
+                                    wire:model="lat"
+                                    :label="__('listing.fields.lat')"
+                                    :hint="__('listing.fields.lat_hint')"
+                                    :error="$errors->first('lat')"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <x-ui.input
+                                    id="lng"
+                                    name="lng"
+                                    type="text"
+                                    inputmode="decimal"
+                                    wire:model="lng"
+                                    :label="__('listing.fields.lng')"
+                                    :hint="__('listing.fields.lng_hint')"
+                                    :error="$errors->first('lng')"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <x-ui.textarea
+                                id="address_full"
+                                name="address_full"
+                                wire:model="address_full"
+                                rows="3"
+                                :label="__('listing.fields.address_full')"
+                                :hint="__('listing.fields.address_full_hint')"
+                                :error="$errors->first('address_full')"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <x-ui.input
+                                id="area_name"
+                                name="area_name"
+                                wire:model="area_name"
+                                :label="__('listing.fields.area_name')"
+                                :hint="__('listing.fields.area_name_hint') . ' ' . __('listing.fields.area_name_public_note')"
+                                :error="$errors->first('area_name')"
+                                required
+                            />
+                        </div>
+                    </div>
+
                     {{-- Tempat Inspeksi --}}
                     <div>
                         <x-ui.input
