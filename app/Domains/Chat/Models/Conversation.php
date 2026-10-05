@@ -105,8 +105,7 @@ final class Conversation extends Model
     {
         $userId = $user instanceof User ? $user->id : $user;
 
-        $member = $this->members->firstWhere('user_id', $userId)
-            ?? $this->members()->where('user_id', $userId)->first();
+        $member = $this->members()->where('user_id', $userId)->first();
 
         if (! $member) {
             return 0;
