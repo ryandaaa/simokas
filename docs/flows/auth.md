@@ -52,6 +52,7 @@ flowchart TD
 | AUTH-R8 | Verifikasi email dimatikan pada P0 [OPEN] |
 | AUTH-R9 | Persetujuan syarat ketentuan dicatat di `accepted_terms_at` (P1) |
 | AUTH-R10 | Inspektor tidak dapat mengajukan inspeksi, membeli, atau menjual (D-06, [OPEN]) |
+| AUTH-R11 | Pengaturan akun: nama dan nomor HP dapat diubah, email TIDAK bisa diubah (PRD 13.10 [OPEN]: perubahan email memerlukan verifikasi email yang ditunda hingga P1). Ganti password wajib menyertakan password lama |
 
 ## 4. Edge case
 
@@ -82,5 +83,5 @@ flowchart TD
 - [x] `AUTH-T10` Alur reset password sukses, tautan kedaluwarsa ditolak (AUTH-E6)
 - [x] `AUTH-T11` Dashboard mengarah sesuai role (dashboard sementara [USULAN] disediakan oleh Identity hingga kartu DSH-1)
 - [x] `AUTH-T12` Setiap role mengakses rute role lain mendapat 403 (dataset role × rute)
-- [ ] `AUTH-T13` Ubah profil dan ganti password
+- [x] `AUTH-T13` Ubah profil dan ganti password
 - [x] `AUTH-T14` Seeder membuat admin dan admin tidak bisa dibuat dari rute publik
