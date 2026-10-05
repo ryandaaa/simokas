@@ -1,0 +1,12 @@
+/* Listing map overrides. Loaded only with the listing-map Vite entry. */
+
+/* Tailwind preflight caps images at max-width: 100%, which squeezes Leaflet
+   tiles and markers. Restore their natural size inside the map only. */
+.listing-map img {
+    max-width: none;
+}
+
+.listing-map:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}

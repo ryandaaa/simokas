@@ -16,6 +16,7 @@ use App\Domains\Listing\Exceptions\PhotoUploadException;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Models\ListingInspectionSlot;
 use App\Domains\Listing\Models\ListingPhoto;
+use App\Domains\Listing\ValueObjects\PekanbaruBoundary;
 use finfo;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\UploadedFile;
@@ -144,7 +145,36 @@ final class CreateListing
             ];
         }
 
-        // 5. Simpan transaksi database dan berkas di disk privat
+        // 5. Validasi lokasi di server (LST-R3): titik wajib ada, numerik,
+        // dalam rentang, dan di dalam wilayah Pekanbaru. Dijaga di Action
+        // agar berlaku untuk semua pemanggil, bukan hanya form Livewire.
+        if ($dto->lat === null || $dto->lng === null) {
+            throw ListingValidationException::locationRequired();
+        }
+
+        if (! is_finite($dto->lat) || ! is_finite($dto->lng)) {
+            throw ListingValidationException::locationInvalid();
+        }
+
+        if ($dto->lat < -90 || $dto->lat > 90 || $dto->lng < -180 || $dto->lng > 180) {
+            throw ListingValidationException::locationInvalid();
+        }
+
+        if (! PekanbaruBoundary::contains($dto->lat, $dto->lng)) {
+            throw ListingValidationException::locationOutsidePekanbaru();
+        }
+
+        $addressFull = trim((string) ($dto->address_full ?? ''));
+        if ($addressFull === '' || mb_strlen($addressFull) < 10 || mb_strlen($addressFull) > 500) {
+            throw ListingValidationException::locationRequired();
+        }
+
+        $areaName = trim((string) ($dto->area_name ?? ''));
+        if ($areaName === '' || mb_strlen($areaName) > 100) {
+            throw ListingValidationException::locationRequired();
+        }
+
+        // 6. Simpan transaksi database dan berkas di disk privat
         $storedPaths = [];
 
         try {
