@@ -63,7 +63,7 @@ it('LST-T13 only lets owner and admin open non-public listings (LST-E10)', funct
     'in_transaction visible to admin' => [ListingStatus::InTransaction, 'admin', true],
 ]);
 
-it('LST-T13 forbids guests and strangers from opening non-public photos', function (ListingStatus $status) {
+it('LST-T13 forbids guests and strangers from opening photos of non-public listings', function (ListingStatus $status) {
     $owner = User::factory()->user()->create();
     $other = User::factory()->user()->create();
     $listing = Listing::factory()->create(['seller_id' => $owner->id, 'status' => $status]);
@@ -85,6 +85,32 @@ it('LST-T13 forbids guests and strangers from opening non-public photos', functi
     [ListingStatus::PendingReview],
     [ListingStatus::Rejected],
     [ListingStatus::Inactive],
+]);
+
+it('LST-T17 allows guests and strangers to open photos of photo-public listings with a public cache header', function (ListingStatus $status) {
+    $owner = User::factory()->user()->create();
+    $other = User::factory()->user()->create();
+    $listing = Listing::factory()->create(['seller_id' => $owner->id, 'status' => $status]);
+    $photo = $listing->photos()->create([
+        'storage_path' => 'listings/'.$listing->id.'/cover.jpg',
+        'sort_order' => 0,
+        'is_cover' => true,
+    ]);
+    Storage::fake('private');
+    Storage::disk('private')->put($photo->storage_path, 'bytes');
+
+    $url = route('listings.photos.show', ['listing' => $listing->id, 'photo' => $photo->id]);
+
+    \Pest\Laravel\get($url)
+        ->assertOk()
+        ->assertHeader('Cache-Control', 'max-age=86400, must-revalidate, public');
+
+    \Pest\Laravel\actingAs($other);
+    \Pest\Laravel\get($url)->assertOk();
+})->with([
+    [ListingStatus::Active],
+    [ListingStatus::InInspection],
+    [ListingStatus::InTransaction],
     [ListingStatus::Sold],
 ]);
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domains\Listing\Http\Controllers;
 
-use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Models\ListingPhoto;
 use Illuminate\Http\Request;
@@ -30,7 +29,7 @@ final class ViewListingPhotoController
             'X-Content-Type-Options' => 'nosniff',
         ];
 
-        if ($listing->status === ListingStatus::Active) {
+        if ($listing->status->isPhotoPubliclyVisible()) {
             $headers['Cache-Control'] = 'public, max-age=86400, must-revalidate';
         } else {
             $headers['Cache-Control'] = 'private, no-cache, no-store, must-revalidate';

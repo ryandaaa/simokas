@@ -90,16 +90,24 @@ final class ListingPolicy
 
     /**
      * Determine whether the user can view a photo of the listing.
-     * If listing is active, public can view.
-     * If listing is pending_review/rejected/inactive, only owner and admin can view.
+     * Photos of photo-public listings (active, in_inspection,
+     * in_transaction, sold [USULAN]) may be opened by anyone, including
+     * guests, so the public etalase and detail pages never show broken
+     * images (CAT-R1, CAT-E5, LST-E11). Photos of pending_review, rejected,
+     * and inactive listings stay restricted to the owner and admins.
+     * Blocked and non-active users are always denied.
      */
     public function viewPhoto(?User $user, Listing $listing, ListingPhoto $photo): bool
     {
-        if ($listing->status === ListingStatus::Active) {
+        if ($user !== null && ($user->isBlocked() || ! $user->isActive())) {
+            return false;
+        }
+
+        if ($listing->status->isPhotoPubliclyVisible()) {
             return true;
         }
 
-        if ($user === null || $user->isBlocked() || ! $user->isActive()) {
+        if ($user === null) {
             return false;
         }
 

@@ -72,6 +72,7 @@ flowchart TD
 | LST-R8 | Listing `sold` tidak dapat diubah |
 | LST-R9 | Pengguna yang diblokir: listing aktifnya otomatis `inactive` [USULAN] |
 | LST-R10 | Perubahan status hanya lewat Action domain Listing, dipicu event dari domain lain |
+| LST-R11 | Foto listing berstatus photo-public (`active`, `in_inspection`, `in_transaction`, `sold` [USULAN]) dapat dibuka publik termasuk tamu, dengan header cache publik. `sold` termasuk agar halaman Terjual tetap menampilkan galeri [USULAN]. Foto `pending_review`, `rejected`, `inactive` hanya untuk pemilik dan admin (header cache privat); pengguna blocked/non-aktif selalu ditolak. Sumber kebenaran: `ListingStatus::isPhotoPubliclyVisible()` |
 
 ## 5. Edge case
 
@@ -108,3 +109,4 @@ flowchart TD
 - [ ] `LST-T14` Event `JobCompleted` mengisi `is_inspected` dan `last_inspected_at` (menyusul di JOB-4; Action `MarkListingInspected` sudah siap, lihat `docs/features/listing-contracts.md`)
 - [ ] `LST-T15` Event `UserBlocked` menonaktifkan listing aktif pengguna (LST-R9) (menyusul di ADM-4)
 - [x] `LST-T16` Aksi admin ganda hanya berlaku sekali (LST-E8)
+- [x] `LST-T17` Foto status photo-public (`active`, `in_inspection`, `in_transaction`, `sold` [USULAN]) dapat dibuka tamu dengan header cache publik; non-publik hanya pemilik/admin dengan cache privat; blocked/non-aktif ditolak (LST-R11; dataset semua status × peran). `ListingPolicy::view` tidak diubah: halaman detail publik non-`active` tetap ditangani aturan visibilitas milik domain Catalog
