@@ -6,6 +6,7 @@ namespace App\Domains\Inspection\Tests\Unit;
 
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Models\User;
+use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspection\Policies\InspectionJobPolicy;
 use App\Domains\Listing\Models\Listing;
@@ -67,7 +68,7 @@ it('JOB-T18 allows only assigned inspector and admin to viewDetail and viewPriva
         'listing_id' => $listing->id,
         'requester_id' => $requester->id,
         'inspector_id' => $assignedInspector->id,
-        'status' => \App\Domains\Inspection\Enums\JobStatus::Taken,
+        'status' => JobStatus::Taken,
     ]);
 
     $actingUser = match ($roleType) {
@@ -115,4 +116,3 @@ it('JOB-T18 allows only active inspector to take job; other roles are rejected',
     'admin' => ['admin', false],
     'blocked inspector' => ['blocked_inspector', false],
 ]);
-

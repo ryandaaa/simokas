@@ -14,7 +14,6 @@ use App\Domains\Inspection\Exceptions\MaxActiveJobsException;
 use App\Domains\Inspection\Exceptions\OwnListingJobException;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Contracts\InspectorEligibility;
-use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\DB;
@@ -56,9 +55,9 @@ final class TakeJob
             }
 
             $allowedSpecialties = $this->eligibility->getAllowedSpecialties($inspector);
-            $vehicleType = $listing?->vehicle_type instanceof VehicleType
+            $vehicleType = $listing instanceof Listing
                 ? $listing->vehicle_type->value
-                : (string) ($listing?->vehicle_type ?? '');
+                : '';
 
             if (! in_array($vehicleType, $allowedSpecialties, true)) {
                 throw InspectorSpecialtyMismatchException::create();

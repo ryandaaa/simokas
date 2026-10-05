@@ -9,6 +9,7 @@ use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Helpers\ListingPrivacyHelper;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -43,10 +44,8 @@ it('maps InspectionJob model to OpenJobCard DTO with only safe fields', function
         ->and($card->areaName)->toBe('Payung Sekaki')
         ->and($card->feeAmount)->toBe(50000);
 
-    $cardArray = (array) $card;
-    expect(array_key_exists('address_full', $cardArray))->toBeFalse()
-        ->and(array_key_exists('chassis_number', $cardArray))->toBeFalse()
-        ->and(array_key_exists('lat', $cardArray))->toBeFalse()
-        ->and(array_key_exists('lng', $cardArray))->toBeFalse()
-        ->and(array_key_exists('inspection_place', $cardArray))->toBeFalse();
+    ListingPrivacyHelper::assertNoPrivateListingData(
+        (string) json_encode($card),
+        ['Jl. Rahasia No. 1', 'CHASSIS-1234', '0.51', '101.45', 'seller_home']
+    );
 });
