@@ -30,7 +30,8 @@ Kontras teks terhadap latar minimal WCAG AA (4,5:1 untuk teks biasa). Periksa wa
 
 ### Tipografi
 
-- Satu keluarga huruf: **Plus Jakarta Sans**, dihosting sendiri (tanpa CDN), dengan cadangan `system-ui`.
+- Satu keluarga huruf: **Satoshi** (Indian Type Foundry, didistribusikan lewat Fontshare), dihosting sendiri (tanpa CDN), dengan cadangan `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`.
+- Bobot yang digunakan: Regular (400), Medium (500), Bold (700) dalam format berkas WOFF2 Latin lokal.
 - Ukuran dasar 16 px. Teks bantu minimal 14 px. Tidak ada teks di bawah 12 px.
 
 ### Jarak, sudut, bayangan
