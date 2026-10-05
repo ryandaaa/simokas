@@ -74,6 +74,9 @@ return [
         'posting_not_success' => 'Bagi hasil hanya dapat diposting untuk pembayaran berstatus success (status saat ini: :status).',
         'posting_purpose_mismatch' => 'Jenis entri :type tidak sesuai dengan tujuan pembayaran :purpose.',
         'posting_invalid_inspector' => 'Penerima bagi hasil harus pengguna dengan peran inspektor yang valid.',
+        'posting_invalid_percentage' => 'Persentase komisi platform harus bilangan bulat 0 sampai 100 (diberikan: :pct).',
+        'posting_snapshot_required' => 'Posting fee inspeksi wajib memakai persentase komisi yang disalin pada job, bukan pengaturan saat ini.',
+        'ledger_entry_immutable' => 'Entri ledger bersifat append-only dan tidak dapat diubah atau dihapus.',
     ],
 
     'ledger' => [
@@ -86,7 +89,7 @@ return [
         ],
         'notes' => [
             'platform_fee' => 'Komisi platform :pct% dari pembayaran.',
-            'payout' => 'Pembayaran :type kepada inspektor.',
+            'payout' => 'Pembayaran :type kepada inspektor (komisi platform :pct%).',
             'refund' => 'Pengembalian dana kepada pembayar.',
         ],
     ],

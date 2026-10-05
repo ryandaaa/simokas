@@ -12,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('ledger_entries', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('payment_id')->constrained('payments')->cascadeOnDelete();
-            $table->foreignUuid('account_user_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('payment_id')->constrained('payments')->restrictOnDelete();
+            $table->foreignUuid('account_user_id')->nullable()->constrained('users')->restrictOnDelete();
             $table->string('entry_type', 50);
             // Signed on purpose: PRD 18.12 records debits as negative amounts.
             $table->bigInteger('amount');

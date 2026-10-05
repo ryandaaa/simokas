@@ -18,14 +18,14 @@ final class LedgerService implements Ledger
         private readonly RefundPayment $refundAction,
     ) {}
 
-    public function postAccessPayout(string $paymentId, string $inspectorId): void
+    public function postAccessPayout(string $paymentId, string $inspectorId, ?int $platformFeePct = null): void
     {
-        $this->payoutAction->handle($this->findPayment($paymentId), $inspectorId, LedgerEntryType::AccessFee);
+        $this->payoutAction->handle($this->findPayment($paymentId), $inspectorId, LedgerEntryType::AccessFee, $platformFeePct);
     }
 
-    public function postInspectionPayout(string $paymentId, string $inspectorId): void
+    public function postInspectionPayout(string $paymentId, string $inspectorId, int $platformFeePct): void
     {
-        $this->payoutAction->handle($this->findPayment($paymentId), $inspectorId, LedgerEntryType::InspectionFee);
+        $this->payoutAction->handle($this->findPayment($paymentId), $inspectorId, LedgerEntryType::InspectionFee, $platformFeePct);
     }
 
     public function refundPayment(string $paymentId): void

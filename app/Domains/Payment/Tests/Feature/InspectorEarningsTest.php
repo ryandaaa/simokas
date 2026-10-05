@@ -46,7 +46,7 @@ function seedEarnings(User $inspector): void
     ]);
 
     $ledger->postAccessPayout($access->id, $inspector->id);
-    $ledger->postInspectionPayout($inspection->id, $inspector->id);
+    $ledger->postInspectionPayout($inspection->id, $inspector->id, 10);
 }
 
 it('PAY-T12 shows inspector balance and per-source breakdown on the earnings page', function () {
@@ -76,7 +76,7 @@ it('shows only own entries and hides other inspectors earnings', function () {
         'purpose' => PaymentPurpose::Inspection,
         'amount' => 150000,
     ]);
-    app(Ledger::class)->postInspectionPayout($otherPayment->id, $other->id);
+    app(Ledger::class)->postInspectionPayout($otherPayment->id, $other->id, 10);
 
     Livewire::actingAs($inspector)
         ->test(InspectorEarnings::class)
