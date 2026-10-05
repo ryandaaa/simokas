@@ -96,9 +96,24 @@ final class InspectionFormPage extends Component
         }
     }
 
+    /**
+     * @return array<string, array<int, string>>
+     */
+    protected function rules(): array
+    {
+        return [
+            'items' => ['array'],
+            'items.*.rating' => ['nullable', 'string', 'in:good,fair,poor'],
+            'items.*.note' => ['nullable', 'string', 'max:1000'],
+            'summaryNote' => ['nullable', 'string', 'max:2000'],
+        ];
+    }
+
     public function saveDraft(SaveDraftResult $saveDraft): void
     {
         Gate::authorize('updateDraft', $this->result);
+
+        $this->validate();
 
         $this->draftSaving = true;
         $this->actionError = null;
@@ -125,6 +140,8 @@ final class InspectionFormPage extends Component
     public function nextCategory(SaveDraftResult $saveDraft): void
     {
         Gate::authorize('updateDraft', $this->result);
+
+        $this->validate();
 
         // Auto-save draft when navigating categories (RES-R2)
         try {

@@ -17,6 +17,22 @@ enum ResultStatus: string
         };
     }
 
+    public function color(): string
+    {
+        return match ($this) {
+            self::Draft => 'warning',
+            self::Submitted => 'success',
+        };
+    }
+
+    public function icon(): string
+    {
+        return match ($this) {
+            self::Draft => 'dokumen',
+            self::Submitted => 'centang',
+        };
+    }
+
     public function isDraft(): bool
     {
         return $this === self::Draft;
