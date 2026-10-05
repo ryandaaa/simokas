@@ -22,12 +22,17 @@ final class StartConversationController
         /** @var User $user */
         $user = Auth::user();
 
-        $conversation = $startConversation->handle(
-            initiator: $user,
-            contextType: $validated['context_type'],
-            contextId: $validated['context_id'],
-        );
+        try {
+            $conversation = $startConversation->handle(
+                initiator: $user,
+                contextType: $validated['context_type'],
+                contextId: $validated['context_id'],
+            );
 
-        return redirect()->route('conversations.show', $conversation);
+            return redirect()->route('conversations.show', $conversation);
+        } catch (\App\Support\Exceptions\DomainException $e) {
+            abort($e->getStatusCode(), $e->getMessage());
+        }
     }
 }
+
