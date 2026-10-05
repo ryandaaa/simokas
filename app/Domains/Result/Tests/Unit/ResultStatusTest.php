@@ -19,6 +19,10 @@ final class ResultStatusTest extends TestCase
     {
         $this->assertSame('Draf', ResultStatus::Draft->label());
         $this->assertSame('Dikirim', ResultStatus::Submitted->label());
+        $this->assertSame('warning', ResultStatus::Draft->color());
+        $this->assertSame('success', ResultStatus::Submitted->color());
+        $this->assertSame('dokumen', ResultStatus::Draft->icon());
+        $this->assertSame('centang', ResultStatus::Submitted->icon());
     }
 
     public function test_it_checks_status_helpers(): void
