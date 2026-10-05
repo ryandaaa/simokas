@@ -253,4 +253,51 @@ it('CHT-T13 creates job conversation via forJobTaken and rejects unassigned insp
         ->and($conversation->hasMember($seller->id))->toBeTrue();
 });
 
+it('CHT-T01 locks context record row in database to serialize conversation creation and prevent duplicates', function (string $contextType) {
+    DB::enableQueryLog();
+
+    $action = app(StartConversation::class);
+
+    $seller = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+    $buyer = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+    $inspector = User::factory()->create(['role' => UserRole::Inspector, 'status' => UserStatus::Active]);
+
+    $listing = Listing::factory()->active()->create(['seller_id' => $seller->id]);
+    $job = InspectionJob::factory()->create([
+        'listing_id' => $listing->id,
+        'requester_id' => $buyer->id,
+        'inspector_id' => $inspector->id,
+    ]);
+
+    $initiator = $contextType === 'listing' ? $buyer : $inspector;
+    $contextId = $contextType === 'listing' ? $listing->id : $job->id;
+    $contextEnum = $contextType === 'listing' ? ConversationContext::Listing : ConversationContext::Job;
+
+    // Consecutive call 1
+    $conversation1 = $action->handle($initiator, $contextEnum, $contextId);
+
+    // Consecutive call 2
+    $conversation2 = $action->handle($initiator, $contextEnum, $contextId);
+
+    // Both calls return the exact same conversation
+    expect($conversation1->id)->toBe($conversation2->id);
+
+    // Only one conversation is created in the database
+    expect(Conversation::query()->where('context_type', $contextEnum)->where('context_id', $contextId)->count())->toBe(1);
+
+    // Verify row lock (lockForUpdate) was executed on the context table
+    $queries = DB::getQueryLog();
+    $targetTable = $contextType === 'listing' ? 'listings' : 'inspection_jobs';
+    $hasLockForUpdate = collect($queries)->contains(function (array $query) use ($targetTable) {
+        $sql = strtolower($query['query']);
+        return str_contains($sql, $targetTable) && str_contains($sql, 'for update');
+    });
+
+    expect($hasLockForUpdate)->toBeTrue();
+})->with([
+    'listing context' => ['listing'],
+    'job context' => ['job'],
+]);
+
+
 
