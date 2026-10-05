@@ -68,5 +68,41 @@ return [
         'unauthorized' => 'Anda tidak memiliki hak untuk membayar atau melihat tagihan ini.',
         'cannot_expire_processed' => 'Tagihan yang sudah berhasil atau dikembalikan tidak dapat dikedaluwarsakan.',
         'idempotency_key_conflict' => 'Kunci idempotensi sudah dipakai untuk tagihan lain. Gunakan kunci baru yang unik untuk setiap tagihan.',
+        'already_posted' => 'Bagi hasil pembayaran ini sudah dicatat di ledger dan tidak dapat diposting ulang.',
+        'refund_not_allowed' => 'Refund hanya dapat dilakukan untuk pembayaran berstatus success (status saat ini: :status).',
+        'refund_already_posted' => 'Pembayaran ini sudah diposting ke ledger sehingga tidak dapat di-refund.',
+        'posting_not_success' => 'Bagi hasil hanya dapat diposting untuk pembayaran berstatus success (status saat ini: :status).',
+        'posting_purpose_mismatch' => 'Jenis entri :type tidak sesuai dengan tujuan pembayaran :purpose.',
+        'posting_invalid_inspector' => 'Penerima bagi hasil harus pengguna dengan peran inspektor yang valid.',
+    ],
+
+    'ledger' => [
+        'types' => [
+            'inspection_fee' => 'Fee Inspeksi',
+            'access_fee' => 'Fee Akses Hasil',
+            'sale_commission' => 'Komisi Transaksi',
+            'platform_fee' => 'Komisi Platform',
+            'refund' => 'Refund',
+        ],
+        'notes' => [
+            'platform_fee' => 'Komisi platform :pct% dari pembayaran.',
+            'payout' => 'Pembayaran :type kepada inspektor.',
+            'refund' => 'Pengembalian dana kepada pembayar.',
+        ],
+    ],
+
+    'earnings' => [
+        'title' => 'Pendapatan Saya',
+        'subtitle' => 'Jumlah entri kredit ledger Anda. Simulasi tanpa penarikan nyata.',
+        'balance' => 'Total Saldo',
+        'balance_hint' => 'Saldo sama dengan jumlah seluruh entri kredit Anda di ledger.',
+        'breakdown' => 'Rincian per Sumber',
+        'entries_title' => 'Riwayat Pendapatan',
+        'entries_count' => '1 entri|:count entri',
+        'empty_title' => 'Belum ada pendapatan',
+        'empty_description' => 'Pendapatan dari fee inspeksi dan akses hasil akan tercatat di sini setelah job selesai atau akses dibayar.',
+        'load_failed_title' => 'Gagal memuat pendapatan',
+        'load_failed' => 'Terjadi galat saat memuat data pendapatan. Silakan coba lagi.',
+        'retry' => 'Coba lagi',
     ],
 ];
