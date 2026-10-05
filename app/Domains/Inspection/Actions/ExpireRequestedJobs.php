@@ -10,6 +10,7 @@ use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Payment\Contracts\Billing;
 use App\Support\Clock;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -30,45 +31,44 @@ final class ExpireRequestedJobs
         $now = Clock::now();
         $expiredCount = 0;
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, InspectionJob> $jobs */
-        $jobs = InspectionJob::query()
+        InspectionJob::query()
             ->where('status', JobStatus::Requested->value)
             ->where('expires_at', '<=', $now)
-            ->get();
+            ->chunkById(100, function (Collection $jobs) use (&$expiredCount, $now): void {
+                foreach ($jobs as $job) {
+                    $expired = DB::transaction(function () use ($job, $now): bool {
+                        $affected = InspectionJob::query()
+                            ->whereKey($job->getKey())
+                            ->where('status', JobStatus::Requested->value)
+                            ->where('expires_at', '<=', $now)
+                            ->update([
+                                'status' => JobStatus::Expired->value,
+                                'updated_at' => $now,
+                            ]);
 
-        foreach ($jobs as $job) {
-            $expired = DB::transaction(function () use ($job, $now): bool {
-                $affected = InspectionJob::query()
-                    ->whereKey($job->getKey())
-                    ->where('status', JobStatus::Requested->value)
-                    ->where('expires_at', '<=', $now)
-                    ->update([
-                        'status' => JobStatus::Expired->value,
-                        'updated_at' => $now,
-                    ]);
+                        if ($affected === 0) {
+                            return false;
+                        }
 
-                if ($affected === 0) {
-                    return false;
+                        // Batalkan tagihan bila kontrak Billing menyediakan method pembatalan
+                        if ($this->billing !== null && method_exists($this->billing, 'cancelBill')) {
+                            $this->billing->cancelBill((string) $job->getKey());
+                        }
+
+                        $this->events->dispatch(new JobExpired(
+                            jobId: (string) $job->getKey(),
+                            listingId: (string) $job->listing_id,
+                            requesterId: (string) $job->requester_id,
+                        ));
+
+                        return true;
+                    });
+
+                    if ($expired) {
+                        $expiredCount++;
+                    }
                 }
-
-                // Batalkan tagihan bila kontrak Billing menyediakan method pembatalan
-                if ($this->billing !== null && method_exists($this->billing, 'cancelBill')) {
-                    $this->billing->cancelBill((string) $job->getKey());
-                }
-
-                $this->events->dispatch(new JobExpired(
-                    jobId: (string) $job->getKey(),
-                    listingId: (string) $job->listing_id,
-                    requesterId: (string) $job->requester_id,
-                ));
-
-                return true;
             });
-
-            if ($expired) {
-                $expiredCount++;
-            }
-        }
 
         return $expiredCount;
     }
