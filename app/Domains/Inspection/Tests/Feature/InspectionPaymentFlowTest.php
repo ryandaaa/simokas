@@ -14,9 +14,8 @@ use App\Domains\Payment\DTOs\ProcessPaymentData;
 use App\Domains\Payment\Enums\PaymentMethod;
 use App\Domains\Payment\Enums\PaymentStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 it('executes full end-to-end flow: request inspection -> successful payment -> job paid -> listing in_inspection', function () {
     $requester = User::factory()->user()->create();

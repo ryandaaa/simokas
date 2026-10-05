@@ -15,12 +15,11 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Models\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 it('redirects guest to login when accessing request inspection page', function () {
     $listing = Listing::factory()->active()->create();

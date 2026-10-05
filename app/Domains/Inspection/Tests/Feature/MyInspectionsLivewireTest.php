@@ -11,12 +11,11 @@ use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
-use Tests\TestCase;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-uses(TestCase::class, RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
 it('redirects guest to login when accessing my inspections page', function () {
     get(route('jobs.mine'))->assertRedirect(route('login'));
