@@ -52,11 +52,9 @@ final class MarkJobPaidOnPaymentSucceeded
             /** @var InspectionJob|null $job */
             $job = InspectionJob::query()->find($event->refId);
 
-            // Jika job tidak ada, atau job cancelled/expired (bukan status requested awal),
-            // refund pembayaran secara idempoten agar dana tidak tersangkut tanpa job.
-            // Jika job sudah paid/taken/scheduled/dst, ini adalah duplicate event dari payment yang sah,
-            // sehingga tidak di-refund.
-            if ($job === null || in_array($job->status, [JobStatus::Cancelled, JobStatus::Expired], true)) {
+            // Jika job cancelled atau expired (bukan status requested lagi saat pembayaran tiba),
+            // pembayaran di-refund otomatis secara idempoten lewat kontrak Ledger::refundPayment.
+            if ($job instanceof InspectionJob && in_array($job->status, [JobStatus::Cancelled, JobStatus::Expired], true)) {
                 $this->ledger->refundPayment($event->paymentId);
             }
 
