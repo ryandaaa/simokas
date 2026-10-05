@@ -123,14 +123,14 @@ sequenceDiagram
 - [x] `JOB-T06` Alamat persis dan nomor rangka hanya muncul setelah `taken` untuk inspektor pengambil (JOB-R5)
 - [x] `JOB-T07` Inspektor batal: kembali `paid`, `inspector_id` null, `available_since` baru (JOB-E3, JOB-E16)
 - [x] `JOB-T08` Setiap transisi sah diterima dan tidak sah ditolak (dataset)
-- [ ] `JOB-T09` Tagihan kedaluwarsa tepat di 30 menit (29 menit belum, 31 menit sudah)
-- [ ] `JOB-T10` Job `paid` 7 hari: refund dan listing `active` (6 hari belum, 7 hari sudah), idempoten (JOB-R8, JOB-E12)
-- [ ] `JOB-T11` Job `result_submitted` 3 hari: `completed` dan fee cair (JOB-R9), idempoten
-- [ ] `JOB-T12` Job `taken` tanpa jadwal 48 jam ditandai `needs_attention_at` (JOB-R10)
+- [x] `JOB-T09` Tagihan kedaluwarsa tepat di 30 menit (29 menit belum, 31 menit sudah)
+- [x] `JOB-T10` Job `paid` 7 hari: refund dan listing `active` (6 hari belum, 7 hari sudah), idempoten (JOB-R8, JOB-E12)
+- [x] `JOB-T11` Job `result_submitted` 3 hari: `completed` dan fee cair (JOB-R9), idempoten
+- [x] `JOB-T12` Job `taken` tanpa jadwal 48 jam ditandai `needs_attention_at` (JOB-R10)
 - [x] `JOB-T13` Pembatalan pemohon per status: refund atau ditolak sesuai tabel bagian 3 (dataset)
 - [x] `JOB-T14` Pemohon tidak dapat membatalkan saat `in_progress`, admin dapat (JOB-E17)
-- [ ] `JOB-T15` Terima Hasil memposting ledger sekali, ganda tidak berefek (JOB-E15)
+- [x] `JOB-T15` Terima Hasil memposting ledger sekali, ganda tidak berefek (JOB-E15)
 - [x] `JOB-T16` Perubahan tarif tidak memengaruhi job lama (JOB-E13)
 - [x] `JOB-T17` Inspektor tidak dapat mengajukan inspeksi (JOB-R12)
 - [x] `JOB-T18` Aksi tiap role pada job milik orang lain mendapat 403 (dataset role × aksi)
-- [ ] `JOB-T19` Event dipancarkan: `JobTaken`, `JobScheduled`, `ResultSubmitted`, `JobCompleted`, `JobCancelled`, `JobExpired`
+- [x] `JOB-T19` Event dipancarkan: `JobTaken`, `JobScheduled`, `ResultSubmitted`, `JobCompleted`, `JobCancelled`, `JobExpired`

@@ -12,6 +12,7 @@ use App\Domains\Inspection\Actions\MarkJobsNeedingAttention;
 use App\Domains\Inspection\Actions\RequestInspection;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Inspector\Models\InspectorProfile;
 use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
@@ -130,7 +131,7 @@ it('integrates auto-complete job: real fee payout in Ledger and listing inspecte
 
     $user = User::factory()->user()->create();
     $inspector = User::factory()->inspector()->create();
-    \App\Domains\Inspector\Models\InspectorProfile::factory()->approved()->create([
+    InspectorProfile::factory()->approved()->create([
         'user_id' => $inspector->id,
         'vehicle_types' => [VehicleType::Car->value],
     ]);

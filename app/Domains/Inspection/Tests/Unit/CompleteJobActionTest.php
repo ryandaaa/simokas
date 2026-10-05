@@ -18,6 +18,7 @@ use App\Domains\Payment\Enums\PaymentStatus;
 use App\Domains\Payment\Models\Payment;
 use App\Support\Clock;
 use Carbon\Carbon;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Mockery;
@@ -25,7 +26,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-it('completes job, sets completed_at, posts payout to ledger, and dispatches JobCompleted', function () {
+it('JOB-T15 completes job, sets completed_at, posts payout to ledger (once), and dispatches JobCompleted – idempoten ganda tidak berefek (JOB-E15)', function () {
     Event::fake([JobCompleted::class]);
 
     $t0 = Carbon::parse('2026-10-06 12:00:00', Clock::TIMEZONE);
@@ -62,7 +63,7 @@ it('completes job, sets completed_at, posts payout to ledger, and dispatches Job
 
     $action = new CompleteJob(
         ledger: $ledgerMock,
-        events: app(\Illuminate\Contracts\Events\Dispatcher::class),
+        events: app(Dispatcher::class),
     );
 
     $completedJob = $action->handle($job);
