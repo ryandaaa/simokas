@@ -26,6 +26,17 @@ final class ListingValidationException extends DomainException
         );
     }
 
+    public static function fieldInvalid(string $field): self
+    {
+        return new self(
+            __('listing.validation.field_invalid', ['field' => $field]),
+            self::CODE_VALIDATION_ERROR,
+            422,
+            null,
+            ['field' => $field],
+        );
+    }
+
     public static function invalidSeller(): self
     {
         return new self(
