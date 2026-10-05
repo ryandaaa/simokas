@@ -8,7 +8,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
-final class Dashboard extends Component
+final class AdminDashboard extends Component
 {
     public function logout(): mixed
     {
@@ -22,8 +22,8 @@ final class Dashboard extends Component
 
     public function render(): View
     {
-        return view('identity::livewire.dashboard', [
+        return view('identity::livewire.admin-dashboard', [
             'user' => Auth::user(),
-        ])->layout('components.layouts.app', ['title' => __('identity.dashboard.title')]);
+        ])->layout('components.layouts.app', ['title' => __('identity.dashboard.admin_title')]);
     }
 }

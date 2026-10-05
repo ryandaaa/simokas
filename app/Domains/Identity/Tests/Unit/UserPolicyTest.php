@@ -10,6 +10,28 @@ use Tests\TestCase;
 
 final class UserPolicyTest extends TestCase
 {
+    public function test_view_any_policy(): void
+    {
+        $policy = new UserPolicy;
+
+        $user = new User(['role' => 'user']);
+        $admin = new User(['role' => 'admin']);
+
+        $this->assertFalse($policy->viewAny($user));
+        $this->assertTrue($policy->viewAny($admin));
+    }
+
+    public function test_manage_policy(): void
+    {
+        $policy = new UserPolicy;
+
+        $user = new User(['role' => 'user']);
+        $admin = new User(['role' => 'admin']);
+
+        $this->assertFalse($policy->manage($user));
+        $this->assertTrue($policy->manage($admin));
+    }
+
     public function test_view_policy(): void
     {
         $policy = new UserPolicy;
