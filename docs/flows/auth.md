@@ -70,17 +70,17 @@ flowchart TD
 
 ## 5. Daftar test case
 
-- [ ] `AUTH-T01` Pengguna mendaftar dengan data valid dan masuk ke dashboard
-- [ ] `AUTH-T02` Email dan HP tidak valid ditolak dengan galat per field (dataset)
-- [ ] `AUTH-T03` Password lemah ditolak (dataset)
-- [ ] `AUTH-T04` Inspektor mendaftar berstatus `pending` dan tidak bisa membuka daftar job
-- [ ] `AUTH-T05` Pendaftaran tidak bisa menghasilkan role `admin` (AUTH-E2)
-- [ ] `AUTH-T06` Email duplikat ditolak (AUTH-E1)
-- [ ] `AUTH-T07` Login gagal tidak membedakan email atau password salah
-- [ ] `AUTH-T08` Rate limit login dan lupa password (AUTH-E3)
-- [ ] `AUTH-T09` Pengguna `blocked` tidak bisa login dan sesi aktifnya ditolak (AUTH-E4)
-- [ ] `AUTH-T10` Alur reset password sukses, tautan kedaluwarsa ditolak (AUTH-E6)
-- [ ] `AUTH-T11` Dashboard mengarah sesuai role
+- [x] `AUTH-T01` Pengguna mendaftar dengan data valid dan masuk ke dashboard
+- [x] `AUTH-T02` Email dan HP tidak valid ditolak dengan galat per field (dataset)
+- [x] `AUTH-T03` Password lemah ditolak (dataset)
+- [x] `AUTH-T04` Inspektor mendaftar berstatus `pending` (bagian "tidak bisa membuka daftar job" ditunda hingga kartu JOB-2)
+- [x] `AUTH-T05` Pendaftaran tidak bisa menghasilkan role `admin` (AUTH-E2)
+- [x] `AUTH-T06` Email duplikat ditolak (AUTH-E1)
+- [x] `AUTH-T07` Login gagal tidak membedakan email atau password salah
+- [x] `AUTH-T08` Rate limit login dan lupa password (AUTH-E3)
+- [x] `AUTH-T09` Pengguna `blocked` tidak bisa login dan sesi aktifnya ditolak (AUTH-E4)
+- [x] `AUTH-T10` Alur reset password sukses, tautan kedaluwarsa ditolak (AUTH-E6)
+- [ ] `AUTH-T11` Dashboard mengarah sesuai role (ditunda: dashboard sementara [USULAN] disediakan oleh Identity sampai kartu DSH-1)
 - [ ] `AUTH-T12` Setiap role mengakses rute role lain mendapat 403 (dataset)
 - [ ] `AUTH-T13` Ubah profil dan ganti password
-- [ ] `AUTH-T14` Seeder membuat admin dan admin tidak bisa dibuat dari rute publik
+- [x] `AUTH-T14` Seeder membuat admin dan admin tidak bisa dibuat dari rute publik
