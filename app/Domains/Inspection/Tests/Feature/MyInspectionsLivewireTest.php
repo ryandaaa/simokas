@@ -89,7 +89,7 @@ it('paginates results when user has more than 12 jobs', function () {
     $user = User::factory()->user()->create();
 
     for ($i = 1; $i <= 15; $i++) {
-        $listing = Listing::factory()->active()->create(['title' => "Car Number {$i}"]);
+        $listing = Listing::factory()->active()->create(['title' => sprintf('Kendaraan Alpha-%02d', $i)]);
         InspectionJob::factory()->create([
             'requester_id' => $user->id,
             'listing_id' => $listing->id,
@@ -101,6 +101,6 @@ it('paginates results when user has more than 12 jobs', function () {
 
     Livewire::test(MyInspections::class)
         ->assertOk()
-        ->assertSee('Car Number 15')
-        ->assertDontSee('Car Number 1'); // Page 1 shows newest 12
+        ->assertSee('Kendaraan Alpha-15')
+        ->assertDontSee('Kendaraan Alpha-01'); // Page 1 shows newest 12
 });

@@ -44,7 +44,7 @@ it('locks listing core fields edit when listing has an active inspection job', f
     $seller = User::factory()->user()->create();
     $listing = Listing::factory()->active()->create([
         'seller_id' => $seller->id,
-        'price' => 100000000,
+        'year' => 2020,
     ]);
 
     $job = InspectionJob::factory()->create([
@@ -55,17 +55,17 @@ it('locks listing core fields edit when listing has an active inspection job', f
     /** @var UpdateListing $updateAction */
     $updateAction = app(UpdateListing::class);
 
-    // Changing price (a core field) is rejected while active job exists
+    // Changing year (a core field) is rejected while active job exists
     $dto = new UpdateListingDTO(
-        fields: ['price' => 120000000],
+        fields: ['year' => 2021],
     );
 
     expect(fn () => $updateAction->handle($seller, $listing, $dto))
         ->toThrow(ListingLockedException::class);
 
-    // Once the job is cancelled, editing price succeeds
+    // Once the job is cancelled, editing year succeeds
     $job->update(['status' => JobStatus::Cancelled]);
 
     $updatedListing = $updateAction->handle($seller, $listing, $dto);
-    expect($updatedListing->price)->toBe(120000000);
+    expect($updatedListing->year)->toBe(2021);
 });
