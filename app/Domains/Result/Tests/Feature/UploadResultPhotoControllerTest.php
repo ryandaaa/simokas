@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Domains\Result\Tests\Feature;
 
 use App\Domains\Identity\Models\User;
-use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
-use App\Domains\Result\Enums\ResultStatus;
+use App\Domains\Inspector\Models\InspectorProfile;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\ResultItem;
@@ -33,7 +32,7 @@ final class UploadResultPhotoControllerTest extends TestCase
     private function createVerifiedInspector(): User
     {
         $inspector = User::factory()->inspector()->create();
-        \App\Domains\Inspector\Models\InspectorProfile::factory()->approved()->create([
+        InspectorProfile::factory()->approved()->create([
             'user_id' => $inspector->id,
             'vehicle_types' => ['car', 'motorcycle'],
         ]);
@@ -41,7 +40,7 @@ final class UploadResultPhotoControllerTest extends TestCase
         return $inspector;
     }
 
-    public function test_RES_T04_uploads_camera_photo_successfully_with_server_captured_at(): void
+    public function test_re_s_t04_uploads_camera_photo_successfully_with_server_captured_at(): void
     {
         Carbon::setTestNow('2026-10-06 14:30:00');
 
@@ -88,7 +87,7 @@ final class UploadResultPhotoControllerTest extends TestCase
         Storage::disk('public')->assertMissing($photo->storage_path);
     }
 
-    public function test_RES_T04_rejects_non_camera_capture_with_422_NOT_CAMERA_CAPTURE(): void
+    public function test_re_s_t04_rejects_non_camera_capture_with_422_no_t_camer_a_capture(): void
     {
         $inspector = $this->createVerifiedInspector();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -115,7 +114,7 @@ final class UploadResultPhotoControllerTest extends TestCase
         ]);
     }
 
-    public function test_RES_T05_rejects_file_exceeding_2_mb(): void
+    public function test_re_s_t05_rejects_file_exceeding_2_mb(): void
     {
         $inspector = $this->createVerifiedInspector();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -142,7 +141,7 @@ final class UploadResultPhotoControllerTest extends TestCase
         ]);
     }
 
-    public function test_RES_T05_rejects_non_image_file(): void
+    public function test_re_s_t05_rejects_non_image_file(): void
     {
         $inspector = $this->createVerifiedInspector();
         $job = InspectionJob::factory()->inProgress($inspector)->create();

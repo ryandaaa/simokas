@@ -29,7 +29,7 @@ final class ViewResultPhotoControllerTest extends TestCase
         Storage::fake('public');
     }
 
-    public function test_RES_T16_signed_url_expires_and_fails_after_expiration(): void
+    public function test_re_s_t16_signed_url_expires_and_fails_after_expiration(): void
     {
         Carbon::setTestNow('2026-10-06 10:00:00');
 
@@ -71,7 +71,7 @@ final class ViewResultPhotoControllerTest extends TestCase
         $this->actingAs($inspector)->get($signedUrl)->assertForbidden();
     }
 
-    public function test_RES_T16_signed_url_cannot_be_accessed_by_unauthorized_parties(): void
+    public function test_re_s_t16_signed_url_cannot_be_accessed_by_unauthorized_parties(): void
     {
         Carbon::setTestNow('2026-10-06 10:00:00');
 

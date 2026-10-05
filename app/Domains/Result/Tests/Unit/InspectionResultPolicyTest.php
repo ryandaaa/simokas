@@ -11,6 +11,9 @@ use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
+use App\Domains\Result\Models\ResultItem;
+use App\Domains\Result\Models\ResultPhoto;
+use App\Domains\Result\Models\TemplateItem;
 use App\Domains\Result\Policies\InspectionResultPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -144,7 +147,7 @@ final class InspectionResultPolicyTest extends TestCase
         $job->listing->update(['seller_id' => $seller->id]);
 
         $template = InspectionTemplate::factory()->create(['vehicle_type' => 'motorcycle']);
-        $templateItem = \App\Domains\Result\Models\TemplateItem::factory()->create(['template_id' => $template->id]);
+        $templateItem = TemplateItem::factory()->create(['template_id' => $template->id]);
 
         $result = InspectionResult::factory()->draft()->create([
             'job_id' => $job->id,
@@ -153,12 +156,12 @@ final class InspectionResultPolicyTest extends TestCase
             'template_id' => $template->id,
         ]);
 
-        $resultItem = \App\Domains\Result\Models\ResultItem::factory()->create([
+        $resultItem = ResultItem::factory()->create([
             'result_id' => $result->id,
             'template_item_id' => $templateItem->id,
         ]);
 
-        $photo = \App\Domains\Result\Models\ResultPhoto::factory()->create([
+        $photo = ResultPhoto::factory()->create([
             'result_id' => $result->id,
             'result_item_id' => $resultItem->id,
         ]);
@@ -174,13 +177,12 @@ final class InspectionResultPolicyTest extends TestCase
         $this->assertFalse($this->policy->deletePhoto($admin, $result, $photo));
 
         // photo from different result cannot be deleted
-        $otherPhoto = \App\Domains\Result\Models\ResultPhoto::factory()->create([
+        $otherPhoto = ResultPhoto::factory()->create([
             'result_id' => $result->id,
             'result_item_id' => $resultItem->id,
         ]);
         $otherPhoto->result_id = '00000000-0000-0000-0000-000000000000';
         $this->assertFalse($this->policy->deletePhoto($assignedInspector, $result, $otherPhoto));
-
 
         // viewPhoto in draft: only assigned inspector and admin
         $this->assertTrue($this->policy->viewPhoto($assignedInspector, $result, $photo));
@@ -200,4 +202,3 @@ final class InspectionResultPolicyTest extends TestCase
         $this->assertFalse($this->policy->viewPhoto($otherUser, $result->refresh(), $photo));
     }
 }
-

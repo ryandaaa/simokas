@@ -123,4 +123,3 @@ final class InspectionResult extends Model
         return $this->hasMany(ResultPhoto::class, 'result_id');
     }
 }
-

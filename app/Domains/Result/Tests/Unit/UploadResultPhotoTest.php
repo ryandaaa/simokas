@@ -17,7 +17,6 @@ use App\Domains\Result\Exceptions\ResultAlreadySubmittedException;
 use App\Domains\Result\Exceptions\UnauthorizedInspectorException;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
-use App\Domains\Result\Models\ResultItem;
 use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Models\TemplateItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -43,7 +42,7 @@ final class UploadResultPhotoTest extends TestCase
         );
     }
 
-    public function test_RES_T04_uploads_camera_photo_with_server_captured_at_and_stamped_at(): void
+    public function test_re_s_t04_uploads_camera_photo_with_server_captured_at_and_stamped_at(): void
     {
         Carbon::setTestNow('2026-10-06 12:00:00');
 
@@ -86,7 +85,7 @@ final class UploadResultPhotoTest extends TestCase
         ]);
     }
 
-    public function test_RES_T04_rejects_non_camera_photo_with_422_NOT_CAMERA_CAPTURE(): void
+    public function test_re_s_t04_rejects_non_camera_photo_with_422_no_t_camer_a_capture(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -111,7 +110,7 @@ final class UploadResultPhotoTest extends TestCase
         }
     }
 
-    public function test_RES_T05_rejects_file_exceeding_2_mb(): void
+    public function test_re_s_t05_rejects_file_exceeding_2_mb(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -137,7 +136,7 @@ final class UploadResultPhotoTest extends TestCase
         }
     }
 
-    public function test_RES_T05_rejects_non_image_or_unsupported_mime(): void
+    public function test_re_s_t05_rejects_non_image_or_unsupported_mime(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();

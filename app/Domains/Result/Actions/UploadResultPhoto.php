@@ -106,7 +106,7 @@ final class UploadResultPhoto
 
         $cleanContent = $this->stripExif($data->file->getPathname(), $realMime);
 
-        return DB::transaction(function () use ($result, $templateItem, $data, $storedPath, $cleanContent): ResultPhoto {
+        return DB::transaction(function () use ($result, $templateItem, $data, $storedPath, $directory, $cleanContent): ResultPhoto {
             // Find or create the ResultItem
             /** @var ResultItem $resultItem */
             $resultItem = ResultItem::query()->firstOrCreate(

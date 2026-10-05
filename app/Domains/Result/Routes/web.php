@@ -31,5 +31,3 @@ Route::middleware('web')->group(function () {
             ->name('result.photos.delete');
     });
 });
-
-

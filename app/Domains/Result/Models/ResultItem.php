@@ -6,10 +6,13 @@ namespace App\Domains\Result\Models;
 
 use App\Domains\Result\Database\factories\ResultItemFactory;
 use App\Domains\Result\Enums\ItemRating;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 
 /**
@@ -22,7 +25,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read InspectionResult $result
  * @property-read TemplateItem $templateItem
- * @property-read \Illuminate\Database\Eloquent\Collection<int, ResultPhoto> $photos
+ * @property-read Collection<int, ResultPhoto> $photos
  * @property-read ResultPhoto|null $photo
  */
 final class ResultItem extends Model
@@ -73,19 +76,18 @@ final class ResultItem extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany<ResultPhoto, $this>
+     * @return HasMany<ResultPhoto, $this>
      */
-    public function photos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function photos(): HasMany
     {
         return $this->hasMany(ResultPhoto::class, 'result_item_id');
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<ResultPhoto, $this>
+     * @return HasOne<ResultPhoto, $this>
      */
-    public function photo(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function photo(): HasOne
     {
         return $this->hasOne(ResultPhoto::class, 'result_item_id')->latestOfMany();
     }
 }
-
