@@ -85,6 +85,10 @@ final class AccountSettings extends Component
 
         RateLimiter::clear($throttleKey);
 
+        if (session()->isStarted()) {
+            session()->regenerate();
+        }
+
         $this->reset(['current_password', 'password', 'password_confirmation']);
 
         session()->flash('status_password', __('identity.account.password_changed'));
