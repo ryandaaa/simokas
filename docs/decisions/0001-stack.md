@@ -11,7 +11,7 @@ PRD v1.4 mengusulkan Next.js + Supabase + Vercel. Tim sudah memiliki hosting **H
 
 | Hal | Pilihan |
 | --- | --- |
-| Framework | Laravel 12, PHP 8.3 |
+| Framework | Laravel 13, PHP 8.3 |
 | Frontend | Blade + Livewire + Tailwind |
 | Database | MySQL/MariaDB di Hostinger |
 | Test | Pest, CI GitHub Actions |
