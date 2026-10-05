@@ -61,7 +61,7 @@ sequenceDiagram
 | ONB-E2 | Berkas dengan ekstensi benar tetapi isi bukan gambar/PDF | Ditolak (periksa MIME sebenarnya) |
 | ONB-E3 | Pengguna lain membuka URL dokumen inspektor | 403, tautan sementara tidak bisa dipakai pihak lain |
 | ONB-E4 | Inspektor `pending` mengakses `/jobs` | 403 |
-| ONB-E5 | Ditolak lalu diajukan ulang tanpa memperbaiki | Diperbolehkan, status kembali `pending`, alasan lama tersimpan di riwayat |
+| ONB-E5 | Ditolak lalu diajukan ulang tanpa memperbaiki | Diperbolehkan, status kembali `pending`, alasan lama tersimpan di riwayat ([OPEN: kolom JSON rejection_history]) |
 | ONB-E6 | Dua admin menindaklanjuti pengajuan yang sama | Aksi kedua gagal karena status sudah berubah, tanpa efek ganda |
 | ONB-E7 | Inspektor belum mengunggah semua dokumen wajib | Tidak masuk antrean admin, ditampilkan daftar yang kurang |
 | ONB-E8 | Inspektor diblokir | Job aktifnya ditangani admin (AUTH-E7) |
@@ -71,11 +71,11 @@ sequenceDiagram
 - [x] `ONB-T01` Unggah dokumen valid tersimpan di disk privat
 - [x] `ONB-T02` Berkas terlalu besar atau tipe salah ditolak (ONB-E1, ONB-E2)
 - [x] `ONB-T03` Inspektor tanpa dokumen lengkap tidak masuk antrean (ONB-E7)
-- [ ] `ONB-T04` Admin menyetujui: status `approved`, `verified_by` dan `verified_at` terisi
-- [ ] `ONB-T05` Admin menolak tanpa alasan gagal, dengan alasan berhasil
-- [ ] `ONB-T06` Inspektor ditolak dapat mengajukan ulang, status kembali `pending` (ONB-E5)
+- [x] `ONB-T04` Admin menyetujui: status `approved`, `verified_by` dan `verified_at` terisi
+- [x] `ONB-T05` Admin menolak tanpa alasan gagal, dengan alasan berhasil
+- [x] `ONB-T06` Inspektor ditolak dapat mengajukan ulang, status kembali `pending` (ONB-E5)
 - [x] `ONB-T07` Hanya pemilik dan admin yang dapat mengakses dokumen (ONB-E3), dataset role
-- [ ] `ONB-T08` Inspektor `pending` mendapat 403 pada daftar job (ONB-E4)
+- [x] `ONB-T08` Inspektor `pending` mendapat 403 pada daftar job (ONB-E4)
 - [x] `ONB-T09` Transisi status verifikasi: pasangan sah diterima, selain itu ditolak
-- [ ] `ONB-T10` Aksi admin ganda pada pengajuan yang sama hanya berlaku sekali (ONB-E6)
-- [ ] `ONB-T11` Job yang tampil sesuai jenis keahlian inspektor (ONB-R5)
+- [x] `ONB-T10` Aksi admin ganda pada pengajuan yang sama hanya berlaku sekali (ONB-E6)
+- [x] `ONB-T11` Job yang tampil sesuai jenis keahlian inspektor (ONB-R5)

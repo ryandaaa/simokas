@@ -6,6 +6,7 @@ namespace App\Domains\Identity\Providers;
 
 use App\Domains\Identity\Http\Middleware\EnsureUserHasRole;
 use App\Domains\Identity\Http\Middleware\EnsureUserNotBlocked;
+use App\Domains\Identity\Listeners\ActivateApprovedInspector;
 use App\Domains\Identity\Livewire\AdminDashboard;
 use App\Domains\Identity\Livewire\Blocked;
 use App\Domains\Identity\Livewire\ForgotPassword;
@@ -16,6 +17,8 @@ use App\Domains\Identity\Livewire\ResetPassword;
 use App\Domains\Identity\Livewire\UserDashboard;
 use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Policies\UserPolicy;
+use App\Domains\Inspector\Events\InspectorApproved;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -36,6 +39,15 @@ final class IdentityServiceProvider extends ServiceProvider
         $this->registerLivewireComponents();
         $this->registerPolicies();
         $this->registerMiddleware();
+        $this->registerListeners();
+    }
+
+    private function registerListeners(): void
+    {
+        Event::listen(
+            InspectorApproved::class,
+            ActivateApprovedInspector::class,
+        );
     }
 
     private function registerLivewireComponents(): void
