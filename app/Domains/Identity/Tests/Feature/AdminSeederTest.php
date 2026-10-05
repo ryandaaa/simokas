@@ -7,6 +7,7 @@ use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Livewire\Register;
 use App\Domains\Identity\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\ReferenceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 it('AUTH-T14 creates admin user via ReferenceSeeder and prevents admin creation from public registration', function () {
-    // Part 1: ReferenceSeeder creates admin user from configuration/environment variables
+    // Part 1: ReferenceSeeder creates admin user from configured environment credentials
     $adminEmail = 'testadmin@simokas.com';
     $adminPassword = 'CustomAdminPass2026!';
 
@@ -52,15 +53,68 @@ it('AUTH-T14 creates admin user via ReferenceSeeder and prevents admin creation 
         ->and($attemptUser->role)->toBe(UserRole::User);
 });
 
-it('throws an exception if ADMIN_PASSWORD is empty in production', function () {
-    $originalEnv = app()->environment();
-    app()->detectEnvironment(fn () => 'production');
-    config(['auth.admin.password' => null]);
+it('executes DatabaseSeeder successfully when admin config is provided', function () {
+    config([
+        'auth.admin.email' => 'seederadmin@simokas.com',
+        'auth.admin.password' => 'SeederAdminPassword2026!',
+    ]);
 
-    try {
-        expect(fn () => (new AdminUserSeeder)->run())
-            ->toThrow(RuntimeException::class, 'ADMIN_PASSWORD environment variable must be set in production.');
-    } finally {
-        app()->detectEnvironment(fn () => $originalEnv);
-    }
+    (new DatabaseSeeder)->run();
+
+    /** @var User|null $admin */
+    $admin = User::query()->where('email', 'seederadmin@simokas.com')->first();
+
+    expect($admin)->not->toBeNull()
+        ->and($admin->email)->toBe('seederadmin@simokas.com')
+        ->and($admin->role)->toBe(UserRole::Admin);
+});
+
+it('throws an exception if ADMIN_PASSWORD is empty in any environment', function () {
+    config([
+        'auth.admin.email' => 'admin@simokas.com',
+        'auth.admin.password' => null,
+    ]);
+
+    expect(fn () => (new AdminUserSeeder)->run())
+        ->toThrow(RuntimeException::class, 'ADMIN_PASSWORD belum diatur atau masih menggunakan nilai placeholder');
+});
+
+it('throws an exception if ADMIN_PASSWORD uses placeholder value', function () {
+    config([
+        'auth.admin.email' => 'admin@simokas.com',
+        'auth.admin.password' => 'GANTI-DENGAN-PASSWORD-KUAT-MIN-12-KARAKTER',
+    ]);
+
+    expect(fn () => (new AdminUserSeeder)->run())
+        ->toThrow(RuntimeException::class, 'ADMIN_PASSWORD belum diatur atau masih menggunakan nilai placeholder');
+});
+
+it('throws an exception if ADMIN_PASSWORD is shorter than 12 characters', function () {
+    config([
+        'auth.admin.email' => 'admin@simokas.com',
+        'auth.admin.password' => 'ShortPass1!',
+    ]);
+
+    expect(fn () => (new AdminUserSeeder)->run())
+        ->toThrow(RuntimeException::class, 'ADMIN_PASSWORD terlalu pendek. Kata sandi akun admin wajib minimal 12 karakter demi keamanan.');
+});
+
+it('throws an exception if ADMIN_EMAIL is empty', function () {
+    config([
+        'auth.admin.email' => null,
+        'auth.admin.password' => 'StrongAdminPass123!',
+    ]);
+
+    expect(fn () => (new AdminUserSeeder)->run())
+        ->toThrow(RuntimeException::class, 'ADMIN_EMAIL belum diatur di file .env atau konfigurasi auth.admin.email.');
+});
+
+it('throws an exception if ADMIN_EMAIL is not a valid email', function () {
+    config([
+        'auth.admin.email' => 'not-a-valid-email',
+        'auth.admin.password' => 'StrongAdminPass123!',
+    ]);
+
+    expect(fn () => (new AdminUserSeeder)->run())
+        ->toThrow(RuntimeException::class, "Format ADMIN_EMAIL 'not-a-valid-email' tidak valid.");
 });

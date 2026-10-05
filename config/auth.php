@@ -124,7 +124,7 @@ return [
     */
 
     'admin' => [
-        'email' => env('ADMIN_EMAIL', 'admin@simokas.com'),
+        'email' => env('ADMIN_EMAIL'),
         'password' => env('ADMIN_PASSWORD'),
     ],
 
