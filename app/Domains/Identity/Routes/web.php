@@ -2,13 +2,18 @@
 
 declare(strict_types=1);
 
+use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Http\Controllers\LogoutController;
+use App\Domains\Identity\Livewire\AdminDashboard;
 use App\Domains\Identity\Livewire\Blocked;
-use App\Domains\Identity\Livewire\Dashboard;
 use App\Domains\Identity\Livewire\ForgotPassword;
+use App\Domains\Identity\Livewire\InspectorDashboard;
 use App\Domains\Identity\Livewire\Login;
 use App\Domains\Identity\Livewire\Register;
 use App\Domains\Identity\Livewire\ResetPassword;
+use App\Domains\Identity\Livewire\UserDashboard;
+use App\Domains\Identity\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
@@ -21,8 +26,30 @@ Route::middleware('web')->group(function () {
     });
 
     Route::middleware(['auth', 'not_blocked'])->group(function () {
-        Route::get('/dashboard', Dashboard::class)->name('dashboard');
+        Route::get('/dashboard', function () {
+            /** @var User|null $user */
+            $user = Auth::user();
+
+            return match ($user?->role) {
+                UserRole::Admin => redirect()->route('dashboard.admin'),
+                UserRole::Inspector => redirect()->route('dashboard.inspector'),
+                default => redirect()->route('dashboard.user'),
+            };
+        })->name('dashboard');
+
         Route::redirect('/identity/dashboard', '/dashboard')->name('identity.dashboard');
+
+        Route::get('/dashboard/user', UserDashboard::class)
+            ->middleware('role:user')
+            ->name('dashboard.user');
+
+        Route::get('/dashboard/inspector', InspectorDashboard::class)
+            ->middleware('role:inspector')
+            ->name('dashboard.inspector');
+
+        Route::get('/dashboard/admin', AdminDashboard::class)
+            ->middleware('role:admin')
+            ->name('dashboard.admin');
     });
 
     Route::post('/logout', LogoutController::class)->middleware('auth')->name('identity.logout');

@@ -80,7 +80,7 @@ flowchart TD
 - [x] `AUTH-T08` Rate limit login dan lupa password (AUTH-E3)
 - [x] `AUTH-T09` Pengguna `blocked` tidak bisa login dan sesi aktifnya ditolak (AUTH-E4)
 - [x] `AUTH-T10` Alur reset password sukses, tautan kedaluwarsa ditolak (AUTH-E6)
-- [ ] `AUTH-T11` Dashboard mengarah sesuai role (ditunda: dashboard sementara [USULAN] disediakan oleh Identity sampai kartu DSH-1)
-- [ ] `AUTH-T12` Setiap role mengakses rute role lain mendapat 403 (dataset)
+- [x] `AUTH-T11` Dashboard mengarah sesuai role (dashboard sementara [USULAN] disediakan oleh Identity hingga kartu DSH-1)
+- [x] `AUTH-T12` Setiap role mengakses rute role lain mendapat 403 (dataset role × rute)
 - [ ] `AUTH-T13` Ubah profil dan ganti password
 - [x] `AUTH-T14` Seeder membuat admin dan admin tidak bisa dibuat dari rute publik
