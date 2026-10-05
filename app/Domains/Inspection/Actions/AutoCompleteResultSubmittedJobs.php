@@ -8,6 +8,7 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Setting\Contracts\SettingsReader;
 use App\Support\Clock;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * Action terjadwal untuk menyelesaikan job result_submitted yang tidak ditanggapi pemohon (D-03, JOB-R9, JOB-T11).
@@ -30,17 +31,16 @@ final class AutoCompleteResultSubmittedJobs
         $cutoff = $now->copy()->subDays($autoAcceptDays);
         $completedCount = 0;
 
-        /** @var \Illuminate\Database\Eloquent\Collection<int, InspectionJob> $jobs */
-        $jobs = InspectionJob::query()
+        InspectionJob::query()
             ->where('status', JobStatus::ResultSubmitted->value)
             ->whereNotNull('submitted_at')
             ->where('submitted_at', '<=', $cutoff)
-            ->get();
-
-        foreach ($jobs as $job) {
-            $this->completeJob->handle($job);
-            $completedCount++;
-        }
+            ->chunkById(100, function (Collection $jobs) use (&$completedCount): void {
+                foreach ($jobs as $job) {
+                    $this->completeJob->handle($job);
+                    $completedCount++;
+                }
+            });
 
         return $completedCount;
     }
