@@ -1,7 +1,10 @@
 <x-layouts.app
     :title="$detail->title"
     :navItems="[
-        ['label' => __('catalog.nav_catalog'), 'url' => route('catalog.index'), 'icon' => 'search', 'active' => true],
+        ['label' => __('home.nav_home'), 'url' => route('home'), 'icon' => 'home', 'active' => false],
+        ['label' => __('home.nav_search'), 'url' => route('catalog.index'), 'icon' => 'search', 'active' => true],
+        ['label' => __('home.nav_how'), 'url' => route('catalog.how-it-works'), 'icon' => 'document-text', 'active' => false],
+        ['label' => __('home.nav_help'), 'url' => route('catalog.help'), 'icon' => 'information-circle', 'active' => false],
     ]"
 >
     @vite('resources/js/catalog-map.js')
