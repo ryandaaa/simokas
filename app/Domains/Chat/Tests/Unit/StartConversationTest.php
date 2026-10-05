@@ -7,12 +7,14 @@ use App\Domains\Chat\Enums\ConversationContext;
 use App\Domains\Chat\Exceptions\BlockedUserCannotChatException;
 use App\Domains\Chat\Exceptions\ChatWithSelfException;
 use App\Domains\Chat\Exceptions\ConversationNotFoundException;
+use App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException;
 use App\Domains\Chat\Models\Conversation;
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
+use App\Support\Exceptions\DomainException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -133,7 +135,7 @@ it('CHT-R2 authorizes only job participants to start job conversation and reject
             ->and($conversation->hasMember($actor->id))->toBeTrue();
     } else {
         expect(fn () => $action->handle($actor, ConversationContext::Job, $job->id))
-            ->toThrow(\App\Support\Exceptions\DomainException::class);
+            ->toThrow(DomainException::class);
     }
 })->with([
     'pemohon' => ['pemohon', true],
@@ -159,10 +161,10 @@ it('CHT-R2 rejects starting job conversation when job has no inspector', functio
     ]);
 
     expect(fn () => $action->handle($requester, ConversationContext::Job, $job->id))
-        ->toThrow(\App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException::class);
+        ->toThrow(UnauthorizedChatParticipantException::class);
 
     expect(fn () => $action->handle($seller, ConversationContext::Job, $job->id))
-        ->toThrow(\App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException::class);
+        ->toThrow(UnauthorizedChatParticipantException::class);
 
     expect(Conversation::query()->count())->toBe(0);
 });
@@ -185,7 +187,7 @@ it('CHT-R2 allows buyer on public listings and rejects outsiders on non-public l
             ->and($conversation->hasMember($seller->id))->toBeTrue();
     } else {
         expect(fn () => $action->handle($buyer, ConversationContext::Listing, $listing->id))
-            ->toThrow(\App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException::class);
+            ->toThrow(UnauthorizedChatParticipantException::class);
         expect(Conversation::query()->count())->toBe(0);
     }
 })->with([
@@ -215,7 +217,7 @@ it('CHT-R2 rejects outsider roles on non-public listing', function (string $role
     };
 
     expect(fn () => $action->handle($actor, ConversationContext::Listing, $listing->id))
-        ->toThrow(\App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException::class);
+        ->toThrow(UnauthorizedChatParticipantException::class);
 
     expect(Conversation::query()->count())->toBe(0);
 })->with([
@@ -240,11 +242,11 @@ it('CHT-T13 creates job conversation via forJobTaken and rejects unassigned insp
 
     // Unassigned inspector cannot call forJobTaken
     expect(fn () => $action->forJobTaken($otherInspector, $job->id))
-        ->toThrow(\App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException::class);
+        ->toThrow(UnauthorizedChatParticipantException::class);
 
     // Invalid target (not seller or requester) is rejected
     expect(fn () => $action->forJobTaken($assignedInspector, $job->id, $outsider->id))
-        ->toThrow(\App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException::class);
+        ->toThrow(UnauthorizedChatParticipantException::class);
 
     // Valid call succeeds
     $conversation = $action->forJobTaken($assignedInspector, $job->id, $seller->id);
@@ -290,6 +292,7 @@ it('CHT-T01 locks context record row in database to serialize conversation creat
     $targetTable = $contextType === 'listing' ? 'listings' : 'inspection_jobs';
     $hasLockForUpdate = collect($queries)->contains(function (array $query) use ($targetTable) {
         $sql = strtolower($query['query']);
+
         return str_contains($sql, $targetTable) && str_contains($sql, 'for update');
     });
 
@@ -298,6 +301,3 @@ it('CHT-T01 locks context record row in database to serialize conversation creat
     'listing context' => ['listing'],
     'job context' => ['job'],
 ]);
-
-
-

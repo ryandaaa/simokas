@@ -139,7 +139,6 @@ it('CHT-T08 catches unique constraint violation and recovers existing message fo
     Event::assertNotDispatched(MessageSent::class);
 });
 
-
 it('CHT-T10 rejects sending message by blocked user (CHT-R6)', function () {
     $action = app(SendMessage::class);
 
