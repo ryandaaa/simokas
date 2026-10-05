@@ -68,10 +68,10 @@ flowchart TD
 - [x] `CAT-T03` Setiap urutan menghasilkan urutan yang benar
 - [x] `CAT-T04` Pagination 12 per halaman dan total benar
 - [x] `CAT-T05` Parameter tidak valid tidak menyebabkan error (CAT-E2), dataset
-- [x] `CAT-T06` Respons publik tidak memuat `lat`, `lng`, `address_full`, `chassis_number` (halaman daftar; detail menyusul di kartu CAT-2)
-- [ ] `CAT-T07` Pemilik, inspektor job, dan admin melihat data persis. Role lain tidak (dataset)
-- [ ] `CAT-T08` Listing non-publik 404 untuk publik (CAT-E4)
-- [ ] `CAT-T09` Matriks tombol aksi sesuai peran dan status (dataset peran × status)
+- [x] `CAT-T06` Respons publik tidak memuat `lat`, `lng`, `address_full`, `chassis_number` (halaman daftar dan detail; detail juga `inspection_place`, di HTML dan data klien)
+- [x] `CAT-T07` Pemilik, inspektor job, dan admin melihat data persis. Role lain tidak (dataset; inspektor job lewat seam `Catalog\Contracts\InspectionJobAccess`, implementasi nyata menunggu JOB-2)
+- [x] `CAT-T08` Listing non-publik 404 untuk publik (CAT-E4; `sold` tampil sebagai Terjual, CAT-E5)
+- [x] `CAT-T09` Matriks tombol aksi sesuai peran dan status (dataset peran × status)
 - [x] `CAT-T10` Empty state tampil saat tidak ada hasil
 - [x] `CAT-T11` Jumlah query pada daftar tidak bertambah seiring jumlah item (tanpa N+1)
-- [x] `CAT-T12` Lencana tidak tampil pada listing yang dicabut (CAT-E9)
+- [x] `CAT-T12` Lencana tidak tampil pada listing yang dicabut (CAT-E9; daftar dan detail membaca flag `is_inspected`. Pencabutan penuh via D-05/RES-4 menunggu RES-4)
