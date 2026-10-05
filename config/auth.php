@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Domains\Identity\Models\User;
 
 return [
 
@@ -113,5 +113,19 @@ return [
     */
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Account Initial Credentials
+    |--------------------------------------------------------------------------
+    |
+    | Credentials used by ReferenceSeeder to seed the initial admin account.
+    |
+    */
+
+    'admin' => [
+        'email' => env('ADMIN_EMAIL'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
 
 ];

@@ -26,7 +26,7 @@ Aplikasi web jual-beli mobil dan motor bekas dengan inspeksi independen oleh ins
    cp .env.example .env
    php artisan key:generate
    ```
-   Sesuaikan kredensial database di `.env`.
+   Sesuaikan kredensial database di `.env`. Variabel `ADMIN_EMAIL` dan `ADMIN_PASSWORD` wajib diisi dengan kata sandi kuat (minimal 12 karakter) sebelum menjalankan seeder database (`php artisan db:seed`). Nilai placeholder `GANTI-DENGAN-PASSWORD-KUAT-MIN-12-KARAKTER` tidak akan lolos validasi seeder.
 
 3. Kompilasi aset frontend:
    ```bash
