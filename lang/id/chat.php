@@ -33,5 +33,7 @@ return [
         'not_participant' => 'Hanya peserta yang dapat membaca atau mengirim pesan dalam percakapan ini.',
         'not_found' => 'Percakapan tidak ditemukan.',
         'context_not_found' => 'Konteks percakapan tidak ditemukan.',
+        'client_key_conflict' => 'Kunci klien pesan sudah digunakan pada percakapan atau pengirim lain.',
     ],
 ];
+

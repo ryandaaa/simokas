@@ -86,6 +86,60 @@ it('CHT-T08 deduplicates double send with the same client key (CHT-E6)', functio
     expect(Message::query()->count())->toBe(1);
 });
 
+it('CHT-T08 rejects client key UUID that is already used by another conversation or sender', function () {
+    $action = app(SendMessage::class);
+
+    $user1 = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+    $user2 = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+    $user3 = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+
+    $conversation1 = Conversation::factory()->withMembers($user1, $user2)->create();
+    $conversation2 = Conversation::factory()->withMembers($user2, $user3)->create();
+
+    $clientKey = (string) Str::uuid();
+
+    // User1 sends in conversation1 with clientKey
+    $action->handle($user1, $conversation1, 'Pesan pertama', $clientKey);
+
+    // Scenario A: Different conversation tries to use same clientKey UUID
+    expect(fn () => $action->handle($user2, $conversation2, 'Pesan kedua', $clientKey))
+        ->toThrow(InvalidMessageException::class);
+
+    // Scenario B: Different sender in same conversation tries to use same clientKey UUID
+    expect(fn () => $action->handle($user2, $conversation1, 'Pesan ketiga', $clientKey))
+        ->toThrow(InvalidMessageException::class);
+});
+
+it('CHT-T08 catches unique constraint violation and recovers existing message for same sender and conversation', function () {
+    Event::fake([MessageSent::class]);
+
+    $action = app(SendMessage::class);
+
+    $buyer = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+    $seller = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+    $conversation = Conversation::factory()->withMembers($buyer, $seller)->create();
+
+    $clientKey = (string) Str::uuid();
+
+    $existing = Message::query()->create([
+        'id' => $clientKey,
+        'conversation_id' => $conversation->id,
+        'sender_id' => $buyer->id,
+        'body' => 'Pesan balapan',
+    ]);
+
+    // Clear cache to simulate second concurrent thread that missed cache
+    Cache::flush();
+
+    // Now if the lookup in SendMessage was bypassed or raced, it should catch UniqueConstraintViolationException
+    $result = $action->handle($buyer, $conversation, 'Pesan balapan', $clientKey);
+
+    expect($result->id)->toBe($existing->id);
+    expect(Message::query()->count())->toBe(1);
+    Event::assertNotDispatched(MessageSent::class);
+});
+
+
 it('CHT-T10 rejects sending message by blocked user (CHT-R6)', function () {
     $action = app(SendMessage::class);
 

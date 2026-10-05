@@ -25,4 +25,14 @@ final class InvalidMessageException extends DomainException
             422,
         );
     }
+
+    public static function clientKeyConflict(): self
+    {
+        return new self(
+            __('chat.errors.client_key_conflict'),
+            self::CODE_VALIDATION_ERROR,
+            422,
+        );
+    }
 }
+
