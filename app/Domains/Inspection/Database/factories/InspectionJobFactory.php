@@ -81,4 +81,36 @@ class InspectionJobFactory extends Factory
             'taken_at' => now(),
         ]);
     }
+
+    public function scheduled(?User $inspector = null, ?\DateTimeInterface $scheduledAt = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => JobStatus::Scheduled,
+            'inspector_id' => $inspector !== null ? $inspector->id : User::factory()->inspector(),
+            'available_since' => now()->subHours(2),
+            'taken_at' => now()->subHour(),
+            'scheduled_at' => $scheduledAt ?? now()->addDay(),
+        ]);
+    }
+
+    public function inProgress(?User $inspector = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => JobStatus::InProgress,
+            'inspector_id' => $inspector !== null ? $inspector->id : User::factory()->inspector(),
+            'available_since' => now()->subHours(3),
+            'taken_at' => now()->subHours(2),
+            'scheduled_at' => now()->subHour(),
+            'started_at' => now()->subMinutes(10),
+        ]);
+    }
+
+    public function cancelled(?User $cancelledBy = null, string $reason = 'Dibatalkan'): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => JobStatus::Cancelled,
+            'cancel_reason' => $reason,
+            'cancelled_by' => $cancelledBy?->id,
+        ]);
+    }
 }
