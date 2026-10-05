@@ -7,6 +7,7 @@ use App\Domains\Chat\Models\Conversation;
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
+use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -129,7 +130,7 @@ it('CHT-R2 authorizes or rejects roles on HTTP POST /conversations/start for job
         'seller_id' => $seller->id,
         'status' => 'active',
     ]);
-    $job = \App\Domains\Inspection\Models\InspectionJob::factory()->create([
+    $job = InspectionJob::factory()->create([
         'listing_id' => $listing->id,
         'requester_id' => $requester->id,
         'inspector_id' => $assignedInspector->id,
@@ -178,4 +179,3 @@ it('CHT-R2 authorizes or rejects roles on HTTP POST /conversations/start for job
     'listing: anonim' => ['listing', 'anonim', 302], // redirects to login
     'listing: pengguna terblokir' => ['listing', 'pengguna terblokir', 302], // redirects to /blocked
 ]);
-

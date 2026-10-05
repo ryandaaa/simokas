@@ -184,7 +184,6 @@ final class StartConversation
                     ->whereHas('members', fn ($q) => $q->where('user_id', $otherUserId))
                     ->first();
 
-
                 if ($existing) {
                     return $existing;
                 }
@@ -204,4 +203,3 @@ final class StartConversation
         });
     }
 }
-

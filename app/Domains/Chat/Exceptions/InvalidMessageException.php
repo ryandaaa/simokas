@@ -35,4 +35,3 @@ final class InvalidMessageException extends DomainException
         );
     }
 }
-

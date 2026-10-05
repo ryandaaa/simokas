@@ -6,6 +6,7 @@ namespace App\Domains\Chat\Http\Controllers;
 
 use App\Domains\Chat\Actions\StartConversation;
 use App\Domains\Identity\Models\User;
+use App\Support\Exceptions\DomainException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,9 +31,8 @@ final class StartConversationController
             );
 
             return redirect()->route('conversations.show', $conversation);
-        } catch (\App\Support\Exceptions\DomainException $e) {
+        } catch (DomainException $e) {
             abort($e->getStatusCode(), $e->getMessage());
         }
     }
 }
-

@@ -132,4 +132,3 @@ final class SendMessage
         return $message;
     }
 }
-

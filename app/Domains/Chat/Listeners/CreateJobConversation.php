@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domains\Chat\Listeners;
 
 use App\Domains\Chat\Actions\StartConversation;
-use App\Domains\Chat\Enums\ConversationContext;
 use App\Domains\Chat\Exceptions\ChatWithSelfException;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Events\JobTaken;
