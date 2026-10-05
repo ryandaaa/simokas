@@ -28,6 +28,22 @@ final class UserPolicy
         return $currentUser->isAdmin() || $currentUser->id === $targetUser->id;
     }
 
+    /**
+     * AUTH-T13: Pengguna hanya dapat memperbarui profil akunnya sendiri.
+     */
+    public function updateProfile(User $currentUser, User $targetUser): bool
+    {
+        return $currentUser->id === $targetUser->id;
+    }
+
+    /**
+     * AUTH-T13: Pengguna hanya dapat mengganti kata sandi akunnya sendiri.
+     */
+    public function changePassword(User $currentUser, User $targetUser): bool
+    {
+        return $currentUser->id === $targetUser->id;
+    }
+
     public function delete(User $currentUser, User $targetUser): bool
     {
         return $currentUser->isAdmin();

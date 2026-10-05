@@ -39,7 +39,14 @@
                 </div>
             </div>
 
-            <div class="pt-4 flex justify-end">
+            <div class="pt-4 flex justify-end gap-3">
+                <x-ui.button
+                    :href="route('identity.account')"
+                    variant="primary"
+                >
+                    {{ __('identity.account.title') }}
+                </x-ui.button>
+
                 <x-ui.button
                     wire:click="logout"
                     variant="secondary"

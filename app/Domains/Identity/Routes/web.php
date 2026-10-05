@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Http\Controllers\LogoutController;
+use App\Domains\Identity\Livewire\AccountSettings;
 use App\Domains\Identity\Livewire\AdminDashboard;
 use App\Domains\Identity\Livewire\Blocked;
 use App\Domains\Identity\Livewire\ForgotPassword;
@@ -50,6 +51,10 @@ Route::middleware('web')->group(function () {
         Route::get('/dashboard/admin', AdminDashboard::class)
             ->middleware('role:admin')
             ->name('dashboard.admin');
+
+        Route::get('/account', AccountSettings::class)
+            ->middleware('role:user,inspector,admin')
+            ->name('identity.account');
     });
 
     Route::post('/logout', LogoutController::class)->middleware('auth')->name('identity.logout');
