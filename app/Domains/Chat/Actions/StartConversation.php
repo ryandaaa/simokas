@@ -170,6 +170,12 @@ final class StartConversation
 
         return Cache::lock($lockKey, 10)->block(5, function () use ($type, $contextId, $initiator, $otherUserId) {
             return DB::transaction(function () use ($type, $contextId, $initiator, $otherUserId) {
+                // Database-level row lock on context record to serialize creation independently of cache driver
+                match ($type) {
+                    ConversationContext::Listing => Listing::query()->whereKey($contextId)->lockForUpdate()->first(),
+                    ConversationContext::Job => InspectionJob::query()->whereKey($contextId)->lockForUpdate()->first(),
+                };
+
                 /** @var Conversation|null $existing */
                 $existing = Conversation::query()
                     ->where('context_type', $type)
@@ -177,6 +183,7 @@ final class StartConversation
                     ->whereHas('members', fn ($q) => $q->where('user_id', $initiator->id))
                     ->whereHas('members', fn ($q) => $q->where('user_id', $otherUserId))
                     ->first();
+
 
                 if ($existing) {
                     return $existing;
