@@ -5,13 +5,18 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Batalkan run lama hanya pada PR. Run di main dibiarkan selesai agar kegagalan tidak tertutup.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     # Sebelum kerangka Laravel ada (composer.json), job ini lulus tanpa menjalankan apa pun.
     # Pengecekan dilakukan di level step karena hashFiles() tidak tersedia di `if` level job.
 
