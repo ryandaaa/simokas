@@ -60,4 +60,59 @@ final class InspectionJobPolicy
 
         return $user->isInspector();
     }
+
+    public function schedule(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return $user->isInspector()
+            && $job->inspector_id !== null
+            && (string) $user->getKey() === (string) $job->inspector_id
+            && $job->status->value === 'taken';
+    }
+
+    public function start(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return $user->isInspector()
+            && $job->inspector_id !== null
+            && (string) $user->getKey() === (string) $job->inspector_id
+            && $job->status->value === 'scheduled';
+    }
+
+    public function cancelAsInspector(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return $user->isInspector()
+            && $job->inspector_id !== null
+            && (string) $user->getKey() === (string) $job->inspector_id
+            && in_array($job->status->value, ['taken', 'scheduled'], true);
+    }
+
+    public function cancelAsRequester(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return (string) $user->getKey() === (string) $job->requester_id
+            && in_array($job->status->value, ['requested', 'paid', 'taken', 'scheduled'], true);
+    }
+
+    public function cancelAsAdmin(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return $user->isAdmin() && $job->isActive();
+    }
 }
