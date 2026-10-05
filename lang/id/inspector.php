@@ -71,4 +71,8 @@ return [
         'open_url' => 'Buka Tautan Portofolio',
         'uploaded_at' => 'Diunggah pada',
     ],
+
+    'validation' => [
+        'safe_portfolio_url' => 'Tautan portofolio harus berupa URL yang valid (hanya skema http atau https, memiliki host, tanpa spasi atau karakter kontrol, dan tanpa userinfo).',
+    ],
 ];

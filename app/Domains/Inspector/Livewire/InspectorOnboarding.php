@@ -11,6 +11,7 @@ use App\Domains\Inspector\Actions\UploadInspectorDocument;
 use App\Domains\Inspector\Enums\DocumentType;
 use App\Domains\Inspector\Models\InspectorDocument;
 use App\Domains\Inspector\Models\InspectorProfile;
+use App\Domains\Inspector\Rules\SafePortfolioUrl;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -133,7 +134,7 @@ final class InspectorOnboarding extends Component
 
         if ($this->portfolio_mode === 'url') {
             $this->validate([
-                'portfolio_url' => ['required', 'url', 'max:255'],
+                'portfolio_url' => ['required', 'string', new SafePortfolioUrl],
             ]);
 
             $action->handle($user, DocumentType::Portfolio, $this->portfolio_url);

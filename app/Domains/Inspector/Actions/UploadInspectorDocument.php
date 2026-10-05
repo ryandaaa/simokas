@@ -9,6 +9,7 @@ use App\Domains\Inspector\Enums\DocumentType;
 use App\Domains\Inspector\Exceptions\DocumentUploadException;
 use App\Domains\Inspector\Exceptions\InvalidInspectorProfileException;
 use App\Domains\Inspector\Models\InspectorDocument;
+use App\Domains\Inspector\Rules\SafePortfolioUrl;
 use finfo;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -45,7 +46,7 @@ final class UploadInspectorDocument
                     throw DocumentUploadException::unsupportedType('url');
                 }
 
-                if (! filter_var($fileOrUrl, FILTER_VALIDATE_URL)) {
+                if (! SafePortfolioUrl::isValid($fileOrUrl)) {
                     throw DocumentUploadException::invalidPortfolioUrl();
                 }
 

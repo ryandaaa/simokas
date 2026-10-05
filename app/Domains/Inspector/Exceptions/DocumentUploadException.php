@@ -60,7 +60,7 @@ final class DocumentUploadException extends DomainException
     public static function invalidPortfolioUrl(): self
     {
         return new self(
-            message: 'Tautan portofolio tidak valid. Gunakan format URL yang benar.',
+            message: __('inspector.validation.safe_portfolio_url'),
             errorCode: DomainException::CODE_VALIDATION_ERROR,
             statusCode: 422,
         );
