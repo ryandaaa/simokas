@@ -7,27 +7,13 @@ Panduan untuk anggota tim yang menyuruh agen (Claude Code atau lainnya) mengerja
 1. Pastikan kartu berada di **Ready**: kartu di kolom **Butuh** sudah di-merge ke `main`.
 2. Geser kartu ke **Ongoing** dan isi assignee.
 3. Pastikan repo lokal berada di `main` terbaru.
-4. Beri agen prompt ini (ganti nomor):
-
-```
-Kerjakan issue #<nomor>.
-Ikuti CLAUDE.md dan docs/AGENT_TASK.md.
-Baca issue, flow doc, dan test case ID yang disebut di dalamnya sebelum menulis kode.
-Jangan keluar dari domain di issue ini.
-Berhenti dan tanya saya bila menemukan [OPEN] yang memengaruhi pekerjaan.
-```
+4. Beri agen prompt dari [PROMPT_KERJAKAN.md](PROMPT_KERJAKAN.md). Satu-satunya yang diganti adalah nomor issue.
 
 Agen dapat membaca issue lewat tool GitHub. Bila tidak ada akses, tempelkan isi issue ke prompt.
 
 5. Tinjau PR yang dibuat agen. Geser kartu ke **Review**, lalu **Done** setelah di-merge.
 
-Prompt varian:
-
-| Tujuan | Tambahan di prompt |
-| --- | --- |
-| Hanya rencana, belum kode | "Buat rencana langkah dan daftar file dulu. Jangan menulis kode sebelum saya setujui." |
-| Hanya test | "Tulis test untuk test case ID di issue lebih dulu dan pastikan gagal karena alasan yang benar. Belum implementasi." |
-| Perbaikan setelah review | "Perbaiki komentar review di PR #<nomor>, tanpa mengubah hal lain." |
+Varian prompt (hanya rencana, hanya test, perbaikan review, lanjutkan) dan prompt review ada di [PROMPT_KERJAKAN.md](PROMPT_KERJAKAN.md).
 
 ## Untuk agen: alur kerja
 
@@ -69,8 +55,8 @@ Tulis ringkasan singkat sebelum mengubah apa pun: file yang akan dibuat atau diu
 
 1. Perbarui flow doc bila perilaku berubah. Centang test case yang selesai di flow doc.
 2. Pastikan [Definition of Done](CONTRIBUTING.md#7-definition-of-done) terpenuhi.
-3. Commit dengan format Conventional Commits berbahasa Inggris.
-4. Buka PR memakai template. Isi: kartu (`Closes #<nomor>`), domain, flow doc, daftar test case ID yang lulus, cara menguji, tangkapan layar untuk UI.
+3. Commit dengan format Conventional Commits berbahasa Inggris. Pakai konfigurasi git lokal apa adanya dan jangan menambahkan `Co-Authored-By` atau atribusi alat/model apa pun di commit maupun deskripsi PR.
+4. Push branch (`git push -u origin <branch>`). **Jangan membuka PR kecuali diminta.** Siapkan draf deskripsi PR mengikuti [template](../.github/pull_request_template.md): kartu (`Closes #<nomor>`), domain, flow doc, daftar test case ID yang lulus, cara menguji, tangkapan layar untuk UI. Manusia yang membuka PR dari draf itu.
 5. Laporkan ke manusia: apa yang selesai, keputusan yang diambil, hal [OPEN] yang ditemui, dan yang sengaja ditunda.
 
 ### 6. Kapan berhenti dan bertanya
@@ -89,4 +75,4 @@ Tulis ringkasan singkat sebelum mengubah apa pun: file yang akan dibuat atau diu
 - [ ] Hanya menyentuh domain kartu ini.
 - [ ] Otorisasi dan privasi data teruji.
 - [ ] `composer check` bersih.
-- [ ] Flow doc diperbarui, PR memakai template dan `Closes #<nomor>`.
+- [ ] Flow doc diperbarui, draf PR siap (template, `Closes #<nomor>`), PR dibuka hanya bila diminta.
