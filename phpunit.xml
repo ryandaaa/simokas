@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         defaultTestSuite="default"
+>
+    <testsuites>
+        <testsuite name="default">
+            <directory>tests/Unit</directory>
+            <directory>tests/Feature</directory>
+            <directory>tests/Arch</directory>
+            <directory suffix="Test.php">app/Domains/*/Tests</directory>
+        </testsuite>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+            <directory suffix="Test.php">app/Domains/*/Tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+            <directory suffix="Test.php">app/Domains/*/Tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Arch">
+            <directory>tests/Arch</directory>
+        </testsuite>
+        <testsuite name="Domain:Identity">
+            <directory>app/Domains/Identity/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Inspector">
+            <directory>app/Domains/Inspector/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Listing">
+            <directory>app/Domains/Listing/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Catalog">
+            <directory>app/Domains/Catalog/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Inspection">
+            <directory>app/Domains/Inspection/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Result">
+            <directory>app/Domains/Result/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Payment">
+            <directory>app/Domains/Payment/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Transaction">
+            <directory>app/Domains/Transaction/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Chat">
+            <directory>app/Domains/Chat/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Rating">
+            <directory>app/Domains/Rating/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Notification">
+            <directory>app/Domains/Notification/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Setting">
+            <directory>app/Domains/Setting/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Admin">
+            <directory>app/Domains/Admin/Tests</directory>
+        </testsuite>
+        <testsuite name="Domain:Dashboard">
+            <directory>app/Domains/Dashboard/Tests</directory>
+        </testsuite>
+    </testsuites>
+    <source>
+        <include>
+            <directory>app</directory>
+        </include>
+        <exclude>
+            <directory suffix=".blade.php">app</directory>
+        </exclude>
+    </source>
+    <php>
+        <env name="APP_ENV" value="testing"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="BROADCAST_CONNECTION" value="null"/>
+        <env name="CACHE_STORE" value="array"/>
+        <env name="DB_CONNECTION" value="mysql"/>
+        <env name="DB_DATABASE" value="simokas_test"/>
+        <env name="MAIL_MAILER" value="array"/>
+        <env name="QUEUE_CONNECTION" value="sync"/>
+        <env name="SESSION_DRIVER" value="array"/>
+        <env name="PULSE_ENABLED" value="false"/>
+        <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="NIGHTWATCH_ENABLED" value="false"/>
+    </php>
+</phpunit>
