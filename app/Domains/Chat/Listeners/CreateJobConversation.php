@@ -41,10 +41,9 @@ final class CreateJobConversation
         }
 
         try {
-            $this->startConversation->handle(
-                initiator: $inspector,
-                contextType: ConversationContext::Job,
-                contextId: $event->jobId,
+            $this->startConversation->forJobTaken(
+                inspector: $inspector,
+                jobId: $event->jobId,
                 targetUserId: $listing->seller_id,
             );
         } catch (ChatWithSelfException $e) {
@@ -54,5 +53,6 @@ final class CreateJobConversation
                 'seller_id' => $listing->seller_id,
             ]);
         }
+
     }
 }
