@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Domains\Identity\Providers;
 
+use App\Domains\Identity\Http\Middleware\EnsureUserHasRole;
 use App\Domains\Identity\Http\Middleware\EnsureUserNotBlocked;
+use App\Domains\Identity\Livewire\AdminDashboard;
 use App\Domains\Identity\Livewire\Blocked;
-use App\Domains\Identity\Livewire\Dashboard;
 use App\Domains\Identity\Livewire\ForgotPassword;
+use App\Domains\Identity\Livewire\InspectorDashboard;
 use App\Domains\Identity\Livewire\Login;
 use App\Domains\Identity\Livewire\Register;
 use App\Domains\Identity\Livewire\ResetPassword;
+use App\Domains\Identity\Livewire\UserDashboard;
 use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Policies\UserPolicy;
 use Illuminate\Support\Facades\Gate;
@@ -41,7 +44,9 @@ final class IdentityServiceProvider extends ServiceProvider
         Livewire::component('identity.login', Login::class);
         Livewire::component('identity.forgot-password', ForgotPassword::class);
         Livewire::component('identity.reset-password', ResetPassword::class);
-        Livewire::component('identity.dashboard', Dashboard::class);
+        Livewire::component('identity.user-dashboard', UserDashboard::class);
+        Livewire::component('identity.inspector-dashboard', InspectorDashboard::class);
+        Livewire::component('identity.admin-dashboard', AdminDashboard::class);
         Livewire::component('identity.blocked', Blocked::class);
     }
 
@@ -53,5 +58,6 @@ final class IdentityServiceProvider extends ServiceProvider
     private function registerMiddleware(): void
     {
         $this->app['router']->aliasMiddleware('not_blocked', EnsureUserNotBlocked::class);
+        $this->app['router']->aliasMiddleware('role', EnsureUserHasRole::class);
     }
 }

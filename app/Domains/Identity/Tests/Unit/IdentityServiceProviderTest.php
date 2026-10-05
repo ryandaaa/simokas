@@ -16,5 +16,12 @@ final class IdentityServiceProviderTest extends TestCase
 
         $this->assertInstanceOf(IdentityServiceProvider::class, $provider);
         $this->assertTrue(View::exists('identity::index'));
+        $this->assertTrue(View::exists('identity::livewire.user-dashboard'));
+        $this->assertTrue(View::exists('identity::livewire.inspector-dashboard'));
+        $this->assertTrue(View::exists('identity::livewire.admin-dashboard'));
+
+        $middleware = $this->app['router']->getMiddleware();
+        $this->assertArrayHasKey('role', $middleware);
+        $this->assertArrayHasKey('not_blocked', $middleware);
     }
 }

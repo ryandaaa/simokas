@@ -1,5 +1,5 @@
 <div class="max-w-4xl mx-auto py-6 space-y-6">
-    <x-ui.card :title="__('identity.dashboard.welcome', ['name' => $user->name])" :subtitle="__('identity.dashboard.title')">
+    <x-ui.card :title="__('identity.dashboard.welcome', ['name' => $user->name])" :subtitle="__('identity.dashboard.admin_title')">
         <div class="space-y-4">
             <x-ui.alert variant="info" :message="__('identity.dashboard.notice')" />
 

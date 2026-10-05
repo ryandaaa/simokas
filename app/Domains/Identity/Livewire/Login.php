@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace App\Domains\Identity\Livewire;
 
 use App\Domains\Identity\Actions\AuthenticateUser;
+use App\Domains\Identity\Enums\UserRole;
+use App\Domains\Identity\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -51,7 +54,16 @@ final class Login extends Component
 
         RateLimiter::clear($throttleKey);
 
-        return redirect()->intended(route('dashboard'));
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        $targetDashboard = match ($user?->role) {
+            UserRole::Admin => route('dashboard.admin'),
+            UserRole::Inspector => route('dashboard.inspector'),
+            default => route('dashboard.user'),
+        };
+
+        return redirect()->intended($targetDashboard);
     }
 
     protected function throttleKey(): string

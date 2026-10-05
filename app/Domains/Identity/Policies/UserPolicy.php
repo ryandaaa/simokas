@@ -8,6 +8,16 @@ use App\Domains\Identity\Models\User;
 
 final class UserPolicy
 {
+    public function viewAny(User $currentUser): bool
+    {
+        return $currentUser->isAdmin();
+    }
+
+    public function manage(User $currentUser): bool
+    {
+        return $currentUser->isAdmin();
+    }
+
     public function view(User $currentUser, User $targetUser): bool
     {
         return $currentUser->isAdmin() || $currentUser->id === $targetUser->id;
