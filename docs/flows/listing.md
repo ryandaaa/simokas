@@ -65,7 +65,7 @@ flowchart TD
 | LST-R1 | Listing baru `pending_review`, tidak tampil publik |
 | LST-R2 | Foto 3–10, maks 2 MB per foto, JPG/PNG/WebP. Satu foto ditandai sampul |
 | LST-R3 | Titik lokasi harus di dalam wilayah Pekanbaru, divalidasi di server |
-| LST-R4 | Lokasi persis, alamat lengkap, dan nomor rangka tidak pernah di respons publik |
+| LST-R4 | Lokasi persis, alamat lengkap, nomor rangka, dan tempat inspeksi (`inspection_place`) tidak pernah di respons publik. `inspection_place` bersifat privat (dapat berisi alamat rumah penjual, PRD 13.3 dan 19) dan hanya tampil untuk pemilik dan admin; publik hanya memakai `area_name` |
 | LST-R5 | Opsi waktu inspeksi minimal 1 dan tidak di masa lalu |
 | LST-R6 | Penjual tidak dapat menghapus atau menonaktifkan listing yang punya job aktif atau transaksi |
 | LST-R7 | Edit mengikuti D-05. Field inti terkunci saat ada job aktif atau transaksi |
@@ -92,8 +92,8 @@ flowchart TD
 
 ## 6. Daftar test case
 
-- [ ] `LST-T01` Penjual membuat listing valid, status `pending_review`, tidak tampil di daftar publik
-- [ ] `LST-T02` Validasi field (dataset): tahun, harga, kilometer, judul, foto, slot
+- [x] `LST-T01` Penjual membuat listing valid, status `pending_review`, tidak tampil di daftar publik
+- [x] `LST-T02` Validasi field (dataset): tahun, harga, kilometer, judul, foto, slot
 - [ ] `LST-T03` Titik di luar Pekanbaru ditolak (LST-E1)
 - [ ] `LST-T04` Admin menyetujui: `active`, menolak dengan alasan: `rejected`
 - [ ] `LST-T05` Penjual memperbaiki dan mengirim ulang listing ditolak (LST-E7)
@@ -101,10 +101,10 @@ flowchart TD
 - [ ] `LST-T07` Edit inti mengembalikan ke `pending_review` dan mencabut lencana (LST-E5)
 - [ ] `LST-T08` Field inti terkunci saat ada job aktif, semua terkunci saat `in_transaction`
 - [ ] `LST-T09` Nonaktifkan ditolak saat ada job aktif atau transaksi (LST-E4)
-- [ ] `LST-T10` Transisi status: pasangan sah diterima, selain itu ditolak
-- [ ] `LST-T11` Respons publik tidak memuat `lat`, `lng`, `address_full`, `chassis_number` (LST-R4)
-- [ ] `LST-T12` Pengguna lain tidak dapat mengedit (LST-E9), dataset role
-- [ ] `LST-T13` Listing non-publik tidak dapat dibuka orang lain (LST-E10)
+- [x] `LST-T10` Transisi status: pasangan sah diterima, selain itu ditolak
+- [x] `LST-T11` Respons publik tidak memuat `lat`, `lng`, `address_full`, `chassis_number` (LST-R4)
+- [x] `LST-T12` Pengguna lain tidak dapat mengedit (LST-E9), dataset role
+- [x] `LST-T13` Listing non-publik tidak dapat dibuka orang lain (LST-E10)
 - [ ] `LST-T14` Event `JobCompleted` mengisi `is_inspected` dan `last_inspected_at`
 - [ ] `LST-T15` Event `UserBlocked` menonaktifkan listing aktif pengguna (LST-R9)
 - [ ] `LST-T16` Aksi admin ganda hanya berlaku sekali (LST-E8)
