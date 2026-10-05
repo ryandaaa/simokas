@@ -41,25 +41,32 @@
             />
         </x-ui.card>
     @else
-        {{-- Progress Stepper --}}
+        {{-- Progress Indicator --}}
         @if (count($categories) > 1)
             <x-ui.card>
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between">
                     <span class="text-sm font-medium text-text">
                         {{ __('inspection.form.category_progress', [
                             'current' => $currentCategoryIndex + 1,
                             'total' => $totalCategories
                         ]) }}
                     </span>
-                    <span class="text-sm text-muted">
+                    <span class="text-sm font-semibold text-primary">
                         {{ $categories[$currentCategoryIndex] ?? '' }}
                     </span>
                 </div>
-                <div class="w-full bg-muted/20 rounded-full h-2">
-                    <div
-                        class="bg-primary h-2 rounded-full transition-all duration-300"
-                        style="width: {{ $totalCategories > 0 ? (($currentCategoryIndex + 1) / $totalCategories * 100) : 0 }}%"
-                    ></div>
+                <div class="grid grid-flow-col auto-cols-fr gap-1.5 mt-3">
+                    @foreach ($categories as $idx => $catName)
+                        <div
+                            @class([
+                                'h-2 rounded-full transition-colors',
+                                'bg-primary' => $idx === $currentCategoryIndex,
+                                'bg-success' => $idx < $currentCategoryIndex,
+                                'bg-muted/20' => $idx > $currentCategoryIndex,
+                            ])
+                            title="{{ $catName }}"
+                        ></div>
+                    @endforeach
                 </div>
             </x-ui.card>
         @endif
