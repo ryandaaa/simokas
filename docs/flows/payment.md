@@ -113,7 +113,7 @@ Alasan posting `inspection` saat selesai: PRD 8.1 menyebut fee inspektor "cair s
 - [x] `PAY-T08` Posting ledger akses: inspektor dan platform sesuai persen (contoh tabel)
 - [x] `PAY-T09` Posting ledger inspeksi hanya saat job `completed`
 - [x] `PAY-T10` Refund sebelum selesai menghasilkan satu entri `refund`, idempoten (PAY-E7)
-- [ ] `PAY-T11` Perubahan tarif tidak memengaruhi tagihan atau job lama (PAY-E8)
+- [x] `PAY-T11` Perubahan tarif tidak memengaruhi tagihan atau job lama (PAY-E8)
 - [x] `PAY-T12` Saldo inspektor sama dengan jumlah kreditnya (PAY-R8)
 - [x] `PAY-T13` Invarian ledger: total entri per pembayaran = nilai pembayaran, di semua jalur (dataset tujuan)
 - [x] `PAY-T14` Transaksi database: kegagalan di tengah tidak meninggalkan entri parsial (PAY-E10)
