@@ -46,6 +46,7 @@ it('JOB-T18 allows only requester owner to view job; all other roles get 403', f
         'inspector' => User::factory()->inspector()->create(),
         'admin' => User::factory()->admin()->create(),
         'blocked_owner' => tap($owner, fn ($u) => $u->update(['status' => 'blocked'])),
+        default => throw new \InvalidArgumentException("Unknown role type: {$roleType}"),
     };
 
     $policy = new InspectionJobPolicy;

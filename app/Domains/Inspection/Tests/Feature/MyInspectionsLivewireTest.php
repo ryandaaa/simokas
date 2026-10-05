@@ -25,6 +25,7 @@ it('forbids inspector and admin from accessing jobs.mine', function (string $rol
     $user = match ($role) {
         'inspector' => User::factory()->inspector()->create(),
         'admin' => User::factory()->admin()->create(),
+        default => throw new \InvalidArgumentException("Unknown role: {$role}"),
     };
 
     actingAs($user);

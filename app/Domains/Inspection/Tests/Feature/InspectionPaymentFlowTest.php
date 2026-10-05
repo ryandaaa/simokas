@@ -10,9 +10,10 @@ use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Actions\ProcessPaymentResult;
-use App\Domains\Payment\DTOs\ProcessPaymentData;
 use App\Domains\Payment\Enums\PaymentMethod;
+use App\Domains\Payment\Enums\PaymentSimulationOutcome;
 use App\Domains\Payment\Enums\PaymentStatus;
+use App\Domains\Payment\Models\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -33,15 +34,18 @@ it('executes full end-to-end flow: request inspection -> successful payment -> j
         ->and($listing->fresh()->status)->toBe(ListingStatus::Active);
 
     // 2. Process payment with success result via real Payment action
+    /** @var Payment $payment */
+    $payment = Payment::query()->findOrFail($bill->id);
+
     /** @var ProcessPaymentResult $paymentAction */
     $paymentAction = app(ProcessPaymentResult::class);
-    $paymentResult = $paymentAction->handle(new ProcessPaymentData(
-        paymentId: $bill->id,
-        targetStatus: PaymentStatus::Success,
-        method: PaymentMethod::Qris,
-    ));
+    $paymentResult = $paymentAction->handle(
+        $payment,
+        PaymentMethod::Qris,
+        PaymentSimulationOutcome::Success,
+    );
 
-    expect($paymentResult->payment->status)->toBe(PaymentStatus::Success);
+    expect($paymentResult->status)->toBe(PaymentStatus::Success);
 
     // 3. Verify real event reaction in Inspection: job is paid and available_since is recorded
     $freshJob = $job->fresh();
@@ -52,7 +56,7 @@ it('executes full end-to-end flow: request inspection -> successful payment -> j
     expect($listing->fresh()->status)->toBe(ListingStatus::InInspection);
 });
 
-it('does not transition job or listing when payment is failed or pending (PAY-R10)', function (PaymentStatus $nonSuccessStatus) {
+it('does not transition job or listing when payment is failed or pending (PAY-R10)', function (PaymentSimulationOutcome $outcome) {
     $requester = User::factory()->user()->create();
     $listing = Listing::factory()->active()->create();
 
@@ -63,20 +67,23 @@ it('does not transition job or listing when payment is failed or pending (PAY-R1
     $job = $result['job'];
     $bill = $result['bill'];
 
-    // Process payment with non-success status
+    // Process payment with non-success outcome
+    /** @var Payment $payment */
+    $payment = Payment::query()->findOrFail($bill->id);
+
     /** @var ProcessPaymentResult $paymentAction */
     $paymentAction = app(ProcessPaymentResult::class);
-    $paymentAction->handle(new ProcessPaymentData(
-        paymentId: $bill->id,
-        targetStatus: $nonSuccessStatus,
-        method: PaymentMethod::BankTransfer,
-    ));
+    $paymentAction->handle(
+        $payment,
+        PaymentMethod::Transfer,
+        $outcome,
+    );
 
     // Job stays requested, listing stays active
     expect($job->fresh()->status)->toBe(JobStatus::Requested)
         ->and($job->fresh()->available_since)->toBeNull()
         ->and($listing->fresh()->status)->toBe(ListingStatus::Active);
 })->with([
-    [PaymentStatus::Failed],
-    [PaymentStatus::Pending],
+    [PaymentSimulationOutcome::Failed],
+    [PaymentSimulationOutcome::Pending],
 ]);
