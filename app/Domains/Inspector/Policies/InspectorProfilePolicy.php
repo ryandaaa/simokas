@@ -23,4 +23,14 @@ final class InspectorProfilePolicy
     {
         return $user->isAdmin() || ($user->isInspector() && $user->id === $profile->user_id);
     }
+
+    public function verify(User $user, ?InspectorProfile $profile = null): bool
+    {
+        return $user->isAdmin();
+    }
+
+    public function resubmit(User $user, InspectorProfile $profile): bool
+    {
+        return $user->isInspector() && $user->id === $profile->user_id;
+    }
 }
