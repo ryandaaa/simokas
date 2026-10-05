@@ -10,6 +10,7 @@ use App\Domains\Listing\Enums\FuelType;
 use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Enums\Transmission;
 use App\Domains\Listing\Enums\VehicleType;
+use App\Domains\Listing\ValueObjects\ApproximateLocation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -133,6 +134,19 @@ class Listing extends Model
     public function inspectionSlots(): HasMany
     {
         return $this->hasMany(ListingInspectionSlot::class, 'listing_id')->orderBy('slot_start');
+    }
+
+    /**
+     * Public approximate point for catalog maps (PRD 16.1, CAT-2).
+     * Never exposes the exact pin; rounds to a coarse grid instead.
+     */
+    public function approximateLocation(): ?ApproximateLocation
+    {
+        if ($this->lat === null || $this->lng === null) {
+            return null;
+        }
+
+        return ApproximateLocation::fromExact((float) $this->lat, (float) $this->lng);
     }
 
     /**

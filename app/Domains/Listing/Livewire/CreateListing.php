@@ -11,6 +11,8 @@ use App\Domains\Listing\Enums\FuelType;
 use App\Domains\Listing\Enums\Transmission;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Listing\Rules\WithinPekanbaru;
+use App\Domains\Listing\ValueObjects\PekanbaruBoundary;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -50,6 +52,13 @@ final class CreateListing extends Component
     public string $description = '';
 
     public string $area_name = '';
+
+    // Step 3: Location (map pin + full address, PRD 16.1)
+    public mixed $lat = null;
+
+    public mixed $lng = null;
+
+    public string $address_full = '';
 
     // Step 2: Photos
     /** @var array<int, mixed> */
@@ -161,8 +170,12 @@ final class CreateListing extends Component
             'color' => ['required', 'string', 'min:1', 'max:30'],
             'chassis_number' => ['nullable', 'string', 'max:30'],
             'description' => ['nullable', 'string', 'max:2000'],
-            'area_name' => ['nullable', 'string', 'max:100'],
         ]);
+    }
+
+    public function defaultMapCentre(): array
+    {
+        return ['lat' => PekanbaruBoundary::CENTRE_LAT, 'lng' => PekanbaruBoundary::CENTRE_LNG];
     }
 
     public function validateStep2(): void
@@ -177,6 +190,10 @@ final class CreateListing extends Component
     public function validateStep3(): void
     {
         $this->validate([
+            'lat' => ['required', new WithinPekanbaru('lat', 'lng')],
+            'lng' => ['required', new WithinPekanbaru('lng', 'lat')],
+            'address_full' => ['required', 'string', 'min:10', 'max:500'],
+            'area_name' => ['required', 'string', 'min:3', 'max:100'],
             'inspection_place' => ['required', 'string', 'max:255'],
             'inspection_slots' => ['required', 'array', 'min:1'],
             'inspection_slots.*.slot_start' => ['required', 'date', 'after:now'],
@@ -212,7 +229,10 @@ final class CreateListing extends Component
             slots: $this->inspection_slots,
             chassis_number: $this->chassis_number !== '' ? trim($this->chassis_number) : null,
             description: $this->description !== '' ? trim($this->description) : null,
-            area_name: $this->area_name !== '' ? trim($this->area_name) : null,
+            area_name: trim($this->area_name),
+            lat: (float) $this->lat,
+            lng: (float) $this->lng,
+            address_full: trim($this->address_full),
             cover_photo_index: $this->cover_index,
         );
 
@@ -229,6 +249,7 @@ final class CreateListing extends Component
 
         return view('listing::livewire.create-listing', [
             'brandSuggestions' => $brandSuggestions,
+            'mapCentre' => $this->defaultMapCentre(),
         ])->layout('components.layouts.app', ['title' => __('listing.create.title')]);
     }
 }
