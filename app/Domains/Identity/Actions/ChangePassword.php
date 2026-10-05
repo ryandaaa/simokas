@@ -35,10 +35,6 @@ final class ChangePassword
             $user->password = Hash::make($newPassword);
             $user->save();
 
-            if (session()->isStarted()) {
-                session()->regenerate();
-            }
-
             return $user;
         });
     }

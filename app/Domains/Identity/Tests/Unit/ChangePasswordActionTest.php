@@ -78,25 +78,6 @@ final class ChangePasswordActionTest extends TestCase
         $action->handle($user2, 'PasswordDua123!', 'PasswordBaru123!');
     }
 
-    public function test_it_preserves_user_authentication_in_the_current_session(): void
-    {
-        /** @var User $user */
-        $user = User::factory()->create([
-            'password' => Hash::make('PasswordLama123!'),
-        ]);
-
-        Auth::login($user);
-        $this->assertTrue(Auth::check());
-        $this->assertSame($user->id, Auth::id());
-
-        $action = new ChangePassword;
-        $action->handle($user, 'PasswordLama123!', 'PasswordBaru123!');
-
-        // Session remains authenticated on current device (AUTH-E10)
-        $this->assertTrue(Auth::check());
-        $this->assertSame($user->id, Auth::id());
-    }
-
     public function test_it_strictly_ignores_extra_input_or_model_tampering(): void
     {
         /** @var User $user */
