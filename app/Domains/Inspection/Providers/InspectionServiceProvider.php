@@ -24,6 +24,7 @@ final class InspectionServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(ListingActivityChecker::class, InspectionListingActivityChecker::class);
+        $this->app->singleton(\App\Domains\Catalog\Contracts\InspectionJobAccess::class, \App\Domains\Inspection\Services\InspectionJobAccessService::class);
     }
 
     public function boot(): void
@@ -37,6 +38,7 @@ final class InspectionServiceProvider extends ServiceProvider
         // berjalan setelah register() semuanya selesai, sehingga binding
         // terakhir ini selalu yang dipakai container.
         $this->app->singleton(ListingActivityChecker::class, InspectionListingActivityChecker::class);
+        $this->app->singleton(\App\Domains\Catalog\Contracts\InspectionJobAccess::class, \App\Domains\Inspection\Services\InspectionJobAccessService::class);
 
         Gate::policy(InspectionJob::class, InspectionJobPolicy::class);
         Gate::define('inspection.request', fn (User $user, Listing $listing): bool => (new InspectionJobPolicy)->request($user, $listing));
