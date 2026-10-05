@@ -2,9 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Note (CAT-3, shared): the default `/` welcome route moved to the
+// Catalog domain (`home` route served by HomeController).
 
 Route::get('/_ui', function () {
     abort_unless(app()->environment(['local', 'testing']), 404);
