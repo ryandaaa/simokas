@@ -104,7 +104,7 @@ Alasan posting `inspection` saat selesai: PRD 8.1 menyebut fee inspektor "cair s
 ## 6. Daftar test case
 
 - [ ] `PAY-T01` Tagihan dibuat dengan jumlah dari server (PAY-E6)
-- [ ] `PAY-T02` `Money::split` menjumlah ke nilai awal untuk banyak nilai (dataset termasuk ganjil, PAY-E9)
+- [x] `PAY-T02` `Money::split` menjumlah ke nilai awal untuk banyak nilai (dataset termasuk ganjil, PAY-E9)
 - [ ] `PAY-T03` Idempotency: dua permintaan kunci sama menghasilkan satu pembayaran (PAY-E1)
 - [ ] `PAY-T04` Hasil `success`, `failed`, `pending` mengubah status sesuai transisi (dataset)
 - [ ] `PAY-T05` Gagal tidak mengubah job, boleh coba lagi dengan kunci baru (PAY-E2)
