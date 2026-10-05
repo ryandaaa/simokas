@@ -10,7 +10,7 @@
 
 ## 1. Ringkasan
 
-Menyediakan seluruh kontrak komponen UI bersama (`<x-ui.*>`), layout aplikasi responsif (bilah atas desktop dan menu bawah mobile), token desain di `resources/css/app.css` (`@theme`), font self-hosted Plus Jakarta Sans, set ikon Heroicons inline, halaman error ramah berbahasa Indonesia, terjemahan `lang/id`, serta galeri komponen internal di `/_ui`.
+Menyediakan seluruh kontrak komponen UI bersama (`<x-ui.*>`), layout aplikasi responsif (bilah atas desktop dan menu bawah mobile), token desain di `resources/css/app.css` (`@theme`), font self-hosted Satoshi, set ikon Heroicons inline, halaman error ramah berbahasa Indonesia, terjemahan `lang/id`, serta galeri komponen internal di `/_ui`.
 
 Komponen dibangun dengan pendekatan **F2 polos**: fungsional, semantik, mobile-first, tanpa dekorasi berlebihan. Semua kartu fitur berikutnya diwajibkan hanya menggunakan komponen ini.
 
