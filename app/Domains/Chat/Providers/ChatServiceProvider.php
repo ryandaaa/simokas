@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Domains\Chat\Providers;
 
 use App\Domains\Chat\Listeners\CreateJobConversation;
+use App\Domains\Chat\Livewire\ConversationDetail;
+use App\Domains\Chat\Livewire\ConversationList;
 use App\Domains\Chat\Models\Conversation;
 use App\Domains\Chat\Policies\ConversationPolicy;
 use App\Domains\Inspection\Events\JobTaken;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 final class ChatServiceProvider extends ServiceProvider
 {
@@ -30,5 +33,8 @@ final class ChatServiceProvider extends ServiceProvider
         Broadcast::channel('conversation.{conversationId}', [ConversationPolicy::class, 'viewChannel']);
 
         Event::listen(JobTaken::class, CreateJobConversation::class);
+
+        Livewire::component('chat.conversation-list', ConversationList::class);
+        Livewire::component('chat.conversation-detail', ConversationDetail::class);
     }
 }
