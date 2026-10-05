@@ -31,4 +31,33 @@ final class InspectionJobPolicy
 
         return $user->isUser() && $user->getKey() === $job->requester_id;
     }
+
+    public function viewDetail(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return $user->isInspector()
+            && $job->inspector_id !== null
+            && (string) $user->getKey() === (string) $job->inspector_id;
+    }
+
+    public function viewPrivate(User $user, InspectionJob $job): bool
+    {
+        return $this->viewDetail($user, $job);
+    }
+
+    public function take(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return $user->isInspector();
+    }
 }

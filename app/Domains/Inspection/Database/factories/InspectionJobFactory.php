@@ -71,4 +71,14 @@ class InspectionJobFactory extends Factory
             'fee_amount' => 15000,
         ]);
     }
+
+    public function taken(?User $inspector = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => JobStatus::Taken,
+            'inspector_id' => $inspector !== null ? $inspector->id : User::factory()->inspector(),
+            'available_since' => now()->subHour(),
+            'taken_at' => now(),
+        ]);
+    }
 }
