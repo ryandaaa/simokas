@@ -29,6 +29,7 @@ use Illuminate\Support\Carbon;
  * @property float $rating_avg
  * @property int $rating_count
  * @property int $completed_jobs
+ * @property array<int, array{reason: string, recorded_at: string}>|null $rejection_history
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -39,6 +40,7 @@ use Illuminate\Support\Carbon;
     'experience_years',
     'verification_status',
     'rejection_reason',
+    'rejection_history',
     'verified_by',
     'verified_at',
     'rating_avg',
@@ -65,6 +67,7 @@ final class InspectorProfile extends Model
             'experience_years' => 'integer',
             'verification_status' => VerificationStatus::class,
             'verified_at' => 'datetime',
+            'rejection_history' => 'array',
             'rating_avg' => 'float',
             'rating_count' => 'integer',
             'completed_jobs' => 'integer',

@@ -35,6 +35,9 @@ return [
         'approved_alert_title' => 'Akun Inspektor Terverifikasi',
         'approved_alert_message' => 'Selamat, akun inspektor Anda telah disetujui. Anda dapat melihat dan mengambil job inspeksi.',
         'status_label' => 'Status Verifikasi Akun',
+        'resubmit_button' => 'Ajukan Ulang Verifikasi',
+        'resubmitting' => 'Mengajukan ulang...',
+        'resubmitted_success' => 'Pengajuan verifikasi berhasil diajukan ulang dan kini menunggu tinjauan admin.',
     ],
 
     'documents' => [
@@ -74,5 +77,14 @@ return [
 
     'validation' => [
         'safe_portfolio_url' => 'Tautan portofolio harus berupa URL yang valid (hanya skema http atau https, memiliki host, tanpa spasi atau karakter kontrol, dan tanpa userinfo).',
+    ],
+
+    'errors' => [
+        'invalid_transition' => 'Transisi status verifikasi tidak sah dari :from ke :to.',
+        'already_processed' => 'Pengajuan verifikasi ini telah diproses oleh admin lain (status saat ini: :status).',
+        'cannot_resubmit' => 'Pengajuan tidak dapat diajukan ulang karena status saat ini adalah :status.',
+        'incomplete_documents' => 'Tidak dapat menyetujui inspektor karena dokumen wajib belum lengkap (:missing).',
+        'missing_rejection_reason' => 'Alasan penolakan wajib diisi.',
+        'not_approved' => 'Hanya inspektor yang telah disetujui yang dapat mengakses halaman atau pekerjaan ini.',
     ],
 ];
