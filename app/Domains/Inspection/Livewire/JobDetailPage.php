@@ -7,7 +7,6 @@ namespace App\Domains\Inspection\Livewire;
 use App\Domains\Inspection\Actions\CancelJobByInspector;
 use App\Domains\Inspection\Actions\ScheduleJob;
 use App\Domains\Inspection\Actions\StartInspection;
-use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
 use App\Support\Clock;

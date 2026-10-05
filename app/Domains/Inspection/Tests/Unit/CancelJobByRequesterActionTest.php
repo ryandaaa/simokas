@@ -11,7 +11,6 @@ use App\Domains\Inspection\Events\JobCancelled;
 use App\Domains\Inspection\Exceptions\CannotCancelInProgressJobException;
 use App\Domains\Inspection\Exceptions\InvalidJobStatusTransitionException;
 use App\Domains\Inspection\Models\InspectionJob;
-use App\Domains\Payment\Enums\LedgerEntryType;
 use App\Domains\Payment\Enums\PaymentMethod;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Enums\PaymentStatus;
