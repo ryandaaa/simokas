@@ -154,6 +154,7 @@
                         :imageAlt="$card->imageAlt"
                         :inspected="$card->inspected"
                         :inspectedDate="$card->inspectedDate"
+                        :href="route('catalog.show', ['listing' => $card->id])"
                     />
                 @endforeach
             </div>
