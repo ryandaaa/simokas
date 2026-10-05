@@ -12,6 +12,7 @@ use App\Domains\Chat\Exceptions\UnauthorizedChatParticipantException;
 use App\Domains\Chat\Models\Conversation;
 use App\Domains\Chat\Models\Message;
 use App\Domains\Identity\Models\User;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
@@ -61,7 +62,10 @@ final class SendMessage
             $cachedId = Cache::get($cacheKey);
 
             if ($cachedId !== null) {
-                $cached = Message::query()->find($cachedId);
+                $cached = Message::query()
+                    ->where('conversation_id', $conversation->id)
+                    ->where('sender_id', $sender->id)
+                    ->find($cachedId);
                 if ($cached) {
                     return $cached;
                 }
@@ -70,34 +74,53 @@ final class SendMessage
             if (Str::isUuid($clientKey)) {
                 $existing = Message::query()->find($clientKey);
                 if ($existing) {
-                    return $existing;
+                    if ($existing->conversation_id === $conversation->id && $existing->sender_id === $sender->id) {
+                        return $existing;
+                    }
+
+                    throw InvalidMessageException::clientKeyConflict();
                 }
             }
         }
 
         RateLimiter::hit($rateKey, 60);
 
-        /** @var Message $message */
-        $message = DB::transaction(function () use ($sender, $conversation, $trimmedBody, $clientKey) {
-            $attributes = [
-                'conversation_id' => $conversation->id,
-                'sender_id' => $sender->id,
-                'body' => $trimmedBody,
-            ];
+        try {
+            /** @var Message $message */
+            $message = DB::transaction(function () use ($sender, $conversation, $trimmedBody, $clientKey) {
+                $attributes = [
+                    'conversation_id' => $conversation->id,
+                    'sender_id' => $sender->id,
+                    'body' => $trimmedBody,
+                ];
 
+                if ($clientKey !== null && Str::isUuid($clientKey)) {
+                    $attributes['id'] = $clientKey;
+                }
+
+                $msg = Message::query()->create($attributes);
+
+                // Update sender's last_read_at
+                $conversation->members()
+                    ->where('user_id', $sender->id)
+                    ->update(['last_read_at' => $msg->created_at ?? now()]);
+
+                return $msg;
+            });
+        } catch (UniqueConstraintViolationException $e) {
             if ($clientKey !== null && Str::isUuid($clientKey)) {
-                $attributes['id'] = $clientKey;
+                $existing = Message::query()
+                    ->where('conversation_id', $conversation->id)
+                    ->where('sender_id', $sender->id)
+                    ->find($clientKey);
+
+                if ($existing) {
+                    return $existing;
+                }
             }
 
-            $msg = Message::query()->create($attributes);
-
-            // Update sender's last_read_at
-            $conversation->members()
-                ->where('user_id', $sender->id)
-                ->update(['last_read_at' => $msg->created_at ?? now()]);
-
-            return $msg;
-        });
+            throw InvalidMessageException::clientKeyConflict();
+        }
 
         if ($clientKey !== null) {
             $cacheKey = sprintf('chat_client_key:%s:%s:%s', $conversation->id, $sender->id, $clientKey);
@@ -109,3 +132,4 @@ final class SendMessage
         return $message;
     }
 }
+
