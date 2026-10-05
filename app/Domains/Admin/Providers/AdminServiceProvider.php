@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Admin\Providers;
 
+use App\Domains\Admin\Livewire\InspectorVerificationQueue;
 use App\Domains\Admin\Livewire\Settings;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -27,5 +28,6 @@ final class AdminServiceProvider extends ServiceProvider
     private function registerLivewireComponents(): void
     {
         Livewire::component('admin.settings', Settings::class);
+        Livewire::component('admin.inspector-verification-queue', InspectorVerificationQueue::class);
     }
 }
