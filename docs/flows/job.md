@@ -117,10 +117,10 @@ sequenceDiagram
 
 - [x] `JOB-T01` Ajukan inspeksi membuat job `requested` dengan tarif sesuai jenis kendaraan
 - [x] `JOB-T02` Ajukan inspeksi hanya pada listing `active` tanpa job aktif (JOB-E2), dataset status
-- [ ] `JOB-T03` Hanya satu inspektor dapat mengambil job (JOB-E1)
+- [x] `JOB-T03` Hanya satu inspektor dapat mengambil job (JOB-E1)
 - [x] `JOB-T04` Indeks unik menolak job aktif kedua langsung lewat query (JOB-R1)
-- [ ] `JOB-T05` Ambil job ditolak: tidak terverifikasi, listing sendiri, batas 3 job, jenis keahlian tidak cocok (dataset)
-- [ ] `JOB-T06` Alamat persis dan nomor rangka hanya muncul setelah `taken` untuk inspektor pengambil (JOB-R5)
+- [x] `JOB-T05` Ambil job ditolak: tidak terverifikasi, listing sendiri, batas 3 job, jenis keahlian tidak cocok (dataset)
+- [x] `JOB-T06` Alamat persis dan nomor rangka hanya muncul setelah `taken` untuk inspektor pengambil (JOB-R5)
 - [ ] `JOB-T07` Inspektor batal: kembali `paid`, `inspector_id` null, `available_since` baru (JOB-E3, JOB-E16)
 - [x] `JOB-T08` Setiap transisi sah diterima dan tidak sah ditolak (dataset)
 - [ ] `JOB-T09` Tagihan kedaluwarsa tepat di 30 menit (29 menit belum, 31 menit sudah)
