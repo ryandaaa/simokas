@@ -246,7 +246,7 @@ it('renders x-ui.alert with all variants, retry button, and dismissible state', 
     $view->assertSee('x-show="show"', false);
 });
 
-it('renders x-ui.modal with title, description, and accessibility attributes', function () {
+it('renders x-ui.modal initially closed with focus trap, alpine listeners, and cloaking', function () {
     $view = $this->blade(
         '<x-ui.modal name="test-modal" title="Konfirmasi Batal" description="Data akan hilang." confirmText="Ya, Batalkan" cancelText="Kembali" />'
     );
@@ -256,7 +256,23 @@ it('renders x-ui.modal with title, description, and accessibility attributes', f
     $view->assertSee('Kembali');
     $view->assertSee('role="dialog"', false);
     $view->assertSee('aria-modal="true"', false);
+
+    // Initial state is closed and cloaked
+    $view->assertSee('open: false', false);
+    $view->assertSee('x-cloak', false);
+    $view->assertSee('x-show="open"', false);
+    $view->assertSee('x-trap="open"', false);
+
+    // Alpine event listeners and focus handling
+    $view->assertSee("x-on:open-modal.window=\"if (\$event.detail === 'test-modal') open = true\"", false);
+    $view->assertSee("x-on:close-modal.window=\"if (\$event.detail === 'test-modal') open = false\"", false);
     $view->assertSee('x-on:keydown.escape.window="open = false"', false);
+    $view->assertSee('this.triggerEl = document.activeElement;', false);
+    $view->assertSee('this.triggerEl.focus()', false);
+
+    // Close actions
+    $view->assertSee('@click="open = false"', false);
+    $view->assertSee('@click.outside="open = false"', false);
 });
 
 it('renders x-ui.money using Support\Money formatting', function () {

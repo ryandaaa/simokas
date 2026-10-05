@@ -55,7 +55,7 @@ Layout aplikasi utama responsif (mobile-first).
   - `navItems` (array): Daftar item navigasi `[['label' => '...', 'url' => '...', 'icon' => '...', 'active' => bool]]`. Maksimal 5 item ditampilkan di menu bawah HP.
   - `headerActions` (slot|null): Aksi di kanan header desktop.
   - `notifications` (slot|null): Kontainer notifikasi visual dan `aria-live`.
-- **Fitur:** Skip-link ke `#main-content`, `aria-live` region terintegrasi, bilah atas desktop, dan menu navigasi bawah di HP (tinggi sentuh min 44px).
+- **Fitur:** Skip-link ke `#main-content`, `aria-live` region terintegrasi, bilah atas desktop, menu navigasi bawah di HP (tinggi sentuh min 44px), serta pemuatan `@livewireStyles` dan `@livewireScripts` tepat satu kali sehingga Alpine.js tersedia di seluruh halaman (termasuk halaman tanpa komponen Livewire dan halaman galeri/error).
 
 ### 4.2 `<x-ui.button>`
 Tombol interaktif dan tautan berpenampilan tombol.
@@ -143,7 +143,7 @@ Pesan pengumuman status / galat.
 ### 4.14 `<x-ui.modal>`
 Dialog konfirmasi tindakan tak dapat dibatalkan.
 - **Props:** `name` / `id` (string), `show` (bool), `title` (string|null), `description` (string|null), `confirmText` (string|null), `confirmVariant` (string, bawaan 'primary'), `cancelText` (string|null), `maxWidth` (string).
-- **Fitur:** Menjebak fokus, menutup dengan tombol `Esc`, backdrop gelap dengan efek blur halus.
+- **Fitur:** Menjebak fokus (`x-trap`), mengembalikan fokus ke elemen pemicu saat ditutup, menutup dengan tombol `Esc`, tombol X, tombol Batal, atau klik di luar (`@click.outside`), serta dilindungi `x-cloak` agar tidak muncul saat awal sebelum Alpine siap.
 
 ### 4.15 `<x-ui.money>`
 Pemformat mata uang Rupiah.

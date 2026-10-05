@@ -84,3 +84,11 @@ it('ensures domain views do not use raw tailwind color or typography classes out
         "Domain view dilarang menggunakan kelas warna Tailwind mentah:\n".implode("\n", $violations)
     );
 });
+
+it('ensures app.css defines x-cloak rule with display none important', function () {
+    $cssContent = file_get_contents(resource_path('css/app.css'));
+
+    expect($cssContent)->not->toBeFalse()
+        ->and($cssContent)->toContain('[x-cloak]')
+        ->and($cssContent)->toMatch('/\[x-cloak\]\s*\{\s*display:\s*none\s*!important;\s*\}/');
+});
