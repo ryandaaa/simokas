@@ -146,6 +146,12 @@ Domain pendengar (seperti `Inspection` pada `JOB-1`) dapat mendengarkan event in
 ## 5. Keamanan & Idempotensi
 
 1. **Idempotensi Penuh:** Penggunaan `idempotency_key` unik menjamin bahwa request ganda (klik ganda, refresh, replay jaringan) selalu mengembalikan objek tagihan yang sama tanpa membuat baris baru di basis data.
-2. **Kunci Baris & Pembaruan Berkondisi:** Perubahan status dalam `ProcessPaymentResult` dilakukan dalam transaksi database dengan klausa berkondisi (`where status = status_lama`), sehingga pemanggilan konkuren tidak berefek ganda.
-3. **Pemisahan Environment:** Mode pilih hasil simulasi bebas (gagal/tertunda) hanya diizinkan di non-produksi/demo. Di lingkungan produksi, server menolak pemilihan hasil bebas dan mewajibkan hasil default sistem (`success`).
-4. **Otorisasi:** Hak melihat (`view`) dan membayar (`pay`) dilindungi `PaymentPolicy`. Hanya pemilik tagihan yang dapat mengakses dan membayar; pembayar lain ditolak dengan `403 Forbidden`. Tagihan yang melewati batas waktu kedaluwarsa (`expires_at`) ditolak dengan `410 Gone / PAYMENT_EXPIRED`.
+2. **Kunci Sama, Parameter Berbeda = 409:** Bila `idempotency_key` sudah dipakai tetapi `payer_id`, `purpose`, `ref_id`, atau `amount` berbeda dari tagihan yang tersimpan, permintaan ditolak dengan `409 IDEMPOTENCY_KEY_CONFLICT` (`IdempotencyKeyConflictException`). Pesan galat tidak membocorkan data tagihan milik orang lain. Hanya bila keempat parameter sama, tagihan yang ada dikembalikan. Pemeriksaan ini berlaku di semua jalur, termasuk pemulihan balapan konkurensi (pelanggaran batasan unik di dalam transaksi).
+3. **Kunci Baris & Pembaruan Berkondisi:** Perubahan status dalam `ProcessPaymentResult` dilakukan dalam transaksi database dengan klausa berkondisi (`where status = status_lama`), sehingga pemanggilan konkuren tidak berefek ganda.
+4. **Pemisahan Environment:** Mode pilih hasil simulasi bebas (gagal/tertunda) hanya diizinkan di non-produksi/demo. Di lingkungan produksi, server menolak pemilihan hasil bebas dan mewajibkan hasil default sistem (`success`).
+5. **Otorisasi:** Hak melihat (`view`) dan membayar (`pay`) dilindungi `PaymentPolicy`. Hanya pemilik tagihan yang dapat mengakses dan membayar; pembayar lain ditolak dengan `403 Forbidden`. Tagihan yang melewati batas waktu kedaluwarsa (`expires_at`) ditolak dengan `410 Gone / PAYMENT_EXPIRED`.
+
+## 6. Catatan untuk Pengguna Kontrak (JOB-1 dan lainnya)
+
+- Setelah retry dari `failed`, kunci pada baris pembayaran **berganti** ke kunci baru, sedangkan kunci lama tidak lagi merujuk ke baris aktif. Pemanggil kontrak harus mengunci keunikan tagihan aktif berdasarkan `(purpose, ref_id, payer)` di sisinya (atau lewat metode kontrak yang tersedia) sebelum membuat tagihan baru, agar tidak tercipta tagihan ganda untuk acuan yang sama.
+- Selalu bangkitkan `idempotencyKey` yang benar-benar baru (mis. UUID v4) untuk setiap tagihan baru; jangan memakai ulang kunci antar tagihan yang berbeda, karena akan ditolak dengan `409 IDEMPOTENCY_KEY_CONFLICT`.

@@ -7,6 +7,7 @@ use App\Domains\Payment\Actions\CreateBill;
 use App\Domains\Payment\DTOs\CreateBillData;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Enums\PaymentStatus;
+use App\Domains\Payment\Exceptions\IdempotencyKeyConflictException;
 use App\Domains\Payment\Models\Payment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
@@ -65,13 +66,13 @@ it('PAY-T03 returns identical payment on duplicate idempotency key without creat
         ->and(Payment::query()->where('idempotency_key', $key)->count())->toBe(1);
 });
 
-it('uses server amount and ignores any client amount variation on identical idempotency key', function () {
+it('rejects the same key with different parameters without creating or changing any row', function (Closure $conflicting) {
     $action = new CreateBill;
     $payer = User::factory()->create();
     $refId = (string) Str::uuid();
-    $key = 'idemp-key-fixed-amount';
+    $key = 'idemp-key-conflict';
 
-    $first = $action->handle(new CreateBillData(
+    $original = $action->handle(new CreateBillData(
         payerId: $payer->id,
         purpose: PaymentPurpose::Inspection,
         refId: $refId,
@@ -79,15 +80,127 @@ it('uses server amount and ignores any client amount variation on identical idem
         idempotencyKey: $key,
     ));
 
-    // Subsequent request attempting to pass modified/spoofed amount
-    $second = $action->handle(new CreateBillData(
+    try {
+        $action->handle($conflicting($payer, $refId, $key));
+        expect(false)->toBeTrue('expected IdempotencyKeyConflictException');
+    } catch (IdempotencyKeyConflictException $e) {
+        expect($e->getErrorCode())->toBe('IDEMPOTENCY_KEY_CONFLICT')
+            ->and($e->getStatusCode())->toBe(409)
+            ->and($e->getMessage())->not->toContain($original->id)
+            ->and($e->getMessage())->not->toContain((string) $original->amount);
+    }
+
+    expect(Payment::query()->where('idempotency_key', $key)->count())->toBe(1);
+
+    $untouched = $original->fresh();
+    expect($untouched->payer_id)->toBe($payer->id)
+        ->and($untouched->purpose)->toBe(PaymentPurpose::Inspection)
+        ->and($untouched->ref_id)->toBe($refId)
+        ->and((int) $untouched->amount)->toBe(50000);
+})->with([
+    'different payer' => [fn ($payer, $refId, $key) => new CreateBillData(
+        payerId: User::factory()->create()->id,
+        purpose: PaymentPurpose::Inspection,
+        refId: $refId,
+        amount: 50000,
+        idempotencyKey: $key,
+    )],
+    'different amount' => [fn ($payer, $refId, $key) => new CreateBillData(
         payerId: $payer->id,
         purpose: PaymentPurpose::Inspection,
         refId: $refId,
-        amount: 1000, // Spoofed amount ignored
+        amount: 1000,
+        idempotencyKey: $key,
+    )],
+    'different purpose' => [fn ($payer, $refId, $key) => new CreateBillData(
+        payerId: $payer->id,
+        purpose: PaymentPurpose::Access,
+        refId: $refId,
+        amount: 50000,
+        idempotencyKey: $key,
+    )],
+    'different ref_id' => [fn ($payer, $refId, $key) => new CreateBillData(
+        payerId: $payer->id,
+        purpose: PaymentPurpose::Inspection,
+        refId: (string) Str::uuid(),
+        amount: 50000,
+        idempotencyKey: $key,
+    )],
+]);
+
+it('never leaks another payer bill through the Billing contract on key conflict', function () {
+    $action = new CreateBill;
+    $owner = User::factory()->create();
+    $stranger = User::factory()->create();
+    $key = 'idemp-key-no-leak';
+
+    $owned = $action->handle(new CreateBillData(
+        payerId: $owner->id,
+        purpose: PaymentPurpose::Inspection,
+        refId: (string) Str::uuid(),
+        amount: 50000,
         idempotencyKey: $key,
     ));
 
-    expect($second->id)->toBe($first->id)
-        ->and($second->amount)->toBe(50000);
+    try {
+        $action->handle(new CreateBillData(
+            payerId: $stranger->id,
+            purpose: PaymentPurpose::Inspection,
+            refId: $owned->ref_id,
+            amount: (int) $owned->amount,
+            idempotencyKey: $key,
+        ));
+        expect(false)->toBeTrue('expected IdempotencyKeyConflictException');
+    } catch (IdempotencyKeyConflictException $e) {
+        expect($e->getMessage())->not->toContain($owned->id)
+            ->and($e->getContext())->toBe([]);
+    }
 });
+
+it('resolves a duplicate-key race to the same bill when parameters match', function () {
+    $action = new CreateBill;
+    $payer = User::factory()->create();
+    $refId = (string) Str::uuid();
+    $key = 'idemp-key-race-match';
+
+    $existing = Payment::factory()->forPayer($payer)->create([
+        'purpose' => PaymentPurpose::Inspection,
+        'ref_id' => $refId,
+        'amount' => 50000,
+        'idempotency_key' => $key,
+    ]);
+
+    // The insert hits the unique constraint (simulating a lost race) and the
+    // recovery path returns the identical bill.
+    $result = $action->handle(new CreateBillData(
+        payerId: $payer->id,
+        purpose: PaymentPurpose::Inspection,
+        refId: $refId,
+        amount: 50000,
+        idempotencyKey: $key,
+    ));
+
+    expect($result->id)->toBe($existing->id)
+        ->and(Payment::query()->where('idempotency_key', $key)->count())->toBe(1);
+});
+
+it('rejects a duplicate-key race when parameters differ', function () {
+    $action = new CreateBill;
+    $payer = User::factory()->create();
+    $key = 'idemp-key-race-conflict';
+
+    Payment::factory()->forPayer($payer)->create([
+        'purpose' => PaymentPurpose::Inspection,
+        'ref_id' => (string) Str::uuid(),
+        'amount' => 50000,
+        'idempotency_key' => $key,
+    ]);
+
+    $action->handle(new CreateBillData(
+        payerId: $payer->id,
+        purpose: PaymentPurpose::Inspection,
+        refId: (string) Str::uuid(),
+        amount: 75000,
+        idempotencyKey: $key,
+    ));
+})->throws(IdempotencyKeyConflictException::class);
