@@ -69,16 +69,16 @@ flowchart TD
 
 ## 5. Daftar test case
 
-- [ ] `CHT-T01` Memulai chat membuat percakapan, kedua kali memakai yang sama (CHT-E9)
-- [ ] `CHT-T02` Kirim pesan tersimpan dan `MessageSent` dipancarkan ke kanal yang benar
-- [ ] `CHT-T03` Otorisasi kanal: peserta diizinkan, selain itu ditolak (CHT-E3), dataset role
-- [ ] `CHT-T04` Validasi panjang dan kosong (CHT-E4)
-- [ ] `CHT-T05` HTML di-*escape* (CHT-E5)
-- [ ] `CHT-T06` Belum dibaca bertambah untuk lawan bicara dan nol setelah dibuka (`last_read_at`)
-- [ ] `CHT-T07` Ambil pesan setelah pesan terakhir mengembalikan yang terlewat (CHT-E1)
-- [ ] `CHT-T08` Kirim ganda dengan kunci sama menjadi satu pesan (CHT-E6)
-- [ ] `CHT-T09` Chat dengan diri sendiri ditolak (CHT-E8)
-- [ ] `CHT-T10` Pengguna diblokir tidak dapat mengirim (CHT-R6)
-- [ ] `CHT-T11` Polling mengembalikan pesan baru tanpa Pusher (CHT-E7)
-- [ ] `CHT-T12` Pembatasan laju (CHT-R9)
-- [ ] `CHT-T13` Percakapan job dibuat saat `JobTaken` dengan peserta inspektor dan penjual
+- [x] `CHT-T01` Memulai chat membuat percakapan, kedua kali memakai yang sama (CHT-E9)
+- [x] `CHT-T02` Kirim pesan tersimpan dan `MessageSent` dipancarkan ke kanal yang benar
+- [x] `CHT-T03` Otorisasi kanal: peserta diizinkan, selain itu ditolak (CHT-E3), dataset role
+- [x] `CHT-T04` Validasi panjang dan kosong (CHT-E4)
+- [x] `CHT-T05` HTML di-*escape* (CHT-E5)
+- [x] `CHT-T06` Belum dibaca bertambah untuk lawan bicara dan nol setelah dibuka (`last_read_at`)
+- [x] `CHT-T07` Ambil pesan setelah pesan terakhir mengembalikan yang terlewat (CHT-E1)
+- [x] `CHT-T08` Kirim ganda dengan kunci sama menjadi satu pesan (CHT-E6)
+- [x] `CHT-T09` Chat dengan diri sendiri ditolak (CHT-E8)
+- [x] `CHT-T10` Pengguna diblokir tidak dapat mengirim (CHT-R6)
+- [x] `CHT-T11` Polling mengembalikan pesan baru tanpa Pusher (CHT-E7)
+- [x] `CHT-T12` Pembatasan laju (CHT-R9)
+- [x] `CHT-T13` Percakapan job dibuat saat `JobTaken` dengan peserta inspektor dan penjual
