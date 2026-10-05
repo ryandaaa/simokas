@@ -65,7 +65,7 @@ flowchart TD
 | LST-R1 | Listing baru `pending_review`, tidak tampil publik |
 | LST-R2 | Foto 3–10, maks 2 MB per foto, JPG/PNG/WebP. Satu foto ditandai sampul |
 | LST-R3 | Titik lokasi harus di dalam wilayah Pekanbaru, divalidasi di server |
-| LST-R4 | Lokasi persis, alamat lengkap, dan nomor rangka tidak pernah di respons publik |
+| LST-R4 | Lokasi persis, alamat lengkap, nomor rangka, dan tempat inspeksi (`inspection_place`) tidak pernah di respons publik. `inspection_place` bersifat privat (dapat berisi alamat rumah penjual, PRD 13.3 dan 19) dan hanya tampil untuk pemilik dan admin; publik hanya memakai `area_name` |
 | LST-R5 | Opsi waktu inspeksi minimal 1 dan tidak di masa lalu |
 | LST-R6 | Penjual tidak dapat menghapus atau menonaktifkan listing yang punya job aktif atau transaksi |
 | LST-R7 | Edit mengikuti D-05. Field inti terkunci saat ada job aktif atau transaksi |
