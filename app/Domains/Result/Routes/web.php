@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domains\Result\Http\Controllers\DeleteResultPhotoController;
+use App\Domains\Result\Http\Controllers\UploadResultPhotoController;
 use App\Domains\Result\Http\Controllers\ViewResultPhotoController;
 use App\Domains\Result\Livewire\InspectionFormPage;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +20,16 @@ Route::middleware('web')->group(function () {
         Route::get('/jobs/{job}/fill', InspectionFormPage::class)
             ->whereUuid('job')
             ->name('result.fill');
+
+        Route::post('/jobs/{job}/result/photos', UploadResultPhotoController::class)
+            ->whereUuid('job')
+            ->name('result.photos.upload');
+
+        Route::delete('/jobs/{job}/result/photos/{photo}', DeleteResultPhotoController::class)
+            ->whereUuid('job')
+            ->whereUuid('photo')
+            ->name('result.photos.delete');
     });
 });
+
 
