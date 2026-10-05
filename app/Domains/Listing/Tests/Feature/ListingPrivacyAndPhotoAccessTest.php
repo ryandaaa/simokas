@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Http\Resources\ListingPrivateResource;
 use App\Domains\Listing\Http\Resources\ListingPublicResource;
 use App\Domains\Listing\Models\Listing;
@@ -192,3 +193,85 @@ it('allows owner and admin to view photos of non-active listing with private cac
         ->assertHeader('X-Content-Type-Options', 'nosniff')
         ->assertHeader('Cache-Control', 'must-revalidate, no-cache, no-store, private');
 });
+
+it('LST-T17 serves listing photos to guests for photo-public statuses with a public cache header', function (ListingStatus $status) {
+    $seller = User::factory()->user()->create();
+    $listing = Listing::factory()->create(['seller_id' => $seller->id, 'status' => $status]);
+
+    $filePath = 'listings/'.$listing->id.'/cover.jpg';
+    Storage::disk('private')->put($filePath, 'fake image binary content');
+
+    $photo = ListingPhoto::factory()->create([
+        'listing_id' => $listing->id,
+        'storage_path' => $filePath,
+        'is_cover' => true,
+    ]);
+
+    get(route('listings.photos.show', ['listing' => $listing->id, 'photo' => $photo->id]))
+        ->assertOk()
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('Cache-Control', 'max-age=86400, must-revalidate, public');
+})->with([
+    ListingStatus::Active,
+    ListingStatus::InInspection,
+    ListingStatus::InTransaction,
+    ListingStatus::Sold,
+]);
+
+it('LST-T17 keeps photos of non-public listings private: guests get 403, others get 403, owner and admin get a private cache header', function (ListingStatus $status) {
+    $owner = User::factory()->user()->create();
+    $otherUser = User::factory()->user()->create();
+    $admin = User::factory()->admin()->create();
+    $blockedOwner = User::factory()->user()->blocked()->create();
+
+    $listing = Listing::factory()->create(['seller_id' => $owner->id, 'status' => $status]);
+    $blockedListing = Listing::factory()->create(['seller_id' => $blockedOwner->id, 'status' => ListingStatus::Active]);
+
+    $filePath = 'listings/'.$listing->id.'/cover.jpg';
+    Storage::disk('private')->put($filePath, 'fake image binary content');
+
+    $photo = ListingPhoto::factory()->create([
+        'listing_id' => $listing->id,
+        'storage_path' => $filePath,
+    ]);
+
+    $blockedFilePath = 'listings/'.$blockedListing->id.'/cover.jpg';
+    Storage::disk('private')->put($blockedFilePath, 'fake image binary content');
+
+    $blockedPhoto = ListingPhoto::factory()->create([
+        'listing_id' => $blockedListing->id,
+        'storage_path' => $blockedFilePath,
+    ]);
+
+    $photoUrl = route('listings.photos.show', ['listing' => $listing->id, 'photo' => $photo->id]);
+
+    // Guest -> 403
+    get($photoUrl)->assertForbidden();
+
+    // Other user -> 403
+    actingAs($otherUser);
+    get($photoUrl)->assertForbidden();
+
+    // Blocked owner cannot open even their own active listing photo -> 403
+    actingAs($blockedOwner);
+    get(route('listings.photos.show', ['listing' => $blockedListing->id, 'photo' => $blockedPhoto->id]))
+        ->assertForbidden();
+
+    // Owner -> 200 with private cache
+    actingAs($owner);
+    get($photoUrl)
+        ->assertOk()
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('Cache-Control', 'must-revalidate, no-cache, no-store, private');
+
+    // Admin -> 200 with private cache
+    actingAs($admin);
+    get($photoUrl)
+        ->assertOk()
+        ->assertHeader('X-Content-Type-Options', 'nosniff')
+        ->assertHeader('Cache-Control', 'must-revalidate, no-cache, no-store, private');
+})->with([
+    ListingStatus::PendingReview,
+    ListingStatus::Rejected,
+    ListingStatus::Inactive,
+]);

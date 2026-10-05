@@ -51,3 +51,7 @@ domain Listing; listener milik domain pemancar event.
 - Tampilan publik (`Terjual` tanpa tombol aksi, LST-E11) dan daftar publik
   dikerjakan di **CAT-2** memakai `ListingPolicy::view` dan
   `ListingPublicResource` yang sudah siap.
+- Foto publik: `ListingPolicy::viewPhoto` dan `ViewListingPhotoController`
+  memakai `ListingStatus::isPhotoPubliclyVisible()` (`active`,
+  `in_inspection`, `in_transaction`, `sold` [USULAN]; LST-R11), sehingga
+  galeri di etalase dan halaman detail publik tidak 403.

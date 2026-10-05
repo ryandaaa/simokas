@@ -87,4 +87,15 @@ enum ListingStatus: string
     {
         return in_array($this, [self::Active, self::InInspection, self::InTransaction], true);
     }
+
+    /**
+     * Statuses whose photos anyone may open (CAT-R1, CAT-E5, LST-E11).
+     * Same as isPubliclyVisible plus Sold [USULAN] so the Terjual page
+     * keeps showing its gallery. Single source of truth for photo access;
+     * ListingPolicy::viewPhoto and ViewListingPhotoController both use it.
+     */
+    public function isPhotoPubliclyVisible(): bool
+    {
+        return $this->isPubliclyVisible() || $this === self::Sold;
+    }
 }

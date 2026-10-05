@@ -77,3 +77,15 @@ it('correctly evaluates boolean status helpers and visibility', function () {
         ->and(ListingStatus::Inactive->isPubliclyVisible())->toBeFalse()
         ->and(ListingStatus::Sold->isPubliclyVisible())->toBeFalse();
 });
+
+it('LST-T17 marks active, in_inspection, in_transaction, and sold as photo-public', function (ListingStatus $status, bool $expected) {
+    expect($status->isPhotoPubliclyVisible())->toBe($expected);
+})->with([
+    'pending_review is not photo-public' => [ListingStatus::PendingReview, false],
+    'active is photo-public' => [ListingStatus::Active, true],
+    'rejected is not photo-public' => [ListingStatus::Rejected, false],
+    'in_inspection is photo-public' => [ListingStatus::InInspection, true],
+    'in_transaction is photo-public' => [ListingStatus::InTransaction, true],
+    'sold is photo-public [USULAN]' => [ListingStatus::Sold, true],
+    'inactive is not photo-public' => [ListingStatus::Inactive, false],
+]);
