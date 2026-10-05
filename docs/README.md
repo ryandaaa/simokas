@@ -9,6 +9,8 @@
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Alur git, PR, review, Definition of Done |
 | [flows/00-overview.md](flows/00-overview.md) | Peta modul, alur lintas role, peta event |
 | `flows/<modul>.md` | Flow per modul: diagram, edge case, daftar test case |
+| [BACKLOG.md](BACKLOG.md) | Daftar kartu kanban (ID, test case, prasyarat, jalur paralel) |
+| [AGENT_TASK.md](AGENT_TASK.md) | Cara menyuruh agen mengerjakan satu kartu, dan alur kerja agen |
 | [features/_TEMPLATE.md](features/_TEMPLATE.md) | Template spesifikasi untuk fitur baru |
 | [decisions/](decisions/) | Catatan keputusan (ADR) |
 
