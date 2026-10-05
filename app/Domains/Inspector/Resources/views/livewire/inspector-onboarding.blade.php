@@ -1,11 +1,29 @@
 <div class="max-w-4xl mx-auto py-6 space-y-6">
     {{-- Header Banner / Status --}}
     @if ($profile && $profile->isRejected())
-        <x-ui.alert
-            variant="danger"
-            :title="__('inspector.onboarding.rejected_alert_title')"
-            :message="__('inspector.onboarding.rejected_alert_message', ['reason' => $profile->rejection_reason ?? '-'])"
-        />
+        <div class="space-y-3">
+            <x-ui.alert
+                variant="danger"
+                :title="__('inspector.onboarding.rejected_alert_title')"
+                :message="__('inspector.onboarding.rejected_alert_message', ['reason' => $profile->rejection_reason ?? '-'])"
+            />
+            <div class="flex justify-end">
+                <x-ui.button
+                    type="button"
+                    variant="primary"
+                    wire:click="resubmit"
+                    wire:loading.attr="disabled"
+                    wire:target="resubmit"
+                >
+                    <span wire:loading.remove wire:target="resubmit">
+                        {{ __('inspector.onboarding.resubmit_button') }}
+                    </span>
+                    <span wire:loading wire:target="resubmit">
+                        {{ __('inspector.onboarding.resubmitting') }}
+                    </span>
+                </x-ui.button>
+            </div>
+        </div>
     @elseif ($profile && $profile->isApproved())
         <x-ui.alert
             variant="success"

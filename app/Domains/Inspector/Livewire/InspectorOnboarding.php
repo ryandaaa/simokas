@@ -7,6 +7,7 @@ namespace App\Domains\Inspector\Livewire;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspector\Actions\CreateInspectorProfile;
 use App\Domains\Inspector\Actions\RemoveInspectorDocument;
+use App\Domains\Inspector\Actions\ResubmitInspector;
 use App\Domains\Inspector\Actions\UploadInspectorDocument;
 use App\Domains\Inspector\Enums\DocumentType;
 use App\Domains\Inspector\Models\InspectorDocument;
@@ -183,6 +184,21 @@ final class InspectorOnboarding extends Component
         $this->documentToDeleteId = null;
         $this->showDeleteModal = false;
         session()->flash('document_success', __('inspector.documents.deleted'));
+    }
+
+    public function resubmit(ResubmitInspector $action): void
+    {
+        /** @var User $user */
+        $user = Auth::user();
+
+        /** @var InspectorProfile $profile */
+        $profile = InspectorProfile::query()
+            ->where('user_id', $user->id)
+            ->firstOrFail();
+
+        $action->handle($user, $profile);
+
+        session()->flash('profile_success', __('inspector.onboarding.resubmitted_success'));
     }
 
     public function render(): View
