@@ -7,6 +7,7 @@ namespace App\Domains\Inspection\Listeners;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Events\JobPaid;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Payment\Contracts\Ledger;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Events\PaymentSucceeded;
 use Illuminate\Support\Facades\DB;
@@ -17,9 +18,17 @@ use Illuminate\Support\Facades\DB;
  * Idempoten: pembaruan berkondisi (where status = requested) membuat event
  * ganda tidak berefek ganda. Pembayaran gagal atau tertunda tidak
  * memancarkan PaymentSucceeded sehingga tidak mengubah job (PAY-R10).
+ *
+ * Penanganan risiko uang: jika job sudah bukan requested (mis. cancelled
+ * oleh pemohon, expired, atau tidak ditemukan), pembayaran di-refund
+ * otomatis secara idempoten lewat kontrak Ledger::refundPayment.
  */
 final class MarkJobPaidOnPaymentSucceeded
 {
+    public function __construct(
+        private readonly Ledger $ledger,
+    ) {}
+
     public function handle(PaymentSucceeded $event): void
     {
         if ($event->purpose !== PaymentPurpose::Inspection) {
@@ -40,6 +49,17 @@ final class MarkJobPaidOnPaymentSucceeded
         });
 
         if ($affected === 0) {
+            /** @var InspectionJob|null $job */
+            $job = InspectionJob::query()->find($event->refId);
+
+            // Jika job tidak ada, atau job cancelled/expired (bukan status requested awal),
+            // refund pembayaran secara idempoten agar dana tidak tersangkut tanpa job.
+            // Jika job sudah paid/taken/scheduled/dst, ini adalah duplicate event dari payment yang sah,
+            // sehingga tidak di-refund.
+            if ($job === null || in_array($job->status, [JobStatus::Cancelled, JobStatus::Expired], true)) {
+                $this->ledger->refundPayment($event->paymentId);
+            }
+
             return;
         }
 
