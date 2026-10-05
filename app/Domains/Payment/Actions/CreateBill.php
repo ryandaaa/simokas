@@ -15,6 +15,23 @@ final class CreateBill
 {
     public function handle(CreateBillData $data): Payment
     {
+        // Same key as before: return the same bill, or reject on mismatch.
+        $byKey = Payment::query()->where('idempotency_key', $data->idempotencyKey)->first();
+
+        if ($byKey !== null) {
+            $this->ensureIdempotencyMatch($byKey, $data);
+
+            return $byKey;
+        }
+
+        // PAY-T15: reopening the same access keeps using the existing bill
+        // instead of creating a second one.
+        $reusable = $this->findReusableBill($data);
+
+        if ($reusable !== null) {
+            return $reusable;
+        }
+
         try {
             return DB::transaction(function () use ($data) {
                 return Payment::create([
@@ -44,6 +61,37 @@ final class CreateBill
 
             return $existing;
         }
+    }
+
+    private function findReusableBill(CreateBillData $data): ?Payment
+    {
+        /** @var Payment|null $candidate */
+        $candidate = Payment::query()
+            ->where('payer_id', $data->payerId)
+            ->where('purpose', $data->purpose->value)
+            ->where('ref_id', $data->refId)
+            ->whereIn('status', [
+                PaymentStatus::Pending->value,
+                PaymentStatus::Failed->value,
+                PaymentStatus::Success->value,
+            ])
+            ->orderByRaw(
+                'CASE WHEN status = ? THEN 0 ELSE 1 END',
+                [PaymentStatus::Success->value]
+            )
+            ->latest()
+            ->first();
+
+        if ($candidate === null) {
+            return null;
+        }
+
+        // A paid bill is always reused so the payer is never charged twice.
+        if ($candidate->status === PaymentStatus::Success) {
+            return $candidate;
+        }
+
+        return $candidate->isExpired() ? null : $candidate;
     }
 
     private function ensureIdempotencyMatch(Payment $existing, CreateBillData $data): void
