@@ -35,7 +35,19 @@ function updateListingFakeImage(string $name = 'photo.jpg', int $sizeKilobytes =
 function activeListingForEdit(User $owner, array $overrides = []): Listing
 {
     return Listing::factory()->active()->withPhotos(3)->create(array_merge(
-        ['seller_id' => $owner->id],
+        [
+            'seller_id' => $owner->id,
+            'year' => 2016,
+            'odometer_km' => 50000,
+            'price' => 100_000_000,
+            'brand' => 'Toyota',
+            'model' => 'Avanza',
+            'vehicle_type' => 'car',
+            'chassis_number' => 'MHKA1234567890123',
+            'title' => 'Toyota Avanza 1.3 G 2018 Terawat',
+            'color' => 'Putih',
+            'description' => 'Kondisi kendaraan sangat terawat, servis rutin di bengkel resmi, surat lengkap.',
+        ],
         $overrides
     ));
 }
@@ -121,7 +133,7 @@ it('LST-T07 sends core field edits back to pending_review and revokes the badge 
 
 it('forbids edits by non-owners and blocked actors', function () {
     $owner = User::factory()->user()->create();
-    $listing = activeListingForEdit($owner);
+    $listing = activeListingForEdit($owner, ['price' => 100_000_000]);
     $action = app(UpdateListing::class);
     $dto = new UpdateListingDTO(fields: ['price' => 123_000_000]);
 
@@ -184,7 +196,11 @@ it('rejects edits on pending_review, rejected, and inactive listings', function 
 
 it('LST-T08 locks core fields when a job or transaction is active, but allows non-core edits', function () {
     $owner = User::factory()->user()->create();
-    $listing = activeListingForEdit($owner);
+    $listing = activeListingForEdit($owner, [
+        'odometer_km' => 50000,
+        'price' => 100_000_000,
+        'brand' => 'Toyota',
+    ]);
 
     $checker = new FakeListingActivityChecker;
     $checker->withActiveJob($listing->id);
@@ -208,7 +224,11 @@ it('LST-T08 locks core fields when a job or transaction is active, but allows no
 
 it('LST-T08 locks core fields while listing is in_inspection', function () {
     $owner = User::factory()->user()->create();
-    $listing = Listing::factory()->inInspection()->withPhotos(3)->create(['seller_id' => $owner->id]);
+    $listing = Listing::factory()->inInspection()->withPhotos(3)->create([
+        'seller_id' => $owner->id,
+        'year' => 2016,
+        'description' => 'Deskripsi awal yang pasti berbeda.',
+    ]);
     $action = app(UpdateListing::class);
 
     expect(fn () => $action->handle($owner, $listing, new UpdateListingDTO(fields: ['year' => 2019])))
