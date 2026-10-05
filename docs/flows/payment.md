@@ -110,11 +110,11 @@ Alasan posting `inspection` saat selesai: PRD 8.1 menyebut fee inspektor "cair s
 - [x] `PAY-T05` Gagal tidak mengubah job, boleh coba lagi dengan kunci baru (PAY-E2)
 - [x] `PAY-T06` Tagihan kedaluwarsa menghasilkan 410 (PAY-E4)
 - [x] `PAY-T07` Pembayar lain mendapat 403 (PAY-E5)
-- [ ] `PAY-T08` Posting ledger akses: inspektor dan platform sesuai persen (contoh tabel)
-- [ ] `PAY-T09` Posting ledger inspeksi hanya saat job `completed`
-- [ ] `PAY-T10` Refund sebelum selesai menghasilkan satu entri `refund`, idempoten (PAY-E7)
+- [x] `PAY-T08` Posting ledger akses: inspektor dan platform sesuai persen (contoh tabel)
+- [x] `PAY-T09` Posting ledger inspeksi hanya saat job `completed`
+- [x] `PAY-T10` Refund sebelum selesai menghasilkan satu entri `refund`, idempoten (PAY-E7)
 - [ ] `PAY-T11` Perubahan tarif tidak memengaruhi tagihan atau job lama (PAY-E8)
-- [ ] `PAY-T12` Saldo inspektor sama dengan jumlah kreditnya (PAY-R8)
-- [ ] `PAY-T13` Invarian ledger: total entri per pembayaran = nilai pembayaran, di semua jalur (dataset tujuan)
+- [x] `PAY-T12` Saldo inspektor sama dengan jumlah kreditnya (PAY-R8)
+- [x] `PAY-T13` Invarian ledger: total entri per pembayaran = nilai pembayaran, di semua jalur (dataset tujuan)
 - [x] `PAY-T14` Transaksi database: kegagalan di tengah tidak meninggalkan entri parsial (PAY-E10)
-- [ ] `PAY-T15` Akses hasil tidak membuat tagihan kedua bila sudah punya akses (PAY-E3)
+- [x] `PAY-T15` Akses hasil tidak membuat tagihan kedua bila sudah punya akses (PAY-E3)
