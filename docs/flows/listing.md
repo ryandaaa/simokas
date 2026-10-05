@@ -64,8 +64,8 @@ flowchart TD
 | --- | --- |
 | LST-R1 | Listing baru `pending_review`, tidak tampil publik |
 | LST-R2 | Foto 3–10, maks 2 MB per foto, JPG/PNG/WebP. Satu foto ditandai sampul |
-| LST-R3 | Titik lokasi harus di dalam wilayah Pekanbaru, divalidasi di server |
-| LST-R4 | Lokasi persis, alamat lengkap, nomor rangka, dan tempat inspeksi (`inspection_place`) tidak pernah di respons publik. `inspection_place` bersifat privat (dapat berisi alamat rumah penjual, PRD 13.3 dan 19) dan hanya tampil untuk pemilik dan admin; publik hanya memakai `area_name` |
+| LST-R3 | Titik lokasi harus di dalam wilayah Pekanbaru, divalidasi di server. Batas memakai bounding box konservatif [USULAN] di `PekanbaruBoundary` (lat 0,40–0,63; lng 101,28–101,76) sampai data batas resmi tersedia (lihat `docs/decisions/0005-leaflet-map.md`) |
+| LST-R4 | Lokasi persis, alamat lengkap, nomor rangka, dan tempat inspeksi (`inspection_place`) tidak pernah di respons publik. `inspection_place` bersifat privat (dapat berisi alamat rumah penjual, PRD 13.3 dan 19) dan hanya tampil untuk pemilik dan admin; publik hanya memakai `area_name`. Titik perkiraan publik (`ApproximateLocation`, pembulatan 2 desimal, maks 800 m) disiapkan untuk peta publik CAT-2 |
 | LST-R5 | Opsi waktu inspeksi minimal 1 dan tidak di masa lalu |
 | LST-R6 | Penjual tidak dapat menghapus atau menonaktifkan listing yang punya job aktif atau transaksi |
 | LST-R7 | Edit mengikuti D-05. Field inti terkunci saat ada job aktif atau transaksi |
@@ -94,7 +94,7 @@ flowchart TD
 
 - [x] `LST-T01` Penjual membuat listing valid, status `pending_review`, tidak tampil di daftar publik
 - [x] `LST-T02` Validasi field (dataset): tahun, harga, kilometer, judul, foto, slot
-- [ ] `LST-T03` Titik di luar Pekanbaru ditolak (LST-E1)
+- [x] `LST-T03` Titik di luar Pekanbaru ditolak (LST-E1)
 - [ ] `LST-T04` Admin menyetujui: `active`, menolak dengan alasan: `rejected`
 - [ ] `LST-T05` Penjual memperbaiki dan mengirim ulang listing ditolak (LST-E7)
 - [ ] `LST-T06` Edit non-inti berlaku langsung tanpa mengubah status

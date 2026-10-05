@@ -66,6 +66,9 @@ it('creates a listing with status pending_review, stores photos on private disk,
         chassis_number: 'MHKA1234567890123',
         description: 'Tangan pertama dari baru.',
         area_name: 'Sukajadi',
+        lat: 0.5071,
+        lng: 101.4478,
+        address_full: 'Jl. HR Soebrantas No. 12, Sukajadi, Pekanbaru',
         cover_photo_index: 0,
     );
 
