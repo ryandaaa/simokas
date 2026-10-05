@@ -1,1 +1,1 @@
-//
+import './listing-photo-compress';
