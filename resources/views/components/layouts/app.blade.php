@@ -70,15 +70,33 @@
                         {{ $headerActions }}
                     @else
                         @auth
-                            <a href="{{ route('dashboard') }}" class="px-3 py-1.5 rounded-full text-sm font-medium text-forest hover:bg-linen transition-colors">
-                                {{ auth()->user()->name }}
-                            </a>
-                            <form method="POST" action="{{ route('identity.logout') }}" class="inline">
-                                @csrf
-                                <x-ui.button type="submit" variant="secondary" class="!min-h-[36px] !px-4 !py-1.5 !text-sm">
-                                    {{ __('Keluar') }}
-                                </x-ui.button>
-                            </form>
+                            <div class="relative" x-data="{ accountMenuOpen: false }" @click.outside="accountMenuOpen = false" @keydown.escape.window="accountMenuOpen = false">
+                                <button type="button"
+                                        @click="accountMenuOpen = !accountMenuOpen"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-forest hover:bg-linen transition-colors focus:outline-none focus:ring-2 focus:ring-forest"
+                                        aria-haspopup="true"
+                                        :aria-expanded="accountMenuOpen.toString()"
+                                        aria-label="{{ __('ui.layout.account_menu') }}">
+                                    <span class="max-w-28 truncate">{{ auth()->user()->name }}</span>
+                                    <x-ui.icon name="chevron-down" class="w-4 h-4" />
+                                </button>
+                                <div x-show="accountMenuOpen"
+                                     x-cloak
+                                     x-transition
+                                     class="absolute right-0 mt-2 w-48 rounded-xl bg-surface border border-fog shadow-lg py-1 z-50">
+                                    <a href="{{ route('dashboard') }}"
+                                       class="block px-4 py-2 text-sm text-charcoal hover:bg-fog transition-colors">
+                                        {{ __('ui.layout.dashboard') }}
+                                    </a>
+                                    <form method="POST" action="{{ route('identity.logout') }}">
+                                        @csrf
+                                        <button type="submit"
+                                                class="block w-full text-left px-4 py-2 text-sm text-charcoal hover:bg-fog transition-colors">
+                                            {{ __('Keluar') }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         @else
                             <a href="{{ route('login') }}" class="px-3 py-1.5 rounded-full text-sm font-medium text-forest hover:bg-linen transition-colors">
                                 {{ __('Masuk') }}

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domains\Identity\Models\User;
+
 it('renders application layout with desktop navbar, mobile bottom bar, skip-link, and aria-live region', function () {
     $navItems = [
         ['label' => 'Beranda', 'url' => '/', 'icon' => 'rumah', 'active' => true],
@@ -80,4 +82,26 @@ it('loads livewire and alpine scripts exactly once on 404 error page', function 
 
     expect(substr_count($errorContent, 'livewire.js'))->toBe(1)
         ->and($errorContent)->toContain('wire\:loading');
+});
+
+it('shows account menu with Keluar for logged-in users', function () {
+    $user = User::factory()->create(['name' => 'Pengguna Menu Akun']);
+
+    $view = $this->actingAs($user)->blade('<x-layouts.app title="Uji Menu"><p>Konten</p></x-layouts.app>');
+
+    $view->assertSee('Pengguna Menu Akun');
+    $view->assertSee(__('ui.layout.account_menu'));
+    $view->assertSee(__('ui.layout.dashboard'));
+    $view->assertSee(route('dashboard'), false);
+    $view->assertSee(route('identity.logout'), false);
+    $view->assertSee('Keluar');
+    $view->assertSee('method="POST"', false);
+});
+
+it('does not show account menu or Keluar for guests', function () {
+    $view = $this->blade('<x-layouts.app title="Uji Menu"><p>Konten</p></x-layouts.app>');
+
+    $view->assertDontSee('Keluar');
+    $view->assertDontSee(__('ui.layout.account_menu'));
+    $view->assertSee(__('Masuk'));
 });

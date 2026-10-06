@@ -69,6 +69,8 @@ return [
         'profile' => 'Profil',
         'menu' => 'Menu',
         'notifications' => 'Notifikasi',
+        'account_menu' => 'Menu akun',
+        'dashboard' => 'Dasbor',
     ],
     'errors' => [
         '403_title' => 'Akses Ditolak',
