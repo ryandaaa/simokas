@@ -108,13 +108,13 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 
 - [x] `RES-T01` Template mobil dan motor berbeda tampil sesuai jenis kendaraan
 - [x] `RES-T02` Simpan draf dan lanjutkan setelah muat ulang (RES-E3)
-- [ ] `RES-T03` Kirim ditolak bila item wajib atau foto minimal kurang, dengan daftar yang kurang (`REQUIRED_ITEMS_MISSING`, `MIN_PHOTOS_NOT_MET`)
+- [x] `RES-T03` Kirim ditolak bila item wajib atau foto minimal kurang, dengan daftar yang kurang (`REQUIRED_ITEMS_MISSING`, `MIN_PHOTOS_NOT_MET`)
 - [x] `RES-T04` Foto non-kamera ditolak (RES-E5), foto kamera diterima dan bercap waktu
 - [x] `RES-T05` Berkas > 2 MB atau bukan gambar ditolak (RES-E1)
-- [ ] `RES-T06` Perhitungan skor (dataset: batas 79/80, 59/60, contoh 62,5)
-- [ ] `RES-T07` Item kritis Buruk memaksa `not_recommended` (RES-E9)
-- [ ] `RES-T08` Hasil terkunci setelah dikirim, ubah ditolak, admin dapat membuka kembali (RES-E14)
-- [ ] `RES-T09` Kirim dua kali berefek sekali (RES-E6)
+- [x] `RES-T06` Perhitungan skor (dataset: batas 79/80, 59/60, contoh 62,5)
+- [x] `RES-T07` Item kritis Buruk memaksa `not_recommended` (RES-E9)
+- [x] `RES-T08` Hasil terkunci setelah dikirim, ubah ditolak, admin dapat membuka kembali (RES-E14)
+- [x] `RES-T09` Kirim dua kali berefek sekali (RES-E6)
 - [ ] `RES-T10` Hak akses tanpa bayar: pemilik, inspektor pembuat, pemohon, admin (dataset)
 - [ ] `RES-T11` Pengguna lain mendapat ringkasan terbatas tanpa rincian (RES-E12), respons tidak memuat rincian
 - [ ] `RES-T12` Bayar akses membuat `result_access` dan posting ledger, tidak menagih dua kali (RES-E7)

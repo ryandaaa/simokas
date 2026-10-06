@@ -41,7 +41,7 @@ final class ScoreCalculatorTest extends TestCase
     }
 
     #[DataProvider('boundaryScoreDataset')]
-    public function test_res_t06_it_evaluates_score_boundaries(
+    public function test_RES_T06_it_evaluates_score_boundaries_with_dataset_79_80_59_60_and_62_5(
         array $items,
         float $expectedScore,
         InspectionRecommendation $expectedRecommendation
@@ -125,7 +125,7 @@ final class ScoreCalculatorTest extends TestCase
         ];
     }
 
-    public function test_res_t07_critical_item_rated_poor_forces_not_recommended_regardless_of_high_score(): void
+    public function test_RES_T07_critical_item_rated_poor_forces_not_recommended_regardless_of_high_score(): void
     {
         // 10 items weight 1: 9 Good (18), 1 Critical Poor (0).
         // Score = 18/20 * 100 = 90.0 (normally recommended), but critical poor forces not_recommended!

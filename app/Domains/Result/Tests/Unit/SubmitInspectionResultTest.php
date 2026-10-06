@@ -40,7 +40,7 @@ final class SubmitInspectionResultTest extends TestCase
         $this->action = app(SubmitInspectionResult::class);
     }
 
-    public function test_res_t03_rejects_submission_when_required_items_missing_with_list(): void
+    public function test_RES_T03_rejects_submission_when_required_items_missing_with_list(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -85,7 +85,7 @@ final class SubmitInspectionResultTest extends TestCase
         }
     }
 
-    public function test_res_t03_rejects_submission_when_min_photos_not_met_with_list(): void
+    public function test_RES_T03_rejects_submission_when_min_photos_not_met_with_list(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -124,7 +124,7 @@ final class SubmitInspectionResultTest extends TestCase
         }
     }
 
-    public function test_res_t06_submits_and_calculates_score_correctly(): void
+    public function test_RES_T06_submits_and_calculates_score_correctly_with_dataset(): void
     {
         Event::fake([ResultSubmitted::class]);
         $action = app(SubmitInspectionResult::class);
@@ -182,7 +182,7 @@ final class SubmitInspectionResultTest extends TestCase
         });
     }
 
-    public function test_res_t07_critical_item_rated_poor_forces_not_recommended(): void
+    public function test_RES_T07_critical_item_rated_poor_forces_not_recommended(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -232,7 +232,7 @@ final class SubmitInspectionResultTest extends TestCase
         $this->assertSame(InspectionRecommendation::NotRecommended, $submitted->recommendation);
     }
 
-    public function test_res_t09_submitting_twice_has_single_effect_and_is_idempotent(): void
+    public function test_RES_T09_submitting_twice_has_single_effect_and_is_idempotent(): void
     {
         Event::fake([ResultSubmitted::class]);
         $action = app(SubmitInspectionResult::class);
