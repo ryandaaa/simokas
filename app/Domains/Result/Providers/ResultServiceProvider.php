@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domains\Result\Providers;
 
+use App\Domains\Payment\Events\PaymentSucceeded;
+use App\Domains\Result\Listeners\GrantAccessOnPaymentSuccess;
 use App\Domains\Result\Livewire\InspectionFormPage;
+use App\Domains\Result\Livewire\ViewResultPage;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Policies\InspectionResultPolicy;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -27,6 +31,9 @@ final class ResultServiceProvider extends ServiceProvider
         Gate::policy(InspectionResult::class, InspectionResultPolicy::class);
         Gate::define('fill-inspection', [InspectionResultPolicy::class, 'fill']);
 
+        Event::listen(PaymentSucceeded::class, GrantAccessOnPaymentSuccess::class);
+
         Livewire::component('result.inspection-form-page', InspectionFormPage::class);
+        Livewire::component('result.view-result-page', ViewResultPage::class);
     }
 }
