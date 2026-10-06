@@ -47,6 +47,7 @@ class DomainException extends Exception
         'JOB_ALREADY_TAKEN' => 409,
         'MAX_ACTIVE_JOBS' => 409,
         'LISTING_HAS_ACTIVE_JOB' => 409,
+        'USER_HAS_ACTIVE_ITEMS' => 409,
         'INSPECTOR_NOT_VERIFIED' => 403,
         'OWN_LISTING' => 403,
         'REQUIRED_ITEMS_MISSING' => 422,

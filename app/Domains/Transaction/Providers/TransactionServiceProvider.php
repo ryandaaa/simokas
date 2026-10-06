@@ -11,6 +11,7 @@ use App\Domains\Payment\Events\PaymentSucceeded;
 use App\Domains\Transaction\Console\Commands\ExpireAcceptedTransactionsCommand;
 use App\Domains\Transaction\Console\Commands\ExpireOfferedTransactionsCommand;
 use App\Domains\Transaction\Console\Commands\MarkStalePaidHeldTransactionsCommand;
+use App\Domains\Transaction\Contracts\TransactionModerationContract;
 use App\Domains\Transaction\Listeners\HandlePurchasePaymentSucceeded;
 use App\Domains\Transaction\Listeners\RestartPaymentCountdownOnJobFinalized;
 use App\Domains\Transaction\Livewire\OfferPage;
@@ -18,6 +19,7 @@ use App\Domains\Transaction\Livewire\TransactionDetailPage;
 use App\Domains\Transaction\Livewire\TransactionsIndexPage;
 use App\Domains\Transaction\Models\Transaction;
 use App\Domains\Transaction\Policies\TransactionPolicy;
+use App\Domains\Transaction\Services\TransactionModerationService;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -28,7 +30,7 @@ final class TransactionServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(TransactionModerationContract::class, TransactionModerationService::class);
     }
 
     public function boot(): void

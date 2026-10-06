@@ -87,6 +87,7 @@ return [
         'templates' => 'Template',
         'settings' => 'Pengaturan',
         'audit_logs' => 'Log Audit',
+        'users' => 'Pengguna',
         'logout' => 'Keluar',
     ],
     'errors' => [

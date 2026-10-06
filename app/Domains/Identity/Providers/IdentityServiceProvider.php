@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Identity\Providers;
 
+use App\Domains\Identity\Contracts\UserModerationContract;
 use App\Domains\Identity\Http\Middleware\EnsureUserHasRole;
 use App\Domains\Identity\Http\Middleware\EnsureUserNotBlocked;
 use App\Domains\Identity\Listeners\ActivateApprovedInspector;
@@ -17,6 +18,7 @@ use App\Domains\Identity\Livewire\ResetPassword;
 use App\Domains\Identity\Livewire\UserDashboard;
 use App\Domains\Identity\Models\User;
 use App\Domains\Identity\Policies\UserPolicy;
+use App\Domains\Identity\Services\UserModerationService;
 use App\Domains\Inspector\Events\InspectorApproved;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -27,7 +29,7 @@ final class IdentityServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(UserModerationContract::class, UserModerationService::class);
     }
 
     public function boot(): void

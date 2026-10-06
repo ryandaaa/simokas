@@ -77,6 +77,12 @@ return [
     'errors' => [
         'forbidden' => 'Anda tidak memiliki hak akses untuk halaman atau aksi ini.',
         'unauthenticated' => 'Silakan masuk terlebih dahulu untuk melanjutkan.',
+        'user_has_active_items' => 'Pengguna masih memiliki job atau transaksi aktif. Selesaikan atau batalkan dulu, atau batalkan bersamaan dengan konfirmasi.',
+        'cannot_block_self' => 'Anda tidak dapat memblokir akun Anda sendiri.',
+        'block_reason_required' => 'Alasan wajib diisi saat membatalkan item aktif bersamaan.',
+        'user_not_blocked' => 'Pengguna tidak dalam status diblokir.',
+        'moderation_unauthorized' => 'Anda tidak memiliki hak untuk memoderasi pengguna.',
+        'moderation_failed' => 'Moderasi pengguna gagal karena perubahan bersamaan. Silakan coba lagi.',
     ],
     'dashboard' => [
         'title' => 'Dashboard',

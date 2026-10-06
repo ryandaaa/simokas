@@ -85,6 +85,7 @@
                 ['label' => __('ui.layout.templates'), 'route' => 'admin.templates.index'],
                 ['label' => __('ui.layout.settings'), 'route' => 'admin.settings'],
                 ['label' => __('ui.layout.audit_logs'), 'route' => 'admin.audit-logs.index'],
+                ['label' => __('ui.layout.users'), 'route' => 'admin.users.index'],
             ];
         } elseif ($currentUser->isInspector()) {
             $isApprovedInspector = app(\App\Domains\Inspector\Contracts\InspectorEligibility::class)->canViewAndTakeJobs($currentUser);

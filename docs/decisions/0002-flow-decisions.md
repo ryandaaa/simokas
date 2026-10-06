@@ -18,9 +18,9 @@ Penanda: **[TIM]** diputuskan tim, **[USULAN]** diputuskan penyusun karena tim m
 
 | Kondisi | Siapa | Aturan | Dana | Listing |
 | --- | --- | --- | --- | --- |
-| `offered` (belum disetujui) | Pembeli | Batal bebas | - | tetap |
+| `offered` (belum disetujui) | Pembeli atau admin | Batal bebas | - | tetap |
 | `offered` | Penjual | Tolak (`rejected`) | - | tetap |
-| `accepted` (belum bayar) | Pembeli atau penjual | Batal bebas, dicatat | - | kembali ke status sebelum transaksi |
+| `accepted` (belum bayar) | Pembeli, penjual, atau admin | Batal bebas, dicatat | - | kembali ke status sebelum transaksi |
 | `paid_held` | Penjual | Batal sepihak diperbolehkan, dicatat untuk tinjauan admin | Refund 100% ke pembeli | `active` |
 | `paid_held` | Pembeli | Perlu persetujuan penjual **atau** admin | Refund 100% ke pembeli | `active` |
 | `paid_held` | Admin | Dapat membatalkan atau menyelesaikan manual | Sesuai keputusan admin | sesuai |
