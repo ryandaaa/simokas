@@ -6,6 +6,7 @@ namespace App\Domains\Result\Providers;
 
 use App\Domains\Payment\Events\PaymentSucceeded;
 use App\Domains\Result\Actions\UpdateTemplateItems;
+use App\Domains\Result\Contracts\ResultModerationContract;
 use App\Domains\Result\Contracts\TemplateEditor;
 use App\Domains\Result\Listeners\GrantAccessOnPaymentSuccess;
 use App\Domains\Result\Livewire\InspectionFormPage;
@@ -14,6 +15,7 @@ use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Policies\InspectionResultPolicy;
 use App\Domains\Result\Policies\InspectionTemplatePolicy;
+use App\Domains\Result\Services\ResultModerationService;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +26,7 @@ final class ResultServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(TemplateEditor::class, UpdateTemplateItems::class);
+        $this->app->singleton(ResultModerationContract::class, ResultModerationService::class);
     }
 
     public function boot(): void

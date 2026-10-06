@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Admin\Livewire;
 
+use App\Domains\Admin\Actions\RecordAuditLog;
 use App\Domains\Setting\Contracts\SettingsReader;
 use App\Domains\Setting\Contracts\UpdatesSettings;
 use App\Domains\Setting\DTOs\SettingsData;
@@ -92,7 +93,7 @@ final class Settings extends Component
         $this->dispatch('close-modal', 'confirm-save-settings');
     }
 
-    public function save(UpdatesSettings $updatesSettings, SettingsReader $reader): void
+    public function save(UpdatesSettings $updatesSettings, SettingsReader $reader, RecordAuditLog $recordAuditLog): void
     {
         $this->authorize('update', AppSetting::class);
         $this->resetAlerts();
@@ -100,6 +101,16 @@ final class Settings extends Component
 
         try {
             $updatesSettings->handle($this->form, Auth::user());
+
+            $recordAuditLog->handle(
+                actor: Auth::user(),
+                action: 'update_settings',
+                entity: 'app_settings',
+                entityId: null,
+                meta: [
+                    'form' => $this->form,
+                ],
+            );
 
             $this->closeConfirmModal();
             $this->loadSettingsData($reader);
