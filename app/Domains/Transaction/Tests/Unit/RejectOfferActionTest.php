@@ -8,8 +8,9 @@ use App\Domains\Transaction\Actions\RejectOffer;
 use App\Domains\Transaction\Enums\TransactionStatus;
 use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 it('TRX-T06 allows seller to reject offer and changes status to rejected', function () {
     $transaction = Transaction::factory()->offered()->create();

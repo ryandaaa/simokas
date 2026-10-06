@@ -9,8 +9,9 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Transaction\Models\Transaction;
 use App\Domains\Transaction\Policies\TransactionPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 function createPolicyTest(): TransactionPolicy
 {

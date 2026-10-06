@@ -16,8 +16,9 @@ use App\Domains\Transaction\Exceptions\OwnListingOfferException;
 use App\Domains\Transaction\Exceptions\TransactionAlreadyRunningException;
 use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 it('TRX-T01 allows buyer to submit offer on active listing', function () {
     $seller = User::factory()->user()->create();
