@@ -38,6 +38,7 @@ final class InspectionServiceProvider extends ServiceProvider
         $this->app->singleton(ListingActivityChecker::class, InspectionListingActivityChecker::class);
         $this->app->singleton(InspectionJobAccess::class, InspectionJobAccessService::class);
         $this->app->singleton(InspectionJobResultContract::class, InspectionJobResultService::class);
+        $this->app->singleton(\App\Domains\Inspection\Contracts\InspectionJobModerationContract::class, \App\Domains\Inspection\Services\InspectionJobModerationService::class);
     }
 
     public function boot(): void
@@ -53,6 +54,7 @@ final class InspectionServiceProvider extends ServiceProvider
         $this->app->singleton(ListingActivityChecker::class, InspectionListingActivityChecker::class);
         $this->app->singleton(InspectionJobAccess::class, InspectionJobAccessService::class);
         $this->app->singleton(InspectionJobResultContract::class, InspectionJobResultService::class);
+        $this->app->singleton(\App\Domains\Inspection\Contracts\InspectionJobModerationContract::class, \App\Domains\Inspection\Services\InspectionJobModerationService::class);
 
         Gate::policy(InspectionJob::class, InspectionJobPolicy::class);
         Gate::define('inspection.request', fn (User $user, Listing $listing): bool => (new InspectionJobPolicy)->request($user, $listing));

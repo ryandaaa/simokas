@@ -24,6 +24,7 @@ final class ResultServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(TemplateEditor::class, UpdateTemplateItems::class);
+        $this->app->singleton(\App\Domains\Result\Contracts\ResultModerationContract::class, \App\Domains\Result\Services\ResultModerationService::class);
     }
 
     public function boot(): void
