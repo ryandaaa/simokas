@@ -16,6 +16,7 @@ use App\Domains\Result\Models\ResultItem;
 use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Models\TemplateItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -212,6 +213,6 @@ final class ViewResultPhotoAccessTest extends TestCase
 
         // Blocked user is rejected by middleware redirect and policy check
         $this->actingAs($blockedBuyer)->get($signedUrl)->assertRedirect(route('identity.blocked'));
-        $this->assertFalse(\Illuminate\Support\Facades\Gate::forUser($blockedBuyer)->allows('viewPhoto', [$result, $photo]));
+        $this->assertFalse(Gate::forUser($blockedBuyer)->allows('viewPhoto', [$result, $photo]));
     }
 }

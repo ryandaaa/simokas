@@ -14,6 +14,7 @@ use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\ResultItem;
 use App\Domains\Result\Models\TemplateItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -84,14 +85,14 @@ final class ViewResultPageItemLabelTest extends TestCase
         ]);
 
         $orphanUuid = (string) Str::uuid();
-        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
         ResultItem::factory()->create([
             'result_id' => $result->id,
             'template_item_id' => $orphanUuid,
             'rating' => ItemRating::Good,
             'note' => 'Catatan item yatim tanpa template.',
         ]);
-        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
         $response = $this->actingAs($seller)->get(route('results.show', ['listing' => $job->listing_id]));
         $response->assertOk();

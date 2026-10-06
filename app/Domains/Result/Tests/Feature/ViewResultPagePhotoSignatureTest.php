@@ -135,7 +135,7 @@ final class ViewResultPagePhotoSignatureTest extends TestCase
 
         // Locked summary should not contain photo id or photo endpoint or signature
         $this->assertStringNotContainsString($photo->id, $content);
-        $this->assertStringNotContainsString('results/' . $result->id . '/photos', $content);
+        $this->assertStringNotContainsString('results/'.$result->id.'/photos', $content);
         $this->assertStringNotContainsString('signature=', $content);
     }
 
