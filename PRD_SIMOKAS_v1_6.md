@@ -1,8 +1,8 @@
 # PRD — Aplikasi SIMOKAS
 
-**Versi:** 1.5
+**Versi:** 1.6
 
-**Status:** Draft, diperbarui 5 Oktober 2026 (stack diganti ke Laravel + MySQL)
+**Status:** Draft, diperbarui 6 Oktober 2026 (keputusan flow D-01 sampai D-06 disalin)
 
 **Platform:** Web responsif (mobile-first)
 
@@ -31,6 +31,7 @@
 | 1.2–1.3 | Tidak tercatat pada draf sebelumnya (nomor versi pada nama file dan isi dokumen tidak sinkron) |
 | 1.4 | Penyusunan ulang agar konsisten dan mudah dipakai tim: format tabel dan daftar diperbaiki, istilah uang diseragamkan, tanggal rencana disesuaikan dengan 5 Oktober, celah aturan bisnis ditutup (konflik kepentingan inspektor, kedaluwarsa tagihan, pembulatan, nomor rangka), spesifikasi fungsional transaksi, chat, rating, dan notifikasi ditambahkan, serta endpoint API yang kurang dilengkapi. Rincian ada di lampiran "Catatan Perubahan" pada akhir dokumen |
 | 1.5 | Stack diganti dari Next.js + Supabase ke **Laravel + MySQL** (hosting Hostinger Cloud Startup). Bagian 6.2, 13.13, 17, 18, 19, 20.4, 24, 25, dan 26 disesuaikan. Row Level Security diganti Policy/Gate Laravel, Supabase Realtime diganti Pusher (cadangan: polling), indeks unik parsial diganti kolom virtual. Rincian di lampiran E |
+| 1.6 | Sinkronisasi keputusan D-01–D-06, komisi transaksi, status, kedaluwarsa, model data, dan panduan inspektor. Rincian di lampiran F |
 
 ---
 
@@ -202,7 +203,7 @@ Tim menyerahkan pemilihan stack kepada rekomendasi penyusun. Prioritas tim adala
 
 | Lapisan | Pilihan | Alasan |
 | --- | --- | --- |
-| Framework | Laravel 12 (PHP 8.3) | Berjalan di hosting PHP, auth, validasi, policy, antrean, dan scheduler sudah bawaan |
+| Framework | Laravel 13 (PHP 8.3) | Berjalan di hosting PHP, auth, validasi, policy, antrean, dan scheduler sudah bawaan |
 | Frontend | Blade + Livewire + Tailwind CSS | Satu proyek tanpa API dan build SPA terpisah, cepat dikerjakan dua orang, ringan di perangkat murah |
 | Database | MySQL/MariaDB (Hostinger) | Tersedia di paket hosting. PostgreSQL tidak tersedia di paket Cloud Hostinger, dan PostgreSQL eksternal (Neon) menambah latensi dan titik gagal |
 | Autentikasi | Laravel Breeze (email + password), role di tabel `users` | Tidak perlu membangun login dari nol |
@@ -299,13 +300,13 @@ Bagian ini memuat aturan uang dan akses yang menjadi inti inovasi SIMOKAS. Tarif
 | Pembayar | Pihak yang mengajukan inspeksi (pembeli atau penjual), atau pihak lain yang membuka hasil | Ditetapkan tim |
 | Komisi platform | **10%** dari setiap pembayaran tarif inspeksi atau biaya akses. Sisanya menjadi pendapatan inspektor | Ditetapkan tim |
 | Komisi transaksi inspektor | **3%** dari harga transaksi yang disetujui, jika transaksi terjadi di dalam platform dan listing memiliki hasil inspeksi | Ditetapkan tim |
-| Potongan platform atas komisi transaksi | Komisi platform 10% juga berlaku (3% bruto menjadi 2,7% bersih) | [ASUMSI] [OPEN] |
-| Penanggung komisi transaksi | Dipotong dari dana penjual. Pembeli membayar harga transaksi yang disepakati | [ASUMSI] [OPEN] |
+| Potongan platform atas komisi transaksi | Komisi platform 10% juga berlaku (3% bruto menjadi 2,7% bersih) | [ASUMSI] |
+| Penanggung komisi transaksi | Dipotong dari dana penjual. Pembeli membayar harga transaksi yang disepakati | [ASUMSI] |
 | Pungutan lain dari penjual atau pembeli | Tidak ada selain 10% dari pendapatan inspektor | [ASUMSI] [OPEN] |
 | Penerima komisi transaksi | Inspektor pembuat hasil inspeksi terbaru yang berlaku pada listing itu. Tanpa inspeksi, tidak ada komisi | [ASUMSI] [OPEN] |
 | Pembulatan | Seluruh nilai dalam rupiah bulat. Komisi platform dihitung dengan pembulatan ke rupiah terdekat, dan sisanya menjadi bagian inspektor sehingga jumlah selalu sama dengan nilai pembayaran | [ASUMSI] |
 
-**Contoh perhitungan:**
+**Contoh perhitungan [ASUMSI]:**
 
 | Kasus | Pembayaran | Komisi platform | Inspektor |
 | --- | --- | --- | --- |
@@ -333,6 +334,7 @@ Bagian ini memuat aturan uang dan akses yang menjadi inti inovasi SIMOKAS. Tarif
 5. Inspektor bebas memilih job di mana saja, sesuai kemampuannya (tidak ada batas wilayah di dalam Pekanbaru).
 6. Alamat persis dan nomor rangka kendaraan baru terlihat oleh inspektor **setelah job diambil**.
 7. **Konflik kepentingan** [ASUMSI]: inspektor tidak dapat mengambil job atas listing miliknya sendiri, dan tidak dapat menjadi pemohon inspeksi atas job yang akan ia kerjakan.
+8. Job `paid` yang tidak diambil siapa pun otomatis `cancelled` setelah **7 hari dari `available_since`**, refund **100%**, listing `active`, dan pemohon dinotifikasi. Setelah inspektor membatalkan, penghitung dimulai ulang dari `available_since` baru (D-01).
 
 ### 8.4 Pembatalan dan Pengembalian Dana [ASUMSI] [OPEN]
 
@@ -344,20 +346,35 @@ Bagian ini memuat aturan uang dan akses yang menjadi inti inovasi SIMOKAS. Tarif
 | Dibatalkan inspektor | Job kembali ke daftar, dana tetap ditahan. Pembatalan berulang dicatat untuk tinjauan admin |
 | Tagihan tidak dibayar dalam 30 menit | Job kedaluwarsa tanpa biaya |
 
-### 8.5 Penyelesaian Job dan Pencairan Fee [ASUMSI] [OPEN]
+### 8.5 Penyelesaian Job dan Pencairan Fee
 
-Setelah inspektor mengirim hasil, status menjadi **Hasil Diinput**. Job menjadi **Selesai** dan fee inspektor "cair" (dalam simulasi: masuk ke saldo inspektor) ketika pemohon menekan **"Terima Hasil"**, atau admin menyelesaikannya secara manual. Laporan terkunci setelah dikirim. Hanya admin yang dapat membukanya kembali.
+Setelah inspektor mengirim hasil, job **Selesai** dan fee cair saat pemohon menekan **"Terima Hasil"**, otomatis setelah **3 hari** berdasarkan `auto_accept_days` yang dapat diubah admin, atau admin menyelesaikannya (D-03). Laporan terkunci setelah dikirim; hanya admin dapat membukanya kembali.
 
 ### 8.6 Transaksi Jual Beli di Dalam Platform (P1, simulasi)
 
-1. Pembeli menekan **Ajukan Pembelian** dengan harga (default sama dengan harga tawar penjual).
-2. Penjual melihat rincian yang akan diterima (harga, dikurangi komisi transaksi 3% jika kendaraan sudah diinspeksi, lalu potongan lain bila ada), kemudian menekan **Setuju** atau **Tolak**.
-3. Pembeli membayar (simulasi). Dana berstatus **Ditahan**, dan listing berstatus Dalam Transaksi.
-4. Pembeli menekan **Konfirmasi Serah Terima**. Dana diteruskan ke penjual setelah dikurangi komisi.
-5. Transaksi **Selesai**, listing menjadi Terjual, dan pembeli dapat memberi rating.
+1. Pembeli menekan **Ajukan Pembelian** dengan harga.
+2. Penjual melihat rincian termasuk komisi transaksi 3% bila ada hasil inspeksi, lalu Setuju atau Tolak.
+3. Pengajuan/persetujuan boleh saat listing **Dalam Inspeksi**, tetapi **pembayaran baru dibuka setelah tidak ada job aktif** (D-02).
+4. Pembeli membayar (simulasi), dana **Ditahan**, listing Dalam Transaksi.
+5. Pembeli **Konfirmasi Serah Terima**; dana diteruskan setelah komisi.
+6. Transaksi Selesai, listing Terjual, dan rating terbuka.
+7. Komisi transaksi 3% dipotong dari penjual dan platform mengambil 10% darinya **[ASUMSI]**.
 
-> **Catatan produksi.** Menahan dan meneruskan dana pihak lain pada sistem nyata mensyaratkan penyedia pembayaran berizin. Versi lomba hanya simulasi sehingga tidak ada dana nyata yang berpindah.
+#### Pembatalan dan kedaluwarsa transaksi
 
+| Kondisi | Siapa | Aturan | Dana | Listing |
+| --- | --- | --- | --- | --- |
+| `offered` (belum disetujui) | Pembeli | Batal bebas | - | tetap |
+| `offered` | Penjual | Tolak (`rejected`) | - | tetap |
+| `accepted` (belum bayar) | Pembeli atau penjual | Batal bebas, dicatat | - | kembali ke status sebelum transaksi |
+| `paid_held` | Penjual | Batal sepihak diperbolehkan, dicatat untuk tinjauan admin | Refund 100% ke pembeli | `active` |
+| `paid_held` | Pembeli | Perlu persetujuan penjual **atau** admin | Refund 100% ke pembeli | `active` |
+| `paid_held` | Admin | Dapat membatalkan atau menyelesaikan manual | Sesuai keputusan admin | sesuai |
+| Semua pembatalan | | Komisi inspektor 3% **tidak** dibayar | | |
+
+Kedaluwarsa **[USULAN]**: `offered` 48 jam → `expired`; `accepted` 24 jam tanpa pembayaran sejak pembayaran dibuka → `expired`; `paid_held` 7 hari tanpa serah terima → **perlu tindakan** admin, tidak otomatis selesai.
+
+Satu listing hanya boleh memiliki satu transaksi berjalan. Contoh Rp100.000.000: komisi Rp3.000.000, platform Rp300.000, inspektor Rp2.700.000, penjual Rp97.000.000.
 ### 8.7 Rating Inspektor (P1)
 
 * Hanya pembeli yang sudah deal dan menyelesaikan pembelian melalui aplikasi yang dapat memberi rating (ditegaskan tim).
@@ -378,6 +395,7 @@ Setelah inspektor mengirim hasil, status menjadi **Hasil Diinput**. Job menjadi 
 | Detail listing | Foto, spesifikasi, harga, area (bukan alamat persis), lencana inspeksi, tombol aksi |
 | Masuk / Daftar | Form login dan registrasi |
 | Cara Kerja dan Bantuan/FAQ | Penjelasan singkat alur untuk pengguna awam dan juri |
+| Panduan Inspektor | Panduan satu halaman untuk pendaftaran, job, inspeksi, foto, fee, dan pembatalan |
 | Kebijakan privasi, Syarat ketentuan | Konten statis (P1) |
 
 ### 9.2 Pembeli dan Penjual
@@ -442,7 +460,7 @@ Setelah inspektor mengirim hasil, status menjadi **Hasil Diinput**. Job menjadi 
 **Aturan tambahan:**
 
 * Satu akun pengguna umum dapat berperan sebagai **pembeli sekaligus penjual**.
-* Inspektor memakai akun dengan role tersendiri, yang dibuat lewat pendaftaran inspektor lalu diverifikasi admin. Apakah inspektor boleh membeli atau menjual dengan akun yang sama masih [OPEN]. Selama belum diputuskan, inspektor tidak dapat mengajukan inspeksi, membeli, atau menjual.
+* Inspektor memakai akun role tersendiri yang diverifikasi admin. **[OPEN] D-06:** membeli, menjual, atau mengajukan inspeksi tetap **dilarang**. Untuk membeli, buat akun pengguna terpisah (email berbeda).
 * Akun admin dibuat manual (seed), tidak bisa didaftarkan dari halaman publik.
 * Satu akun dapat dipakai di banyak perangkat.
 * Inspektor yang belum diverifikasi tidak dapat melihat atau mengambil job.
@@ -621,7 +639,9 @@ Detail listing:
 Aturan:
 
 * Listing baru berstatus **Menunggu Validasi** dan tidak tampil publik.
-* Mengedit listing aktif yang sudah punya hasil inspeksi atau job berjalan membatasi perubahan field inti (jenis, merek, model, tahun, nomor rangka) agar hasil inspeksi tidak menjadi tidak relevan. Perubahan semacam itu memerlukan inspeksi ulang atau persetujuan admin [OPEN].
+* Field **non-inti** (harga, nego, deskripsi, foto, warna, slot dan tempat inspeksi) berlaku langsung.
+* Field **inti** (jenis, merek, model, tahun, nomor rangka, kilometer) → `pending_review` dan lencana dicabut (`is_inspected = false`). Hasil lama tetap di riwayat pembayar; lencana kembali setelah inspeksi baru selesai (D-05).
+* Field inti terkunci saat job aktif/transaksi; saat `in_transaction`, seluruh field terkunci.
 * Penjual dapat menonaktifkan listing (status **Nonaktif**).
 * Penjual tidak dapat menghapus atau menonaktifkan listing yang memiliki job aktif atau transaksi.
 
@@ -691,18 +711,18 @@ Grafik bersifat sederhana (garis atau batang) dan tidak wajib pada P0. Cukup kar
 
 | Field | Tipe | Wajib | Aturan |
 | --- | --- | :---: | --- |
-| Listing | Otomatis | Ya | Hanya listing Aktif milik orang lain |
+| Listing | Otomatis | Ya | Hanya listing Aktif atau Dalam Inspeksi milik orang lain |
 | Harga tawaran | Angka (Rp) | Ya | > 0, default harga listing |
 | Catatan | Teks | Tidak | Maksimal 300 karakter |
 
 Aturan:
 
-* Satu listing hanya boleh memiliki satu transaksi berjalan pada satu waktu.
-* Penjual melihat rincian: harga, komisi transaksi inspektor (jika ada hasil inspeksi), dan jumlah yang diterima, sebelum menekan Setuju atau Tolak.
+* Satu listing hanya boleh memiliki satu transaksi berjalan.
+* Pembelian boleh diajukan/disetujui saat listing **Dalam Inspeksi**, tetapi pembayaran menunggu tidak adanya job aktif (D-02).
+* Penjual melihat harga, komisi inspektor bila ada hasil, dan jumlah diterima sebelum Setuju/Tolak.
 * Pembayaran memakai modul simulasi dan idempotency key yang sama dengan 13.4.
-* Dana berstatus **Ditahan** sampai pembeli menekan **Konfirmasi Serah Terima** atau admin menyelesaikannya.
-* Pembeli tidak dapat mengajukan pembelian atas listing miliknya sendiri.
-
+* Dana **Ditahan** sampai pembeli Konfirmasi Serah Terima atau admin menyelesaikan.
+* Pembeli tidak dapat membeli listing sendiri.
 ### 13.13 Chat (P1)
 
 * Pesan teks, maksimal 1.000 karakter per pesan.
@@ -762,30 +782,21 @@ Transisi utama: `pending_review → active | rejected`, `rejected → pending_re
 
 | Kode | Label | Pemicu |
 | --- | --- | --- |
-| `requested` | Diajukan | Pemohon menekan Ajukan Inspeksi (belum bayar) |
-| `paid` | Dibayar | Pembayaran simulasi berhasil. Tampil di daftar job |
-| `taken` | Diambil | Inspektor mengambil job |
-| `scheduled` | Dijadwalkan | Jadwal final ditetapkan inspektor |
-| `in_progress` | Sedang Diinspeksi | Inspektor menekan Mulai Inspeksi |
+| `requested` | Diajukan | Ajukan Inspeksi (belum bayar) |
+| `paid` | Dibayar | Pembayaran berhasil; tampil di daftar |
+| `taken` | Diambil | Inspektor mengambil |
+| `scheduled` | Dijadwalkan | Jadwal final ditetapkan |
+| `in_progress` | Sedang Diinspeksi | Mulai Inspeksi |
 | `result_submitted` | Hasil Diinput | Inspektor mengirim hasil |
-| `completed` | Selesai | Pemohon menerima hasil atau admin menyelesaikan. Fee cair |
-| `cancelled` | Dibatalkan | Dibatalkan pemohon atau admin |
-| `expired` | Kedaluwarsa | Tagihan tidak dibayar dalam 30 menit [ASUMSI] |
+| `completed` | Selesai | Pemohon menerima, otomatis 3 hari (`auto_accept_days`), atau admin |
+| `cancelled` | Dibatalkan | Pemohon/admin atau otomatis setelah `paid` 7 hari |
+| `expired` | Kedaluwarsa | Tagihan tidak dibayar 30 menit [ASUMSI] |
 
-Aturan transisi:
-
-* `requested → paid | expired | cancelled`.
-* `paid → taken | cancelled`.
-* `taken → paid` terjadi jika inspektor membatalkan (job kembali ke daftar). Selain itu `taken → scheduled | cancelled`.
-* `scheduled → in_progress | paid | cancelled`.
-* `in_progress → result_submitted`. Setelah titik ini pemohon tidak dapat membatalkan, hanya admin.
-* `result_submitted → completed`.
-* Status akhir: `completed`, `cancelled`, `expired`. Job aktif adalah job yang bukan status akhir.
+Aturan transisi: `requested → paid | expired | cancelled`; `paid → taken | cancelled`, termasuk timeout 7 hari dari `available_since` (D-01); `taken → paid` bila inspektor batal; `scheduled → in_progress | paid | cancelled`; `in_progress → result_submitted`; `result_submitted → completed` saat pemohon menerima, otomatis 3 hari, atau admin (D-03). Status akhir: `completed`, `cancelled`, `expired`.
 
 ### 14.3 Status Transaksi Jual Beli (P1)
 
-`offered` (Diajukan) → `accepted` (Disetujui penjual) → `paid_held` (Dibayar, dana ditahan) → `completed` (Selesai), dengan cabang `rejected` (Ditolak) dan `cancelled` (Dibatalkan).
-
+`offered` → `accepted` → `paid_held` → `completed`, dengan cabang `rejected`, `cancelled`, dan `expired`. `offered` 48 jam; `accepted` 24 jam sejak pembayaran dibuka; `paid_held` 7 hari tanpa serah terima perlu tindakan admin, tidak otomatis selesai.
 ---
 
 ## 15. Template Inspeksi
@@ -964,6 +975,7 @@ Tabel `users` bawaan Laravel diperluas dengan kolom di bawah, sehingga tidak ada
 | fee_amount | bigint | Tarif saat dibuat (disalin agar perubahan tarif tidak memengaruhi job lama) |
 | platform_fee_pct | numeric | Persentase komisi saat dibuat (disalin) |
 | expires_at | timestamp (UTC) | Batas pembayaran tagihan |
+| available_since | timestamp (UTC) | Waktu mulai job tersedia; diatur ulang saat job kembali ke `paid` setelah inspektor membatalkan |
 | scheduled_at | timestamp (UTC) | Jadwal final |
 | taken_at, started_at, submitted_at, completed_at | timestamp (UTC) | |
 | needs_attention_at | timestamp (UTC) | Ditandai bila jadwal belum ditetapkan (E8) |
@@ -1032,7 +1044,7 @@ Pesan dan notifikasi baru disiarkan lewat Laravel Echo pada **kanal privat** (`p
 
 ### 18.17 app_settings
 
-`key`, `value` (json). Berisi: `inspection_fee_car` (50000), `inspection_fee_motorcycle` (15000), `platform_fee_pct` (10), `sale_commission_pct` (3). Biaya akses hasil memakai tarif inspeksi yang sama, sehingga tidak ada kunci terpisah.
+`key`, `value` (json). Berisi: `inspection_fee_car` (50000), `inspection_fee_motorcycle` (15000), `platform_fee_pct` (10), `sale_commission_pct` (3), `auto_accept_days` (3), `paid_job_timeout_days` (7).
 
 ### 18.18 audit_logs (P2)
 
@@ -1457,6 +1469,15 @@ Splash/onboarding tidak diperlukan. Halaman **Cara Kerja** dan **Bantuan/FAQ** s
 | E24 | Inspektor mencoba mengambil job atas listing miliknya | Ditolak dengan `403 OWN_LISTING` dan job tidak tampil di daftarnya [ASUMSI] |
 | E25 | Pembayaran dibuka setelah tagihan kedaluwarsa | Ditolak dengan `410 PAYMENT_EXPIRED`. Pemohon diminta mengajukan ulang |
 
+### Edge case tambahan dari flow
+
+| ID | Situasi | Perilaku |
+| --- | --- | --- |
+| JOB-E17 | Pemohon membatalkan saat `in_progress` | Ditolak; hanya admin |
+| TRX-E10 | Serah terima tidak dikonfirmasi 7 hari | Ditandai perlu tindakan; admin memutuskan |
+| TRX-E13 | Serah terima dikonfirmasi dua kali | Efek sekali |
+| LST-E6 | Harga listing berubah setelah penawaran | Penawaran memakai harga tersalin |
+
 ---
 
 ## 23. Rencana Rilis, Pengujian, dan Timeline Pengerjaan
@@ -1515,7 +1536,7 @@ Halaman **Cara Kerja** di beranda dan teks bantuan singkat pada formulir. Pandua
 
 ### 24.1 Asumsi
 
-1. Paket Hostinger Cloud Startup dapat menjalankan Laravel 12 (PHP 8.3), cron per menit, dan koneksi keluar ke Pusher [OPEN: verifikasi di hPanel].
+1. Paket Hostinger Cloud Startup dapat menjalankan Laravel 13 (PHP 8.3), cron per menit, dan koneksi keluar ke Pusher [OPEN: verifikasi di hPanel].
 2. Tim sudah terdaftar pada lomba. Pendaftaran sudah ditutup pada 4 Oktober, sehingga status pendaftaran perlu dikonfirmasi.
 3. Seluruh pembayaran adalah simulasi dan tidak ada uang nyata berpindah.
 4. Tarif dan komisi pada Bagian 8 sudah ditetapkan tim, kecuali yang ditandai [ASUMSI], dan semuanya dapat diubah admin.
@@ -1581,7 +1602,7 @@ Urutan berdasarkan dampak pada pengerjaan 8 Oktober. Pertanyaan yang sudah dijaw
 10. Apakah rating juga boleh diberikan oleh **pemohon inspeksi** setelah menerima hasil? Saat ini rating hanya setelah pembeli deal lewat aplikasi, sehingga inspektor yang inspeksinya tidak berujung penjualan tidak pernah dinilai.
 11. **Lencana publik**: apakah skor ringkas dan rekomendasi boleh tampil di listing, atau hanya tulisan "Sudah Diinspeksi"?
 12. **Masa berlaku hasil inspeksi**: selama kendaraan belum terjual (jawaban tim). Perlu batas usia (misalnya 30 hari) dan inspeksi ulang?
-13. Apakah perubahan field inti listing setelah inspeksi mencabut lencana atau perlu persetujuan admin?
+13. ~~Apakah perubahan field inti listing setelah inspeksi mencabut lencana atau perlu persetujuan admin?~~ **Terjawab:** field inti → `pending_review` + lencana dicabut; field inti terkunci saat job/transaksi aktif (D-05).
 14. Apakah inspektor boleh membeli atau menjual dengan akun yang sama? Sementara ini dilarang (Bagian 10).
 15. **Konflik kepentingan inspektor** (R16): apakah larangan inspeksi atas listing sendiri dan tinjauan admin acak cukup, atau perlu aturan lain?
 
@@ -1762,7 +1783,7 @@ SIMOKAS memadukan tiga hal yang belum bertemu di marketplace kendaraan bekas kon
 
 Untuk lomba, kunci keberhasilannya bukan jumlah fitur, melainkan **satu alur utama yang mulus, aman, dan mudah dijelaskan**: dari penjual memasang penawaran, pembeli mengajukan inspeksi, inspektor mengambil dan mengisi laporan, hingga hasil terkunci dan dapat dibuka dengan akses berbayar. Setelah alur itu stabil pada 8 Oktober, fitur transaksi, chat, dan rating melengkapi cerita produk sebelum pengumpulan pada 12 Oktober.
 
-**Langkah berikutnya:** jawab Open Questions prioritas tinggi (Bagian 26 poin 1–5), serahkan indikator inspeksi mobil dan motor paling lambat 6 Oktober, lalu PRD ini diperbarui ke versi 1.5.
+**Langkah berikutnya:** jawab Open Questions prioritas tinggi (Bagian 26 poin 1–5), serahkan indikator inspeksi mobil dan motor paling lambat 6 Oktober, lalu PRD ini diperbarui ke versi 1.6.
 
 ---
 
@@ -1819,7 +1840,7 @@ Daftar ini membantu tim meninjau apa saja yang berubah dari draf sebelumnya. Per
 
 | Area | Perubahan |
 | --- | --- |
-| Stack (6.2) | Next.js + Supabase + Vercel diganti Laravel 12 + Blade/Livewire/Tailwind + MySQL di Hostinger Cloud Startup |
+| Stack (6.2) | Next.js + Supabase + Vercel diganti Laravel 13 + Blade/Livewire/Tailwind + MySQL di Hostinger Cloud Startup |
 | Database | PostgreSQL tidak tersedia di paket Cloud Hostinger dan PostgreSQL eksternal menambah latensi. Dipilih MySQL. Indeks unik parsial diganti kolom virtual `active_listing_id` + indeks unik. `timestamptz` menjadi `timestamp` (UTC), `text[]` dan `jsonb` menjadi `json`, enum menjadi string |
 | Hak akses | Row Level Security diganti Policy/Gate Laravel. Tabel `profiles` digabung ke `users` |
 | Real-time | Supabase Realtime diganti Laravel Echo + Pusher, dengan cadangan polling Livewire |
@@ -1827,3 +1848,18 @@ Daftar ini membantu tim meninjau apa saja yang berubah dari draf sebelumnya. Per
 | Tugas terjadwal | Kedaluwarsa tagihan dan penandaan job memakai Laravel Scheduler lewat cron hPanel |
 | Tidak berubah | Seluruh aturan bisnis (Bagian 8), alur pengguna (12), status (14), template inspeksi (15), dan acceptance criteria (28) |
 
+
+
+### F. Perubahan v1.6
+
+| Area | Perubahan |
+| --- | --- |
+| 6.2 | Framework diseragamkan ke Laravel 13. |
+| 8.1 | Komisi 3% dari penjual dan platform 10% darinya **[ASUMSI]**; contoh 100 juta: 3 juta / 300 ribu / 2,7 juta / 97 juta. |
+| 8.3, 8.5, 14.2 | D-01/D-03: timeout 7 hari dari `available_since`; auto-complete 3 hari (`auto_accept_days`). |
+| 8.6, 13.12, 14.3 | D-02/D-04: pembayaran ditunda; pembatalan; timeout 48 jam / 24 jam / 7 hari. |
+| 13.3, Q13 | D-05: non-inti langsung; inti → `pending_review`, lencana dicabut, field inti terkunci. |
+| 18.7, 18.17 | Tambah `available_since`, `auto_accept_days`=3, `paid_job_timeout_days`=7; komisi 3% dan 10% tetap. |
+| 22 | Edge case tambahan dari flow. |
+| 10 | D-06 tetap **[OPEN]**, default dilarang. |
+| 9 | Tautan panduan inspektor. |

@@ -104,3 +104,18 @@ it('posts access payout through the contract with an explicit pct overriding set
     expect((int) $entries->firstWhere('entry_type', LedgerEntryType::PlatformFee)->amount)->toBe(5000)
         ->and((int) $entries->firstWhere('entry_type', LedgerEntryType::AccessFee)->amount)->toBe(45000);
 });
+
+it('posts purchase payouts through the contract', function () {
+    $ledger = app(Ledger::class);
+    $inspector = User::factory()->inspector()->create();
+    $payment = Payment::factory()->success()->purchase()->create(['amount' => 100000000]);
+
+    $ledger->postPurchasePayout($payment->id, 3000000, 2700000, $inspector->id);
+
+    $entries = LedgerEntry::query()->where('payment_id', $payment->id)->get();
+
+    expect($entries)->toHaveCount(2)
+        ->and((int) $entries->firstWhere('entry_type', LedgerEntryType::PlatformFee)->amount)->toBe(300000)
+        ->and((int) $entries->firstWhere('entry_type', LedgerEntryType::SaleCommission)->amount)->toBe(2700000)
+        ->and($ledger->balanceFor($inspector->id))->toBe(2700000);
+});
