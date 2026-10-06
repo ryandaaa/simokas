@@ -57,6 +57,6 @@ final class ViewResultPage extends Component
             'hasAccess' => $hasAccess,
             'canRequestAccess' => $canRequestAccess,
             'accessFee' => $this->result->job->fee_amount,
-        ]);
+        ])->layout('components.layouts.app', ['title' => __('result.inspection_results')]);
     }
 }

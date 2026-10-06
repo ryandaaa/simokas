@@ -90,7 +90,7 @@ final class ResultAccessPolicyTest extends TestCase
             ->access()
             ->create();
         ResultAccess::factory()
-            ->for($result)
+            ->for($result, 'result')
             ->for($buyer, 'user')
             ->create(['payment_id' => $payment->id]);
 
@@ -126,7 +126,7 @@ final class ResultAccessPolicyTest extends TestCase
             ->access()
             ->create();
         ResultAccess::factory()
-            ->for($result)
+            ->for($result, 'result')
             ->for($buyer, 'user')
             ->create(['payment_id' => $payment->id]);
 
@@ -149,7 +149,7 @@ final class ResultAccessPolicyTest extends TestCase
 
         // Create access
         ResultAccess::factory()
-            ->for($result)
+            ->for($result, 'result')
             ->for($buyer, 'user')
             ->create();
 

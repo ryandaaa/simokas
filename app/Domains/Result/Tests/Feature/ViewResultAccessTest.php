@@ -7,6 +7,7 @@ namespace App\Domains\Result\Tests\Feature;
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Payment\Enums\LedgerEntryType;
 use App\Domains\Payment\Models\LedgerEntry;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Result\Actions\GrantResultAccess;
@@ -70,8 +71,7 @@ final class ViewResultAccessTest extends TestCase
 
         // Verify the page is rendered (no full details shown)
         // Without access, should show limited summary and payment button
-        $response->assertSee(__('result.access_required'));
-        $response->assertSee(Money::format($result->job->fee_amount));
+        $response->assertSee(__('result.access_required', ['cost' => Money::format($result->job->fee_amount)]));
     }
 
     #[Test]
@@ -104,13 +104,14 @@ final class ViewResultAccessTest extends TestCase
         // Should post ledger entries for inspector and platform
         $inspectorEntries = LedgerEntry::query()
             ->where('payment_id', $payment->id)
-            ->where('to_user_id', $inspector->id)
+            ->where('account_user_id', $inspector->id)
+            ->where('entry_type', LedgerEntryType::AccessFee->value)
             ->get();
 
         $platformEntries = LedgerEntry::query()
             ->where('payment_id', $payment->id)
-            ->where('to_user_id', null)
-            ->where('note', 'like', '%access%')
+            ->whereNull('account_user_id')
+            ->where('entry_type', LedgerEntryType::PlatformFee->value)
             ->get();
 
         $this->assertGreaterThan(0, $inspectorEntries->count());
@@ -138,8 +139,8 @@ final class ViewResultAccessTest extends TestCase
         $this->assertEquals(2, $allEntries->count());
 
         // Verify split invariant: inspector + platform = payment amount
-        $inspectorAmount = $allEntries->where('to_user_id', $inspector->id)->sum('amount');
-        $platformAmount = $allEntries->where('to_user_id', null)->sum('amount');
+        $inspectorAmount = $allEntries->where('account_user_id', $inspector->id)->sum('amount');
+        $platformAmount = $allEntries->whereNull('account_user_id')->sum('amount');
 
         $this->assertEquals($payment->amount, $inspectorAmount + $platformAmount);
         $this->assertGreaterThan(0, $inspectorAmount);

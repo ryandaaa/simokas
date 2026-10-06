@@ -4,13 +4,7 @@ use App\Domains\Result\Enums\InspectionRecommendation;
 
 <div class="min-h-screen bg-color-bg py-8">
     <div class="max-w-2xl mx-auto px-4">
-        {{-- Loading state --}}
-        @if ($this->isLoading())
-            <div class="space-y-4">
-                <div class="h-32 bg-color-surface rounded-xl animate-pulse"></div>
-                <div class="h-40 bg-color-surface rounded-xl animate-pulse"></div>
-            </div>
-        @elseif ($hasAccess)
+        @if ($hasAccess)
             {{-- Full result view --}}
             <div class="space-y-8">
                 {{-- Header with recommendation --}}
