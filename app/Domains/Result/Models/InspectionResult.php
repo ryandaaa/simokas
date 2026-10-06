@@ -8,6 +8,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Result\Database\factories\InspectionResultFactory;
+use App\Domains\Result\Enums\InspectionRecommendation;
 use App\Domains\Result\Enums\ResultStatus;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -24,10 +25,13 @@ use Illuminate\Support\Carbon;
  * @property string $inspector_id
  * @property string $template_id
  * @property float|null $total_score
- * @property string|null $recommendation
+ * @property InspectionRecommendation|null $recommendation
  * @property string|null $summary_note
  * @property ResultStatus $status
  * @property Carbon|null $submitted_at
+ * @property Carbon|null $reopened_at
+ * @property string|null $reopened_by
+ * @property string|null $reopen_reason
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read InspectionJob $job
@@ -61,6 +65,9 @@ final class InspectionResult extends Model
         'summary_note',
         'status',
         'submitted_at',
+        'reopened_at',
+        'reopened_by',
+        'reopen_reason',
     ];
 
     /**
@@ -70,8 +77,10 @@ final class InspectionResult extends Model
     {
         return [
             'status' => ResultStatus::class,
+            'recommendation' => InspectionRecommendation::class,
             'total_score' => 'decimal:2',
             'submitted_at' => 'datetime',
+            'reopened_at' => 'datetime',
         ];
     }
 
@@ -97,6 +106,14 @@ final class InspectionResult extends Model
     public function inspector(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inspector_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function reopenedByUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reopened_by');
     }
 
     /**

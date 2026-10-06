@@ -116,4 +116,10 @@ final class InspectionResultPolicy
 
         return false;
     }
+
+    public function reopen(User $user, InspectionResult $result): bool
+    {
+        // Only admin can reopen results (RES-R4, RES-E14)
+        return $user->isAdmin() && ! $user->isBlocked() && $user->isActive();
+    }
 }

@@ -54,12 +54,12 @@ final class UploadResultPhoto
             throw UnauthorizedInspectorException::create();
         }
 
-        if ($job->status !== JobStatus::InProgress) {
-            throw JobNotInProgressException::create();
-        }
-
         if ($result->status !== ResultStatus::Draft) {
             throw ResultAlreadySubmittedException::create();
+        }
+
+        if ($job->status !== JobStatus::InProgress) {
+            throw JobNotInProgressException::create();
         }
 
         // 2. Camera capture check (RES-R5, RES-E5)

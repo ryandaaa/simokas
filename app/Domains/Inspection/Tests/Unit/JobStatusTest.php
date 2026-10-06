@@ -51,7 +51,7 @@ function jobStatusMatrixDataset(): array
         JobStatus::Taken->value => [JobStatus::Scheduled, JobStatus::Paid, JobStatus::Cancelled],
         JobStatus::Scheduled->value => [JobStatus::InProgress, JobStatus::Paid, JobStatus::Cancelled],
         JobStatus::InProgress->value => [JobStatus::ResultSubmitted, JobStatus::Cancelled],
-        JobStatus::ResultSubmitted->value => [JobStatus::Completed, JobStatus::Cancelled],
+        JobStatus::ResultSubmitted->value => [JobStatus::Completed, JobStatus::Cancelled, JobStatus::InProgress],
         JobStatus::Completed->value => [],
         JobStatus::Cancelled->value => [],
         JobStatus::Expired->value => [],
