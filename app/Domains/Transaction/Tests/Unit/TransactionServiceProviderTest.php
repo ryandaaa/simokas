@@ -15,6 +15,8 @@ final class TransactionServiceProviderTest extends TestCase
         $provider = $this->app->getProvider(TransactionServiceProvider::class);
 
         $this->assertInstanceOf(TransactionServiceProvider::class, $provider);
-        $this->assertTrue(View::exists('transaction::index'));
+        $this->assertTrue(View::exists('transaction::livewire.offer-page'));
+        $this->assertTrue(View::exists('transaction::livewire.transactions-index-page'));
+        $this->assertTrue(View::exists('transaction::livewire.transaction-detail-page'));
     }
 }

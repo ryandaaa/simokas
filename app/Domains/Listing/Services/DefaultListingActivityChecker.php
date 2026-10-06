@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace App\Domains\Listing\Services;
 
 use App\Domains\Listing\Contracts\ListingActivityChecker;
+use App\Domains\Transaction\Models\Transaction;
 
 /**
- * Default activity checker used until JOB-1 (Inspection) and TRX-1
- * (Transaction) provide real implementations.
+ * Default activity checker. hasActiveTransaction() is real since TRX-1:
+ * it reads the transactions table (read-only) for offered, accepted, or
+ * paid_held statuses. hasActiveJob() stays false here; JOB-1 overrides
+ * the binding with InspectionListingActivityChecker.
  *
- * Reports no activity so locks only apply from the listing status itself.
- * JOB-1 and TRX-1 override this binding without touching Listing code.
+ * Reports no job activity so listing locks only apply from the listing
+ * status itself for jobs.
  */
 final class DefaultListingActivityChecker implements ListingActivityChecker
 {
@@ -22,6 +25,12 @@ final class DefaultListingActivityChecker implements ListingActivityChecker
 
     public function hasActiveTransaction(string $listingId): bool
     {
-        return false;
+        // Read-only cross-domain read (A1): TRX-1 real implementation.
+        // A listing is locked while a transaction is offered, accepted,
+        // or paid_held (LST-R7).
+        return Transaction::query()
+            ->where('listing_id', $listingId)
+            ->whereIn('status', ['offered', 'accepted', 'paid_held'])
+            ->exists();
     }
 }

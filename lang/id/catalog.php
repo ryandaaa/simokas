@@ -69,6 +69,7 @@ return [
         'coordinates' => 'Koordinat persis',
         'actions_title' => 'Tindakan',
         'action_request_inspection' => 'Ajukan Inspeksi',
+        'action_request_purchase' => 'Ajukan Pembelian',
         'action_view_result' => 'Lihat Hasil Inspeksi',
         'action_open_result' => 'Buka Hasil Inspeksi',
         'action_edit' => 'Ubah Listing',
