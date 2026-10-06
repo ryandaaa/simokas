@@ -170,9 +170,9 @@ it('AUTH-T15 rejects registration without valid terms consent', function (mixed 
     'null' => [null],
 ]);
 
-it('AUTH-T16 records accepted_terms_at at registration time when consent is given', function () {
+it('AUTH-T16 records accepted_terms_at at registration time when consent is given', function ($testCase) {
     $frozen = CarbonImmutable::parse('2026-10-05 10:00:00', 'UTC');
-    $this->travelTo($frozen);
+    $testCase->travelTo($frozen);
 
     Livewire::test(Register::class)
         ->set('name', 'Siti Setuju')

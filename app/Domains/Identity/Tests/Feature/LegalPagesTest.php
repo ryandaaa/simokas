@@ -9,10 +9,13 @@ use App\Domains\Identity\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+
 uses(RefreshDatabase::class);
 
 it('AUTH-T17 shows public legal pages with a single h1, draft label, and lang-sourced text', function (string $routeName, string $titleKey, string $introKey) {
-    $response = $this->get(route($routeName));
+    $response = get(route($routeName));
 
     $response->assertOk();
 
@@ -36,10 +39,10 @@ it('AUTH-T17 grants guests and every role access to legal pages', function (?Use
             'role' => $role,
             'status' => UserStatus::Active,
         ]);
-        $this->actingAs($user);
+        actingAs($user);
     }
 
-    $this->get(route($routeName))->assertOk();
+    get(route($routeName))->assertOk();
 })->with([
     'guest sees privacy' => [null, 'legal.privacy'],
     'guest sees terms' => [null, 'legal.terms'],
@@ -52,7 +55,7 @@ it('AUTH-T17 grants guests and every role access to legal pages', function (?Use
 ]);
 
 it('AUTH-T18 shows footer links to both legal pages on home and auth pages', function (string $url) {
-    $this->get($url)->assertOk()
+    get($url)->assertOk()
         ->assertSee(route('legal.privacy'), false)
         ->assertSee(route('legal.terms'), false)
         ->assertSee(__('legal.footer_privacy'), false)
