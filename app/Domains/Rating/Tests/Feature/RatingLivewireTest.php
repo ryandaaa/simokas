@@ -23,6 +23,8 @@ use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 uses(RefreshDatabase::class);
 
 it('RTG-T01 Livewire RatingForm submits valid rating and displays success', function () {
@@ -55,7 +57,7 @@ it('RTG-T01 Livewire RatingForm submits valid rating and displays success', func
         ->assertSee(__('rating.success'))
         ->assertSee('5 / 5');
 
-    $this->assertDatabaseHas('ratings', [
+    assertDatabaseHas('ratings', [
         'transaction_id' => $transaction->id,
         'inspector_id' => $inspectorUser->id,
         'buyer_id' => $buyer->id,

@@ -22,6 +22,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
+use function Pest\Laravel\assertDatabaseHas;
+
 uses(TestCase::class, RefreshDatabase::class);
 
 function createCompletedTransactionWithInspector(): array
@@ -73,7 +75,7 @@ it('RTG-T01 buyer of completed transaction submits rating and it is saved', func
         ->and($rating->transaction_id)->toBe($transaction->id)
         ->and($rating->is_hidden)->toBeFalse();
 
-    $this->assertDatabaseHas('ratings', [
+    assertDatabaseHas('ratings', [
         'id' => $rating->id,
         'transaction_id' => $transaction->id,
         'inspector_id' => $inspector->id,

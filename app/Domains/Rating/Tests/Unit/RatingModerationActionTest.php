@@ -15,6 +15,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+
 uses(TestCase::class, RefreshDatabase::class);
 
 it('RTG-T05 admin hides and unhides rating, recalculating inspector average and logging audit (RTG-E6)', function () {
@@ -38,14 +41,14 @@ it('RTG-T05 admin hides and unhides rating, recalculating inspector average and 
         'is_hidden' => false,
     ]);
 
-    $this->actingAs($admin);
+    actingAs($admin);
 
     // 1. Admin hides rating 2 (score 4)
     $hideAction = app(HideRating::class);
     $hidden = $hideAction->handle($admin, $rating2);
 
     expect($hidden->is_hidden)->toBeTrue();
-    $this->assertDatabaseHas('ratings', [
+    assertDatabaseHas('ratings', [
         'id' => $rating2->id,
         'is_hidden' => true,
     ]);
@@ -56,7 +59,7 @@ it('RTG-T05 admin hides and unhides rating, recalculating inspector average and 
         ->and($profile->rating_count)->toBe(1);
 
     // Audit log should be recorded
-    $this->assertDatabaseHas('audit_logs', [
+    assertDatabaseHas('audit_logs', [
         'actor_id' => $admin->id,
         'action' => 'hide_rating',
         'entity' => 'rating',
@@ -68,7 +71,7 @@ it('RTG-T05 admin hides and unhides rating, recalculating inspector average and 
     $unhidden = $unhideAction->handle($admin, $rating2->fresh());
 
     expect($unhidden->is_hidden)->toBeFalse();
-    $this->assertDatabaseHas('ratings', [
+    assertDatabaseHas('ratings', [
         'id' => $rating2->id,
         'is_hidden' => false,
     ]);
@@ -79,7 +82,7 @@ it('RTG-T05 admin hides and unhides rating, recalculating inspector average and 
         ->and($profile->rating_count)->toBe(2);
 
     // Audit log should record unhide
-    $this->assertDatabaseHas('audit_logs', [
+    assertDatabaseHas('audit_logs', [
         'actor_id' => $admin->id,
         'action' => 'unhide_rating',
         'entity' => 'rating',
