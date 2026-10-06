@@ -7,25 +7,25 @@
         ['label' => __('home.nav_help'), 'url' => route('catalog.help'), 'icon' => 'information-circle', 'active' => false],
     ]"
 >
-    <div class="space-y-4">
+    <div class="space-y-6 pb-12">
         <div>
-            <h1 class="text-xl font-bold text-text sm:text-2xl">{{ __('catalog.heading') }}</h1>
-            <p class="mt-1 text-sm text-muted">{{ __('catalog.subheading') }}</p>
+            <h1 class="text-3xl sm:text-4xl md:text-hero font-bold text-obs tracking-tight">{{ __('catalog.heading') }}</h1>
+            <p class="mt-2 text-sm text-slate">{{ __('catalog.subheading') }}</p>
         </div>
 
-        <details open class="rounded-xl border border-muted/20 bg-surface">
+        <details open class="rounded-[10px] border border-fog bg-surface">
             <summary
-                class="flex min-h-[44px] cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-semibold text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-accent md:hidden"
+                class="flex min-h-[44px] cursor-pointer list-none items-center justify-between px-4 py-3 text-sm font-bold text-obs focus:outline-none focus-visible:ring-2 focus-visible:ring-forest md:hidden"
                 aria-label="{{ __('catalog.filter_toggle') }}"
             >
                 <span class="inline-flex items-center gap-2">
-                    <x-ui.icon name="search" class="h-4 w-4" />
+                    <x-ui.icon name="kaca-pembesar" class="h-4 w-4 text-forest" />
                     {{ __('catalog.filter_title') }}
                 </span>
-                <x-ui.icon name="chevron-down" class="h-4 w-4" />
+                <x-ui.icon name="chevron-down" class="h-4 w-4 text-pebble" />
             </summary>
 
-            <form method="GET" action="{{ route('catalog.index') }}" class="border-t border-muted/15 p-4 md:border-t-0">
+            <form method="GET" action="{{ route('catalog.index') }}" class="border-t border-fog p-4 sm:p-6 md:border-t-0">
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <x-ui.input
                         id="filter-q"
@@ -120,32 +120,32 @@
                     />
                 </div>
 
-                <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-                    <x-ui.button type="submit" variant="primary" icon="search">
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row">
+                    <x-ui.button type="submit" variant="primary" icon="kaca-pembesar">
                         {{ __('catalog.apply') }}
                     </x-ui.button>
-                    <x-ui.button :href="route('catalog.index')" variant="ghost" icon="x-mark">
+                    <x-ui.button :href="route('catalog.index')" variant="secondary" icon="silang">
                         {{ __('catalog.reset') }}
                     </x-ui.button>
                 </div>
             </form>
         </details>
 
-        <p class="text-sm text-muted" aria-live="polite" role="status">
+        <p class="text-sm text-slate" aria-live="polite" role="status">
             {{ trans_choice('catalog.results', $listings->total(), ['count' => number_format($listings->total(), 0, ',', '.')]) }}
         </p>
 
         @if ($listings->isEmpty())
             <x-ui.empty-state
-                icon="search"
+                icon="kaca-pembesar"
                 :title="__('catalog.empty_title')"
                 :description="__('catalog.empty_description')"
                 :actionLabel="__('catalog.reset')"
                 :actionUrl="route('catalog.index')"
-                actionIcon="x-mark"
+                actionIcon="silang"
             />
         @else
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($cards as $card)
                     <x-ui.listing-card
                         :title="$card->title"
