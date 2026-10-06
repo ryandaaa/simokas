@@ -13,6 +13,11 @@
         <x-ui.alert variant="danger" :message="$errorMessage" :retry-action="'retry'" />
     @endif
 
+    <div wire:loading class="w-full text-center py-4 text-sm text-slate">
+        <x-ui.icon name="jam" class="w-5 h-5 animate-spin inline-block mr-2" />
+        {{ __('ui.actions.loading') }}
+    </div>
+
     @if ($jobs === null || $jobs->isEmpty())
         <x-ui.empty-state
             icon="dokumen"

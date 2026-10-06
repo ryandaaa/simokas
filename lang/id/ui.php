@@ -71,6 +71,7 @@ return [
         'notifications' => 'Notifikasi',
         'account_menu' => 'Menu akun',
         'dashboard' => 'Dashboard',
+        'history' => 'Riwayat',
         'my_listings' => 'Iklan Saya',
         'create_listing' => 'Buat Iklan',
         'my_inspections' => 'Inspeksi Saya',

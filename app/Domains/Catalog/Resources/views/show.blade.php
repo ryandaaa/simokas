@@ -60,7 +60,7 @@
                                     x-show="active === {{ $index }}"
                                     src="{{ $photo->url }}"
                                     alt="{{ $photo->alt }}"
-                                    loading="lazy"
+                                    @if ($index > 0) loading="lazy" @else loading="eager" @endif
                                     width="800"
                                     height="600"
                                     class="h-full w-full object-cover"
@@ -85,7 +85,7 @@
                                 >
                                     <img
                                         src="{{ $photo->url }}"
-                                        alt=""
+                                        alt="{{ $photo->alt }}"
                                         loading="lazy"
                                         width="200"
                                         height="150"

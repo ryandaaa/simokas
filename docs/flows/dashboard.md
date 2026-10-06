@@ -62,3 +62,10 @@ Satu akun `user` yang menjadi pembeli sekaligus penjual melihat kedua bagian dal
 - [x] `DSH-T07` Jumlah query tidak bertambah seiring data (DSH-E4)
 - [x] `DSH-T08` Kegagalan satu kartu tidak merusak halaman (DSH-E5)
 - [x] `DSH-T09` Respons tidak memuat data persis (DSH-R4)
+- [x] `HIST-T01` Pengguna hanya melihat riwayat miliknya (transaksi, hasil inspeksi, job)
+- [x] `HIST-T02` Hasil inspeksi yang pernah diakses atau dibayar tetap tampil walau listing berstatus sold
+- [x] `HIST-T03` Riwayat tidak membocorkan data persis (alamat lengkap, koordinat, nomor rangka, tempat inspeksi)
+- [x] `HIST-T04` Pagination 10 item per halaman untuk setiap bagian
+- [x] `HIST-T05` Empty state untuk pengguna tanpa riwayat aktivitas
+- [x] `HIST-T06` Otorisasi semua peran dan inspektor belum disetujui hanya melihat bagian yang boleh
+- [x] `HIST-T07` Bebas dari masalah N+1 (jumlah query konstan terhadap jumlah data)

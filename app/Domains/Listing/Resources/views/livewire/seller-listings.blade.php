@@ -58,6 +58,8 @@
                                     src="{{ route('listings.photos.show', ['listing' => $listing->id, 'photo' => $listing->coverPhoto->id]) }}"
                                     alt="{{ $listing->title }}"
                                     class="w-full h-full object-cover"
+                                    width="400"
+                                    height="225"
                                     loading="lazy"
                                 />
                             @else
