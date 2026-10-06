@@ -44,11 +44,11 @@ final class AuditLog extends Model
 
     protected static function booted(): void
     {
-        static::updating(function (): void {
+        self::updating(function (): void {
             throw new BadMethodCallException('Audit log entries are immutable.');
         });
 
-        static::deleting(function (): void {
+        self::deleting(function (): void {
             throw new BadMethodCallException('Audit log entries cannot be deleted.');
         });
     }

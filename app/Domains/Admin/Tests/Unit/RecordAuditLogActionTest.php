@@ -16,7 +16,7 @@ final class RecordAuditLogActionTest extends TestCase
     public function test_adm_t13_record_audit_log_action_records_sensitive_actions_with_actor_action_entity_id_meta(): void
     {
         $admin = User::factory()->admin()->create();
-        $action = new RecordAuditLog();
+        $action = new RecordAuditLog;
 
         $log = $action->handle(
             actor: $admin,

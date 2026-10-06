@@ -76,9 +76,6 @@ final class UnifiedAdminQueue extends Component
         ])->layout('components.layouts.app', ['title' => __('admin.unified_queue.title')]);
     }
 
-    /**
-     * @return LengthAwarePaginator<int, array{type: string, id: string, title: string, subtitle: string, time: \Illuminate\Support\Carbon|null, status_label: string, status_variant: string, status_icon: string, url: string, model: mixed}>
-     */
     private function buildQueueItems(): LengthAwarePaginator
     {
         $perPage = 12;
@@ -95,9 +92,9 @@ final class UnifiedAdminQueue extends Component
                 'type' => 'listing',
                 'id' => (string) $l->id,
                 'title' => $l->title,
-                'subtitle' => 'Penjual: '.($l->seller?->name ?? '-'),
+                'subtitle' => 'Penjual: '.$l->seller->name,
                 'time' => $l->created_at,
-                'status_label' => __('listing.status.pending_review'),
+                'status_label' => (string) __('listing.status.pending_review'),
                 'status_variant' => 'warning',
                 'status_icon' => 'jam',
                 'url' => route('admin.listings.index'),
@@ -117,8 +114,8 @@ final class UnifiedAdminQueue extends Component
             $transformed = $paginator->getCollection()->map(fn (InspectorProfile $p): array => [
                 'type' => 'inspector',
                 'id' => (string) $p->id,
-                'title' => 'Verifikasi Inspektor: '.($p->user?->name ?? '-'),
-                'subtitle' => $p->user?->email ?? '-',
+                'title' => 'Verifikasi Inspektor: '.$p->user->name,
+                'subtitle' => $p->user->email,
                 'time' => $p->created_at,
                 'status_label' => 'Menunggu Verifikasi',
                 'status_variant' => 'warning',
@@ -141,8 +138,8 @@ final class UnifiedAdminQueue extends Component
             $transformed = $paginator->getCollection()->map(fn (InspectionJob $j): array => [
                 'type' => 'job',
                 'id' => (string) $j->id,
-                'title' => 'Job Perlu Tindakan: '.($j->listing?->title ?? $j->id),
-                'subtitle' => 'Status: '.$j->status->label().' • Pemohon: '.($j->requester?->name ?? '-'),
+                'title' => 'Job Perlu Tindakan: '.$j->listing->title,
+                'subtitle' => 'Status: '.$j->status->label().' • Pemohon: '.$j->requester->name,
                 'time' => $j->needs_attention_at ?? $j->created_at,
                 'status_label' => 'Perlu Tindakan',
                 'status_variant' => 'danger',
@@ -162,7 +159,7 @@ final class UnifiedAdminQueue extends Component
             ->map(fn (Listing $l): array => [
                 'type' => 'listing',
                 'id' => (string) $l->id,
-                'timestamp' => $l->created_at?->timestamp ?? 0,
+                'timestamp' => $l->created_at->timestamp,
             ]);
 
         $inspectorList = InspectorProfile::query()
@@ -172,7 +169,7 @@ final class UnifiedAdminQueue extends Component
             ->map(fn (InspectorProfile $p): array => [
                 'type' => 'inspector',
                 'id' => (string) $p->id,
-                'timestamp' => $p->created_at?->timestamp ?? 0,
+                'timestamp' => $p->created_at->timestamp,
             ]);
 
         $jobList = InspectionJob::query()
@@ -183,7 +180,7 @@ final class UnifiedAdminQueue extends Component
             ->map(fn (InspectionJob $j): array => [
                 'type' => 'job',
                 'id' => (string) $j->id,
-                'timestamp' => ($j->needs_attention_at ?? $j->created_at)?->timestamp ?? 0,
+                'timestamp' => ($j->needs_attention_at ?? $j->created_at)->timestamp,
             ]);
 
         $merged = $listingList->concat($inspectorList)->concat($jobList)
@@ -221,9 +218,9 @@ final class UnifiedAdminQueue extends Component
                     'type' => 'listing',
                     'id' => (string) $model->id,
                     'title' => $model->title,
-                    'subtitle' => 'Penjual: '.($model->seller?->name ?? '-'),
+                    'subtitle' => 'Penjual: '.$model->seller->name,
                     'time' => $model->created_at,
-                    'status_label' => __('listing.status.pending_review'),
+                    'status_label' => (string) __('listing.status.pending_review'),
                     'status_variant' => 'warning',
                     'status_icon' => 'jam',
                     'url' => route('admin.listings.index'),
@@ -241,8 +238,8 @@ final class UnifiedAdminQueue extends Component
                 return [
                     'type' => 'inspector',
                     'id' => (string) $model->id,
-                    'title' => 'Verifikasi Inspektor: '.($model->user?->name ?? '-'),
-                    'subtitle' => $model->user?->email ?? '-',
+                    'title' => 'Verifikasi Inspektor: '.$model->user->name,
+                    'subtitle' => $model->user->email,
                     'time' => $model->created_at,
                     'status_label' => 'Menunggu Verifikasi',
                     'status_variant' => 'warning',
@@ -261,8 +258,8 @@ final class UnifiedAdminQueue extends Component
             return [
                 'type' => 'job',
                 'id' => (string) $model->id,
-                'title' => 'Job Perlu Tindakan: '.($model->listing?->title ?? $model->id),
-                'subtitle' => 'Status: '.$model->status->label().' • Pemohon: '.($model->requester?->name ?? '-'),
+                'title' => 'Job Perlu Tindakan: '.$model->listing->title,
+                'subtitle' => 'Status: '.$model->status->label().' • Pemohon: '.$model->requester->name,
                 'time' => $model->needs_attention_at ?? $model->created_at,
                 'status_label' => 'Perlu Tindakan',
                 'status_variant' => 'danger',

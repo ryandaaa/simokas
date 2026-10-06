@@ -8,6 +8,7 @@ use App\Domains\Admin\Actions\RecordAuditLog;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Contracts\InspectionJobModerationContract;
 use App\Domains\Inspection\Enums\JobStatus;
+use App\Domains\Inspection\Exceptions\InvalidJobStatusTransitionException;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Result\Contracts\ResultModerationContract;
 use App\Domains\Result\Enums\ResultStatus;
@@ -208,7 +209,7 @@ final class JobDetail extends Component
         if (
             $e->getErrorCode() === DomainException::CODE_CONFLICT
             || $e->getCode() === 409
-            || $e instanceof \App\Domains\Inspection\Exceptions\InvalidJobStatusTransitionException
+            || $e instanceof InvalidJobStatusTransitionException
         ) {
             return __('admin.jobs.already_processed');
         }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domains\Admin\Tests\Feature;
 
 use App\Domains\Admin\Livewire\JobDetail;
-use App\Domains\Admin\Models\AuditLog;
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
@@ -15,7 +14,6 @@ use App\Domains\Payment\Contracts\Ledger;
 use App\Domains\Payment\Enums\LedgerEntryType;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Enums\PaymentStatus;
-use App\Domains\Payment\Models\LedgerEntry;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Models\InspectionResult;
@@ -235,7 +233,9 @@ final class AdminJobDetailActionsTest extends TestCase
             ->set('cancelReason', 'Alasan kedua')
             ->call('cancelJob');
 
-        $this->assertSame(JobStatus::Cancelled, $job->fresh()->status);
+        /** @var InspectionJob $freshJob */
+        $freshJob = InspectionJob::query()->findOrFail($job->id);
+        $this->assertSame('Alasan pertama', $freshJob->cancel_reason);
     }
 
     public function test_conflict_when_status_already_changed_shows_friendly_message(): void

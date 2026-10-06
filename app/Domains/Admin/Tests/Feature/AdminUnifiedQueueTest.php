@@ -13,7 +13,6 @@ use App\Domains\Inspector\Enums\DocumentType;
 use App\Domains\Inspector\Enums\VerificationStatus;
 use App\Domains\Inspector\Models\InspectorDocument;
 use App\Domains\Inspector\Models\InspectorProfile;
-use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
