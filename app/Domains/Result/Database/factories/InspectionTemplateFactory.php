@@ -50,21 +50,4 @@ class InspectionTemplateFactory extends Factory
             'is_active' => false,
         ]);
     }
-
-    /**
-     * Use firstOrCreate pattern to avoid unique constraint violations
-     * when multiple records share the same vehicle_type and version.
-     */
-    public function firstOrCreate(): InspectionTemplate
-    {
-        $attributes = $this->definition();
-
-        return InspectionTemplate::query()->firstOrCreate(
-            [
-                'vehicle_type' => $attributes['vehicle_type'],
-                'version' => $attributes['version'],
-            ],
-            $attributes
-        );
-    }
 }

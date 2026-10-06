@@ -28,7 +28,7 @@ class InspectionResultFactory extends Factory
             'job_id' => InspectionJob::factory()->inProgress(),
             'listing_id' => Listing::factory()->active(),
             'inspector_id' => User::factory()->inspector(),
-            'template_id' => InspectionTemplate::factory()->firstOrCreate()->id,
+            'template_id' => InspectionTemplate::factory(),
             'total_score' => null,
             'recommendation' => null,
             'summary_note' => null,
