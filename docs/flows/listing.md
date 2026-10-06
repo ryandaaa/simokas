@@ -106,7 +106,7 @@ flowchart TD
 - [x] `LST-T11` Respons publik tidak memuat `lat`, `lng`, `address_full`, `chassis_number` (LST-R4)
 - [x] `LST-T12` Pengguna lain tidak dapat mengedit (LST-E9), dataset role
 - [x] `LST-T13` Listing non-publik tidak dapat dibuka orang lain (LST-E10)
-- [ ] `LST-T14` Event `JobCompleted` mengisi `is_inspected` dan `last_inspected_at` (menyusul di JOB-4; Action `MarkListingInspected` sudah siap, lihat `docs/features/listing-contracts.md`)
+- [x] `LST-T14` Event `JobCompleted` mengisi `is_inspected` dan `last_inspected_at` (menyusul di JOB-4; Action `MarkListingInspected` sudah siap, lihat `docs/features/listing-contracts.md`)
 - [ ] `LST-T15` Event `UserBlocked` menonaktifkan listing aktif pengguna (LST-R9) (menyusul di ADM-4)
 - [x] `LST-T16` Aksi admin ganda hanya berlaku sekali (LST-E8)
 - [x] `LST-T17` Foto status photo-public (`active`, `in_inspection`, `in_transaction`, `sold` [USULAN]) dapat dibuka semua penonton (tamu, pemilik aktif/pending, admin, pengguna lain aktif, inspektor pending/approved, blocked, non-aktif) dengan header cache publik; non-publik hanya pemilik aktif/admin aktif dengan cache privat (LST-R11; dataset semua status × peran). `ListingPolicy::view` tidak diubah: halaman detail publik non-`active` tetap ditangani aturan visibilitas milik domain Catalog
