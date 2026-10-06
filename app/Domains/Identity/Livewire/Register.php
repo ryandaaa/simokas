@@ -25,7 +25,7 @@ final class Register extends Component
 
     public string $account_type = 'user';
 
-    public bool $accepted_terms = false;
+    public mixed $accepted_terms = false;
 
     /**
      * @return array<string, array<int, mixed>>
@@ -49,6 +49,7 @@ final class Register extends Component
     {
         return [
             'email.unique' => __('identity.register.duplicate_email'),
+            'accepted_terms.accepted' => __('identity.register.terms_required'),
         ];
     }
 

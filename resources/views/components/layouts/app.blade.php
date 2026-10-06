@@ -79,9 +79,28 @@
     @endif
 
     {{-- Slot Konten Utama --}}
-    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-8 focus:outline-none" tabindex="-1">
+    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 focus:outline-none" tabindex="-1">
         {{ $slot }}
     </main>
+
+    {{-- Footer Bersama --}}
+    <footer class="mt-auto border-t border-muted/20 bg-surface text-muted text-sm pb-24 md:pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <x-ui.icon name="perisai-centang" class="w-5 h-5 text-accent" />
+                <span class="font-semibold text-text">{{ config('app.name', 'SIMOKAS') }}</span>
+                <span>&copy; {{ date('Y') }} {{ __('legal.footer_rights') }}</span>
+            </div>
+            <nav class="flex items-center gap-6" aria-label="Tautan Hukum">
+                <a href="{{ route('legal.privacy') }}" class="text-muted hover:text-text focus:outline-none focus:ring-2 focus:ring-accent rounded transition-colors">
+                    {{ __('legal.footer_privacy') }}
+                </a>
+                <a href="{{ route('legal.terms') }}" class="text-muted hover:text-text focus:outline-none focus:ring-2 focus:ring-accent rounded transition-colors">
+                    {{ __('legal.footer_terms') }}
+                </a>
+            </nav>
+        </div>
+    </footer>
 
     {{-- Menu bawah di HP (maksimal 5 item) --}}
     @if (!empty($navItems))

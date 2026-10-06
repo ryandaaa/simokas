@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 final class RegisterUser
 {
     /**
-     * @param  array{name: string, email: string, phone: string, password: string, role?: string|UserRole, accepted_terms?: bool}  $data
+     * @param  array{name: string, email: string, phone: string, password: string, role?: string|UserRole, accepted_terms?: mixed}  $data
      */
     public function handle(array $data): User
     {

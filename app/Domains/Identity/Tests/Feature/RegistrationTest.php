@@ -6,6 +6,8 @@ use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Livewire\Register;
 use App\Domains\Identity\Models\User;
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
@@ -146,15 +148,51 @@ it('AUTH-E1 displays friendly duplicate email message with login and reset links
         ->assertSee(__('identity.register.duplicate_email_reset'));
 });
 
-it('requires acceptance of terms and conditions', function () {
-    Livewire::test(Register::class)
+it('AUTH-T15 rejects registration without valid terms consent', function (mixed $value) {
+    $component = Livewire::test(Register::class)
         ->set('name', 'Budi Santoso')
         ->set('email', 'budi@example.com')
         ->set('phone', '081234567890')
         ->set('password', 'Rahasia123!')
         ->set('password_confirmation', 'Rahasia123!')
         ->set('account_type', 'user')
-        ->set('accepted_terms', false)
-        ->call('register')
-        ->assertHasErrors(['accepted_terms']);
+        ->set('accepted_terms', $value)
+        ->call('register');
+
+    $component->assertHasErrors(['accepted_terms'])
+        ->assertSee(__('identity.register.terms_required'));
+
+    expect(User::query()->where('email', 'budi@example.com')->exists())->toBeFalse();
+})->with([
+    'unchecked (false)' => [false],
+    'empty string' => [''],
+    'zero string' => ['0'],
+    'weird string' => ['maybe'],
+    'null' => [null],
+]);
+
+it('AUTH-T16 records accepted_terms_at at registration time when consent is given', function () {
+    $frozen = CarbonImmutable::parse('2026-10-05 10:00:00', 'UTC');
+    Carbon::setTestNow($frozen);
+
+    try {
+        Livewire::test(Register::class)
+            ->set('name', 'Siti Setuju')
+            ->set('email', 'siti@example.com')
+            ->set('phone', '081234567891')
+            ->set('password', 'Rahasia123!')
+            ->set('password_confirmation', 'Rahasia123!')
+            ->set('account_type', 'user')
+            ->set('accepted_terms', true)
+            ->call('register')
+            ->assertRedirect(route('dashboard'));
+
+        /** @var User|null $user */
+        $user = User::query()->where('email', 'siti@example.com')->first();
+        expect($user)->not->toBeNull()
+            ->and($user->accepted_terms_at)->not->toBeNull()
+            ->and($user->accepted_terms_at->equalTo($frozen))->toBeTrue();
+    } finally {
+        Carbon::setTestNow();
+    }
 });
