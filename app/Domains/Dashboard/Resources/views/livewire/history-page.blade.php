@@ -18,6 +18,14 @@
         </div>
     </div>
 
+    {{-- Pesan Galat --}}
+    @if (session('error'))
+        <x-ui.alert variant="danger" :message="session('error')" />
+    @endif
+    @if (session('success'))
+        <x-ui.alert variant="success" :message="session('success')" />
+    @endif
+
     {{-- Filter Nav Tabs --}}
     <div class="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-fog" role="tablist">
         <x-ui.button

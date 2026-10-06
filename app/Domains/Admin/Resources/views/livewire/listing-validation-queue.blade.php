@@ -83,6 +83,8 @@
                                     src="{{ $photo['url'] }}"
                                     alt="{{ $selectedDetail->title }}"
                                     class="w-full aspect-16/9 object-cover"
+                                    width="400"
+                                    height="225"
                                     loading="lazy"
                                 />
                             </a>
@@ -190,7 +192,9 @@
                                     <img
                                         src="{{ $item->coverUrl }}"
                                         alt="{{ $item->title }}"
-                                        class="w-24 h-18 object-cover rounded-lg shrink-0"
+                                        class="w-24 h-18 object-cover rounded-lg shrink-0 aspect-[4/3]"
+                                        width="96"
+                                        height="72"
                                         loading="lazy"
                                     />
                                 @endif
