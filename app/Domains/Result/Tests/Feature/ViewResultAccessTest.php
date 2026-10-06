@@ -20,6 +20,7 @@ use Tests\TestCase;
 final class ViewResultAccessTest extends TestCase
 {
     use RefreshDatabase;
+
     #[Test]
     public function re_s_t10_grants_free_access_to_owner_inspector_requester_admin(): void
     {
