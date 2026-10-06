@@ -17,7 +17,7 @@ uses(TestCase::class, RefreshDatabase::class);
 
 it('creates inspector profile with valid data and pending status', function () {
     $inspector = User::factory()->inspector()->pending()->create();
-    $action = new CreateInspectorProfile;
+    $action = app(CreateInspectorProfile::class);
 
     $profile = $action->handle($inspector, [
         'vehicle_types' => [VehicleType::Car->value, VehicleType::Motorcycle->value],
@@ -39,7 +39,7 @@ it('creates inspector profile with valid data and pending status', function () {
 
 it('updates existing profile idempotently without creating duplicate records', function () {
     $inspector = User::factory()->inspector()->pending()->create();
-    $action = new CreateInspectorProfile;
+    $action = app(CreateInspectorProfile::class);
 
     $profile1 = $action->handle($inspector, [
         'vehicle_types' => [VehicleType::Car->value],
@@ -60,7 +60,7 @@ it('updates existing profile idempotently without creating duplicate records', f
 
 it('rejects profile creation for regular users who are not inspectors', function () {
     $user = User::factory()->user()->active()->create();
-    $action = new CreateInspectorProfile;
+    $action = app(CreateInspectorProfile::class);
 
     expect(fn () => $action->handle($user, [
         'vehicle_types' => [VehicleType::Car->value],
@@ -70,7 +70,7 @@ it('rejects profile creation for regular users who are not inspectors', function
 
 it('rejects invalid experience years', function (int $years) {
     $inspector = User::factory()->inspector()->pending()->create();
-    $action = new CreateInspectorProfile;
+    $action = app(CreateInspectorProfile::class);
 
     expect(fn () => $action->handle($inspector, [
         'vehicle_types' => [VehicleType::Car->value],
@@ -80,7 +80,7 @@ it('rejects invalid experience years', function (int $years) {
 
 it('rejects empty or invalid vehicle types', function ($invalidVehicleTypes) {
     $inspector = User::factory()->inspector()->pending()->create();
-    $action = new CreateInspectorProfile;
+    $action = app(CreateInspectorProfile::class);
 
     expect(fn () => $action->handle($inspector, [
         'vehicle_types' => $invalidVehicleTypes,
