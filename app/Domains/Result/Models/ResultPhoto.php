@@ -82,7 +82,7 @@ final class ResultPhoto extends Model
     public function temporaryUrl(int $minutes = 30): string
     {
         return URL::temporarySignedRoute(
-            'result.photos.show',
+            'results.photos.show',
             now()->addMinutes($minutes),
             [
                 'result' => $this->result_id,
