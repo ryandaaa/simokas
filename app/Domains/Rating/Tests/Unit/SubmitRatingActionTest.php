@@ -145,12 +145,11 @@ it('RTG-T03 validates comment length and escapes HTML (RTG-E5)', function () {
     expect(fn () => $action->handle($buyer, $transaction, 5, $longComment))
         ->toThrow(InvalidRatingCommentException::class);
 
-    // HTML in comment should be escaped
+    // The comment is stored as typed; escaping happens once, at render time (see RatingLivewireTest).
     $htmlComment = 'Layanan <script>alert("xss")</script> <b>bagus</b> & terpercaya';
     $rating = $action->handle($buyer, $transaction, 5, $htmlComment);
 
-    expect($rating->comment)->not->toContain('<script>')
-        ->and($rating->comment)->toContain('&lt;script&gt;');
+    expect($rating->comment)->toBe($htmlComment);
 });
 
 it('RTG-T04 rating average and count are recalculated correctly with 2 decimal rounding (RTG-E8)', function () {

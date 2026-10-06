@@ -38,5 +38,29 @@ it('NTF-T05 hides the badge when there is nothing unread', function (): void {
 
 it('NTF-T05 does not show the bell to guests', function (): void {
     Livewire::test(NotificationBell::class)
-        ->assertDontSee(route('notifications.index'));
+        ->assertDontSee(route('notifications.index'))
+        ->assertDontSeeHtml('wire:poll');
+});
+
+it('NTF-T05 polls every 15s for authenticated users and updates unread count on refresh', function (): void {
+    $user = User::factory()->user()->create([
+        'name' => 'Pengguna Polling',
+        'email' => 'user-polling@example.com',
+    ]);
+    Notification::factory()->forUser($user)->create([
+        'title' => 'Notifikasi Polling 1',
+    ]);
+
+    actingAs($user);
+
+    $component = Livewire::test(NotificationBell::class)
+        ->assertSeeHtml('wire:poll.15s')
+        ->assertSee('1');
+
+    Notification::factory()->forUser($user)->create([
+        'title' => 'Notifikasi Polling 2',
+    ]);
+
+    $component->call('$refresh')
+        ->assertSee('2');
 });
