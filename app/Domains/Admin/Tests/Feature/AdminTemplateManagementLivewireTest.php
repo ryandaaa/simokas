@@ -73,8 +73,8 @@ it('ADM-T12 old results maintain their template version after template update', 
     $job = InspectionJob::factory()->create(['listing_id' => $listing->id]);
 
     $result = InspectionResult::factory()
-        ->for($job)
-        ->for($template)
+        ->for($job, 'job')
+        ->for($template, 'template')
         ->for($inspector, 'inspector')
         ->create();
 

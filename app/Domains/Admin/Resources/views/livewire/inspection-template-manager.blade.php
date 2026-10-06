@@ -57,8 +57,8 @@
                     @empty
                         <x-ui.empty-state
                             icon="document"
-                            title="No templates found"
-                            description="No inspection templates are available."
+                            title="{{ __('admin.templates.no_templates') }}"
+                            description="{{ __('admin.templates.no_templates_description') }}"
                         />
                     @endforelse
                 </div>
@@ -145,8 +145,8 @@
                             @empty
                                 <x-ui.empty-state
                                     icon="exclamation"
-                                    title="No items"
-                                    description="This template has no items."
+                                    title="{{ __('admin.templates.no_items') }}"
+                                    description="{{ __('admin.templates.no_items_description') }}"
                                 />
                             @endforelse
 
