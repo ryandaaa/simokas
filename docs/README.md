@@ -13,6 +13,7 @@
 | [AGENT_TASK.md](AGENT_TASK.md) | Cara menyuruh agen mengerjakan satu kartu, dan alur kerja agen |
 | [PROMPT_KERJAKAN.md](PROMPT_KERJAKAN.md) | Prompt siap pakai (input hanya nomor issue), varian, dan prompt review |
 | [panduan-inspektor.md](panduan-inspektor.md) | Panduan satu halaman untuk inspektor |
+| [qa/daftar-periksa-uji-manual.md](qa/daftar-periksa-uji-manual.md) | Daftar periksa uji manual QA-P0 untuk perangkat dan browser |
 | [features/_TEMPLATE.md](features/_TEMPLATE.md) | Template spesifikasi untuk fitur baru |
 | [decisions/](decisions/) | Catatan keputusan (ADR) |
 
