@@ -51,15 +51,6 @@ final class ReopenInspectionResult
                 return $lockedResult->load(['items', 'photos']);
             }
 
-            // Must be in submitted status to reopen
-            if ($lockedResult->status !== ResultStatus::Submitted) {
-                throw new DomainException(
-                    'Hanya laporan inspeksi yang telah dikirim yang dapat dibuka kembali.',
-                    'CANNOT_REOPEN_RESULT',
-                    422,
-                );
-            }
-
             // Update result back to draft and record audit fields
             $now = Clock::now();
             $lockedResult->update([

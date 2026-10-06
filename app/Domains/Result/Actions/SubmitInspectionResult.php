@@ -62,7 +62,7 @@ final class SubmitInspectionResult
                 ->orderBy('sort_order')
                 ->get();
 
-            /** @var Collection<int, ResultItem> $resultItems */
+            /** @var Collection<string, ResultItem> $resultItems */
             $resultItems = ResultItem::query()
                 ->where('result_id', $lockedResult->getKey())
                 ->with('photos')
@@ -73,8 +73,8 @@ final class SubmitInspectionResult
             $missingRequired = [];
             foreach ($templateItems as $templateItem) {
                 if ($templateItem->is_required) {
-                    $item = $resultItems->get($templateItem->id);
-                    if ($item === null || $item->rating === null || $item->rating->value === '') {
+                    $item = $resultItems->get((string) $templateItem->id);
+                    if ($item === null || $item->rating === null) {
                         $missingRequired[] = [
                             'id' => (string) $templateItem->id,
                             'label' => $templateItem->label,
@@ -91,7 +91,7 @@ final class SubmitInspectionResult
             $missingPhotos = [];
             foreach ($templateItems as $templateItem) {
                 if ($templateItem->requires_photo) {
-                    $item = $resultItems->get($templateItem->id);
+                    $item = $resultItems->get((string) $templateItem->id);
                     $photoCount = $item !== null ? $item->photos->count() : 0;
                     if ($photoCount < 1) {
                         $missingPhotos[] = [
@@ -109,7 +109,7 @@ final class SubmitInspectionResult
             // 5. Calculate total score and recommendation via pure ScoreCalculator (RES-T06, RES-T07)
             $calcItems = [];
             foreach ($templateItems as $templateItem) {
-                $item = $resultItems->get($templateItem->id);
+                $item = $resultItems->get((string) $templateItem->id);
                 $calcItems[] = [
                     'weight' => $templateItem->weight,
                     'rating' => $item?->rating,
