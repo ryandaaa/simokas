@@ -8,6 +8,7 @@ use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\URL;
 
 /**
  * @mixin InspectionResult
@@ -95,7 +96,11 @@ final class InspectionResultResource extends JsonResource
                 'id' => $photo->id,
                 'captured_at' => $photo->captured_at->toIso8601String(),
                 'stamped_at' => $photo->stamped_at?->toIso8601String(),
-                'url' => route('results.photos.show', ['result' => $this->id, 'photo' => $photo->id]),
+                'url' => URL::temporarySignedRoute(
+                    'results.photos.show',
+                    now()->addMinutes(15),
+                    ['result' => $this->id, 'photo' => $photo->id]
+                ),
             ])->all(),
         ]);
     }

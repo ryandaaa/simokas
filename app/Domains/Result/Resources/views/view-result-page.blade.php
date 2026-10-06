@@ -103,7 +103,7 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                 @forelse ($result->photos as $photo)
                     <div class="bg-color-surface rounded-xl overflow-hidden shadow-sm">
                         <img
-                            src="{{ route('results.photos.show', [$result, $photo]) }}"
+                            src="{{ $photoUrls[$photo->id] ?? '' }}"
                             alt="{{ __('result.inspection_photo') }}"
                             class="w-full h-auto"
                             loading="lazy"
