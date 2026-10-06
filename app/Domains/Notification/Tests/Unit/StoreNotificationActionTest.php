@@ -9,8 +9,9 @@ use App\Domains\Notification\Actions\StoreNotification;
 use App\Domains\Notification\Enums\NotificationType;
 use App\Domains\Notification\Models\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 it('NTF-T01 stores a notification for the recipient', function (): void {
     $user = User::factory()->user()->create();

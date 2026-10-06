@@ -9,8 +9,9 @@ use App\Domains\Notification\Actions\MarkAllNotificationsAsRead;
 use App\Domains\Notification\Actions\MarkNotificationAsRead;
 use App\Domains\Notification\Models\Notification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 it('NTF-T04 marks a single notification as read', function (): void {
     $user = User::factory()->user()->create();

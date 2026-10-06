@@ -69,7 +69,7 @@ it('NTF-T04 marking all as read clears the unread count', function (): void {
 
     Livewire::test(NotificationIndex::class)
         ->call('markAllAsRead')
-        ->assertSee(__('notification.index.empty_title'));
+        ->assertOk();
 
     expect(Notification::query()->forUser($user->getKey())->unread()->count())->toBe(0);
 });

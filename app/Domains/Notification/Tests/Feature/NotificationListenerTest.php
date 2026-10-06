@@ -98,6 +98,7 @@ it('NTF-T01 notifies matching inspectors when an inspection payment succeeds', f
 it('NTF-T01 notifies the seller and the requester when a job is taken', function (): void {
     [$job, $seller, $requester] = makeJobWithSellerAndRequester();
     $inspector = User::factory()->inspector()->active()->create();
+    $job->update(['inspector_id' => $inspector->getKey()]);
 
     JobTaken::dispatch(
         jobId: $job->getKey(),
@@ -251,6 +252,7 @@ it('NTF-T01 notifies conversation members except the sender on a new message', f
 it('NTF-T02 does not create duplicate notifications when an event is dispatched twice', function (): void {
     [$job, $seller, $requester] = makeJobWithSellerAndRequester();
     $inspector = User::factory()->inspector()->active()->create();
+    $job->update(['inspector_id' => $inspector->getKey()]);
 
     JobTaken::dispatch(jobId: $job->getKey(), listingId: $job->listing_id, inspectorId: $inspector->getKey());
     JobTaken::dispatch(jobId: $job->getKey(), listingId: $job->listing_id, inspectorId: $inspector->getKey());
@@ -281,6 +283,7 @@ it('NTF-T07 a failing listener does not fail the main action', function (): void
 it('NTF-T08 notifications never contain precise listing data', function (): void {
     [$job, $seller, $requester, $listing] = makeJobWithSellerAndRequester();
     $inspector = User::factory()->inspector()->active()->create();
+    $job->update(['inspector_id' => $inspector->getKey()]);
 
     JobTaken::dispatch(jobId: $job->getKey(), listingId: $job->listing_id, inspectorId: $inspector->getKey());
 
@@ -307,6 +310,7 @@ it('NTF-T09 blocked users do not receive notifications', function (): void {
         'requester_id' => $requester->getKey(),
     ]);
     $inspector = User::factory()->inspector()->active()->create();
+    $job->update(['inspector_id' => $inspector->getKey()]);
 
     JobTaken::dispatch(jobId: $job->getKey(), listingId: $job->listing_id, inspectorId: $inspector->getKey());
 

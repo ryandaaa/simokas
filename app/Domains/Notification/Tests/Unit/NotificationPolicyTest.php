@@ -8,8 +8,9 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Notification\Models\Notification;
 use App\Domains\Notification\Policies\NotificationPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 it('NTF-T03 allows the owner to view and update their notification', function (): void {
     $owner = User::factory()->user()->create();

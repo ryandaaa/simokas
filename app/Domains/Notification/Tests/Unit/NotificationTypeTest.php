@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Notification\Tests\Unit;
 
 use App\Domains\Notification\Enums\NotificationType;
+use Tests\TestCase;
 
 it('NTF-T01 defines a snake_case value for every notification type', function (): void {
     $values = array_map(fn (NotificationType $type): string => $type->value, NotificationType::cases());
@@ -24,3 +25,5 @@ it('NTF-T01 every notification type has a non-empty Indonesian label', function 
         expect($type->label())->not->toBe('');
     }
 });
+
+uses(TestCase::class);
