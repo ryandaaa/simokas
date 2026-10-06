@@ -69,6 +69,8 @@ return [
         'cancel_confirm' => 'Ya, Batalkan Pengajuan',
         'cancel_success' => 'Pengajuan inspeksi berhasil dibatalkan.',
         'in_progress_notice' => 'Inspeksi sedang berjalan. Hubungi admin bila ingin membatalkan.',
+        'bill_expired' => 'Tagihan kedaluwarsa',
+        'reapply' => 'Ajukan ulang',
     ],
     'open_jobs' => [
         'title' => 'Job Inspeksi Terbuka',

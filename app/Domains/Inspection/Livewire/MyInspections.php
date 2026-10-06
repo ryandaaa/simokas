@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Domains\Inspection\Livewire;
 
 use App\Domains\Inspection\Actions\CancelJobByRequester;
+use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Payment\Enums\PaymentPurpose;
+use App\Domains\Payment\Enums\PaymentStatus;
+use App\Domains\Payment\Models\Payment;
 use App\Support\Exceptions\DomainException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
@@ -73,6 +77,7 @@ final class MyInspections extends Component
     public function render(): View
     {
         $jobs = null;
+        $paymentMap = [];
 
         try {
             $jobs = InspectionJob::query()
@@ -80,6 +85,27 @@ final class MyInspections extends Component
                 ->with('listing')
                 ->latest()
                 ->paginate(12);
+
+            $requestedJobIds = $jobs->getCollection()
+                ->where('status', JobStatus::Requested)
+                ->pluck('id')
+                ->all();
+
+            if (! empty($requestedJobIds)) {
+                $paymentMap = Payment::query()
+                    ->where('purpose', PaymentPurpose::Inspection)
+                    ->whereIn('ref_id', $requestedJobIds)
+                    ->where('status', PaymentStatus::Pending)
+                    ->where(function ($query) {
+                        $query->whereNull('expires_at')
+                            ->orWhere('expires_at', '>', now());
+                    })
+                    ->latest()
+                    ->get(['id', 'ref_id'])
+                    ->unique('ref_id')
+                    ->pluck('id', 'ref_id')
+                    ->all();
+            }
         } catch (Throwable) {
             $this->errorMessage = __('inspection.mine.load_failed');
         }
@@ -91,6 +117,7 @@ final class MyInspections extends Component
         return view('inspection::livewire.my-inspections', [
             'jobs' => $jobs,
             'cancellingJob' => $cancellingJob,
+            'paymentMap' => $paymentMap,
         ])->layout('components.layouts.app', ['title' => __('inspection.mine.title')]);
     }
 }
