@@ -18,10 +18,12 @@ final class DashboardPage extends Component
         $user = Auth::user();
 
         // If unverified inspector, redirect to verification page
-        if ($user->role === UserRole::Inspector) {
+        if ($user !== null && $user->role === UserRole::Inspector) {
             $profile = InspectorProfile::where('user_id', $user->id)->first();
             if (! $profile || $profile->verification_status !== VerificationStatus::Approved) {
-                redirect(route('inspector.verification-status'))->send();
+                $this->redirectRoute('inspector.onboarding');
+
+                return;
             }
         }
     }
@@ -32,7 +34,9 @@ final class DashboardPage extends Component
 
         return view('dashboard::dashboard', [
             'user' => $user,
-            'role' => $user->role,
+            'role' => $user?->role,
+        ])->layout('components.layouts.app', [
+            'title' => __('dashboard.title'),
         ]);
     }
 }

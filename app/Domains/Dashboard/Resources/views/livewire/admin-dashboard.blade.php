@@ -1,4 +1,8 @@
 <div class="space-y-6">
+    <div>
+        <h2 class="text-lg font-bold text-text mb-4">{{ __('dashboard.admin.title') }}</h2>
+    </div>
+
     {{-- Key Metrics Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {{-- Total Users Card --}}
@@ -23,8 +27,8 @@
                     <p class="text-sm text-muted">{{ __('dashboard.admin.total_inspectors') }}</p>
                     <p class="text-3xl font-bold text-text mt-2">{{ $totalInspectors }}</p>
                 </div>
-                <div class="p-3 bg-info/10 rounded-lg">
-                    <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-3 bg-primary/10 rounded-lg">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
@@ -54,7 +58,7 @@
         <h3 class="text-lg font-bold text-text mb-4">{{ __('dashboard.admin.jobs_by_status') }}</h3>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
             @foreach ($jobsByStatus as $status => $count)
-                <div class="p-4 rounded-lg bg-surface border border-border">
+                <div class="p-4 rounded-lg bg-surface border border-muted/20">
                     <p class="text-sm text-muted capitalize">{{ str_replace('_', ' ', $status) }}</p>
                     <p class="text-2xl font-bold text-text mt-2">{{ $count }}</p>
                 </div>
@@ -129,9 +133,6 @@
     <div class="flex gap-3 flex-wrap">
         <x-ui.button :href="route('admin.settings')" variant="primary">
             {{ __('dashboard.admin.manage_settings') }}
-        </x-ui.button>
-        <x-ui.button :href="route('admin.users')" variant="secondary">
-            {{ __('dashboard.admin.manage_users') }}
         </x-ui.button>
     </div>
 </div>

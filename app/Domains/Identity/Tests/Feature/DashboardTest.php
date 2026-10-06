@@ -9,6 +9,7 @@ use App\Domains\Identity\Livewire\InspectorDashboard;
 use App\Domains\Identity\Livewire\Login;
 use App\Domains\Identity\Livewire\UserDashboard;
 use App\Domains\Identity\Models\User;
+use App\Domains\Inspector\Models\InspectorProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
@@ -34,6 +35,12 @@ it('AUTH-T11 shows role-specific content at /dashboard for each role', function 
         'role' => UserRole::from($roleName),
         'status' => UserStatus::Active,
     ]);
+
+    if ($user->role === UserRole::Inspector) {
+        InspectorProfile::factory()->approved()->create([
+            'user_id' => $user->id,
+        ]);
+    }
 
     actingAs($user);
 

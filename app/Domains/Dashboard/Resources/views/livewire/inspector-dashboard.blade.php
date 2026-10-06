@@ -1,4 +1,8 @@
 <div class="space-y-6">
+    <div>
+        <h2 class="text-lg font-bold text-text mb-4">{{ __('dashboard.inspector.title') }}</h2>
+    </div>
+
     {{-- Key Metrics Cards --}}
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {{-- Available Jobs Card --}}
@@ -55,8 +59,8 @@
                     <p class="text-sm text-muted">{{ __('dashboard.inspector.total_inspections') }}</p>
                     <p class="text-3xl font-bold text-text mt-2">{{ $totalInspections }}</p>
                 </div>
-                <div class="p-3 bg-info/10 rounded-lg">
-                    <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="p-3 bg-primary/10 rounded-lg">
+                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                 </div>

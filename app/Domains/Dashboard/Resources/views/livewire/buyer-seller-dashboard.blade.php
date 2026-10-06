@@ -77,8 +77,8 @@
                         <p class="text-sm text-muted">{{ __('dashboard.seller.inspection_status') }}</p>
                         <p class="text-3xl font-bold text-text mt-2">{{ $runningInspections }}</p>
                     </div>
-                    <div class="p-3 bg-info/10 rounded-lg">
-                        <svg class="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="p-3 bg-primary/10 rounded-lg">
+                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7-1a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
                     </div>
