@@ -40,6 +40,9 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('admin.listing-validation-queue', ListingValidationQueue::class);
         Livewire::component('admin.inspection-template-manager', InspectionTemplateManager::class);
         Livewire::component('admin.audit-log-index', \App\Domains\Admin\Livewire\AuditLogIndex::class);
+        Livewire::component('admin.unified-admin-queue', \App\Domains\Admin\Livewire\UnifiedAdminQueue::class);
+        Livewire::component('admin.job-monitor', \App\Domains\Admin\Livewire\JobMonitor::class);
+        Livewire::component('admin.job-detail', \App\Domains\Admin\Livewire\JobDetail::class);
     }
 
     private function registerEventListeners(): void
