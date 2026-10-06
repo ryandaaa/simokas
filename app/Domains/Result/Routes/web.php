@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domains\Result\Http\Controllers\DeleteResultPhotoController;
+use App\Domains\Result\Http\Controllers\RequestResultAccessController;
 use App\Domains\Result\Http\Controllers\UploadResultPhotoController;
 use App\Domains\Result\Http\Controllers\ViewResultController;
 use App\Domains\Result\Http\Controllers\ViewResultPhotoController;
@@ -15,6 +16,12 @@ Route::middleware('web')->group(function () {
         ->middleware(['auth', 'not_blocked'])
         ->whereUuid('result')
         ->name('results.show');
+
+    // Request paid access to inspection result
+    Route::post('/results/{result}/request-access', RequestResultAccessController::class)
+        ->middleware(['auth', 'not_blocked'])
+        ->whereUuid('result')
+        ->name('results.request-access');
 
     // Foto hasil inspeksi: disajikan dari storage privat lewat URL bertanda tangan sementara
     Route::get('/results/{result}/photos/{photo}', ViewResultPhotoController::class)
