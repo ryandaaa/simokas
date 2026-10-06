@@ -63,6 +63,30 @@
                             <div class="flex items-center gap-2 self-start sm:self-auto">
                                 <x-ui.status-chip :label="$job->status->label()" :variant="$job->status->color()" :icon="$job->status->icon()" />
 
+                                @if ($job->status === \App\Domains\Inspection\Enums\JobStatus::Requested)
+                                    @if (isset($paymentMap[$job->id]))
+                                        <x-ui.button
+                                            :href="route('payments.show', ['payment' => $paymentMap[$job->id]])"
+                                            variant="primary"
+                                            class="!min-h-[36px] !px-3.5 !py-1 text-xs"
+                                        >
+                                            {{ __('inspection.mine.pay') }}
+                                        </x-ui.button>
+                                    @else
+                                        <div class="flex flex-col items-start text-xs text-muted">
+                                            <span>{{ __('inspection.mine.bill_expired') }}</span>
+                                            @if (\Illuminate\Support\Facades\Route::has('jobs.request') && $job->listing_id)
+                                                <a
+                                                    href="{{ route('jobs.request', ['listing' => $job->listing_id]) }}"
+                                                    class="text-xs font-semibold text-primary hover:underline"
+                                                >
+                                                    {{ __('inspection.mine.reapply') }}
+                                                </a>
+                                            @endif
+                                        </div>
+                                    @endif
+                                @endif
+
                                 @if (in_array($job->status, [
                                     \App\Domains\Inspection\Enums\JobStatus::Requested,
                                     \App\Domains\Inspection\Enums\JobStatus::Paid,
