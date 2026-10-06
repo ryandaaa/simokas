@@ -28,7 +28,7 @@ it('redirects unauthenticated users from dashboards to login', function (string 
     'admin dashboard' => ['dashboard.admin'],
 ]);
 
-it('AUTH-T11 redirects /dashboard route to role-specific dashboard for each role', function (string $roleName, string $targetRoute) {
+it('AUTH-T11 redirects /dashboard route to role-specific dashboard for each role', function (string $roleName, string $targetRoute, string $expectedContentKey) {
     /** @var User $user */
     $user = User::factory()->create([
         'role' => UserRole::from($roleName),
@@ -40,11 +40,12 @@ it('AUTH-T11 redirects /dashboard route to role-specific dashboard for each role
     // Dashboard domain now handles role-based rendering at /dashboard
     // instead of redirecting to separate role-specific routes
     get(route('dashboard'))
-        ->assertOk();
+        ->assertOk()
+        ->assertSee(__($expectedContentKey));
 })->with([
-    'user role' => ['user', 'dashboard.user'],
-    'inspector role' => ['inspector', 'dashboard.inspector'],
-    'admin role' => ['admin', 'dashboard.admin'],
+    'user role' => ['user', 'dashboard.user', 'dashboard.buyer.title'],
+    'inspector role' => ['inspector', 'dashboard.inspector', 'identity.dashboard.inspector_title'],
+    'admin role' => ['admin', 'dashboard.admin', 'identity.dashboard.admin_title'],
 ]);
 
 it('AUTH-T11 allows authenticated users to view their respective role dashboard', function (string $roleName, string $route, string $expectedTitleKey) {
