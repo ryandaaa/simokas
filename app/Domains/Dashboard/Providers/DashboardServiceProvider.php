@@ -29,9 +29,9 @@ final class DashboardServiceProvider extends ServiceProvider
 
     private function registerLivewireComponents(): void
     {
-        Livewire::component('dashboard::dashboard-page', DashboardPage::class);
-        Livewire::component('dashboard::buyer-seller-dashboard', BuyerSellerDashboard::class);
-        Livewire::component('dashboard::inspector-dashboard', InspectorDashboard::class);
-        Livewire::component('dashboard::admin-dashboard', AdminDashboard::class);
+        Livewire::component('dashboard.dashboard-page', DashboardPage::class);
+        Livewire::component('dashboard.buyer-seller-dashboard', BuyerSellerDashboard::class);
+        Livewire::component('dashboard.inspector-dashboard', InspectorDashboard::class);
+        Livewire::component('dashboard.admin-dashboard', AdminDashboard::class);
     }
 }

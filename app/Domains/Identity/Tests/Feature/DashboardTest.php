@@ -37,8 +37,10 @@ it('AUTH-T11 redirects /dashboard route to role-specific dashboard for each role
 
     actingAs($user);
 
+    // Dashboard domain now handles role-based rendering at /dashboard
+    // instead of redirecting to separate role-specific routes
     get(route('dashboard'))
-        ->assertRedirect(route($targetRoute));
+        ->assertOk();
 })->with([
     'user role' => ['user', 'dashboard.user'],
     'inspector role' => ['inspector', 'dashboard.inspector'],

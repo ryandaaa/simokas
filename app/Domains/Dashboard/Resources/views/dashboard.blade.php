@@ -12,15 +12,15 @@
     {{-- Role-based Dashboard --}}
     @switch($role)
         @case(UserRole::User)
-            <livewire:dashboard::buyer-seller-dashboard :user="$user" />
+            <livewire:dashboard.buyer-seller-dashboard :user="$user" />
             @break
 
         @case(UserRole::Inspector)
-            <livewire:dashboard::inspector-dashboard :user="$user" />
+            <livewire:dashboard.inspector-dashboard :user="$user" />
             @break
 
         @case(UserRole::Admin)
-            <livewire:dashboard::admin-dashboard :user="$user" />
+            <livewire:dashboard.admin-dashboard :user="$user" />
             @break
 
         @default
