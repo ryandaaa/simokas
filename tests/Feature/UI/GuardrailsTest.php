@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Blade;
 use Symfony\Component\Finder\Finder;
 
 it('ensures no hex color codes or style attributes exist in blade views', function () {
@@ -138,7 +139,7 @@ it('ensures layout contains two preload links for above-the-fold satoshi fonts',
         ->and($layoutContent)->toMatch('/<link\s+rel=["\']preload["\'][^>]+Satoshi-Bold\.woff2[^>]+as=["\']font["\'][^>]+type=["\']font\/woff2["\'][^>]+crossorigin/i');
 
     // Render layout sederhana untuk memastikan ekspresi Vite dievaluasi tanpa galat
-    $rendered = \Illuminate\Support\Facades\Blade::render('<x-layouts.app :title="\'Uji Preload\'"><div>Konten</div></x-layouts.app>');
+    $rendered = Blade::render('<x-layouts.app :title="\'Uji Preload\'"><div>Konten</div></x-layouts.app>');
     expect($rendered)->toContain('as="font"')
         ->and($rendered)->toContain('type="font/woff2"')
         ->and($rendered)->toContain('crossorigin')
@@ -147,7 +148,7 @@ it('ensures layout contains two preload links for above-the-fold satoshi fonts',
 });
 
 it('ensures listing-card component renders img with lazy loading, dimensions and alt', function () {
-    $rendered = \Illuminate\Support\Facades\Blade::render(
+    $rendered = Blade::render(
         '<x-ui.listing-card :title="\'Toyota Yaris 2020\'" :price="180000000" image-url="https://example.com/test.jpg" />'
     );
 

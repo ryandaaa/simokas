@@ -25,6 +25,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 
@@ -291,7 +292,7 @@ it('HIST-T05 displays empty states for user without history', function () {
 
 it('HIST-T06 enforces authorization for all roles and unapproved inspector restrictions', function () {
     // 1. Guest redirected to login
-    $guestResponse = $this->get(route('history'));
+    $guestResponse = get(route('history'));
     $guestResponse->assertRedirect(route('login'));
 
     // 2. Blocked user rejected by not_blocked middleware
