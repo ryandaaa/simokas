@@ -44,10 +44,10 @@
                         {{-- Bulatan Status --}}
                         <div @class([
                             'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors select-none',
-                            'bg-success text-surface' => $status === 'completed',
-                            'bg-primary text-surface ring-4 ring-primary/20 font-bold' => $status === 'current',
-                            'bg-danger text-surface' => $status === 'failed',
-                            'bg-muted/20 text-muted' => $status === 'upcoming',
+                            'bg-lime text-forest' => $status === 'completed',
+                            'bg-forest text-lime ring-4 ring-linen font-bold' => $status === 'current',
+                            'bg-alarm text-paper' => $status === 'failed',
+                            'bg-fog text-pebble' => $status === 'upcoming',
                         ])
                         @if ($status === 'current') aria-current="step" @endif>
                             @if ($status === 'completed')
@@ -62,10 +62,10 @@
                         {{-- Label --}}
                         <span @class([
                             'text-xs mt-1.5 text-center font-medium max-w-[80px] truncate',
-                            'text-primary font-semibold' => $status === 'current',
-                            'text-text' => $status === 'completed',
-                            'text-danger' => $status === 'failed',
-                            'text-muted' => $status === 'upcoming',
+                            'text-forest font-bold' => $status === 'current',
+                            'text-obs' => $status === 'completed',
+                            'text-alarm' => $status === 'failed',
+                            'text-pebble' => $status === 'upcoming',
                         ])>
                             {{ $step['label'] }}
                         </span>
@@ -75,8 +75,8 @@
                     @if (!$isLast)
                         <div @class([
                             'h-0.5 flex-1 mx-2 -mt-5',
-                            'bg-success' => $status === 'completed',
-                            'bg-muted/20' => $status !== 'completed',
+                            'bg-lime' => $status === 'completed',
+                            'bg-fog' => $status !== 'completed',
                         ]) aria-hidden="true"></div>
                     @endif
                 </li>
@@ -84,10 +84,10 @@
                 <li class="flex items-start gap-3">
                     <div @class([
                         'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 select-none',
-                        'bg-success text-surface' => $status === 'completed',
-                        'bg-primary text-surface ring-4 ring-primary/20' => $status === 'current',
-                        'bg-danger text-surface' => $status === 'failed',
-                        'bg-muted/20 text-muted' => $status === 'upcoming',
+                        'bg-lime text-forest' => $status === 'completed',
+                        'bg-forest text-lime ring-4 ring-linen font-bold' => $status === 'current',
+                        'bg-alarm text-paper' => $status === 'failed',
+                        'bg-fog text-pebble' => $status === 'upcoming',
                     ])
                     @if ($status === 'current') aria-current="step" @endif>
                         @if ($status === 'completed')
@@ -102,14 +102,14 @@
                     <div class="pt-0.5">
                         <p @class([
                             'text-sm font-medium',
-                            'text-primary font-semibold' => $status === 'current',
-                            'text-text' => $status === 'completed',
-                            'text-danger' => $status === 'failed',
-                            'text-muted' => $status === 'upcoming',
+                            'text-forest font-bold' => $status === 'current',
+                            'text-obs' => $status === 'completed',
+                            'text-alarm' => $status === 'failed',
+                            'text-pebble' => $status === 'upcoming',
                         ])>{{ $step['label'] }}</p>
 
                         @if ($step['description'])
-                            <p class="text-xs text-muted mt-0.5">{{ $step['description'] }}</p>
+                            <p class="text-xs text-slate mt-0.5">{{ $step['description'] }}</p>
                         @endif
                     </div>
                 </li>

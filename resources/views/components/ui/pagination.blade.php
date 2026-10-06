@@ -31,14 +31,14 @@
 
 <nav role="navigation" aria-label="Navigasi Halaman" {{ $attributes->merge(['class' => 'flex flex-col sm:flex-row items-center justify-between gap-4 py-3']) }}>
     {{-- Info Hasil --}}
-    <div class="text-sm text-muted">
+    <div class="text-sm text-slate">
         @if ($totalItems !== null)
             <span>{{ __('ui.pagination.showing', ['default' => 'Menampilkan']) }}</span>
-            <span class="font-semibold text-text">{{ $totalItems }}</span>
+            <span class="font-bold text-obs">{{ $totalItems }}</span>
             <span>{{ __('ui.pagination.results', ['default' => 'hasil']) }}</span>
-            <span class="text-muted/60">({{ __('ui.stepper.step', ['step' => "{$cur} / {$totalP}"]) }})</span>
+            <span class="text-pebble">({{ __('ui.stepper.step', ['step' => "{$cur} / {$totalP}"]) }})</span>
         @else
-            <span>Halaman <span class="font-semibold text-text">{{ $cur }}</span> dari <span class="font-semibold text-text">{{ $totalP }}</span></span>
+            <span>Halaman <span class="font-bold text-obs">{{ $cur }}</span> dari <span class="font-bold text-obs">{{ $totalP }}</span></span>
         @endif
     </div>
 

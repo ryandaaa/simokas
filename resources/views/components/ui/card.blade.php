@@ -11,8 +11,8 @@
 
 @php
     $isClickable = $clickable || !empty($href);
-    $baseClasses = 'bg-surface border border-muted/20 rounded-xl transition-all duration-150 overflow-hidden';
-    $interactiveClasses = $isClickable ? 'hover:border-muted/40 hover:shadow-sm cursor-pointer' : '';
+    $baseClasses = 'bg-surface border border-fog rounded-[10px] transition-all duration-150 overflow-hidden';
+    $interactiveClasses = $isClickable ? 'hover:border-pebble cursor-pointer' : '';
     $classes = "{$baseClasses} {$interactiveClasses}";
 @endphp
 
@@ -25,14 +25,14 @@
 @elseif ($href)
     <a href="{{ $href }}" {{ $attributes->merge(['class' => $classes . ' block']) }}>
         @if ($header || $title)
-            <div class="px-5 py-4 border-b border-muted/15 flex items-center justify-between">
+            <div class="px-5 py-4 border-b border-fog flex items-center justify-between">
                 @if ($header)
                     {{ $header }}
                 @else
                     <div>
-                        <h3 class="text-base font-semibold text-text">{{ $title }}</h3>
+                        <h3 class="text-base font-bold text-obs">{{ $title }}</h3>
                         @if ($subtitle)
-                            <p class="text-xs text-muted mt-0.5">{{ $subtitle }}</p>
+                            <p class="text-xs text-slate mt-0.5">{{ $subtitle }}</p>
                         @endif
                     </div>
                 @endif
@@ -44,7 +44,7 @@
         </div>
 
         @if ($footer)
-            <div class="px-5 py-3.5 bg-bg/50 border-t border-muted/15">
+            <div class="px-5 py-3.5 bg-fog/30 border-t border-fog">
                 {{ $footer }}
             </div>
         @endif
@@ -52,14 +52,14 @@
 @else
     <div {{ $attributes->merge(['class' => $classes]) }}>
         @if ($header || $title)
-            <div class="px-5 py-4 border-b border-muted/15 flex items-center justify-between">
+            <div class="px-5 py-4 border-b border-fog flex items-center justify-between">
                 @if ($header)
                     {{ $header }}
                 @else
                     <div>
-                        <h3 class="text-base font-semibold text-text">{{ $title }}</h3>
+                        <h3 class="text-base font-bold text-obs">{{ $title }}</h3>
                         @if ($subtitle)
-                            <p class="text-xs text-muted mt-0.5">{{ $subtitle }}</p>
+                            <p class="text-xs text-slate mt-0.5">{{ $subtitle }}</p>
                         @endif
                     </div>
                 @endif
@@ -71,7 +71,7 @@
         </div>
 
         @if ($footer)
-            <div class="px-5 py-3.5 bg-bg/50 border-t border-muted/15">
+            <div class="px-5 py-3.5 bg-fog/30 border-t border-fog">
                 {{ $footer }}
             </div>
         @endif

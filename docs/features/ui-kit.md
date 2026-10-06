@@ -20,15 +20,20 @@ Didefinisikan di `resources/css/app.css` melalui direktif Tailwind CSS v4 `@them
 
 | Token | Nilai | Penggunaan |
 | --- | --- | --- |
-| `--color-primary` | `#12355B` | Tombol utama, header, tautan |
-| `--color-accent` | `#F59E0B` | Penekanan, lencana inspeksi |
-| `--color-success` | `#16A34A` | Layak, berhasil |
-| `--color-warning` | `#D97706` | Perlu perhatian, menunggu |
-| `--color-danger` | `#DC2626` | Tidak direkomendasikan, galat |
-| `--color-bg` | `#F8FAFC` | Latar belakang halaman |
-| `--color-surface` | `#FFFFFF` | Permukaan kartu, modal |
-| `--color-text` | `#0F172A` | Teks utama |
-| `--color-muted` | `#64748B` | Teks pendukung |
+| `--color-forest` (`primary`) | `#163300` | Warna utama teks, aksen gelap, border sekunder |
+| `--color-lime` (`accent`) | `#9fe870` | HANYA tombol aksi primer dan status aktif/sukses |
+| `--color-lime-hover` (`accent-hover`) | `#8fd95c` | Status hover tombol aksi primer |
+| `--color-spruce` (`success`) | `#054d28` | Hover tautan, indikator sukses |
+| `--color-linen` | `#e2f6d5` | Hover tombol sekunder, latar lembut, status primary |
+| `--color-signal` | `#0b4c72` | Informasi / pemberitahuan netral |
+| `--color-alarm` (`danger`) | `#cb272f` | Galat, bahaya, status tidak direkomendasikan |
+| `--color-warning` | `#D97706` | Peringatan, perlu perhatian, menunggu |
+| `--color-charcoal` (`text`) | `#454745` | Teks isi (body text), label formulir |
+| `--color-obs` | `#0e0f0c` | Judul tebal (headings) |
+| `--color-pebble` (`muted`) | `#868685` | Teks sekunder, placeholder, border input |
+| `--color-slate` | `#6a6c6a` | Teks sekunder, spesifikasi kendaraan |
+| `--color-fog` (`border`) | `#e8ebe6` | Garis halus pembatas, latar tombol nonaktif |
+| `--color-paper` (`bg`, `surface`) | `#ffffff` | Kanvas latar belakang dan permukaan kartu |
 
 ## 3. Kesepakatan Enum Status Domain [USULAN]
 

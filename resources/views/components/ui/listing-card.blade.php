@@ -16,8 +16,8 @@
 ])
 
 @if ($loading)
-    <div class="bg-surface border border-muted/20 rounded-xl overflow-hidden animate-pulse">
-        <x-ui.skeleton variant="image" class="aspect-[4/3] w-full rounded-none" />
+    <div class="bg-surface border border-fog rounded-[10px] overflow-hidden animate-pulse">
+        <x-ui.skeleton variant="image" class="aspect-[16/10] w-full rounded-none" />
         <div class="p-4 space-y-3">
             <x-ui.skeleton variant="title" class="w-3/4" />
             <x-ui.skeleton variant="text" class="w-1/2" />
@@ -28,19 +28,19 @@
         </div>
     </div>
 @else
-    <article {{ $attributes->merge(['class' => 'bg-surface border border-muted/20 rounded-xl overflow-hidden hover:border-muted/40 hover:shadow-sm transition-all duration-150 flex flex-col']) }}>
-        <a href="{{ $href ?? '#' }}" class="group block focus:outline-none focus:ring-2 focus:ring-accent rounded-xl">
+    <article {{ $attributes->merge(['class' => 'bg-surface border border-fog rounded-[10px] overflow-hidden hover:border-pebble transition-all duration-150 flex flex-col']) }}>
+        <a href="{{ $href ?? '#' }}" class="group block focus:outline-none focus:ring-2 focus:ring-forest rounded-[10px]">
             {{-- Foto Utama --}}
-            <div class="relative aspect-[4/3] w-full bg-muted/10 overflow-hidden">
+            <div class="relative aspect-[16/10] w-full bg-fog overflow-hidden">
                 @if ($imageUrl)
                     <img src="{{ $imageUrl }}"
                          alt="{{ $imageAlt ?? $title }}"
                          loading="lazy"
                          width="400"
-                         height="300"
+                         height="250"
                          class="w-full h-full object-cover group-hover:scale-102 transition-transform duration-200" />
                 @else
-                    <div class="w-full h-full flex flex-col items-center justify-center text-muted/50 bg-muted/5">
+                    <div class="w-full h-full flex flex-col items-center justify-center text-pebble bg-fog">
                         <x-ui.icon name="foto" class="w-12 h-12 stroke-[1.2]" />
                     </div>
                 @endif
@@ -60,23 +60,23 @@
             {{-- Informasi Kendaraan --}}
             <div class="p-4 flex-1 flex flex-col justify-between">
                 <div>
-                    <h3 class="font-semibold text-text text-base line-clamp-2 group-hover:text-primary transition-colors">
+                    <h3 class="font-bold text-obs text-base line-clamp-2 group-hover:text-forest transition-colors">
                         {{ $title }}
                     </h3>
 
                     <div class="mt-2">
-                        <x-ui.money :amount="$price" class="text-lg font-bold text-primary" />
+                        <x-ui.money :amount="$price" class="text-lg font-bold text-forest" />
                     </div>
                 </div>
 
                 {{-- Spesifikasi Ringkas: Tahun, Jarak, Area --}}
-                <div class="mt-3 pt-3 border-t border-muted/15 flex items-center justify-between text-xs text-muted">
+                <div class="mt-3 pt-3 border-t border-fog flex items-center justify-between text-xs text-slate">
                     <div class="flex items-center gap-2">
                         @if ($year)
                             <span>{{ $year }}</span>
                         @endif
                         @if ($year && $mileage)
-                            <span class="text-muted/40">•</span>
+                            <span class="text-pebble">•</span>
                         @endif
                         @if ($mileage !== null)
                             <span>{{ number_format((int) $mileage, 0, ',', '.') }} km</span>

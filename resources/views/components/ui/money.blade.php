@@ -9,4 +9,4 @@
     $formatted = \App\Support\Money::format($intAmount);
 @endphp
 
-<span {{ $attributes->merge(['class' => 'font-semibold tracking-tight text-text']) }}>{{ $formatted }}</span>
+<span {{ $attributes->merge(['class' => 'font-bold tracking-tight text-forest']) }}>{{ $formatted }}</span>

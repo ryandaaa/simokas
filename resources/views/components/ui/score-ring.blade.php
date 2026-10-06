@@ -47,10 +47,10 @@
     };
 
     $strokeColorClass = match ($variant) {
-        'success' => 'text-success',
+        'success' => 'text-forest',
         'warning' => 'text-warning',
-        'danger' => 'text-danger',
-        default => 'text-primary',
+        'danger' => 'text-alarm',
+        default => 'text-forest',
     };
 @endphp
 
@@ -66,7 +66,7 @@
                 {{-- Lingkaran Latar Belakang --}}
                 <circle cx="50" cy="50" r="40"
                         stroke-width="8"
-                        class="text-muted/20"
+                        class="text-fog"
                         stroke="currentColor"
                         fill="transparent" />
 
@@ -83,8 +83,8 @@
 
             {{-- Angka Skor di Tengah --}}
             <div class="absolute inset-0 flex flex-col items-center justify-center select-none">
-                <span class="text-2xl font-bold text-text">{{ round($numScore) }}</span>
-                <span class="text-[10px] text-muted font-medium uppercase tracking-wider">
+                <span class="text-2xl font-bold text-obs">{{ round($numScore) }}</span>
+                <span class="text-[10px] text-slate font-medium uppercase tracking-wider">
                     {{ $label ?? __('ui.score_ring.score') }}
                 </span>
             </div>
