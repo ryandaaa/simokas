@@ -6,7 +6,9 @@ namespace App\Domains\Result\Providers;
 
 use App\Domains\Result\Livewire\InspectionFormPage;
 use App\Domains\Result\Models\InspectionResult;
+use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Policies\InspectionResultPolicy;
+use App\Domains\Result\Policies\InspectionTemplatePolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -25,6 +27,7 @@ final class ResultServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
 
         Gate::policy(InspectionResult::class, InspectionResultPolicy::class);
+        Gate::policy(InspectionTemplate::class, InspectionTemplatePolicy::class);
         Gate::define('fill-inspection', [InspectionResultPolicy::class, 'fill']);
 
         Livewire::component('result.inspection-form-page', InspectionFormPage::class);
