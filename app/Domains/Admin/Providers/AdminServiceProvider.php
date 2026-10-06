@@ -24,6 +24,11 @@ final class AdminServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'admin');
         $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
 
+        \Illuminate\Support\Facades\Gate::policy(
+            \App\Domains\Admin\Models\AuditLog::class,
+            \App\Domains\Admin\Policies\AuditLogPolicy::class,
+        );
+
         $this->registerLivewireComponents();
         $this->registerEventListeners();
     }
@@ -34,6 +39,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('admin.inspector-verification-queue', InspectorVerificationQueue::class);
         Livewire::component('admin.listing-validation-queue', ListingValidationQueue::class);
         Livewire::component('admin.inspection-template-manager', InspectionTemplateManager::class);
+        Livewire::component('admin.audit-log-index', \App\Domains\Admin\Livewire\AuditLogIndex::class);
     }
 
     private function registerEventListeners(): void
