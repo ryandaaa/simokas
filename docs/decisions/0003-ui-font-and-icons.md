@@ -21,7 +21,7 @@ UI SIMOKAS menganut prinsip modern minimalis, bersih, dan terpercaya (`docs/UI_G
 ## Alasan
 
 1. **Keamanan & Privasi:** Mengunduh font dari Google Fonts atau CDN publik berisiko membocorkan alamat IP pengguna ke pihak ketiga dan berpotensi melanggar privasi pengguna. Self-hosting sepenuhnya mengeliminasi risiko ini.
-2. **Performa:** Font berformat woff2 sangat hemat ukuran (sekitar 27 kB per bobot untuk latin), dimuat secara lokal dengan `font-display: swap` tanpa perlu memuat CDN luar.
+2. **Performa:** Font berformat woff2 sangat hemat ukuran (sekitar 27 kB per bobot untuk latin), dimuat secara lokal dengan `font-display: block` (diubah dari `swap` pada 7 Oktober 2026 agar halaman tidak berkedip dari font bawaan ke Satoshi) tanpa perlu memuat CDN luar.
 3. **Ukuran Bundle Ikon:** Memasang paket ikon penuh (seperti Blade Heroicons dengan ratusan file/class) menambah ukuran vendor dan jejak memori yang tidak perlu. Dengan implementasi inline SVG di `<x-ui.icon>`, hanya ikon yang benar-benar dipakai di aplikasi yang disimpan di dalam kode sumber.
 4. **Fleksibilitas:** Inline SVG memungkinkan kontrol pewarnaan dan ukuran langsung melalui kelas utilitas Tailwind (`text-primary`, `text-success`, `w-5 h-5`) serta transisi CSS yang mulus.
 
