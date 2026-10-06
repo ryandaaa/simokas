@@ -78,8 +78,8 @@
 6. Jika `paid` tidak diambil selama 7 hari, sistem membatalkan dan mengembalikan 100% dana kepada pemohon.
 
 ## Gambar yang perlu ditambahkan
-- `/jobs/open` — daftar job terbuka.
-- `/jobs/{id}` — detail job, jadwal, dan aksi.
-- `/jobs/{id}/fill` — checklist dan kamera.
-- `/earnings` — pendapatan.
-- `/inspector/register` — pendaftaran dan dokumen verifikasi.
+- `/jobs/open` [perlu dikonfirmasi] — daftar job terbuka.
+- `/jobs/{id}` [perlu dikonfirmasi] — detail job, jadwal, dan aksi.
+- `/jobs/{id}/fill` [perlu dikonfirmasi] — checklist dan kamera.
+- `/earnings` [perlu dikonfirmasi] — pendapatan.
+- `/inspector/register` [perlu dikonfirmasi] — pendaftaran dan dokumen verifikasi.
