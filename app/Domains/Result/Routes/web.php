@@ -8,11 +8,18 @@ use App\Domains\Result\Http\Controllers\UploadResultPhotoController;
 use App\Domains\Result\Http\Controllers\ViewResultController;
 use App\Domains\Result\Http\Controllers\ViewResultPhotoController;
 use App\Domains\Result\Livewire\InspectionFormPage;
+use App\Domains\Result\Livewire\ViewResultPage;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
-    // View inspection result with access control
-    Route::get('/results/{result}', ViewResultController::class)
+    // View inspection result page with access control (Livewire UI)
+    Route::get('/results/{result}', ViewResultPage::class)
+        ->middleware(['auth', 'not_blocked'])
+        ->whereUuid('result')
+        ->name('results.view');
+
+    // View inspection result API endpoint with access control (JSON)
+    Route::get('/results/{result}/json', ViewResultController::class)
         ->middleware(['auth', 'not_blocked'])
         ->whereUuid('result')
         ->name('results.show');

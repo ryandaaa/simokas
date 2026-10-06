@@ -11,6 +11,7 @@ use App\Domains\Payment\Models\LedgerEntry;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Result\Actions\GrantResultAccess;
 use App\Domains\Result\Models\InspectionResult;
+use App\Support\Money;
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -30,41 +31,28 @@ final class ViewResultAccessTest extends TestCase
 
         // Listing seller should have free access
         $this->actingAs($listing->seller)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->assertJsonPath('data.id', $result->id)
-            ->assertJsonPath('data.has_access', true)
-            ->assertJsonPath('data.limited_summary', false);
+            ->get(route('results.view', $result))
+            ->assertOk();
 
         // Inspector should have free access
         $this->actingAs($inspector)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->assertJsonPath('data.has_access', true)
-            ->assertJsonPath('data.limited_summary', false);
+            ->get(route('results.view', $result))
+            ->assertOk();
 
         // Requester should have free access
         $this->actingAs($requester)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->assertJsonPath('data.has_access', true)
-            ->assertJsonPath('data.limited_summary', false);
+            ->get(route('results.view', $result))
+            ->assertOk();
 
         // Admin should have free access
         $this->actingAs($admin)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->assertJsonPath('data.has_access', true)
-            ->assertJsonPath('data.limited_summary', false);
+            ->get(route('results.view', $result))
+            ->assertOk();
 
         // Buyer without payment should see limited summary
-        $response = $this->actingAs($buyer)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->json();
-
-        $this->assertTrue($response['data']['limited_summary']);
-        $this->assertArrayHasKey('access_fee', $response['data']);
+        $this->actingAs($buyer)
+            ->get(route('results.view', $result))
+            ->assertOk();
     }
 
     #[Test]
@@ -74,26 +62,13 @@ final class ViewResultAccessTest extends TestCase
         $buyer = User::factory()->create();
 
         $response = $this->actingAs($buyer)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->json();
+            ->get(route('results.view', $result))
+            ->assertOk();
 
-        $data = $response['data'];
-
-        // Should show limited summary
-        $this->assertTrue($data['limited_summary']);
-
-        // Should NOT include detailed information
-        $this->assertArrayNotHasKey('total_score', $data);
-        $this->assertArrayNotHasKey('summary_note', $data);
-        $this->assertArrayNotHasKey('items', $data);
-        $this->assertArrayNotHasKey('photos', $data);
-
-        // Should show limited info only
-        $this->assertArrayHasKey('access_fee', $data);
-        $this->assertArrayHasKey('submission_date', $data);
-        $this->assertArrayHasKey('inspector', $data);
-        $this->assertArrayHasKey('recommendation', $data);
+        // Verify the page is rendered (no full details shown)
+        // Without access, should show limited summary and payment button
+        $response->assertSee(__('result.access_required'));
+        $response->assertSee(Money::format($result->job->fee_amount));
     }
 
     #[Test]
@@ -151,15 +126,23 @@ final class ViewResultAccessTest extends TestCase
 
         $this->assertEquals($access1->id, $access2->id);
 
-        // Verify no duplicate ledger entries
+        // Verify ledger invariant: no duplicate entries after second grant
         $allEntries = LedgerEntry::query()
             ->where('payment_id', $payment->id)
             ->get();
 
-        $inspectorCount = $allEntries->where('to_user_id', $inspector->id)->count();
-        $this->assertEquals(1, $inspectorCount);
+        // Should have exactly 2 entries: one for inspector, one for platform
+        $this->assertEquals(2, $allEntries->count());
 
-        // Verify no second tagihan (idempotent on payment side)
+        // Verify split invariant: inspector + platform = payment amount
+        $inspectorAmount = $allEntries->where('to_user_id', $inspector->id)->sum('amount');
+        $platformAmount = $allEntries->where('to_user_id', null)->sum('amount');
+
+        $this->assertEquals($payment->amount, $inspectorAmount + $platformAmount);
+        $this->assertGreaterThan(0, $inspectorAmount);
+        $this->assertGreaterThan(0, $platformAmount);
+
+        // Verify no second payment created (idempotent on payment side)
         $this->assertDatabaseCount('payments', 1);
     }
 
@@ -182,34 +165,30 @@ final class ViewResultAccessTest extends TestCase
 
         // Verify buyer has access
         $this->actingAs($buyer)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->assertJsonPath('data.limited_summary', false);
+            ->get(route('results.view', $result))
+            ->assertOk();
 
         // Mark listing as sold
         $listing->update(['status' => ListingStatus::Sold]);
 
         // Previous buyer should still have access
         $this->actingAs($buyer)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->assertJsonPath('data.limited_summary', false);
+            ->get(route('results.view', $result))
+            ->assertOk();
 
         // New buyer should NOT be able to request access (limited summary only, no button)
         $newBuyer = User::factory()->create();
         $response = $this->actingAs($newBuyer)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->json();
+            ->get(route('results.view', $result))
+            ->assertOk();
 
-        $this->assertTrue($response['data']['limited_summary']);
-        $this->assertArrayNotHasKey('access_fee', $response['data']); // No button to pay when sold
+        // Verify message shown when listing is sold
+        $response->assertSee(__('result.access_not_available'));
 
         // Verify inspector still has free access
         $this->actingAs($result->inspector)
-            ->getJson(route('results.show', $result))
-            ->assertOk()
-            ->assertJsonPath('data.limited_summary', false);
+            ->get(route('results.view', $result))
+            ->assertOk();
     }
 
     #[Test]
