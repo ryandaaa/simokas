@@ -7,12 +7,16 @@ namespace App\Domains\Inspector\Actions;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspector\Enums\VehicleType;
 use App\Domains\Inspector\Enums\VerificationStatus;
+use App\Domains\Inspector\Events\InspectorSubmitted;
 use App\Domains\Inspector\Exceptions\InvalidInspectorProfileException;
 use App\Domains\Inspector\Models\InspectorProfile;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\DB;
 
 final class CreateInspectorProfile
 {
+    public function __construct(private readonly Dispatcher $events) {}
+
     /**
      * @param  array<string, mixed>  $data
      */
@@ -54,6 +58,11 @@ final class CreateInspectorProfile
                     'verification_status' => VerificationStatus::Pending,
                 ]
             );
+
+            $this->events->dispatch(new InspectorSubmitted(
+                inspectorProfileId: $profile->id,
+                userId: $profile->user_id,
+            ));
 
             return $profile;
         });
