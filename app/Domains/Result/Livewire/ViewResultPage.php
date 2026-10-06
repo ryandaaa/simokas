@@ -27,7 +27,7 @@ final class ViewResultPage extends Component
     {
         $policy = app(ResultAccessPolicy::class);
         if (! $policy->canRequestPaidAccess(auth()->user(), $this->result)) {
-            return;
+            return null;
         }
 
         return redirect(route('results.request-access', $this->result));
