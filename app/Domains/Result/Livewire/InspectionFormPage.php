@@ -9,9 +9,12 @@ use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Result\Actions\DeleteResultPhoto;
 use App\Domains\Result\Actions\GetOrCreateDraftResult;
 use App\Domains\Result\Actions\SaveDraftResult;
+use App\Domains\Result\Actions\SubmitInspectionResult;
 use App\Domains\Result\Actions\UploadResultPhoto;
 use App\Domains\Result\DTOs\UploadPhotoData;
 use App\Domains\Result\Enums\ItemRating;
+use App\Domains\Result\Exceptions\MinPhotosNotMetException;
+use App\Domains\Result\Exceptions\RequiredItemsMissingException;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Models\TemplateItem;
@@ -56,6 +59,10 @@ final class InspectionFormPage extends Component
 
     /** @var array<string, array{id: string, url: string, captured_at: string, stamped_at: ?string}> */
     public array $photos = [];
+
+    public bool $showSubmitConfirmation = false;
+
+    public bool $isSubmitting = false;
 
     public function mount(InspectionJob $job, GetOrCreateDraftResult $getOrCreateDraft): void
     {
@@ -300,6 +307,61 @@ final class InspectionFormPage extends Component
     public function getRatings(): array
     {
         return ItemRating::cases();
+    }
+
+    public function showSubmitConfirmation(): void
+    {
+        $this->showSubmitConfirmation = true;
+    }
+
+    public function cancelSubmit(): void
+    {
+        $this->showSubmitConfirmation = false;
+    }
+
+    public function submitResult(SubmitInspectionResult $submitAction): void
+    {
+        Gate::authorize('updateDraft', $this->result);
+
+        $this->validate();
+        $this->isSubmitting = true;
+        $this->actionError = null;
+        $this->actionSuccess = null;
+
+        try {
+            // Save draft first before submitting
+            $itemsData = $this->buildItemsData();
+            $saveDraft = app(SaveDraftResult::class);
+            $this->result = $saveDraft->handle(
+                Auth::user(),
+                $this->result,
+                $itemsData,
+                $this->summaryNote !== '' ? $this->summaryNote : null,
+            );
+
+            // Submit result - Action handles validation and atomicity
+            /** @var User $inspector */
+            $inspector = Auth::user();
+            $this->result = $submitAction->handle($inspector, $this->result);
+
+            $this->showSubmitConfirmation = false;
+            $this->actionSuccess = __('inspection.form.result_submitted_success');
+
+            // Redirect to job detail after successful submission
+            $this->redirect(route('jobs.show', $this->job->id), navigate: true);
+        } catch (RequiredItemsMissingException $e) {
+            $this->actionError = __('inspection.form.error_required_items_missing', [
+                'items' => implode(', ', array_map(fn ($item) => $item['label'], $e->getMissingItems())),
+            ]);
+        } catch (MinPhotosNotMetException $e) {
+            $this->actionError = __('inspection.form.error_min_photos_not_met', [
+                'items' => implode(', ', array_map(fn ($item) => $item['label'], $e->getMissingPhotoItems())),
+            ]);
+        } catch (DomainException $e) {
+            $this->actionError = $e->getMessage();
+        } finally {
+            $this->isSubmitting = false;
+        }
     }
 
     public function render(): View

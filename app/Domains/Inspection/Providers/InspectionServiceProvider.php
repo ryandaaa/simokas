@@ -10,6 +10,7 @@ use App\Domains\Inspection\Console\Commands\AutoCompleteJobsCommand;
 use App\Domains\Inspection\Console\Commands\CancelUnclaimedJobsCommand;
 use App\Domains\Inspection\Console\Commands\ExpireRequestedJobsCommand;
 use App\Domains\Inspection\Console\Commands\MarkNeedsAttentionCommand;
+use App\Domains\Inspection\Contracts\InspectionJobResultContract;
 use App\Domains\Inspection\Listeners\MarkJobPaidOnPaymentSucceeded;
 use App\Domains\Inspection\Livewire\InspectorJobsPage;
 use App\Domains\Inspection\Livewire\JobDetailPage;
@@ -19,6 +20,7 @@ use App\Domains\Inspection\Livewire\RequestInspectionPage;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspection\Policies\InspectionJobPolicy;
 use App\Domains\Inspection\Services\InspectionJobAccessService;
+use App\Domains\Inspection\Services\InspectionJobResultService;
 use App\Domains\Inspection\Services\InspectionListingActivityChecker;
 use App\Domains\Listing\Contracts\ListingActivityChecker;
 use App\Domains\Listing\Models\Listing;
@@ -35,6 +37,7 @@ final class InspectionServiceProvider extends ServiceProvider
     {
         $this->app->singleton(ListingActivityChecker::class, InspectionListingActivityChecker::class);
         $this->app->singleton(InspectionJobAccess::class, InspectionJobAccessService::class);
+        $this->app->singleton(InspectionJobResultContract::class, InspectionJobResultService::class);
     }
 
     public function boot(): void
@@ -49,6 +52,7 @@ final class InspectionServiceProvider extends ServiceProvider
         // terakhir ini selalu yang dipakai container.
         $this->app->singleton(ListingActivityChecker::class, InspectionListingActivityChecker::class);
         $this->app->singleton(InspectionJobAccess::class, InspectionJobAccessService::class);
+        $this->app->singleton(InspectionJobResultContract::class, InspectionJobResultService::class);
 
         Gate::policy(InspectionJob::class, InspectionJobPolicy::class);
         Gate::define('inspection.request', fn (User $user, Listing $listing): bool => (new InspectionJobPolicy)->request($user, $listing));

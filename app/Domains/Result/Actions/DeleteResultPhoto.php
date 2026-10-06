@@ -42,12 +42,12 @@ final class DeleteResultPhoto
             throw UnauthorizedInspectorException::create();
         }
 
-        if ($job->status !== JobStatus::InProgress) {
-            throw JobNotInProgressException::create();
-        }
-
         if ($result->status !== ResultStatus::Draft) {
             throw ResultAlreadySubmittedException::create();
+        }
+
+        if ($job->status !== JobStatus::InProgress) {
+            throw JobNotInProgressException::create();
         }
 
         if ($photo->result_id !== $result->getKey()) {

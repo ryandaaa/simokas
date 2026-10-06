@@ -177,5 +177,13 @@ return [
         'invalid_rating' => 'Penilaian :rating tidak valid.',
         'note_too_long' => 'Catatan maksimal 1.000 karakter.',
         'summary_note_too_long' => 'Catatan ringkasan maksimal 2.000 karakter.',
+        'submit_result' => 'Kirim Hasil',
+        'submit_confirmation_title' => 'Kirim Hasil Inspeksi?',
+        'submit_confirmation_message' => 'Hasil inspeksi akan dikunci dan tidak dapat diubah setelah dikirim. Hanya admin yang dapat membuka kembali untuk revisi.',
+        'submit_warning' => 'Perhatian: Aksi ini tidak dapat dibatalkan. Periksa kembali semua data sebelum mengirim.',
+        'error_required_items_missing' => 'Item wajib yang belum diisi: :items',
+        'error_min_photos_not_met' => 'Item berikut masih memerlukan foto: :items',
+        'result_submitted_success' => 'Hasil inspeksi berhasil dikirim dan terkunci.',
+        'submitting' => 'Mengirim hasil...',
     ],
 ];

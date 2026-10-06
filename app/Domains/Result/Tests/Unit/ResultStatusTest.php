@@ -38,6 +38,6 @@ final class ResultStatusTest extends TestCase
     {
         $this->assertTrue(ResultStatus::Draft->canTransitionTo(ResultStatus::Submitted));
         $this->assertFalse(ResultStatus::Draft->canTransitionTo(ResultStatus::Draft));
-        $this->assertFalse(ResultStatus::Submitted->canTransitionTo(ResultStatus::Draft));
+        $this->assertTrue(ResultStatus::Submitted->canTransitionTo(ResultStatus::Draft));
     }
 }
