@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Transaction\Livewire;
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Transaction\Actions\SubmitOffer;
 use App\Support\Exceptions\DomainException;
@@ -32,6 +33,13 @@ final class OfferPage extends Component
 
     public function mount(Listing $listing): void
     {
+        // TRX-R1: only active or in_inspection listings can receive offers.
+        // Anything else 404s so non-public listing data (title, year, area,
+        // price) is never rendered on this page.
+        if (! in_array($listing->status, [ListingStatus::Active, ListingStatus::InInspection], true)) {
+            abort(404);
+        }
+
         $this->listingId = (string) $listing->getKey();
         $this->priceAmount = (string) $listing->price;
     }

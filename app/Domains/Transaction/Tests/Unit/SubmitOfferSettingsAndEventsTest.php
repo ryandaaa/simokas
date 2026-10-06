@@ -11,11 +11,16 @@ use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Setting\Models\AppSetting;
 use App\Domains\Transaction\Actions\SubmitOffer;
+use App\Domains\Transaction\Enums\TransactionStatus;
 use App\Domains\Transaction\Events\TransactionOffered;
 use App\Domains\Transaction\Exceptions\InvalidListingStatusException;
 use App\Domains\Transaction\Exceptions\InvalidOfferPriceException;
+use App\Domains\Transaction\Exceptions\TransactionAlreadyRunningException;
+use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
@@ -127,4 +132,51 @@ it('dispatches TransactionOffered exactly once after commit', function () {
         && $event->listingId === (string) $listing->getKey()
         && $event->buyerId === (string) $buyer->getKey()
         && $event->sellerId === (string) $seller->getKey());
+});
+
+it('TRX-E2 concurrent offers: the loser gets 409 TransactionAlreadyRunning, not 500', function () {
+    $seller = User::factory()->user()->create();
+    $buyer1 = User::factory()->user()->create();
+    $buyer2 = User::factory()->user()->create();
+    $listing = Listing::factory()->active()->create(['seller_id' => $seller->id]);
+
+    $hookFired = false;
+
+    Transaction::creating(function () use ($listing, $buyer2, &$hookFired): void {
+        if ($hookFired) {
+            return;
+        }
+        $hookFired = true;
+
+        // Simulate the race winner: a competing active transaction for the
+        // same listing, inserted just before our own INSERT runs, so the
+        // unique active_listing_id constraint fires on our INSERT.
+        DB::table('transactions')->insert([
+            'id' => (string) Str::uuid(),
+            'listing_id' => $listing->id,
+            'buyer_id' => $buyer2->id,
+            'status' => TransactionStatus::Offered->value,
+            'price_amount' => 100000000,
+            'commission_pct' => null,
+            'inspector_id' => null,
+            'notes' => null,
+            'expires_at' => now()->addHours(48),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    });
+
+    try {
+        expect(fn () => app(SubmitOffer::class)->handle($buyer1, $listing, 100000000))
+            ->toThrow(TransactionAlreadyRunningException::class);
+    } finally {
+        Transaction::flushEventListeners();
+    }
+
+    // The loser's failed attempt left no phantom lock behind: a fresh offer
+    // succeeds and stays the single active transaction for the listing.
+    $fresh = app(SubmitOffer::class)->handle($buyer2, $listing, 100000000);
+
+    expect(Transaction::query()->forListing($listing->id)->active()->count())->toBe(1)
+        ->and($fresh->buyer_id)->toBe($buyer2->id);
 });

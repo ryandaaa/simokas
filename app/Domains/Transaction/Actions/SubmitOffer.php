@@ -18,6 +18,7 @@ use App\Domains\Transaction\Exceptions\InvalidOfferPriceException;
 use App\Domains\Transaction\Exceptions\OwnListingOfferException;
 use App\Domains\Transaction\Exceptions\TransactionAlreadyRunningException;
 use App\Domains\Transaction\Models\Transaction;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -90,16 +91,23 @@ final class SubmitOffer
                 }
             }
 
-            return Transaction::create([
-                'listing_id' => $listing->id,
-                'buyer_id' => $buyer->id,
-                'status' => TransactionStatus::Offered,
-                'price_amount' => $priceAmount,
-                'commission_pct' => $commissionPct,
-                'inspector_id' => $inspectorId,
-                'notes' => $notes,
-                'expires_at' => now()->addHours(48),
-            ]);
+            try {
+                return Transaction::create([
+                    'listing_id' => $listing->id,
+                    'buyer_id' => $buyer->id,
+                    'status' => TransactionStatus::Offered,
+                    'price_amount' => $priceAmount,
+                    'commission_pct' => $commissionPct,
+                    'inspector_id' => $inspectorId,
+                    'notes' => $notes,
+                    'expires_at' => now()->addHours(48),
+                ]);
+            } catch (UniqueConstraintViolationException) {
+                // TRX-E2: lost a race with a concurrent offer for the same
+                // listing. The unique active_listing_id constraint fired, so
+                // report the domain conflict (409), never a 500.
+                throw TransactionAlreadyRunningException::create();
+            }
         });
 
         TransactionOffered::dispatch(

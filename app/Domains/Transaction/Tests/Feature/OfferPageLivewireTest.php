@@ -108,16 +108,24 @@ it('TRX-T02 shows a clear error when offering on own listing', function () {
     expect(Transaction::query()->count())->toBe(0);
 });
 
-it('TRX-T01 shows a clear error when offering on a sold listing', function () {
+it('returns 404 on the offer page for non-offerable listing statuses', function (string $state) {
     $seller = User::factory()->user()->create();
     $buyer = User::factory()->user()->create();
-    $listing = Listing::factory()->sold()->create(['seller_id' => $seller->id]);
+    $listing = Listing::factory()->$state()->create(['seller_id' => $seller->id]);
 
     actingAs($buyer);
 
-    Livewire::test(OfferPage::class, ['listing' => $listing])
-        ->call('submit')
-        ->assertSee(__('transaction.errors.invalid_listing_status'));
+    get(route('transactions.offer', ['listing' => $listing->id]))
+        ->assertNotFound();
+})->with(['pendingReview', 'rejected', 'inactive', 'sold', 'inTransaction']);
 
-    expect(Transaction::query()->count())->toBe(0);
-});
+it('renders the offer page for offerable listing statuses', function (string $state) {
+    $seller = User::factory()->user()->create();
+    $buyer = User::factory()->user()->create();
+    $listing = Listing::factory()->$state()->create(['seller_id' => $seller->id]);
+
+    actingAs($buyer);
+
+    get(route('transactions.offer', ['listing' => $listing->id]))
+        ->assertOk();
+})->with(['active', 'inInspection']);

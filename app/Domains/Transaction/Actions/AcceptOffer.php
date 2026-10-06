@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\DB;
  *
  * Uses a conditional update (UPDATE ... WHERE status = 'offered') so a
  * stale model or a concurrent accept/reject cannot double-apply.
- * The event is dispatched exactly once, only when the status truly changed.
+ * The event is dispatched exactly once, after the database transaction
+ * commits, and only when the status truly changed.
  */
 final class AcceptOffer
 {
@@ -37,13 +38,13 @@ final class AcceptOffer
                     'updated_at' => now(),
                 ]);
 
-            if ($affected === 0) {
-                return false;
-            }
+            return $affected === 1;
+        });
 
-            /** @var Transaction $fresh */
-            $fresh = Transaction::query()->findOrFail($transaction->getKey());
+        /** @var Transaction $fresh */
+        $fresh = Transaction::query()->findOrFail($transaction->getKey());
 
+        if ($changed) {
             TransactionAccepted::dispatch(
                 transactionId: (string) $fresh->getKey(),
                 listingId: (string) $fresh->listing_id,
@@ -51,21 +52,14 @@ final class AcceptOffer
                 sellerId: (string) $fresh->listing->seller_id,
             );
 
-            return true;
-        });
-
-        if (! $changed) {
-            /** @var Transaction $fresh */
-            $fresh = Transaction::query()->findOrFail($transaction->getKey());
-
-            // Idempotent: already accepted by the winner, return as-is without a second event.
-            if ($fresh->status === TransactionStatus::Accepted) {
-                return $fresh;
-            }
-
-            throw OfferNotPendingException::create();
+            return $fresh;
         }
 
-        return Transaction::query()->findOrFail($transaction->getKey());
+        // Idempotent: already accepted by the winner, return as-is without a second event.
+        if ($fresh->status === TransactionStatus::Accepted) {
+            return $fresh;
+        }
+
+        throw OfferNotPendingException::create();
     }
 }
