@@ -12,23 +12,23 @@ use App\Domains\Result\Livewire\ViewResultPage;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
-    // View inspection result page with access control (Livewire UI)
-    Route::get('/results/{result}', ViewResultPage::class)
+    // View inspection result page with access control (Livewire UI, called from Catalog with listing parameter)
+    Route::get('/results/{listing}', ViewResultPage::class)
         ->middleware(['auth', 'not_blocked'])
-        ->whereUuid('result')
-        ->name('results.view');
+        ->whereUuid('listing')
+        ->name('results.show');
 
     // View inspection result API endpoint with access control (JSON)
     Route::get('/results/{result}/json', ViewResultController::class)
         ->middleware(['auth', 'not_blocked'])
         ->whereUuid('result')
-        ->name('results.show');
+        ->name('results.json');
 
-    // Request paid access to inspection result
-    Route::post('/results/{result}/request-access', RequestResultAccessController::class)
+    // Request paid access to inspection result (called from UI with listing parameter)
+    Route::post('/results/{listing}/request-access', RequestResultAccessController::class)
         ->middleware(['auth', 'not_blocked'])
-        ->whereUuid('result')
-        ->name('results.request-access');
+        ->whereUuid('listing')
+        ->name('results.access');
 
     // Foto hasil inspeksi: disajikan dari storage privat lewat URL bertanda tangan sementara
     Route::get('/results/{result}/photos/{photo}', ViewResultPhotoController::class)

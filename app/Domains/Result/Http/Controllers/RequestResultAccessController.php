@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Result\Http\Controllers;
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Contracts\Billing;
 use App\Domains\Payment\DTOs\CreateBillData;
 use App\Domains\Payment\Enums\PaymentPurpose;
@@ -19,10 +20,19 @@ final class RequestResultAccessController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __invoke(InspectionResult $result, Billing $billing): RedirectResponse
+    public function __invoke(Listing $listing, Billing $billing): RedirectResponse
     {
         /** @var User $user */
         $user = auth()->user();
+
+        // Find the inspection result for this listing
+        $result = InspectionResult::whereHas('job', function ($query) use ($listing) {
+            $query->where('listing_id', $listing->id);
+        })->first();
+
+        if ($result === null) {
+            abort(404);
+        }
 
         // Check if user can request paid access
         $policy = app(ResultAccessPolicy::class);

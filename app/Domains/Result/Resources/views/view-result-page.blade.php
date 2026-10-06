@@ -40,7 +40,7 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                     </div>
 
                     {{-- Inspector info --}}
-                    <div class="border-t border-gray-200 pt-4">
+                    <div class="border-t border-color-border pt-4">
                         <p class="text-sm text-color-muted mb-2">{{ __('result.inspector') }}</p>
                         <p class="text-lg font-semibold text-color-text">{{ $result->inspector->name }}</p>
                     </div>
@@ -79,7 +79,7 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                     <div class="bg-color-surface rounded-xl p-6 shadow-sm">
                         <div class="space-y-4">
                             @foreach ($groupedItems as $item)
-                                <div class="flex items-start justify-between gap-4 border-b border-gray-200 pb-4 last:border-b-0">
+                                <div class="flex items-start justify-between gap-4 border-b border-color-border pb-4 last:border-b-0">
                                     <div>
                                         <p class="font-semibold text-color-text">{{ $item->template_item_id }}</p>
                                         @if ($item->notes)
@@ -144,14 +144,14 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                     </div>
 
                     {{-- Inspector info --}}
-                    <div class="border-t border-gray-200 pt-4">
+                    <div class="border-t border-color-border pt-4">
                         <p class="text-sm text-color-muted mb-2">{{ __('result.inspector') }}</p>
                         <p class="text-lg font-semibold text-color-text">{{ $result->inspector->name }}</p>
                     </div>
 
                     {{-- Recommendation if available --}}
                     @if ($result->recommendation)
-                        <div class="border-t border-gray-200 pt-4 mt-4">
+                        <div class="border-t border-color-border pt-4 mt-4">
                             <p class="text-sm text-color-muted mb-2">{{ __('result.recommendation') }}</p>
                             <x-ui.status-chip
                                 :label="$result->recommendation->label()"
@@ -167,7 +167,7 @@ use App\Domains\Result\Enums\InspectionRecommendation;
 
                 {{-- Access button --}}
                 @if ($canRequestAccess)
-                    <div class="bg-color-bg rounded-xl p-6 border border-gray-200">
+                    <div class="bg-color-bg rounded-xl p-6 border border-color-border">
                         <p class="text-color-text mb-4">
                             {{ __('result.access_required', ['cost' => \App\Support\Money::format($accessFee)]) }}
                         </p>

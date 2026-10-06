@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Result\Livewire;
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Listing\Models\Listing;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Policies\ResultAccessPolicy;
 use Illuminate\Contracts\View\View;
@@ -18,8 +19,17 @@ final class ViewResultPage extends Component
 
     public bool $isRequestingAccess = false;
 
-    public function mount(InspectionResult $result): void
+    public function mount(Listing $listing): void
     {
+        // Find the inspection result for this listing
+        $result = InspectionResult::whereHas('job', function ($query) use ($listing) {
+            $query->where('listing_id', $listing->id);
+        })->first();
+
+        if ($result === null) {
+            abort(404);
+        }
+
         $this->result = $result;
     }
 
@@ -30,7 +40,7 @@ final class ViewResultPage extends Component
             return null;
         }
 
-        return redirect(route('results.request-access', $this->result));
+        return redirect(route('results.access', ['listing' => $this->result->job->listing_id]));
     }
 
     public function render(): View

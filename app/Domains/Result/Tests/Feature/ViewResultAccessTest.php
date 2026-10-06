@@ -31,27 +31,27 @@ final class ViewResultAccessTest extends TestCase
 
         // Listing seller should have free access
         $this->actingAs($listing->seller)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // Inspector should have free access
         $this->actingAs($inspector)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // Requester should have free access
         $this->actingAs($requester)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // Admin should have free access
         $this->actingAs($admin)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // Buyer without payment should see limited summary
         $this->actingAs($buyer)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
     }
 
@@ -62,7 +62,7 @@ final class ViewResultAccessTest extends TestCase
         $buyer = User::factory()->create();
 
         $response = $this->actingAs($buyer)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // Verify the page is rendered (no full details shown)
@@ -165,7 +165,7 @@ final class ViewResultAccessTest extends TestCase
 
         // Verify buyer has access
         $this->actingAs($buyer)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // Mark listing as sold
@@ -173,13 +173,13 @@ final class ViewResultAccessTest extends TestCase
 
         // Previous buyer should still have access
         $this->actingAs($buyer)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // New buyer should NOT be able to request access (limited summary only, no button)
         $newBuyer = User::factory()->create();
         $response = $this->actingAs($newBuyer)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
 
         // Verify message shown when listing is sold
@@ -187,7 +187,7 @@ final class ViewResultAccessTest extends TestCase
 
         // Verify inspector still has free access
         $this->actingAs($result->inspector)
-            ->get(route('results.view', $result))
+            ->get(route('results.show', $result->job->listing))
             ->assertOk();
     }
 
