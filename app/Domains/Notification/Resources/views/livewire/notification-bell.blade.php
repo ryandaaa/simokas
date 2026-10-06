@@ -1,4 +1,4 @@
-<div>
+<div @auth wire:poll.15s @endauth>
     @auth
     <a href="{{ route('notifications.index') }}"
        class="relative inline-flex items-center justify-center w-11 h-11 rounded-lg text-muted hover:text-text hover:bg-muted/10 focus:outline-none focus:ring-2 focus:ring-accent transition-colors"

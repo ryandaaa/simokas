@@ -76,5 +76,6 @@ return [
         'login_hint' => 'Masuk untuk mengajukan inspeksi atau membuka hasil. Anda akan kembali ke halaman ini.',
         'not_public_notice' => 'Listing ini belum tampil publik. Hanya Anda dan admin yang dapat melihat halaman ini.',
         'sold_notice' => 'Kendaraan ini sudah Terjual.',
+        'active_inspection_notice' => 'Sedang ada inspeksi berjalan pada kendaraan ini',
     ],
 ];

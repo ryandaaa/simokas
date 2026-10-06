@@ -6,6 +6,7 @@ namespace App\Domains\Catalog\Http\Controllers;
 
 use App\Domains\Catalog\Actions\ShowListingDetail;
 use App\Domains\Catalog\DTOs\ListingDetail;
+use App\Domains\Listing\Contracts\ListingActivityChecker;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,13 +17,14 @@ use Illuminate\View\View;
  *
  * Action matrix (docs/flows/catalog.md section 3, P0 only):
  * - "Ajukan Inspeksi" appears for eligible requesters (guest, or
- *   authenticated role `user` who is not the owner) on `active` listings.
- *   Expected JOB-1 route: `jobs.request` (GET /jobs/request/{listing} or
- *   equivalent, created by JOB-1). While that route is missing, guests link
- *   to login (intended URL stored below) and authenticated users see no
- *   button. Inspectors never see it (D-06), admins and owners neither.
- *   NOTE: the "no active job" condition cannot be checked yet (no
- *   Inspection domain); JOB-1 should add active-job gating.
+ *   authenticated role `user` who is not the owner) on `active` listings
+ *   without an active inspection job. Expected JOB-1 route: `jobs.request`
+ *   (GET /jobs/request/{listing} or equivalent, created by JOB-1). While
+ *   that route is missing, guests link to login (intended URL stored below)
+ *   and authenticated users see no button. Inspectors never see it (D-06),
+ *   admins and owners neither.
+ *   When an active job exists, the button is hidden and replaced by an
+ *   informative notice.
  * - "Lihat Hasil" (entitled: owner, admin, job inspector via private
  *   access) and "Buka Hasil" (everyone else, paid access) appear only when
  *   their RES-4 routes exist. Expected RES-4 routes: `results.show` and
@@ -36,7 +38,10 @@ use Illuminate\View\View;
  */
 final class ShowListingController
 {
-    public function __construct(private readonly ShowListingDetail $details) {}
+    public function __construct(
+        private readonly ShowListingDetail $details,
+        private readonly ListingActivityChecker $activityChecker,
+    ) {}
 
     public function __invoke(Request $request, string $listing): View
     {
@@ -53,16 +58,21 @@ final class ShowListingController
             $request->session()->put('url.intended', $request->url());
         }
 
+        $canRequestInspection = $this->canRequestInspection($detail);
+        $hasActiveJob = ! $detail->isSold && $this->activityChecker->hasActiveJob($detail->id);
+
         return view('catalog::show', [
             'detail' => $detail,
-            'actions' => $this->buildActions($detail),
+            'actions' => $this->buildActions($detail, $hasActiveJob),
+            'hasActiveJob' => $hasActiveJob,
+            'canRequestInspection' => $canRequestInspection,
         ]);
     }
 
     /**
      * @return list<array{key: string, label: string, url: string, variant: string, icon: string|null}>
      */
-    private function buildActions(ListingDetail $detail): array
+    private function buildActions(ListingDetail $detail, bool $hasActiveJob = false): array
     {
         if ($detail->isSold) {
             return [];
@@ -80,7 +90,7 @@ final class ShowListingController
             ];
         }
 
-        if ($detail->status->value === 'active' && $this->canRequestInspection($detail)) {
+        if ($detail->status->value === 'active' && ! $hasActiveJob && $this->canRequestInspection($detail)) {
             if ($detail->viewerRole === null) {
                 $actions[] = [
                     'key' => 'request-inspection',

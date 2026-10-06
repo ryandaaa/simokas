@@ -115,12 +115,12 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 - [x] `RES-T07` Item kritis Buruk memaksa `not_recommended` (RES-E9)
 - [x] `RES-T08` Hasil terkunci setelah dikirim, ubah ditolak, admin dapat membuka kembali (RES-E14)
 - [x] `RES-T09` Kirim dua kali berefek sekali (RES-E6)
-- [ ] `RES-T10` Hak akses tanpa bayar: pemilik, inspektor pembuat, pemohon, admin (dataset)
-- [ ] `RES-T11` Pengguna lain mendapat ringkasan terbatas tanpa rincian (RES-E12), respons tidak memuat rincian
-- [ ] `RES-T12` Bayar akses membuat `result_access` dan posting ledger, tidak menagih dua kali (RES-E7)
-- [ ] `RES-T13` Setelah `sold`, pembeli baru tidak dapat membuka, pembayar lama tetap (RES-E8)
+- [x] `RES-T10` Hak akses tanpa bayar: pemilik, inspektor pembuat, pemohon, admin (dataset)
+- [x] `RES-T11` Pengguna lain mendapat ringkasan terbatas tanpa rincian (RES-E12), respons tidak memuat rincian
+- [x] `RES-T12` Bayar akses membuat `result_access` dan posting ledger, tidak menagih dua kali (RES-E7)
+- [x] `RES-T13` Setelah `sold`, pembeli baru tidak dapat membuka, pembayar lama tetap (RES-E8)
 - [x] `RES-T14` Draf hanya dapat diakses inspektor pemilik job (RES-E11)
 - [x] `RES-T15` Draf tetap memakai versi template yang tercatat (RES-E10)
 - [x] `RES-T16` Tautan foto bertanda tangan kedaluwarsa dan tidak dapat dipakai pihak lain
-- [ ] `RES-T17` Tidak ada rute unduh atau cetak (RES-R12)
+- [x] `RES-T17` Tidak ada rute unduh atau cetak (RES-R12)
 

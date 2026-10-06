@@ -9,6 +9,8 @@ use App\Domains\Admin\Listeners\RecordInspectorRejectedListener;
 use App\Domains\Admin\Listeners\RecordJobCancelledListener;
 use App\Domains\Admin\Listeners\RecordListingApprovedListener;
 use App\Domains\Admin\Listeners\RecordListingRejectedListener;
+use App\Domains\Admin\Listeners\RecordRatingHiddenListener;
+use App\Domains\Admin\Listeners\RecordRatingUnhiddenListener;
 use App\Domains\Admin\Listeners\RecordResultReopenedListener;
 use App\Domains\Admin\Livewire\AuditLogIndex;
 use App\Domains\Admin\Livewire\InspectionTemplateManager;
@@ -27,6 +29,8 @@ use App\Domains\Inspector\Events\InspectorApproved;
 use App\Domains\Inspector\Events\InspectorRejected;
 use App\Domains\Listing\Events\ListingApproved;
 use App\Domains\Listing\Events\ListingRejected;
+use App\Domains\Rating\Events\RatingHidden;
+use App\Domains\Rating\Events\RatingUnhidden;
 use App\Domains\Result\Events\ResultReopened;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -98,6 +102,14 @@ final class AdminServiceProvider extends ServiceProvider
         Event::listen(
             ListingRejected::class,
             RecordListingRejectedListener::class,
+        );
+        Event::listen(
+            RatingHidden::class,
+            RecordRatingHiddenListener::class,
+        );
+        Event::listen(
+            RatingUnhidden::class,
+            RecordRatingUnhiddenListener::class,
         );
     }
 }
