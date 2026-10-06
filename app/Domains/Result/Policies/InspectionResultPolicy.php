@@ -105,16 +105,7 @@ final class InspectionResultPolicy
             return false;
         }
 
-        // For submitted results: listing owner and inspection requester can view
-        if ((string) $user->getKey() === (string) $result->listing->seller_id) {
-            return true;
-        }
-
-        if ((string) $user->getKey() === (string) $result->job->requester_id) {
-            return true;
-        }
-
-        return false;
+        return app(ResultAccessPolicy::class)->viewDetails($user, $result);
     }
 
     public function reopen(User $user, InspectionResult $result): bool

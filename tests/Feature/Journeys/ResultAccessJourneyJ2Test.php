@@ -202,4 +202,4 @@ it('J2 allows buyer who purchased result access to view photos via signed url', 
     $response = $this->actingAs($buyer)->get($signedUrl);
 
     $response->assertOk();
-})->skip('CELAH: app/Domains/Result/Policies/InspectionResultPolicy.php:108-117 hanya mengizinkan listing->seller_id dan job->requester_id untuk melihat foto pada hasil submitted tanpa memeriksa tabel result_accesses, sehingga pembeli yang membayar biaya akses ditolak 403 saat mengakses foto via route results.photos.show. Usulan perbaikan: tambahkan pengecekan ResultAccess di InspectionResultPolicy::viewPhoto() agar mengizinkan pengguna yang memiliki entri ResultAccess yang valid.');
+});
