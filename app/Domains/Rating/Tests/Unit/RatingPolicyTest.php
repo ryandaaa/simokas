@@ -25,7 +25,7 @@ it('RTG-T06 rating cannot be updated or deleted by buyer or any user (RTG-R3)', 
         'inspector_id' => $inspector->id,
     ]);
 
-    $policy = new RatingPolicy();
+    $policy = new RatingPolicy;
 
     // Buyer cannot update or delete
     expect($policy->update($buyer, $rating))->toBeFalse()
@@ -55,7 +55,7 @@ it('authorizes create only for transaction buyer on completed transaction with i
         'status' => TransactionStatus::Completed,
     ]);
 
-    $policy = new RatingPolicy();
+    $policy = new RatingPolicy;
 
     expect($policy->create($buyer, $transaction))->toBeTrue()
         ->and($policy->create($otherUser, $transaction))->toBeFalse()
@@ -67,7 +67,7 @@ it('denies create if transaction not completed or has no inspector or already ra
     $buyer = User::factory()->user()->create();
     $inspector = User::factory()->inspector()->create();
 
-    $policy = new RatingPolicy();
+    $policy = new RatingPolicy;
 
     // Not completed
     $txNotCompleted = Transaction::factory()->create([
@@ -106,7 +106,7 @@ it('authorizes hide and unhide only for active admin', function () {
 
     $rating = Rating::factory()->create();
 
-    $policy = new RatingPolicy();
+    $policy = new RatingPolicy;
 
     expect($policy->hide($admin, $rating))->toBeTrue()
         ->and($policy->unhide($admin, $rating))->toBeTrue()
