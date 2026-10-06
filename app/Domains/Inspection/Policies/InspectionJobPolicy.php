@@ -123,6 +123,6 @@ final class InspectionJobPolicy
         }
 
         return (string) $user->getKey() === (string) $job->requester_id
-            && $job->status->value === 'result_submitted';
+            && in_array($job->status->value, ['result_submitted', 'completed'], true);
     }
 }
