@@ -80,7 +80,7 @@ sequenceDiagram
 - [x] `NTF-T03` Hanya pemilik dapat membaca atau menandai (NTF-E4)
 - [x] `NTF-T04` Tandai dibaca satu dan semua
 - [x] `NTF-T05` Jumlah belum dibaca benar
-- [ ] `NTF-T06` Siaran dikirim ke kanal pengguna yang benar (ditunda ke NTF-2, real-time)
+- [ ] `NTF-T06` Siaran dikirim ke kanal pengguna yang benar (Diputuskan memakai polling tanpa Pusher; ditunda)
 - [x] `NTF-T07` Kegagalan listener tidak menggagalkan aksi utama (NTF-E7)
 - [x] `NTF-T08` Notifikasi tidak memuat alamat atau nomor rangka (NTF-R5)
 - [x] `NTF-T09` Pengguna diblokir tidak menerima notifikasi (NTF-R6)
