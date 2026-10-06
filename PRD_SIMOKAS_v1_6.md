@@ -1671,82 +1671,82 @@ Jika waktu habis, korbankan **kelengkapan fitur P1**, bukan **kualitas alur P0**
 
 ### 28.1 Registrasi dan Login (P0)
 
-- [ ] Pengguna dapat mendaftar sebagai pengguna umum dengan data valid dan langsung masuk ke dashboard.
-- [ ] Email atau nomor HP tidak valid ditolak dengan pesan pada field terkait.
-- [ ] Inspektor yang mendaftar berstatus Menunggu Verifikasi dan tidak dapat membuka daftar job.
-- [ ] Login gagal tidak menyebutkan apakah email atau password yang salah.
-- [ ] Reset password lewat tautan email berfungsi.
-- [ ] Pengguna tidak dapat mendaftar sebagai admin dari halaman publik.
+- [x] Pengguna dapat mendaftar sebagai pengguna umum dengan data valid dan langsung masuk ke dashboard.
+- [x] Email atau nomor HP tidak valid ditolak dengan pesan pada field terkait.
+- [x] Inspektor yang mendaftar berstatus Menunggu Verifikasi dan tidak dapat membuka daftar job.
+- [x] Login gagal tidak menyebutkan apakah email atau password yang salah.
+- [x] Reset password lewat tautan email berfungsi.
+- [x] Pengguna tidak dapat mendaftar sebagai admin dari halaman publik.
 
 ### 28.2 Listing (P0)
 
-- [ ] Penjual dapat membuat listing dengan 3–10 foto, titik lokasi, dan opsi waktu inspeksi.
-- [ ] Listing baru berstatus Menunggu Validasi dan tidak tampil di daftar publik.
-- [ ] Admin dapat menyetujui atau menolak (dengan alasan), dan status berubah sesuai.
-- [ ] Pin di luar Pekanbaru ditolak.
-- [ ] Respons publik tidak memuat koordinat persis, alamat lengkap, maupun nomor rangka.
-- [ ] Daftar barang dapat disaring dan diurutkan sesuai Bagian 13.2.
+- [x] Penjual dapat membuat listing dengan 3–10 foto, titik lokasi, dan opsi waktu inspeksi.
+- [x] Listing baru berstatus Menunggu Validasi dan tidak tampil di daftar publik.
+- [x] Admin dapat menyetujui atau menolak (dengan alasan), dan status berubah sesuai.
+- [x] Pin di luar Pekanbaru ditolak.
+- [x] Respons publik tidak memuat koordinat persis, alamat lengkap, maupun nomor rangka.
+- [x] Daftar barang dapat disaring dan diurutkan sesuai Bagian 13.2.
 
 ### 28.3 Inspeksi dan Pembayaran (P0)
 
 - [ ] Tombol Ajukan Inspeksi hanya muncul pada listing Aktif tanpa job aktif.
-- [ ] Pembayaran simulasi sukses mengubah job menjadi Dibayar dan listing menjadi Dalam Inspeksi.
-- [ ] Klik ganda pada Bayar tidak menghasilkan tagihan ganda.
-- [ ] Pembayaran gagal tidak membuat job tampil di daftar inspektor.
-- [ ] Tagihan yang tidak dibayar dalam 30 menit berstatus Kedaluwarsa dan listing dapat diajukan inspeksi lagi.
-- [ ] Tarif yang dikenakan sama dengan tarif admin saat job dibuat (default Rp15.000 motor, Rp50.000 mobil).
+- [x] Pembayaran simulasi sukses mengubah job menjadi Dibayar dan listing menjadi Dalam Inspeksi.
+- [x] Klik ganda pada Bayar tidak menghasilkan tagihan ganda.
+- [x] Pembayaran gagal tidak membuat job tampil di daftar inspektor.
+- [x] Tagihan yang tidak dibayar dalam 30 menit berstatus Kedaluwarsa dan listing dapat diajukan inspeksi lagi.
+- [x] Tarif yang dikenakan sama dengan tarif admin saat job dibuat (default Rp15.000 motor, Rp50.000 mobil).
 
 ### 28.4 Job Inspektor (P0)
 
-- [ ] Inspektor terverifikasi melihat job terbuka. Yang belum terverifikasi tidak.
-- [ ] Ambil Job hanya berhasil untuk satu inspektor bila ditekan bersamaan.
-- [ ] Alamat persis dan nomor rangka hanya muncul setelah job diambil.
-- [ ] Inspektor tidak dapat mengambil job atas listing miliknya sendiri.
-- [ ] Pembatalan oleh inspektor mengembalikan job ke daftar.
+- [x] Inspektor terverifikasi melihat job terbuka. Yang belum terverifikasi tidak.
+- [x] Ambil Job hanya berhasil untuk satu inspektor bila ditekan bersamaan.
+- [x] Alamat persis dan nomor rangka hanya muncul setelah job diambil.
+- [x] Inspektor tidak dapat mengambil job atas listing miliknya sendiri.
+- [x] Pembatalan oleh inspektor mengembalikan job ke daftar.
 
 ### 28.5 Form dan Hasil Inspeksi (P0)
 
-- [ ] Template mobil dan motor berbeda tampil sesuai jenis kendaraan.
-- [ ] Draf tersimpan dan dapat dilanjutkan setelah halaman dimuat ulang.
-- [ ] Kirim Hasil ditolak jika item wajib atau foto minimal belum terpenuhi, dengan daftar yang kurang.
-- [ ] Foto inspeksi hanya dapat diambil dari kamera dan menampilkan timestamp.
-- [ ] Skor dan rekomendasi dihitung sesuai Bagian 15.3, termasuk aturan item kritis.
-- [ ] Laporan terkunci setelah dikirim.
+- [x] Template mobil dan motor berbeda tampil sesuai jenis kendaraan.
+- [x] Draf tersimpan dan dapat dilanjutkan setelah halaman dimuat ulang.
+- [x] Kirim Hasil ditolak jika item wajib atau foto minimal belum terpenuhi, dengan daftar yang kurang.
+- [x] Foto inspeksi hanya dapat diambil dari kamera dan menampilkan timestamp.
+- [x] Skor dan rekomendasi dihitung sesuai Bagian 15.3, termasuk aturan item kritis.
+- [x] Laporan terkunci setelah dikirim.
 
 ### 28.6 Akses Hasil dan Pendapatan (P0)
 
-- [ ] Listing yang sudah diinspeksi menampilkan lencana publik, tetapi rincian hasil tersembunyi.
-- [ ] Pemilik, inspektor pembuat, pembayar inspeksi, dan admin dapat melihat rincian tanpa biaya akses.
-- [ ] Pengguna lain melihat tombol Buka Hasil dengan biaya akses yang sama dengan tarif inspeksi, dan setelah membayar dapat melihat hasil.
-- [ ] Pembayaran akses menambah pendapatan inspektor dikurangi komisi platform 10%, dan tercatat di ledger. Jumlah pendapatan inspektor dan komisi platform selalu sama dengan nilai pembayaran.
-- [ ] Setelah listing Terjual, pembeli baru tidak dapat membuka hasil.
+- [x] Listing yang sudah diinspeksi menampilkan lencana publik, tetapi rincian hasil tersembunyi.
+- [x] Pemilik, inspektor pembuat, pembayar inspeksi, dan admin dapat melihat rincian tanpa biaya akses.
+- [x] Pengguna lain melihat tombol Buka Hasil dengan biaya akses yang sama dengan tarif inspeksi, dan setelah membayar dapat melihat hasil.
+- [x] Pembayaran akses menambah pendapatan inspektor dikurangi komisi platform 10%, dan tercatat di ledger. Jumlah pendapatan inspektor dan komisi platform selalu sama dengan nilai pembayaran.
+- [x] Setelah listing Terjual, pembeli baru tidak dapat membuka hasil.
 
 ### 28.7 Dashboard dan Admin (P0)
 
-- [ ] Setiap role melihat dashboard sesuai Bagian 13.8.
-- [ ] Admin dapat mengubah tarif dan persentase komisi, dan job baru memakai nilai baru.
-- [ ] Admin dapat memverifikasi inspektor, memvalidasi listing, dan menyelesaikan atau membatalkan job.
+- [x] Setiap role melihat dashboard sesuai Bagian 13.8.
+- [x] Admin dapat mengubah tarif dan persentase komisi, dan job baru memakai nilai baru.
+- [x] Admin dapat memverifikasi inspektor, memvalidasi listing, dan menyelesaikan atau membatalkan job.
 
 ### 28.8 Keamanan dan Performa (P0)
 
-- [ ] Pengguna role A tidak dapat membaca data privat role B melalui rute, endpoint, maupun kanal real-time.
-- [ ] Dokumen inspektor tidak dapat diakses tanpa autentikasi yang berhak.
+- [x] Pengguna role A tidak dapat membaca data privat role B melalui rute, endpoint, maupun kanal real-time.
+- [x] Dokumen inspektor tidak dapat diakses tanpa autentikasi yang berhak.
 - [ ] Halaman daftar barang mencapai Lighthouse mobile Performance ≥ 80.
 - [ ] Alur utama berjalan di Chrome Android, Safari iPhone, dan Chrome desktop.
 
 ### 28.9 Transaksi, Chat, dan Rating (P1)
 
-- [ ] Alur Ajukan Pembelian sampai Selesai berjalan sesuai Bagian 8.6, dan listing berubah menjadi Terjual.
-- [ ] Penjual melihat rincian potongan sebelum menyetujui pembelian.
-- [ ] Komisi inspektor 3% dari harga transaksi dihitung benar, dipotong platform sesuai aturan yang disepakati, dan tercatat di ledger.
-- [ ] Transaksi pada listing tanpa hasil inspeksi tidak menghasilkan komisi inspektor.
-- [ ] Pesan terkirim muncul pada lawan bicara secara real-time (target kurang dari 2 detik) tanpa memuat ulang halaman, dengan penanda belum dibaca.
-- [ ] Pengguna hanya menerima pesan dari percakapan yang diikutinya.
-- [ ] Setelah koneksi terputus dan pulih, pesan yang terlewat muncul.
+- [x] Alur Ajukan Pembelian sampai Selesai berjalan sesuai Bagian 8.6, dan listing berubah menjadi Terjual.
+- [x] Penjual melihat rincian potongan sebelum menyetujui pembelian.
+- [x] Komisi inspektor 3% dari harga transaksi dihitung benar, dipotong platform sesuai aturan yang disepakati, dan tercatat di ledger.
+- [x] Transaksi pada listing tanpa hasil inspeksi tidak menghasilkan komisi inspektor.
+- [x] Pesan terkirim muncul pada lawan bicara secara real-time (target kurang dari 2 detik) tanpa memuat ulang halaman, dengan penanda belum dibaca.
+- [x] Pengguna hanya menerima pesan dari percakapan yang diikutinya.
+- [x] Setelah koneksi terputus dan pulih, pesan yang terlewat muncul.
 - [ ] Hanya pembeli dari transaksi selesai yang dapat memberi rating, satu kali per transaksi.
 - [ ] Rating rata-rata inspektor diperbarui dan tampil pada hasil inspeksi dan dashboard.
 - [ ] Notifikasi untuk kejadian pada 13.15 muncul real-time dan dapat ditandai dibaca.
-- [ ] Halaman kebijakan privasi dan syarat ketentuan dapat diakses, dan persetujuan dicatat saat registrasi.
+- [x] Halaman kebijakan privasi dan syarat ketentuan dapat diakses, dan persetujuan dicatat saat registrasi.
 
 ---
 
