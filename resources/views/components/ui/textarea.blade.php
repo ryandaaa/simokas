@@ -36,7 +36,7 @@
 @else
     <div class="w-full">
         @if ($label)
-            <label for="{{ $textareaId }}" class="block text-sm font-medium text-text mb-1.5">
+            <label for="{{ $textareaId }}" class="block text-base font-medium text-charcoal mb-1.5">
                 {{ $label }}
                 @if ($required)
                     <span class="text-danger ml-0.5" aria-hidden="true">*</span>
@@ -54,16 +54,16 @@
                       @if ($required) required aria-required="true" @endif
                       @if ($disabled) disabled @endif
                       {{ $attributes->merge([
-                          'class' => 'w-full px-3.5 py-2.5 rounded-lg text-sm bg-surface text-text border transition-colors focus:outline-none focus:ring-2 ' .
+                          'class' => 'w-full px-4 py-3 rounded-[10px] text-base bg-surface text-forest border placeholder:text-pebble transition-colors focus:outline-none focus:ring-0 shadow-none focus:shadow-none ' .
                               ($hasError
-                                  ? 'border-danger focus:ring-danger/20 focus:border-danger'
-                                  : 'border-muted/30 focus:ring-accent focus:border-accent') .
-                              ($disabled ? ' opacity-60 bg-muted/10 cursor-not-allowed' : ''),
+                                  ? 'border-danger focus:border-danger'
+                                  : 'border-pebble focus:border-forest') .
+                              ($disabled ? ' opacity-60 bg-fog text-pebble cursor-not-allowed' : ''),
                       ]) }}>{{ $slot }}</textarea>
         </div>
 
         @if ($hint)
-            <p id="{{ $textareaId }}-hint" class="text-xs text-muted mt-1.5">
+            <p id="{{ $textareaId }}-hint" class="text-xs text-pebble mt-1.5">
                 {{ $hint }}
             </p>
         @endif

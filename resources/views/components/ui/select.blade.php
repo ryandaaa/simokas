@@ -38,7 +38,7 @@
 @else
     <div class="w-full">
         @if ($label)
-            <label for="{{ $selectId }}" class="block text-sm font-medium text-text mb-1.5">
+            <label for="{{ $selectId }}" class="block text-base font-medium text-charcoal mb-1.5">
                 {{ $label }}
                 @if ($required)
                     <span class="text-danger ml-0.5" aria-hidden="true">*</span>
@@ -55,11 +55,11 @@
                     @if ($required) required aria-required="true" @endif
                     @if ($disabled) disabled @endif
                     {{ $attributes->merge([
-                        'class' => 'w-full min-h-[44px] px-3.5 py-2.5 pr-10 rounded-lg text-sm bg-surface text-text border transition-colors appearance-none focus:outline-none focus:ring-2 ' .
+                        'class' => 'w-full h-11 min-h-[44px] px-4 py-2.5 pr-10 rounded-[10px] text-base bg-surface text-forest border transition-colors appearance-none focus:outline-none focus:ring-0 shadow-none focus:shadow-none ' .
                             ($hasError
-                                ? 'border-danger focus:ring-danger/20 focus:border-danger'
-                                : 'border-muted/30 focus:ring-accent focus:border-accent') .
-                            ($disabled ? ' opacity-60 bg-muted/10 cursor-not-allowed' : ''),
+                                ? 'border-danger focus:border-danger'
+                                : 'border-pebble focus:border-forest') .
+                            ($disabled ? ' opacity-60 bg-fog text-pebble cursor-not-allowed' : ''),
                     ]) }}>
                 @if ($placeholder)
                     <option value="" @selected(empty($selected))>{{ $placeholder }}</option>
@@ -80,13 +80,13 @@
                 @endif
             </select>
 
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-muted">
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-pebble">
                 <x-ui.icon name="chevron-down" class="w-4 h-4" />
             </div>
         </div>
 
         @if ($hint)
-            <p id="{{ $selectId }}-hint" class="text-xs text-muted mt-1.5">
+            <p id="{{ $selectId }}-hint" class="text-xs text-pebble mt-1.5">
                 {{ $hint }}
             </p>
         @endif
