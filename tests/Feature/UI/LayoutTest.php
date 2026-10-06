@@ -85,7 +85,7 @@ it('loads livewire and alpine scripts exactly once on 404 error page', function 
 });
 
 it('shows account menu with Keluar for logged-in users', function () {
-    $user = User::factory()->create(['name' => 'Pengguna Menu Akun']);
+    $user = User::factory()->make(['name' => 'Pengguna Menu Akun']);
 
     $view = $this->actingAs($user)->blade('<x-layouts.app title="Uji Menu"><p>Konten</p></x-layouts.app>');
 
