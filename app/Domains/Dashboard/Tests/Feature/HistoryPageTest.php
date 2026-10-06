@@ -290,6 +290,49 @@ it('HIST-T05 displays empty states for user without history', function () {
     $response->assertSee(__('dashboard.history.empty_results_title'));
 });
 
+it('HIST-T02b a draft result never appears in the requester history until it is submitted', function () {
+    $requester = User::factory()->user()->create();
+    $seller = User::factory()->user()->create();
+    $inspector = createApprovedInspector();
+    $template = getTemplate();
+
+    $listing = Listing::factory()->create([
+        'seller_id' => $seller->id,
+        'title' => 'Suzuki Ertiga Draf Rahasia',
+        'status' => ListingStatus::Active,
+    ]);
+
+    $job = InspectionJob::factory()->create([
+        'listing_id' => $listing->id,
+        'requester_id' => $requester->id,
+        'inspector_id' => $inspector->id,
+        'status' => JobStatus::InProgress,
+    ]);
+
+    $result = InspectionResult::factory()->create([
+        'job_id' => $job->id,
+        'listing_id' => $listing->id,
+        'inspector_id' => $inspector->id,
+        'template_id' => $template->id,
+        'status' => ResultStatus::Draft,
+    ]);
+
+    actingAs($requester)->get(route('history'))
+        ->assertOk()
+        ->assertDontSee('Suzuki Ertiga Draf Rahasia');
+
+    $result->update([
+        'status' => ResultStatus::Submitted,
+        'recommendation' => InspectionRecommendation::Recommended,
+        'total_score' => 85.0,
+        'submitted_at' => now(),
+    ]);
+
+    actingAs($requester)->get(route('history'))
+        ->assertOk()
+        ->assertSee('Suzuki Ertiga Draf Rahasia');
+});
+
 it('HIST-T06 enforces authorization for all roles and unapproved inspector restrictions', function () {
     // 1. Guest redirected to login
     $guestResponse = get(route('history'));

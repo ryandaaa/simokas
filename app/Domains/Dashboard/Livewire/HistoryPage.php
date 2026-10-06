@@ -8,6 +8,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Contracts\InspectorEligibility;
+use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultAccess;
 use App\Domains\Transaction\Models\Transaction;
@@ -65,6 +66,8 @@ final class HistoryPage extends Component
             ->pluck('result_id');
 
         $inspectionResults = InspectionResult::query()
+            // Hasil yang masih draf (inspektor belum selesai mengisi) tidak masuk riwayat siapa pun selain pembuatnya.
+            ->where('status', ResultStatus::Submitted->value)
             ->where(function ($query) use ($user, $paidResultIds): void {
                 $query->whereIn('id', $paidResultIds)
                     ->orWhereHas('job', function ($jobQuery) use ($user): void {
