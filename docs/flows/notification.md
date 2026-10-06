@@ -28,6 +28,12 @@ sequenceDiagram
 
 ## 2. Pemicu [USULAN, PRD 13.15]
 
+> **Catatan NTF-1 (2026-10-06):** empat event pada tabel di bawah belum ada di
+> `main` saat kartu ini dikerjakan (`TransactionOffered`, `TransactionAccepted`,
+> `TransactionRejected`, `InspectorSubmitted`) sehingga baris yang memakai
+> event tersebut belum diimplementasikan. Event-event itu "ditambahkan di PR
+> shared terpisah" (lihat Tugas 4 dan Tugas 5 di rencana kerja).
+
 | Penerima | Kejadian | Event sumber | Tautan |
 | --- | --- | --- | --- |
 | Inspektor | Job baru sesuai keahlian | `PaymentSucceeded` (inspection) | Detail job |
@@ -69,13 +75,13 @@ sequenceDiagram
 
 ## 5. Daftar test case
 
-- [ ] `NTF-T01` Setiap event pada tabel pemicu membuat notifikasi untuk penerima yang tepat (dataset event × penerima)
-- [ ] `NTF-T02` Event ganda tidak menghasilkan notifikasi ganda (NTF-E2)
-- [ ] `NTF-T03` Hanya pemilik dapat membaca atau menandai (NTF-E4)
-- [ ] `NTF-T04` Tandai dibaca satu dan semua
-- [ ] `NTF-T05` Jumlah belum dibaca benar
-- [ ] `NTF-T06` Siaran dikirim ke kanal pengguna yang benar
-- [ ] `NTF-T07` Kegagalan listener tidak menggagalkan aksi utama (NTF-E7)
-- [ ] `NTF-T08` Notifikasi tidak memuat alamat atau nomor rangka (NTF-R5)
-- [ ] `NTF-T09` Pengguna diblokir tidak menerima notifikasi (NTF-R6)
-- [ ] `NTF-T10` Pesan chat beruntun dikelompokkan (NTF-R4)
+- [x] `NTF-T01` Setiap event pada tabel pemicu membuat notifikasi untuk penerima yang tepat (dataset event × penerima; hanya untuk event yang sudah ada di `main`, lihat catatan bagian 2)
+- [x] `NTF-T02` Event ganda tidak menghasilkan notifikasi ganda (NTF-E2)
+- [x] `NTF-T03` Hanya pemilik dapat membaca atau menandai (NTF-E4)
+- [x] `NTF-T04` Tandai dibaca satu dan semua
+- [x] `NTF-T05` Jumlah belum dibaca benar
+- [ ] `NTF-T06` Siaran dikirim ke kanal pengguna yang benar (ditunda ke NTF-2, real-time)
+- [x] `NTF-T07` Kegagalan listener tidak menggagalkan aksi utama (NTF-E7)
+- [x] `NTF-T08` Notifikasi tidak memuat alamat atau nomor rangka (NTF-R5)
+- [x] `NTF-T09` Pengguna diblokir tidak menerima notifikasi (NTF-R6)
+- [x] `NTF-T10` Pesan chat beruntun dikelompokkan (NTF-R4)
