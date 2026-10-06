@@ -6,6 +6,7 @@ namespace App\Domains\Admin\Tests\Feature;
 
 use App\Domains\Admin\Livewire\JobDetail;
 use App\Domains\Identity\Enums\UserRole;
+use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
@@ -257,5 +258,88 @@ final class AdminJobDetailActionsTest extends TestCase
         // Attempting to complete the job throws 409 conflict caught with friendly message
         $component->call('completeJob')
             ->assertSee(__('admin.jobs.already_processed'));
+    }
+
+    public function test_adm_t02_non_admin_gets_403_on_mutating_actions_without_state_effect(): void
+    {
+        $user = User::factory()->create(['role' => UserRole::User]);
+
+        $job = InspectionJob::factory()->create([
+            'status' => JobStatus::Taken,
+        ]);
+
+        // Mount itself refuses non-admins
+        Livewire::actingAs($user)
+            ->test(JobDetail::class, ['job' => $job])
+            ->assertForbidden();
+
+        $this->assertSame(JobStatus::Taken, $job->fresh()->status);
+        $this->assertDatabaseCount('audit_logs', 0);
+    }
+
+    public function test_adm_t02_blocked_admin_gets_403_on_mutating_actions_without_state_effect(): void
+    {
+        $blockedAdmin = User::factory()->admin()->create([
+            'status' => UserStatus::Blocked,
+        ]);
+
+        $job = InspectionJob::factory()->create([
+            'status' => JobStatus::Taken,
+        ]);
+
+        Livewire::actingAs($blockedAdmin)
+            ->test(JobDetail::class, ['job' => $job])
+            ->assertForbidden();
+
+        $this->assertSame(JobStatus::Taken, $job->fresh()->status);
+        $this->assertDatabaseCount('audit_logs', 0);
+    }
+
+    public function test_adm_t02_admin_blocked_mid_session_cannot_cancel_complete_or_reopen(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $inspector = User::factory()->inspector()->create();
+        $template = InspectionTemplate::factory()->create();
+
+        $job = InspectionJob::factory()->create([
+            'inspector_id' => $inspector->id,
+            'status' => JobStatus::ResultSubmitted,
+        ]);
+
+        $result = InspectionResult::factory()->create([
+            'job_id' => $job->id,
+            'listing_id' => $job->listing_id,
+            'inspector_id' => $inspector->id,
+            'template_id' => $template->id,
+            'status' => ResultStatus::Submitted,
+        ]);
+
+        // Admin gets blocked after the page loads; Livewire actions must re-check.
+        // Each action gets a fresh mount as active admin (mount passes), then the
+        // admin is blocked, then the action must 403. A 403 response does not
+        // return a reusable Livewire snapshot, hence one component per action.
+        foreach (['cancelJob', 'completeJob', 'reopenResult'] as $action) {
+            $admin->update(['status' => UserStatus::Active]);
+
+            $component = Livewire::actingAs($admin)
+                ->test(JobDetail::class, ['job' => $job]);
+
+            $admin->update(['status' => UserStatus::Blocked]);
+
+            if ($action === 'cancelJob') {
+                $component->set('cancelReason', 'Alasan jahat');
+            }
+
+            if ($action === 'reopenResult') {
+                $component->set('reopenReason', 'Alasan jahat');
+            }
+
+            $component->call($action)->assertForbidden();
+        }
+
+        // No state or data effect
+        $this->assertSame(JobStatus::ResultSubmitted, $job->fresh()->status);
+        $this->assertSame(ResultStatus::Submitted, $result->fresh()->status);
+        $this->assertDatabaseCount('audit_logs', 0);
     }
 }

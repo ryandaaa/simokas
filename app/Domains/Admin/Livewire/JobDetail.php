@@ -16,6 +16,7 @@ use App\Domains\Result\Models\InspectionResult;
 use App\Support\Exceptions\DomainException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Component;
 
 final class JobDetail extends Component
@@ -40,18 +41,15 @@ final class JobDetail extends Component
 
     public function mount(InspectionJob $job): void
     {
-        /** @var User|null $user */
-        $user = Auth::user();
-
-        if ($user === null || ! $user->isAdmin()) {
-            abort(403);
-        }
+        $this->ensureActiveAdmin();
 
         $this->job = $job->loadMissing(['listing.seller', 'inspector', 'requester']);
     }
 
     public function openCancelModal(): void
     {
+        $this->ensureActiveAdmin();
+
         $this->resetAlerts();
         $this->cancelReason = '';
         $this->refund = in_array($this->job->status, [JobStatus::Paid, JobStatus::Taken, JobStatus::Scheduled], true);
@@ -69,6 +67,8 @@ final class JobDetail extends Component
 
     public function cancelJob(InspectionJobModerationContract $moderation): void
     {
+        $this->ensureActiveAdmin();
+
         $this->resetAlerts();
 
         $this->validate([
@@ -91,6 +91,8 @@ final class JobDetail extends Component
 
     public function openCompleteModal(): void
     {
+        $this->ensureActiveAdmin();
+
         $this->resetAlerts();
         $this->showCompleteModal = true;
         $this->dispatch('open-modal', 'complete-job-modal');
@@ -104,6 +106,8 @@ final class JobDetail extends Component
 
     public function completeJob(InspectionJobModerationContract $moderation, RecordAuditLog $recordAuditLog): void
     {
+        $this->ensureActiveAdmin();
+
         $this->resetAlerts();
 
         /** @var User $admin */
@@ -134,6 +138,8 @@ final class JobDetail extends Component
 
     public function openReopenModal(): void
     {
+        $this->ensureActiveAdmin();
+
         $this->resetAlerts();
         $this->reopenReason = '';
         $this->showReopenModal = true;
@@ -150,6 +156,8 @@ final class JobDetail extends Component
 
     public function reopenResult(ResultModerationContract $moderation): void
     {
+        $this->ensureActiveAdmin();
+
         $this->resetAlerts();
 
         $this->validate([
@@ -221,5 +229,10 @@ final class JobDetail extends Component
     {
         $this->successMessage = null;
         $this->errorMessage = null;
+    }
+
+    private function ensureActiveAdmin(): void
+    {
+        Gate::authorize('admin.access');
     }
 }

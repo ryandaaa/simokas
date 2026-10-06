@@ -20,6 +20,7 @@ use App\Domains\Admin\Livewire\Settings;
 use App\Domains\Admin\Livewire\UnifiedAdminQueue;
 use App\Domains\Admin\Models\AuditLog;
 use App\Domains\Admin\Policies\AuditLogPolicy;
+use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Events\JobCancelled;
 use App\Domains\Inspector\Events\InspectorApproved;
 use App\Domains\Inspector\Events\InspectorRejected;
@@ -47,6 +48,11 @@ final class AdminServiceProvider extends ServiceProvider
         Gate::policy(
             AuditLog::class,
             AuditLogPolicy::class,
+        );
+
+        Gate::define(
+            'admin.access',
+            fn (User $user): bool => $user->isAdmin() && $user->isActive() && ! $user->isBlocked(),
         );
 
         $this->registerLivewireComponents();
