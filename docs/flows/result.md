@@ -124,3 +124,5 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 - [x] `RES-T16` Tautan foto bertanda tangan kedaluwarsa dan tidak dapat dipakai pihak lain
 - [ ] `RES-T17` Tidak ada rute unduh atau cetak (RES-R12)
 
+_Status RES-4: Implementing test access, payment, and limited summary views_
+
