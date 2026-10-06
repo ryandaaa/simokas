@@ -34,6 +34,12 @@ use function Pest\Laravel\seed;
 uses(RefreshDatabase::class);
 
 beforeEach(function (): void {
+    // CI tidak punya .env berisi ADMIN_PASSWORD; berikan nilai uji agar seeder tidak bergantung pada lingkungan.
+    config([
+        'auth.admin.email' => 'seederadmin@simokas.test',
+        'auth.admin.password' => 'kata-sandi-uji-'.bin2hex(random_bytes(8)),
+    ]);
+
     seed(ReferenceSeeder::class);
 });
 
