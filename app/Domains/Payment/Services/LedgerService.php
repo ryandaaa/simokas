@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Payment\Services;
 
 use App\Domains\Payment\Actions\PostPayout;
+use App\Domains\Payment\Actions\PostPurchasePayout;
 use App\Domains\Payment\Actions\RefundPayment;
 use App\Domains\Payment\Contracts\Ledger;
 use App\Domains\Payment\Enums\LedgerEntryType;
@@ -15,6 +16,7 @@ final class LedgerService implements Ledger
 {
     public function __construct(
         private readonly PostPayout $payoutAction,
+        private readonly PostPurchasePayout $purchasePayoutAction,
         private readonly RefundPayment $refundAction,
     ) {}
 
@@ -26,6 +28,11 @@ final class LedgerService implements Ledger
     public function postInspectionPayout(string $paymentId, string $inspectorId, int $platformFeePct): void
     {
         $this->payoutAction->handle($this->findPayment($paymentId), $inspectorId, LedgerEntryType::InspectionFee, $platformFeePct);
+    }
+
+    public function postPurchasePayout(string $paymentId, int $saleCommission, int $inspectorCommission, string $inspectorUserId): void
+    {
+        $this->purchasePayoutAction->handle($this->findPayment($paymentId), $saleCommission, $inspectorCommission, $inspectorUserId);
     }
 
     public function refundPayment(string $paymentId): void
