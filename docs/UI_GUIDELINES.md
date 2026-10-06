@@ -16,29 +16,41 @@ Semua warna dan ukuran didefinisikan sebagai **token** di `resources/css/app.css
 
 | Token | Nilai | Pemakaian |
 | --- | --- | --- |
-| `--color-primary` | `#12355B` | Tombol utama, header, tautan |
-| `--color-accent` | `#F59E0B` | Penekanan, lencana |
-| `--color-success` | `#16A34A` | Layak, berhasil |
-| `--color-warning` | `#D97706` | Perlu perhatian, menunggu |
-| `--color-danger` | `#DC2626` | Tidak direkomendasikan, galat, aksi destruktif |
-| `--color-bg` | `#F8FAFC` | Latar halaman |
-| `--color-surface` | `#FFFFFF` | Kartu |
-| `--color-text` | `#0F172A` | Teks utama |
-| `--color-muted` | `#64748B` | Teks pendukung |
+| `--color-forest` (`primary`) | `#163300` | Warna utama teks, aksen gelap, border sekunder |
+| `--color-lime` (`accent`) | `#9fe870` | HANYA tombol aksi primer dan status aktif/sukses |
+| `--color-lime-hover` (`accent-hover`) | `#8fd95c` | Status hover tombol aksi primer |
+| `--color-spruce` (`success`) | `#054d28` | Hover tautan, indikator sukses |
+| `--color-linen` | `#e2f6d5` | Hover tombol sekunder, latar lembut, status primary |
+| `--color-signal` | `#0b4c72` | Informasi / pemberitahuan netral |
+| `--color-alarm` (`danger`) | `#cb272f` | Galat, bahaya, status tidak direkomendasikan |
+| `--color-warning` | `#D97706` | Peringatan, perlu perhatian, menunggu |
+| `--color-charcoal` (`text`) | `#454745` | Teks isi (body text), label formulir |
+| `--color-obs` | `#0e0f0c` | Judul tebal (headings) |
+| `--color-pebble` (`muted`) | `#868685` | Teks sekunder, placeholder, border input |
+| `--color-slate` | `#6a6c6a` | Teks sekunder, spesifikasi kendaraan |
+| `--color-fog` (`border`) | `#e8ebe6` | Garis halus pembatas, latar tombol nonaktif |
+| `--color-paper` (`bg`, `surface`) | `#ffffff` | Kanvas latar belakang dan permukaan kartu |
 
-Kontras teks terhadap latar minimal WCAG AA (4,5:1 untuk teks biasa). Periksa warna `accent` sebelum dipakai sebagai latar teks putih.
+Kontras teks terhadap latar memenuhi WCAG AA (4,5:1 untuk teks biasa). Tombol primer memakai teks forest di atas latar lime.
 
 ### Tipografi
 
-- Satu keluarga huruf: **Satoshi** (Indian Type Foundry, didistribusikan lewat Fontshare), dihosting sendiri (tanpa CDN), dengan cadangan `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`.
+- Satu keluarga huruf: **Satoshi** (Indian Type Foundry, lisensi ITF FFL: berkas font tidak boleh diubah), dihosting sendiri (tanpa CDN), dengan cadangan `system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif`.
 - Bobot yang digunakan: Regular (400), Medium (500), Bold (700) dalam format berkas WOFF2 Latin lokal.
+- Judul: tebal dengan pelacakan rapat (`font-bold tracking-tight text-obs`).
+- Label formulir: 16 px (teks dasar) dengan bobot sedang (`text-base font-medium text-charcoal`).
 - Ukuran dasar 16 px. Teks bantu minimal 14 px. Tidak ada teks di bawah 12 px.
 
 ### Jarak, sudut, bayangan
 
 - Skala jarak Tailwind (kelipatan 4 px). Gutter halaman 16 px di HP.
-- Sudut membulat sedang (`rounded-xl` untuk kartu, `rounded-lg` untuk input dan tombol).
-- Bayangan tipis hanya untuk kartu yang bisa diklik dan modal.
+- Bentuk tombol: pil bulat penuh (`rounded-full`), tinggi minimal 44 px, padding `px-6 py-2.5` (11 px 24 px).
+- Tombol primer: latar lime dengan teks forest (hover `#8fd95c`).
+- Tombol sekunder: latar putih dengan border forest (hover linen `#e2f6d5`).
+- Tombol nonaktif: latar fog dengan teks pebble.
+- Formulir input: tinggi 44 px (`h-11 min-h-[44px]`), sudut membulat 10 px (`rounded-[10px]`), border pebble, fokus border forest tanpa bayangan luar.
+- Kartu: sudut membulat 10 px (`rounded-[10px]`), kontainer besar 16 px (`rounded-2xl`), tampilan datar (flat) tanpa gradien, garis batas halus fog (`border-fog`).
+- Modal: sudut membulat 28 px (`rounded-[28px]`), backdrop forest transparan (`bg-forest/45`).
 
 ### Ikon
 

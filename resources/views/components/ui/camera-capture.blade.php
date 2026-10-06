@@ -43,19 +43,19 @@
              itemId: '{{ $itemId }}'
          })">
         @if ($displayLabel)
-            <label class="block text-sm font-semibold text-text">{{ $displayLabel }}</label>
+            <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
         @endif
 
         {{-- Pratinjau Gambar --}}
         <div x-show="previewUrl && !isStreaming" class="space-y-3">
-            <div class="relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-muted/20 bg-muted/10">
+            <div class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden border border-fog bg-fog/20">
                 <img :src="previewUrl"
                      src="{{ $photoUrl }}"
                      alt="{{ $displayLabel }}"
                      class="w-full h-full object-cover" />
 
                 {{-- Watermark / Cap Waktu & Job ID --}}
-                <div class="absolute bottom-0 inset-x-0 bg-text/80 backdrop-blur-xs text-surface p-3 text-xs flex justify-between items-center">
+                <div class="absolute bottom-0 inset-x-0 bg-forest/80 backdrop-blur-xs text-paper p-3 text-xs flex justify-between items-center">
                     @if ($jobId)
                         <span class="font-mono font-medium">{{ __('ui.camera.job_id', ['id' => $jobId]) }}</span>
                     @endif
@@ -89,16 +89,16 @@
         </div>
 
         {{-- Fallback jika pengguna menekan ulangi pada URL awal --}}
-        <div x-show="!previewUrl && !isStreaming && !permissionDenied" x-cloak class="relative aspect-[4/3] w-full rounded-xl border-2 border-dashed border-muted/30 bg-muted/5 flex flex-col items-center justify-center p-6 text-center">
-            <div class="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
+        <div x-show="!previewUrl && !isStreaming && !permissionDenied" x-cloak class="relative aspect-[4/3] w-full rounded-[10px] border-2 border-dashed border-pebble/40 bg-fog/20 flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-fog text-forest flex items-center justify-center mb-3">
                 <x-ui.icon name="kamera" class="w-8 h-8" />
             </div>
 
-            <p class="text-sm font-medium text-text mb-1">
+            <p class="text-sm font-medium text-obs mb-1">
                 {{ __('ui.camera.instruction') }}
             </p>
 
-            <p class="text-xs text-muted mb-4">
+            <p class="text-xs text-slate mb-4">
                 Hanya menerima tangkapan langsung dari kamera demi keabsahan inspeksi.
             </p>
 
@@ -119,7 +119,7 @@
                            x-ref="fallbackInput"
                            @change="handleFileInput($event)"
                            {{ $attributes->whereStartsWith('wire:model') }} />
-                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-surface hover:bg-primary/90 transition-colors focus-within:ring-2 focus-within:ring-accent">
+                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full text-base font-medium bg-lime text-forest hover:bg-lime-hover transition-colors focus-within:ring-2 focus-within:ring-forest">
                         <x-ui.icon name="kamera" class="w-4 h-4" />
                         <span>{{ __('ui.actions.take_photo') }}</span>
                     </span>
@@ -160,20 +160,20 @@
              itemId: '{{ $itemId }}'
          })">
         @if ($displayLabel)
-            <label class="block text-sm font-semibold text-text">{{ $displayLabel }}</label>
+            <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
         @endif
 
         {{-- Keadaan Siap Ambil / Tombol Pemicu Kamera --}}
-        <div x-show="!previewUrl && !isStreaming && !permissionDenied" class="relative aspect-[4/3] w-full rounded-xl border-2 border-dashed border-muted/30 bg-muted/5 flex flex-col items-center justify-center p-6 text-center">
-            <div class="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-3">
+        <div x-show="!previewUrl && !isStreaming && !permissionDenied" class="relative aspect-[4/3] w-full rounded-[10px] border-2 border-dashed border-pebble/40 bg-fog/20 flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-16 h-16 rounded-full bg-fog text-forest flex items-center justify-center mb-3">
                 <x-ui.icon name="kamera" class="w-8 h-8" />
             </div>
 
-            <p class="text-sm font-medium text-text mb-1">
+            <p class="text-sm font-medium text-obs mb-1">
                 {{ __('ui.camera.instruction') }}
             </p>
 
-            <p class="text-xs text-muted mb-4">
+            <p class="text-xs text-slate mb-4">
                 Hanya menerima tangkapan langsung dari kamera demi keabsahan inspeksi.
             </p>
 
@@ -195,7 +195,7 @@
                            x-ref="fallbackInput"
                            @change="handleFileInput($event)"
                            {{ $attributes->whereStartsWith('wire:model') }} />
-                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-lg text-sm font-semibold bg-primary text-surface hover:bg-primary/90 transition-colors focus-within:ring-2 focus-within:ring-accent">
+                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full text-base font-medium bg-lime text-forest hover:bg-lime-hover transition-colors focus-within:ring-2 focus-within:ring-forest">
                         <x-ui.icon name="kamera" class="w-4 h-4" />
                         <span>{{ __('ui.actions.take_photo') }}</span>
                     </span>
@@ -204,11 +204,11 @@
         </div>
 
         {{-- Live Stream Video dari Browser Camera --}}
-        <div x-show="isStreaming" x-cloak class="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-text flex flex-col justify-between">
+        <div x-show="isStreaming" x-cloak class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden bg-forest flex flex-col justify-between">
             <video x-ref="video" playsinline autoplay muted class="w-full h-full object-cover"></video>
 
-            <div class="absolute bottom-0 inset-x-0 bg-text/80 p-3 flex items-center justify-between gap-3">
-                <x-ui.button type="button" variant="ghost" class="text-surface hover:bg-surface/20 min-h-[44px]" @click="stopCamera()">
+            <div class="absolute bottom-0 inset-x-0 bg-forest/80 p-3 flex items-center justify-between gap-3">
+                <x-ui.button type="button" variant="ghost" class="text-paper hover:bg-paper/20 min-h-[44px]" @click="stopCamera()">
                     {{ __('ui.actions.cancel') }}
                 </x-ui.button>
 
@@ -220,13 +220,13 @@
 
         {{-- Keadaan Pratinjau Setelah Tangkapan Kamera Berhasil --}}
         <div x-show="previewUrl && !isStreaming" x-cloak class="space-y-3">
-            <div class="relative aspect-[4/3] w-full rounded-xl overflow-hidden border border-muted/20 bg-muted/10">
+            <div class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden border border-fog bg-fog/20">
                 <img :src="previewUrl"
                      alt="{{ $displayLabel }}"
                      class="w-full h-full object-cover" />
 
                 {{-- Watermark / Cap Waktu & Job ID --}}
-                <div class="absolute bottom-0 inset-x-0 bg-text/80 backdrop-blur-xs text-surface p-3 text-xs flex justify-between items-center">
+                <div class="absolute bottom-0 inset-x-0 bg-forest/80 backdrop-blur-xs text-paper p-3 text-xs flex justify-between items-center">
                     @if ($jobId)
                         <span class="font-mono font-medium">{{ __('ui.camera.job_id', ['id' => $jobId]) }}</span>
                     @endif

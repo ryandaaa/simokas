@@ -48,14 +48,14 @@
                        @if ($required) required aria-required="true" @endif
                        @if ($disabled) disabled @endif
                        {{ $attributes->merge([
-                           'class' => 'w-5 h-5 rounded border bg-surface text-primary focus:ring-accent focus:ring-offset-2 transition-colors ' .
-                               ($hasError ? 'border-danger' : 'border-muted/40'),
+                           'class' => 'w-5 h-5 rounded-[4px] border bg-surface text-forest focus:ring-forest focus:ring-offset-2 transition-colors ' .
+                               ($hasError ? 'border-danger' : 'border-pebble'),
                        ]) }} />
             </div>
 
-            <div class="text-sm">
+            <div class="text-base">
                 @if ($label)
-                    <span class="font-medium text-text">
+                    <span class="font-medium text-charcoal">
                         {{ $label }}
                         @if ($required)
                             <span class="text-danger ml-0.5" aria-hidden="true">*</span>
@@ -67,7 +67,7 @@
                 @endif
 
                 @if ($hint)
-                    <p id="{{ $checkboxId }}-hint" class="text-xs text-muted mt-0.5">
+                    <p id="{{ $checkboxId }}-hint" class="text-xs text-pebble mt-0.5">
                         {{ $hint }}
                     </p>
                 @endif

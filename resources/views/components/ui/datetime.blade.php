@@ -17,9 +17,9 @@
     };
 @endphp
 
-<time datetime="{{ $carbonWib->toIso8601String() }}" {{ $attributes->merge(['class' => 'inline-flex items-center gap-1 text-sm text-muted']) }}>
+<time datetime="{{ $carbonWib->toIso8601String() }}" {{ $attributes->merge(['class' => 'inline-flex items-center gap-1 text-sm text-slate']) }}>
     @if ($showIcon)
-        <x-ui.icon name="jam" class="w-4 h-4 shrink-0" />
+        <x-ui.icon name="jam" class="w-4 h-4 shrink-0 text-pebble" />
     @endif
     <span>{{ $formatted }}</span>
 </time>
