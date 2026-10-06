@@ -37,7 +37,7 @@ final class JobDetail extends Component
 
     public ?string $errorMessage = null;
 
-    public function mount(string $job): void
+    public function mount(InspectionJob $job): void
     {
         /** @var User|null $user */
         $user = Auth::user();
@@ -46,12 +46,7 @@ final class JobDetail extends Component
             abort(403);
         }
 
-        /** @var InspectionJob $foundJob */
-        $foundJob = InspectionJob::query()
-            ->with(['listing.seller', 'inspector', 'requester'])
-            ->findOrFail($job);
-
-        $this->job = $foundJob;
+        $this->job = $job->loadMissing(['listing.seller', 'inspector', 'requester']);
     }
 
     public function openCancelModal(): void
@@ -210,7 +205,11 @@ final class JobDetail extends Component
 
     private function friendlyErrorMessage(DomainException $e): string
     {
-        if ($e->getErrorCode() === DomainException::CODE_CONFLICT || $e->getCode() === 409) {
+        if (
+            $e->getErrorCode() === DomainException::CODE_CONFLICT
+            || $e->getCode() === 409
+            || $e instanceof \App\Domains\Inspection\Exceptions\InvalidJobStatusTransitionException
+        ) {
             return __('admin.jobs.already_processed');
         }
 
