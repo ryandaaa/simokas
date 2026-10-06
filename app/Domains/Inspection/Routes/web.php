@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Domains\Inspection\Http\Controllers\CompleteJobController;
 use App\Domains\Inspection\Http\Controllers\TakeJobController;
 use App\Domains\Inspection\Livewire\InspectorJobsPage;
 use App\Domains\Inspection\Livewire\JobDetailPage;
@@ -16,6 +17,9 @@ Route::middleware('web')->group(function () {
         Route::get('/jobs/request/{listing}', RequestInspectionPage::class)
             ->whereUuid('listing')
             ->name('jobs.request');
+        Route::post('/jobs/{job}/complete', CompleteJobController::class)
+            ->whereUuid('job')
+            ->name('jobs.complete');
     });
 
     Route::middleware(['auth', 'not_blocked', 'role:inspector', 'verified_inspector'])->group(function () {

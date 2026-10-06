@@ -84,8 +84,8 @@ flowchart TD
 - [x] `ADM-T04` Aksi ganda pada entitas yang sama berefek sekali (ADM-E3)
 - [x] `ADM-T05` Ubah pengaturan valid tersimpan, tidak valid ditolak seluruhnya (ADM-E2)
 - [x] `ADM-T06` Perubahan pengaturan hanya memengaruhi job dan transaksi baru (ADM-E1)
-- [ ] `ADM-T07` Selesaikan manual job `result_submitted`: fee cair sekali (ADM-E4)
-- [ ] `ADM-T08` Batalkan job per status dan opsi refund (ADM-E8), dataset
+- [x] `ADM-T07` Selesaikan manual job `result_submitted`: fee cair sekali (ADM-E4)
+- [x] `ADM-T08` Batalkan job per status dan opsi refund (ADM-E8), dataset
 - [ ] `ADM-T09` Buka kembali hasil: status `draft`, inspektor dinotifikasi
 - [ ] `ADM-T10` Blokir pengguna: ditolak bila ada item aktif, sukses bersamaan dengan pembatalan terkonfirmasi (ADM-E5)
 - [ ] `ADM-T11` Admin tidak dapat memblokir atau mengubah role dirinya sendiri (ADM-R9)
