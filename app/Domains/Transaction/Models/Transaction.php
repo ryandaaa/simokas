@@ -27,6 +27,9 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $expires_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read Listing $listing
+ * @property-read User $buyer
+ * @property-read User|null $inspector
  */
 final class Transaction extends Model
 {
@@ -55,16 +58,25 @@ final class Transaction extends Model
         ];
     }
 
+    /**
+     * @return BelongsTo<Listing, $this>
+     */
     public function listing(): BelongsTo
     {
         return $this->belongsTo(Listing::class);
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function buyer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'buyer_id');
     }
 
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function inspector(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inspector_id');
