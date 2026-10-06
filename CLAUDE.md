@@ -1,6 +1,6 @@
 # SIMOKAS — Panduan untuk Developer dan AI
 
-Aplikasi web jual-beli mobil dan motor bekas dengan inspeksi independen. Sumber kebenaran produk: [`PRD_SIMOKAS_v1_5.md`](PRD_SIMOKAS_v1_5.md). Aturan pengerjaan: folder [`docs/`](docs/README.md).
+Aplikasi web jual-beli mobil dan motor bekas dengan inspeksi independen. Sumber kebenaran produk: [`PRD_SIMOKAS_v1_6.md`](PRD_SIMOKAS_v1_5.md). Aturan pengerjaan: folder [`docs/`](docs/README.md).
 
 ## Mengerjakan kartu kanban
 
