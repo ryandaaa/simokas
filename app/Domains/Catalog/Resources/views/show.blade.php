@@ -108,7 +108,7 @@
                     </p>
                 </x-ui.card>
 
-                @if (count($actions) > 0)
+                @if (count($actions) > 0 || (!empty($hasActiveJob) && !empty($canRequestInspection)))
                     <x-ui.card>
                         <h2 class="text-sm font-semibold text-text">{{ __('catalog.detail.actions_title') }}</h2>
                         <div class="mt-3 flex flex-col gap-2">
@@ -117,6 +117,12 @@
                                     {{ $action['label'] }}
                                 </x-ui.button>
                             @endforeach
+
+                            @if (!empty($hasActiveJob) && !empty($canRequestInspection))
+                                <p class="text-sm text-muted">
+                                    {{ __('catalog.detail.active_inspection_notice') }}
+                                </p>
+                            @endif
                         </div>
                     </x-ui.card>
                 @endif
