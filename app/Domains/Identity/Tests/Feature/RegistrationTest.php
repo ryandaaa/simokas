@@ -6,6 +6,7 @@ use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Livewire\Register;
 use App\Domains\Identity\Models\User;
+use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -170,24 +171,28 @@ it('AUTH-T15 rejects registration without valid terms consent', function (mixed 
     'null' => [null],
 ]);
 
-it('AUTH-T16 records accepted_terms_at at registration time when consent is given', function ($testCase) {
+it('AUTH-T16 records accepted_terms_at at registration time when consent is given', function () {
     $frozen = CarbonImmutable::parse('2026-10-05 10:00:00', 'UTC');
-    $testCase->travelTo($frozen);
+    Carbon::setTestNow($frozen);
 
-    Livewire::test(Register::class)
-        ->set('name', 'Siti Setuju')
-        ->set('email', 'siti@example.com')
-        ->set('phone', '081234567891')
-        ->set('password', 'Rahasia123!')
-        ->set('password_confirmation', 'Rahasia123!')
-        ->set('account_type', 'user')
-        ->set('accepted_terms', true)
-        ->call('register')
-        ->assertRedirect(route('dashboard'));
+    try {
+        Livewire::test(Register::class)
+            ->set('name', 'Siti Setuju')
+            ->set('email', 'siti@example.com')
+            ->set('phone', '081234567891')
+            ->set('password', 'Rahasia123!')
+            ->set('password_confirmation', 'Rahasia123!')
+            ->set('account_type', 'user')
+            ->set('accepted_terms', true)
+            ->call('register')
+            ->assertRedirect(route('dashboard'));
 
-    /** @var User|null $user */
-    $user = User::query()->where('email', 'siti@example.com')->first();
-    expect($user)->not->toBeNull()
-        ->and($user->accepted_terms_at)->not->toBeNull()
-        ->and($user->accepted_terms_at->equalTo($frozen))->toBeTrue();
+        /** @var User|null $user */
+        $user = User::query()->where('email', 'siti@example.com')->first();
+        expect($user)->not->toBeNull()
+            ->and($user->accepted_terms_at)->not->toBeNull()
+            ->and($user->accepted_terms_at->equalTo($frozen))->toBeTrue();
+    } finally {
+        Carbon::setTestNow();
+    }
 });
