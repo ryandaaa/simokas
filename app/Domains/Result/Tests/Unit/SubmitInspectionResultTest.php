@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domains\Result\Tests\Unit;
 
 use App\Domains\Identity\Models\User;
-use App\Domains\Inspection\Contracts\InspectionJobResultContract;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Result\Actions\SubmitInspectionResult;
@@ -20,10 +19,8 @@ use App\Domains\Result\Exceptions\UnauthorizedInspectorException;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\ResultItem;
-use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Models\TemplateItem;
 use App\Domains\Result\Services\ScoreCalculator;
-use App\Support\Clock;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;

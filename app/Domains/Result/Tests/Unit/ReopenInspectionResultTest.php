@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domains\Result\Tests\Unit;
 
 use App\Domains\Identity\Models\User;
-use App\Domains\Inspection\Contracts\InspectionJobResultContract;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Result\Actions\ReopenInspectionResult;

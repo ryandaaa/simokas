@@ -20,7 +20,7 @@ final class ScoreCalculatorTest extends TestCase
         $this->calculator = new ScoreCalculator;
     }
 
-    public function testItCalculatesExample62Point5Correctly(): void
+    public function test_it_calculates_example_62_point_5_correctly(): void
     {
         // 4 items with weight 1 (max score 8): Baik (2), Baik (2), Cukup (1), Buruk (0)
         // Sum = 5, score = 62.5, recommendation caution
