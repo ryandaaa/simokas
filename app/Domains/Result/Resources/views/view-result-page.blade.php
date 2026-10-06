@@ -75,9 +75,9 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                             @foreach ($groupedItems as $item)
                                 <div class="flex items-start justify-between gap-4 border-b border-color-border pb-4 last:border-b-0">
                                     <div>
-                                        <p class="font-semibold text-color-text">{{ $item->template_item_id }}</p>
-                                        @if ($item->notes)
-                                            <p class="text-sm text-color-muted mt-1">{{ $item->notes }}</p>
+                                        <p class="font-semibold text-color-text">{{ $item->templateItem?->label ?? __('result.unnamed_item') }}</p>
+                                        @if ($item->note)
+                                            <p class="text-sm text-color-muted mt-1">{{ $item->note }}</p>
                                         @endif
                                     </div>
                                     <x-ui.status-chip
@@ -103,7 +103,7 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                 @forelse ($result->photos as $photo)
                     <div class="bg-color-surface rounded-xl overflow-hidden shadow-sm">
                         <img
-                            src="{{ route('results.photos.show', [$result, $photo]) }}"
+                            src="{{ $photoUrls[$photo->id] ?? '' }}"
                             alt="{{ __('result.inspection_photo') }}"
                             class="w-full h-auto"
                             loading="lazy"

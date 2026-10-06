@@ -42,4 +42,5 @@ return [
     'inspection_photos' => 'Semua foto inspeksi',
     'confirm_and_pay' => 'Setuju & Bayar :cost',
     'access_not_available' => 'Akses hasil tidak tersedia.',
+    'unnamed_item' => 'Item Tanpa Nama',
 ];
