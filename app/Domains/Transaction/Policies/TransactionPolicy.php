@@ -60,4 +60,35 @@ final class TransactionPolicy
 
         return (string) $user->id === (string) $listing->seller_id;
     }
+
+    /**
+     * Determine whether the user can open the purchase payment.
+     * Only the buyer. The accepted status and the absence of an active
+     * inspection job are enforced by the Action itself.
+     */
+    public function pay(User $user, Transaction $transaction): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return (string) $user->id === (string) $transaction->buyer_id;
+    }
+
+    /**
+     * Determine whether the user can confirm the handover.
+     * The buyer or an active admin.
+     */
+    public function confirmHandover(User $user, Transaction $transaction): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        if ((string) $user->id === (string) $transaction->buyer_id) {
+            return true;
+        }
+
+        return $user->isAdmin();
+    }
 }
