@@ -201,4 +201,29 @@ final class InspectionResultPolicyTest extends TestCase
         $this->assertFalse($this->policy->viewPhoto($otherInspector, $result->refresh(), $photo));
         $this->assertFalse($this->policy->viewPhoto($otherUser, $result->refresh(), $photo));
     }
+
+    public function test_it_authorizes_reopen_only_for_admin(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $inspector = User::factory()->inspector()->create();
+        $user = User::factory()->user()->create();
+
+        $job = InspectionJob::factory()->create([
+            'status' => JobStatus::ResultSubmitted,
+            'inspector_id' => $inspector->id,
+        ]);
+        $result = InspectionResult::factory()->submitted()->create([
+            'job_id' => $job->id,
+            'inspector_id' => $inspector->id,
+        ]);
+
+        // Only admin can reopen
+        $this->assertTrue($this->policy->reopen($admin, $result));
+        $this->assertFalse($this->policy->reopen($inspector, $result));
+        $this->assertFalse($this->policy->reopen($user, $result));
+
+        // When admin is blocked
+        $admin->update(['status' => UserStatus::Blocked]);
+        $this->assertFalse($this->policy->reopen($admin->refresh(), $result));
+    }
 }

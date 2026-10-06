@@ -47,7 +47,7 @@ enum ResultStatus: string
     {
         return match ($this) {
             self::Draft => $to === self::Submitted,
-            self::Submitted => false,
+            self::Submitted => $to === self::Draft,
         };
     }
 }

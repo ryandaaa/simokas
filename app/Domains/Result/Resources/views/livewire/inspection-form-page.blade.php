@@ -239,12 +239,13 @@
                     </x-ui.button>
                 @else
                     <x-ui.button
-                        variant="primary"
-                        wire:click="saveDraft"
+                        variant="success"
+                        wire:click="showSubmitConfirmation"
                         wire:loading.attr="disabled"
-                        wire:target="saveDraft"
+                        wire:target="showSubmitConfirmation"
+                        icon="check"
                     >
-                        {{ __('inspection.form.save_draft') }}
+                        {{ __('inspection.form.submit_result') }}
                     </x-ui.button>
                 @endif
             </div>
@@ -253,6 +254,48 @@
         {{-- All categories completed notice --}}
         @if ($currentCategoryIndex === $totalCategories - 1 && $totalCategories > 0)
             <x-ui.alert variant="success" :message="__('inspection.form.all_categories_completed')" />
+        @endif
+
+        {{-- Submit Confirmation Modal --}}
+        @if ($showSubmitConfirmation)
+            <x-ui.modal
+                :show="true"
+                name="submit-result-modal"
+            >
+                <div class="space-y-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-text">{{ __('inspection.form.submit_confirmation_title') }}</h3>
+                        <p class="text-sm text-muted mt-2">{{ __('inspection.form.submit_confirmation_message') }}</p>
+                    </div>
+
+                    <div class="bg-warning/10 border border-warning/30 rounded-lg p-3">
+                        <p class="text-sm text-warning font-medium">{{ __('inspection.form.submit_warning') }}</p>
+                    </div>
+
+                    <x-slot:footer>
+                        <x-ui.button
+                            type="button"
+                            variant="secondary"
+                            wire:click="cancelSubmit"
+                            :disabled="$isSubmitting"
+                        >
+                            {{ __('ui.actions.cancel') }}
+                        </x-ui.button>
+                        <x-ui.button
+                            type="button"
+                            variant="success"
+                            wire:click="submitResult"
+                            wire:loading.attr="disabled"
+                            wire:target="submitResult"
+                            :loading="$isSubmitting"
+                            icon="check"
+                        >
+                            <span wire:loading.remove wire:target="submitResult">{{ __('inspection.form.submit_result') }}</span>
+                            <span wire:loading wire:target="submitResult">{{ __('inspection.form.submitting') }}</span>
+                        </x-ui.button>
+                    </x-slot:footer>
+                </div>
+            </x-ui.modal>
         @endif
     @endif
 </div>
