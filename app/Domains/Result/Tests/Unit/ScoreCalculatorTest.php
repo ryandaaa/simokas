@@ -41,7 +41,7 @@ final class ScoreCalculatorTest extends TestCase
     }
 
     #[DataProvider('boundaryScoreDataset')]
-    public function testResT06ItEvaluatesScoreBoundariesWithDataset798059And60And625(
+    public function test_res_t06_it_evaluates_score_boundaries_with_dataset(
         array $items,
         float $expectedScore,
         InspectionRecommendation $expectedRecommendation
@@ -125,7 +125,7 @@ final class ScoreCalculatorTest extends TestCase
         ];
     }
 
-    public function testResT07CriticalItemRatedPoorForcesNotRecommendedRegardlessOfHighScore(): void
+    public function test_res_t07_critical_item_rated_poor_forces_not_recommended_regardless_of_high_score(): void
     {
         // 10 items weight 1: 9 Good (18), 1 Critical Poor (0).
         // Score = 18/20 * 100 = 90.0 (normally recommended), but critical poor forces not_recommended!
@@ -149,7 +149,7 @@ final class ScoreCalculatorTest extends TestCase
         $this->assertTrue($result->hasCriticalFailure);
     }
 
-    public function testCriticalItemRatedFairOrGoodDoesNotForceNotRecommended(): void
+    public function test_critical_item_rated_fair_or_good_does_not_force_not_recommended(): void
     {
         // 5 items: 4 Good, 1 Critical Fair.
         // Sum = 8 + 1 = 9 / 10 = 90.0 -> recommended!
@@ -168,7 +168,7 @@ final class ScoreCalculatorTest extends TestCase
         $this->assertFalse($result->hasCriticalFailure);
     }
 
-    public function testItHandlesWeightsAndStringRatings(): void
+    public function test_it_handles_weights_and_string_ratings(): void
     {
         // Item 1: weight 3, rating 'good' (value 2 * 3 = 6, max 6)
         // Item 2: weight 2, rating 'fair' (value 1 * 2 = 2, max 4)
@@ -186,7 +186,7 @@ final class ScoreCalculatorTest extends TestCase
         $this->assertSame(InspectionRecommendation::Caution, $result->recommendation);
     }
 
-    public function testItHandlesObjectsAndDefaults(): void
+    public function test_it_handles_objects_and_defaults(): void
     {
         $item1 = (object) ['weight' => 2, 'rating' => 'good', 'is_critical' => false];
         $item2 = (object) ['weight' => null, 'rating' => null, 'is_critical' => null]; // defaults weight 1, value 0
@@ -198,7 +198,7 @@ final class ScoreCalculatorTest extends TestCase
         $this->assertSame(InspectionRecommendation::Caution, $result->recommendation);
     }
 
-    public function testItHandlesEmptyItemsCollection(): void
+    public function test_it_handles_empty_items_collection(): void
     {
         $result = $this->calculator->calculate([]);
 
@@ -207,7 +207,7 @@ final class ScoreCalculatorTest extends TestCase
         $this->assertFalse($result->hasCriticalFailure);
     }
 
-    public function testItResolvesInvalidOrNegativeWeightToOne(): void
+    public function test_it_resolves_invalid_or_negative_weight_to_one(): void
     {
         $items = [
             ['weight' => -5, 'rating' => 'good'],

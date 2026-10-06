@@ -40,7 +40,7 @@ final class SubmitInspectionResultTest extends TestCase
         $this->action = app(SubmitInspectionResult::class);
     }
 
-    public function testResT03RejectsSubmissionWhenRequiredItemsMissingWithList(): void
+    public function test_res_t03_rejects_submission_when_required_items_missing_with_list(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -85,7 +85,7 @@ final class SubmitInspectionResultTest extends TestCase
         }
     }
 
-    public function testResT03RejectsSubmissionWhenMinPhotosNotMetWithList(): void
+    public function test_res_t03_rejects_submission_when_min_photos_not_met_with_list(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -124,7 +124,7 @@ final class SubmitInspectionResultTest extends TestCase
         }
     }
 
-    public function testResT06SubmitsAndCalculatesScoreCorrectlyWithDataset(): void
+    public function test_res_t06_submits_and_calculates_score_correctly_with_dataset(): void
     {
         Event::fake([ResultSubmitted::class]);
         $action = app(SubmitInspectionResult::class);
@@ -182,7 +182,7 @@ final class SubmitInspectionResultTest extends TestCase
         });
     }
 
-    public function testResT07CriticalItemRatedPoorForcesNotRecommended(): void
+    public function test_res_t07_critical_item_rated_poor_forces_not_recommended(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->inProgress($inspector)->create();
@@ -232,7 +232,7 @@ final class SubmitInspectionResultTest extends TestCase
         $this->assertSame(InspectionRecommendation::NotRecommended, $submitted->recommendation);
     }
 
-    public function testResT09SubmittingTwiceHasSingleEffectAndIsIdempotent(): void
+    public function test_res_t09_submitting_twice_has_single_effect_and_is_idempotent(): void
     {
         Event::fake([ResultSubmitted::class]);
         $action = app(SubmitInspectionResult::class);
@@ -269,7 +269,7 @@ final class SubmitInspectionResultTest extends TestCase
         Event::assertDispatchedTimes(ResultSubmitted::class, 1);
     }
 
-    public function testItAuthorizesOnlyTheAssignedInspector(): void
+    public function test_it_authorizes_only_the_assigned_inspector(): void
     {
         $assignedInspector = User::factory()->inspector()->create();
         $otherInspector = User::factory()->inspector()->create();
@@ -283,7 +283,7 @@ final class SubmitInspectionResultTest extends TestCase
         $this->action->handle($otherInspector, $result);
     }
 
-    public function testItRejectsSubmittingWhenJobIsNotInProgress(): void
+    public function test_it_rejects_submitting_when_job_is_not_in_progress(): void
     {
         $inspector = User::factory()->inspector()->create();
         $job = InspectionJob::factory()->scheduled($inspector)->create();
