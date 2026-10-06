@@ -115,4 +115,14 @@ final class InspectionJobPolicy
 
         return $user->isAdmin() && $job->isActive();
     }
+
+    public function complete(User $user, InspectionJob $job): bool
+    {
+        if ($user->isBlocked() || ! $user->isActive()) {
+            return false;
+        }
+
+        return (string) $user->getKey() === (string) $job->requester_id
+            && in_array($job->status->value, ['result_submitted', 'completed'], true);
+    }
 }
