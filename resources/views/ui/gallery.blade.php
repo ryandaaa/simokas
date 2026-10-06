@@ -36,80 +36,104 @@
         {{-- 1. Token Desain --}}
         <section id="tokens" class="space-y-4">
             <div>
-                <h2 class="text-xl font-bold text-text">1. Token Desain</h2>
-                <p class="text-sm text-muted">Didefinisikan di <code class="font-mono text-xs">resources/css/app.css</code> (@theme). Dilarang memakai hex atau style inline di view.</p>
+                <h2 class="text-xl font-bold text-obs">1. Token Desain</h2>
+                <p class="text-sm text-slate">Didefinisikan di <code class="font-mono text-xs">resources/css/app.css</code> (@theme). Dilarang memakai hex atau style inline di view.</p>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-primary"></div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-forest"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-primary</p>
-                        <p class="text-[11px] text-muted">Tombol utama, header</p>
+                        <p class="text-xs font-bold text-obs">--color-forest</p>
+                        <p class="text-[11px] text-slate">Teks utama, aksen gelap</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-accent"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-lime border border-forest/10"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-accent</p>
-                        <p class="text-[11px] text-muted">Penekanan, lencana</p>
+                        <p class="text-xs font-bold text-obs">--color-lime</p>
+                        <p class="text-[11px] text-slate">Aksi primer, status aktif</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-success"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-spruce"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-success</p>
-                        <p class="text-[11px] text-muted">Layak, berhasil</p>
+                        <p class="text-xs font-bold text-obs">--color-spruce</p>
+                        <p class="text-[11px] text-slate">Hover tautan</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-warning"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-linen border border-forest/10"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-warning</p>
-                        <p class="text-[11px] text-muted">Perlu perhatian</p>
+                        <p class="text-xs font-bold text-obs">--color-linen</p>
+                        <p class="text-[11px] text-slate">Hover tombol sekunder</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-danger"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-signal"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-danger</p>
-                        <p class="text-[11px] text-muted">Galat, destruktif</p>
+                        <p class="text-xs font-bold text-obs">--color-signal</p>
+                        <p class="text-[11px] text-slate">Informasi</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-bg border border-muted/20"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-alarm"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-bg</p>
-                        <p class="text-[11px] text-muted">Latar halaman</p>
+                        <p class="text-xs font-bold text-obs">--color-alarm</p>
+                        <p class="text-[11px] text-slate">Galat, bahaya</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-surface border border-muted/20"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-charcoal"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-surface</p>
-                        <p class="text-[11px] text-muted">Kartu, dialog</p>
+                        <p class="text-xs font-bold text-obs">--color-charcoal</p>
+                        <p class="text-[11px] text-slate">Teks isi</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-text"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-obs"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-text</p>
-                        <p class="text-[11px] text-muted">Teks utama</p>
+                        <p class="text-xs font-bold text-obs">--color-obs</p>
+                        <p class="text-[11px] text-slate">Judul</p>
                     </div>
                 </div>
 
-                <div class="p-3 rounded-xl bg-surface border border-muted/20 space-y-2">
-                    <div class="h-10 w-full rounded-lg bg-muted"></div>
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-pebble"></div>
                     <div>
-                        <p class="text-xs font-bold text-text">--color-muted</p>
-                        <p class="text-[11px] text-muted">Teks pendukung</p>
+                        <p class="text-xs font-bold text-obs">--color-pebble</p>
+                        <p class="text-[11px] text-slate">Border input, placeholder</p>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-slate"></div>
+                    <div>
+                        <p class="text-xs font-bold text-obs">--color-slate</p>
+                        <p class="text-[11px] text-slate">Teks sekunder</p>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-fog border border-pebble/20"></div>
+                    <div>
+                        <p class="text-xs font-bold text-obs">--color-fog</p>
+                        <p class="text-[11px] text-slate">Garis halus, latar nonaktif</p>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-[10px] bg-surface border border-fog space-y-2">
+                    <div class="h-10 w-full rounded-full bg-paper border border-fog"></div>
+                    <div>
+                        <p class="text-xs font-bold text-obs">--color-paper</p>
+                        <p class="text-[11px] text-slate">Kanvas putih</p>
                     </div>
                 </div>
             </div>

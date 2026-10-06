@@ -52,7 +52,7 @@
          x-transition:leave="ease-in duration-150"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
-         class="fixed inset-0 bg-text/40 backdrop-blur-xs transition-opacity"
+         class="fixed inset-0 bg-forest/45 backdrop-blur-xs transition-opacity"
          @click="open = false"
          aria-hidden="true"></div>
 
@@ -67,43 +67,43 @@
              x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
              @click.outside="open = false"
              @click.stop
-             class="relative transform overflow-hidden rounded-xl bg-surface text-left shadow-lg transition-all w-full {{ $maxWidth }} p-6 border border-muted/20">
+             class="relative transform overflow-hidden rounded-[28px] bg-surface text-left shadow-lg transition-all w-full {{ $maxWidth }} p-6 sm:p-8 border border-fog">
 
             {{-- Tombol Tutup --}}
             <button type="button"
                     @click="open = false"
-                    class="absolute top-4 right-4 p-1 rounded-lg text-muted hover:text-text hover:bg-muted/10 focus:outline-none focus:ring-2 focus:ring-accent"
+                    class="absolute top-5 right-5 w-9 h-9 rounded-full bg-fog text-forest hover:bg-linen flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-forest"
                     aria-label="{{ __('ui.actions.close') }}">
                 <x-ui.icon name="silang" class="w-5 h-5" />
             </button>
 
             {{-- Judul dan Deskripsi --}}
-            <div class="mb-4">
+            <div class="mb-5 pr-10">
                 @if ($title)
-                    <h3 id="{{ $titleId }}" class="text-lg font-bold text-text">
+                    <h3 id="{{ $titleId }}" class="text-title font-bold text-obs">
                         {{ $title }}
                     </h3>
                 @endif
 
                 @if ($description)
-                    <p id="{{ $descId }}" class="mt-2 text-sm text-muted">
+                    <p id="{{ $descId }}" class="mt-1.5 text-sm text-slate">
                         {{ $description }}
                     </p>
                 @endif
             </div>
 
             {{-- Slot Isi Modal --}}
-            <div class="text-sm text-text">
+            <div class="text-sm text-charcoal leading-relaxed">
                 {{ $slot }}
             </div>
 
             {{-- Tombol Tindakan / Footer --}}
             @if (isset($footer))
-                <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-muted/15">
+                <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-fog">
                     {{ $footer }}
                 </div>
             @elseif ($confirmText || $cancelText)
-                <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-muted/15">
+                <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-fog">
                     <x-ui.button type="button"
                                  variant="secondary"
                                  @click="open = false">

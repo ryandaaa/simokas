@@ -6,32 +6,37 @@ use App\Support\Clock;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 it('renders x-ui.button with all variants, loading, disabled, and link states', function () {
-    // Primary variant
+    // Primary variant (Wise theme: lime with forest text, pill rounded-full)
     $view = $this->blade('<x-ui.button variant="primary">Kirim</x-ui.button>');
     $view->assertSee('Kirim');
-    $view->assertSee('bg-primary');
+    $view->assertSee('bg-lime');
+    $view->assertSee('text-forest');
+    $view->assertSee('rounded-full');
     $view->assertSee('min-h-[44px]');
     $view->assertSee('wire:loading.attr="disabled"', false);
 
-    // Secondary variant
+    // Secondary variant (Wise theme: white surface with forest border)
     $view = $this->blade('<x-ui.button variant="secondary">Batal</x-ui.button>');
     $view->assertSee('Batal');
     $view->assertSee('bg-surface');
+    $view->assertSee('border-forest');
+    $view->assertSee('text-forest');
 
-    // Danger variant
+    // Danger variant (Wise theme: alarm)
     $view = $this->blade('<x-ui.button variant="danger">Hapus</x-ui.button>');
     $view->assertSee('Hapus');
-    $view->assertSee('bg-danger');
+    $view->assertSee('bg-alarm');
 
     // Ghost variant
     $view = $this->blade('<x-ui.button variant="ghost">Bantuan</x-ui.button>');
     $view->assertSee('Bantuan');
     $view->assertSee('bg-transparent');
 
-    // Disabled state
+    // Disabled state (Wise theme: fog with pebble text)
     $view = $this->blade('<x-ui.button :disabled="true">Terkunci</x-ui.button>');
     $view->assertSee('disabled');
-    $view->assertSee('opacity-50');
+    $view->assertSee('bg-fog');
+    $view->assertSee('text-pebble');
 
     // Loading state
     $view = $this->blade('<x-ui.button :loading="true">Menyimpan</x-ui.button>');
@@ -131,7 +136,8 @@ it('renders x-ui.card with header, footer, clickable, and loading state', functi
     $view->assertSee('Kartu Uji');
     $view->assertSee('Subjudul');
     $view->assertSee('Konten kartu');
-    $view->assertSee('rounded-xl');
+    $view->assertSee('rounded-[10px]');
+    $view->assertSee('border-fog');
 
     // Clickable card
     $view = $this->blade('<x-ui.card href="/detail" title="Klik Saya">Isi</x-ui.card>');
@@ -182,14 +188,22 @@ it('renders x-ui.badge-inspected with date and compact formats', function () {
 });
 
 it('renders x-ui.status-chip across all variants and icons', function () {
-    $variants = ['success', 'warning', 'danger', 'primary', 'muted'];
+    $expectedClasses = [
+        'success' => 'bg-lime text-forest border-lime',
+        'warning' => 'bg-warning/10 text-warning border-warning/30',
+        'danger' => 'bg-alarm/10 text-alarm border-alarm/30',
+        'primary' => 'bg-linen text-forest border-forest/20',
+        'muted' => 'bg-fog text-pebble border-fog',
+    ];
 
-    foreach ($variants as $variant) {
+    foreach ($expectedClasses as $variant => $classes) {
         $view = $this->blade(
             '<x-ui.status-chip label="Status '.$variant.'" variant="'.$variant.'" icon="centang" />'
         );
         $view->assertSee('Status '.$variant);
-        $view->assertSee('border-'.$variant.'/30');
+        foreach (explode(' ', $classes) as $cls) {
+            $view->assertSee($cls);
+        }
     }
 });
 
@@ -206,8 +220,8 @@ it('renders x-ui.stepper with horizontal and vertical orientations and status in
     $view->assertSee('Dibayar');
     $view->assertSee('Inspeksi');
     $view->assertSee('aria-current="step"', false);
-    $view->assertSee('bg-success');
-    $view->assertSee('bg-primary');
+    $view->assertSee('bg-lime');
+    $view->assertSee('bg-forest');
 
     // Vertical
     $view = $this->blade('<x-ui.stepper :steps="$steps" orientation="vertical" />', ['steps' => $steps]);
@@ -304,7 +318,7 @@ it('renders x-ui.score-ring with circular score and recommendation chip', functi
     $view = $this->blade('<x-ui.score-ring :score="88" recommendation="recommended" />');
     $view->assertSee('88');
     $view->assertSee('Layak');
-    $view->assertSee('text-success');
+    $view->assertSee('text-forest');
 
     // Caution
     $view = $this->blade('<x-ui.score-ring :score="65" recommendation="caution" />');
@@ -316,7 +330,7 @@ it('renders x-ui.score-ring with circular score and recommendation chip', functi
     $view = $this->blade('<x-ui.score-ring :score="40" recommendation="not_recommended" />');
     $view->assertSee('40');
     $view->assertSee('Tidak Direkomendasikan');
-    $view->assertSee('text-danger');
+    $view->assertSee('text-alarm');
 
     // Loading
     $view = $this->blade('<x-ui.score-ring :loading="true" />');
@@ -378,7 +392,7 @@ it('renders x-ui.skeleton for various variants', function () {
     foreach ($variants as $variant) {
         $view = $this->blade('<x-ui.skeleton variant="'.$variant.'" />');
         $view->assertSee('animate-pulse');
-        $view->assertSee('bg-muted/20');
+        $view->assertSee('bg-fog');
     }
 });
 
@@ -399,4 +413,45 @@ it('renders x-ui.icon with outline and solid variants for all required status an
         $viewSolid->assertSee('<svg', false);
         $viewSolid->assertSee('fill="currentColor"', false);
     }
+});
+
+it('renders x-ui.button with Wise theme color rules and pill shape', function () {
+    // Primary action button is lime with forest text and hover lime-hover
+    $viewPri = $this->blade('<x-ui.button variant="primary">Aksi Utama</x-ui.button>');
+    $viewPri->assertSee('bg-lime');
+    $viewPri->assertSee('text-forest');
+    $viewPri->assertSee('rounded-full');
+
+    // Secondary button is white surface with forest border and linen hover
+    $viewSec = $this->blade('<x-ui.button variant="secondary">Aksi Kedua</x-ui.button>');
+    $viewSec->assertSee('bg-surface');
+    $viewSec->assertSee('border-forest');
+    $viewSec->assertSee('hover:bg-linen');
+
+    // Disabled button is fog with pebble text
+    $viewDis = $this->blade('<x-ui.button variant="primary" :disabled="true">Nonaktif</x-ui.button>');
+    $viewDis->assertSee('bg-fog');
+    $viewDis->assertSee('text-pebble');
+});
+
+it('renders x-ui.status-chip with Wise theme active lime and primary linen', function () {
+    // Active / success status is lime with forest text
+    $viewActive = $this->blade('<x-ui.status-chip label="Aktif" variant="success" icon="centang" />');
+    $viewActive->assertSee('bg-lime');
+    $viewActive->assertSee('text-forest');
+
+    // Primary status is linen with forest text
+    $viewPri = $this->blade('<x-ui.status-chip label="Diproses" variant="primary" icon="jam" />');
+    $viewPri->assertSee('bg-linen');
+    $viewPri->assertSee('text-forest');
+
+    // Danger status is alarm
+    $viewDanger = $this->blade('<x-ui.status-chip label="Ditolak" variant="danger" icon="silang" />');
+    $viewDanger->assertSee('bg-alarm/10');
+    $viewDanger->assertSee('text-alarm');
+
+    // Muted status is fog
+    $viewMuted = $this->blade('<x-ui.status-chip label="Terjual" variant="muted" icon="tag" />');
+    $viewMuted->assertSee('bg-fog');
+    $viewMuted->assertSee('text-pebble');
 });

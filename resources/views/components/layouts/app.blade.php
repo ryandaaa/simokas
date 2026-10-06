@@ -16,36 +16,35 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-full flex flex-col font-sans bg-bg text-text">
+<body class="min-h-full flex flex-col font-sans bg-paper text-charcoal" x-data="{ mobileMenuOpen: false }">
     {{-- Skip-link untuk aksesibilitas keyboard --}}
     <a href="#main-content"
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-surface focus:rounded-lg focus:shadow-md focus:outline-none focus:ring-2 focus:ring-accent">
+       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-lime focus:text-forest focus:rounded-full focus:shadow-md focus:outline-none focus:ring-2 focus:ring-forest">
         {{ __('ui.layout.skip_link') }}
     </a>
 
-    {{-- Bilah atas (Desktop & Header Mobile) --}}
-    <header class="sticky top-0 z-40 bg-surface border-b border-muted/20">
+    {{-- Bilah atas (Desktop & Header Mobile ala Wise) --}}
+    <header class="sticky top-0 z-40 bg-surface border-b border-fog">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center justify-between h-16 gap-4">
                 {{-- Brand/Logo --}}
                 <div class="flex items-center gap-6">
-                    <a href="{{ url('/') }}" class="flex items-center gap-2 text-primary font-bold text-xl tracking-tight focus:outline-none focus:ring-2 focus:ring-accent rounded-lg px-1">
-                        <x-ui.icon name="perisai-centang" class="w-7 h-7 text-accent" />
-                        <span>{{ config('app.name', 'SIMOKAS') }}</span>
+                    <a href="{{ url('/') }}" class="text-sm font-black text-forest tracking-[0.2em] focus:outline-none focus:ring-2 focus:ring-forest rounded-full px-2 py-1 select-none">
+                        {{ config('app.name', 'SIMOKAS') }}
                     </a>
 
-                    {{-- Navigasi Desktop (bilah atas) --}}
+                    {{-- Navigasi Desktop (bilah atas berbentuk pil) --}}
                     @if (!empty($navItems))
-                        <nav class="hidden md:flex items-center gap-1" aria-label="Navigasi Utama">
+                        <nav class="hidden md:flex items-center gap-1 p-1 bg-fog rounded-full" aria-label="Navigasi Utama">
                             @foreach ($navItems as $item)
                                 @php
                                     $isActive = !empty($item['active']);
                                 @endphp
                                 <a href="{{ $item['url'] ?? '#' }}"
                                    @class([
-                                       'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent',
-                                       'bg-primary/10 text-primary font-semibold' => $isActive,
-                                       'text-muted hover:text-text hover:bg-muted/10' => !$isActive,
+                                       'flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-forest',
+                                       'bg-lime text-forest font-bold' => $isActive,
+                                       'text-charcoal hover:bg-linen' => !$isActive,
                                    ])
                                    @if ($isActive) aria-current="page" @endif>
                                     @if (!empty($item['icon']))
@@ -60,10 +59,57 @@
 
                 {{-- Header Actions / User Slot --}}
                 <div class="flex items-center gap-2">
-                    {{ $headerActions ?? '' }}
+                    <button type="button"
+                            @click="mobileMenuOpen = !mobileMenuOpen"
+                            class="md:hidden p-2 rounded-full text-forest hover:bg-fog focus:outline-none focus:ring-2 focus:ring-forest"
+                            aria-label="Menu navigasi">
+                        <x-ui.icon name="menu" class="w-6 h-6" />
+                    </button>
+
+                    @if ($headerActions)
+                        {{ $headerActions }}
+                    @else
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="px-3 py-1.5 rounded-full text-sm font-medium text-forest hover:bg-linen transition-colors">
+                                {{ auth()->user()->name }}
+                            </a>
+                            <form method="POST" action="{{ route('identity.logout') }}" class="inline">
+                                @csrf
+                                <x-ui.button type="submit" variant="secondary" class="!min-h-[36px] !px-4 !py-1.5 !text-sm">
+                                    {{ __('Keluar') }}
+                                </x-ui.button>
+                            </form>
+                        @else
+                            <a href="{{ route('login') }}" class="px-3 py-1.5 rounded-full text-sm font-medium text-forest hover:bg-linen transition-colors">
+                                {{ __('Masuk') }}
+                            </a>
+                            <x-ui.button :href="route('identity.register')" variant="secondary" class="!min-h-[36px] !px-4 !py-1.5 !text-sm">
+                                {{ __('Daftar') }}
+                            </x-ui.button>
+                        @endauth
+                    @endif
                 </div>
             </div>
         </div>
+
+        {{-- Dropdown Menu Mobile --}}
+        @if (!empty($navItems))
+            <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-surface border-t border-fog px-5 py-3 flex flex-col gap-2">
+                @foreach ($navItems as $item)
+                    @php
+                        $isActive = !empty($item['active']);
+                    @endphp
+                    <a href="{{ $item['url'] ?? '#' }}"
+                       @class([
+                           'py-2 px-3 rounded-full text-sm font-medium transition-colors',
+                           'bg-lime text-forest font-bold' => $isActive,
+                           'text-forest hover:bg-linen' => !$isActive,
+                       ])>
+                        {{ $item['label'] }}
+                    </a>
+                @endforeach
+            </div>
+        @endif
     </header>
 
     {{-- Region aria-live untuk pembaca layar --}}
@@ -79,26 +125,60 @@
     @endif
 
     {{-- Slot Konten Utama --}}
-    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 focus:outline-none" tabindex="-1">
+    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 focus:outline-none" tabindex="-1">
         {{ $slot }}
     </main>
 
-    {{-- Footer Bersama --}}
-    <footer class="mt-auto border-t border-muted/20 bg-surface text-muted text-sm pb-24 md:pb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-                <x-ui.icon name="perisai-centang" class="w-5 h-5 text-accent" />
-                <span class="font-semibold text-text">{{ config('app.name', 'SIMOKAS') }}</span>
-                <span>&copy; {{ date('Y') }} {{ __('legal.footer_rights') }}</span>
+    {{-- Footer Gelap Forest Ink ala Wise --}}
+    <footer class="mt-auto bg-forest text-paper pb-24 md:pb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+            <div class="col-span-2 md:col-span-1">
+                <p class="text-sm font-black text-lime tracking-[0.2em]">SIMOKAS</p>
+                <p class="text-sm text-paper/70 mt-3 max-w-xs leading-relaxed">
+                    Platform jual beli kendaraan bekas dengan inspeksi independen di Kota Pekanbaru. Netral 100% — kami tidak menjual kendaraan.
+                </p>
             </div>
-            <nav class="flex items-center gap-6" aria-label="Tautan Hukum">
-                <a href="{{ route('legal.privacy') }}" class="text-muted hover:text-text focus:outline-none focus:ring-2 focus:ring-accent rounded transition-colors">
-                    {{ __('legal.footer_privacy') }}
-                </a>
-                <a href="{{ route('legal.terms') }}" class="text-muted hover:text-text focus:outline-none focus:ring-2 focus:ring-accent rounded transition-colors">
-                    {{ __('legal.footer_terms') }}
-                </a>
-            </nav>
+            <div>
+                <p class="text-xs font-bold text-lime mb-3 tracking-[0.15em]">NAVIGASI</p>
+                <div class="flex flex-col gap-2.5 text-sm">
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('catalog.index') }}">Kendaraan</a>
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('catalog.how-it-works') }}">Cara Kerja</a>
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('catalog.help') }}">Bantuan</a>
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('login') }}">Masuk</a>
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('identity.register') }}">Daftar</a>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-lime mb-3 tracking-[0.15em]">LAYANAN</p>
+                <div class="flex flex-col gap-2.5 text-sm">
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('catalog.index', ['type' => 'car']) }}">Inspeksi Mobil — Rp 50.000</a>
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('catalog.index', ['type' => 'motorcycle']) }}">Inspeksi Motor — Rp 15.000</a>
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('identity.register') }}">Jadi Inspektor</a>
+                    <a class="text-paper/80 hover:text-lime transition-colors" href="{{ route('dashboard') }}">Dashboard</a>
+                </div>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-lime mb-3 tracking-[0.15em]">WILAYAH & LEGAL</p>
+                <p class="text-sm text-paper/70 leading-relaxed">
+                    Tampan · Sukajadi · Marpoyan Damai · Bukit Raya · Rumbai · Payung Sekaki<br/>
+                    Kota Pekanbaru, Riau
+                </p>
+                <nav class="flex flex-col gap-2.5 text-sm mt-3" aria-label="Tautan Hukum">
+                    <a href="{{ route('legal.terms') }}" class="text-paper/80 hover:text-lime text-left transition-colors">
+                        {{ __('legal.footer_terms') }}
+                    </a>
+                    <a href="{{ route('legal.privacy') }}" class="text-paper/80 hover:text-lime text-left transition-colors">
+                        {{ __('legal.footer_privacy') }}
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="border-t border-paper/15">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-paper/50">
+                <span>&copy; {{ date('Y') }} {{ config('app.name', 'SIMOKAS') }} — {{ __('legal.footer_rights') }}</span>
+                <span>Seluruh waktu ditampilkan dalam WIB</span>
+            </div>
         </div>
     </footer>
 
@@ -107,7 +187,7 @@
         @php
             $bottomNavItems = array_slice($navItems, 0, 5);
         @endphp
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-muted/20 pb-safe" aria-label="Navigasi Seluler">
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-fog pb-safe" aria-label="Navigasi Seluler">
             <div class="grid grid-flow-col auto-cols-fr items-center h-16 px-2">
                 @foreach ($bottomNavItems as $item)
                     @php
@@ -115,9 +195,9 @@
                     @endphp
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
-                           'flex flex-col items-center justify-center py-1 rounded-lg text-xs font-medium focus:outline-none focus:ring-2 focus:ring-accent min-h-[44px]',
-                           'text-primary font-semibold' => $isActive,
-                           'text-muted hover:text-text' => !$isActive,
+                           'flex flex-col items-center justify-center py-1 rounded-full text-xs font-medium focus:outline-none focus:ring-2 focus:ring-forest min-h-[44px] transition-colors',
+                           'text-forest font-bold bg-linen' => $isActive,
+                           'text-slate hover:text-forest' => !$isActive,
                        ])
                        @if ($isActive) aria-current="page" @endif>
                         @if (!empty($item['icon']))
