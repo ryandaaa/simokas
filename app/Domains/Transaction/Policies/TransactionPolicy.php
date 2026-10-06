@@ -26,7 +26,10 @@ final class TransactionPolicy
         }
 
         // Get the listing to check if user is seller
-        $listing = $transaction->listing;
+        $listing = $transaction->listing();
+        if (! $listing) {
+            return false;
+        }
 
         return (string) $user->id === (string) $listing->seller_id;
     }
@@ -41,7 +44,10 @@ final class TransactionPolicy
             return false;
         }
 
-        $listing = $transaction->listing;
+        $listing = $transaction->listing();
+        if (! $listing) {
+            return false;
+        }
 
         return (string) $user->id === (string) $listing->seller_id;
     }
@@ -56,7 +62,10 @@ final class TransactionPolicy
             return false;
         }
 
-        $listing = $transaction->listing;
+        $listing = $transaction->listing();
+        if (! $listing) {
+            return false;
+        }
 
         return (string) $user->id === (string) $listing->seller_id;
     }

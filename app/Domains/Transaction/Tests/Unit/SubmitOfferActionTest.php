@@ -27,14 +27,14 @@ it('TRX-T01 allows buyer to submit offer on active listing', function () {
     $action = app(SubmitOffer::class);
     $transaction = $action->handle($buyer, $listing, $listing->price);
 
-    expect($transaction)
-        ->status->toBe(TransactionStatus::Offered)
-        ->buyer_id->toBe($buyer->id)
-        ->listing_id->toBe($listing->id)
-        ->price_amount->toBe($listing->price)
-        ->commission_pct->toBeNull()
-        ->inspector_id->toBeNull()
-        ->expires_at->not->toBeNull();
+    expect($transaction)->not->toBeNull();
+    expect($transaction->status)->toBe(TransactionStatus::Offered);
+    expect($transaction->buyer_id)->toBe($buyer->id);
+    expect($transaction->listing_id)->toBe($listing->id);
+    expect($transaction->price_amount)->toBe($listing->price);
+    expect($transaction->commission_pct)->toBeNull();
+    expect($transaction->inspector_id)->toBeNull();
+    expect($transaction->expires_at)->not->toBeNull();
 });
 
 it('TRX-T01 allows buyer to submit offer on in_inspection listing', function () {
@@ -45,9 +45,9 @@ it('TRX-T01 allows buyer to submit offer on in_inspection listing', function () 
     $action = app(SubmitOffer::class);
     $transaction = $action->handle($buyer, $listing, $listing->price);
 
-    expect($transaction)
-        ->status->toBe(TransactionStatus::Offered)
-        ->buyer_id->toBe($buyer->id);
+    expect($transaction)->not->toBeNull();
+    expect($transaction->status)->toBe(TransactionStatus::Offered);
+    expect($transaction->buyer_id)->toBe($buyer->id);
 });
 
 it('TRX-T01 rejects offer on rejected listing', function () {
@@ -114,7 +114,8 @@ it('TRX-T03 allows only one active transaction per listing', function () {
 
     // First buyer successfully submits offer
     $tx1 = $action->handle($buyer1, $listing, $listing->price);
-    expect($tx1)->status->toBe(TransactionStatus::Offered);
+    expect($tx1)->not->toBeNull();
+    expect($tx1->status)->toBe(TransactionStatus::Offered);
 
     // Second buyer tries to submit - should fail with 409
     expect(fn () => $action->handle($buyer2, $listing, $listing->price))
@@ -142,9 +143,9 @@ it('TRX-T04 includes commission details when listing has inspection result', fun
     $action = app(SubmitOffer::class);
     $transaction = $action->handle($buyer, $listing, $listing->price);
 
-    expect($transaction)
-        ->commission_pct->toBe(3)
-        ->inspector_id->toBe($inspector->id);
+    expect($transaction)->not->toBeNull();
+    expect($transaction->commission_pct)->toBe(3);
+    expect($transaction->inspector_id)->toBe($inspector->id);
 });
 
 it('TRX-T04 has no commission when listing has no inspection result', function () {
@@ -158,9 +159,9 @@ it('TRX-T04 has no commission when listing has no inspection result', function (
     $action = app(SubmitOffer::class);
     $transaction = $action->handle($buyer, $listing, $listing->price);
 
-    expect($transaction)
-        ->commission_pct->toBeNull()
-        ->inspector_id->toBeNull();
+    expect($transaction)->not->toBeNull();
+    expect($transaction->commission_pct)->toBeNull();
+    expect($transaction->inspector_id)->toBeNull();
 });
 
 it('TRX-T05 copies price and does not change when listing price changes after offer', function () {
