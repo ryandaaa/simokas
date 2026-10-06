@@ -74,6 +74,7 @@
         if ($currentUser->isAdmin()) {
             $roleNavLinks = [
                 ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                ['label' => __('ui.layout.history'), 'route' => 'history'],
                 ['label' => __('ui.layout.queue'), 'route' => 'admin.queue.index'],
                 ['label' => __('ui.layout.admin_jobs'), 'route' => 'admin.jobs.index'],
                 ['label' => __('ui.layout.inspectors'), 'route' => 'admin.inspectors.index'],
@@ -88,6 +89,7 @@
             if ($isApprovedInspector) {
                 $roleNavLinks = [
                     ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                    ['label' => __('ui.layout.history'), 'route' => 'history'],
                     ['label' => __('ui.layout.open_jobs'), 'route' => 'jobs.open'],
                     ['label' => __('ui.layout.my_jobs'), 'route' => 'jobs.inspector'],
                     ['label' => __('ui.layout.earnings'), 'route' => 'inspector.earnings'],
@@ -97,12 +99,14 @@
             } else {
                 $roleNavLinks = [
                     ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                    ['label' => __('ui.layout.history'), 'route' => 'history'],
                     ['label' => __('ui.layout.onboarding'), 'route' => 'inspector.onboarding'],
                 ];
             }
         } elseif ($currentUser->isUser()) {
             $roleNavLinks = [
                 ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                ['label' => __('ui.layout.history'), 'route' => 'history'],
                 ['label' => __('ui.layout.my_listings'), 'route' => 'listings.mine'],
                 ['label' => __('ui.layout.create_listing'), 'route' => 'listings.create'],
                 ['label' => __('ui.layout.my_inspections'), 'route' => 'jobs.mine'],
