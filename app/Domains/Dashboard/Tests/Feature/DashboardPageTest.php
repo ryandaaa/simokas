@@ -243,6 +243,7 @@ it('redirects to dashboard by role from login', function (string $role) {
         ])
         ),
         'admin' => User::factory()->admin()->create(),
+        default => throw new \UnexpectedValueException("Unknown role: {$role}"),
     };
 
     $response = actingAs($user)->get(route('dashboard'));
