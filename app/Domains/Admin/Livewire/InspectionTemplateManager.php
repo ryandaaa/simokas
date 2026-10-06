@@ -37,22 +37,14 @@ final class InspectionTemplateManager extends Component
         $this->resetAlerts();
 
         $template = InspectionTemplate::findOrFail($templateId);
-        $this->selectedTemplateId = $template->id;
+        $this->setSelectedTemplate($template);
+    }
 
-        // Load items from selected template
-        $this->items = $template->items()
-            ->orderBy('sort_order')
-            ->get()
-            ->map(fn (TemplateItem $item) => [
-                'id' => $item->id,
-                'label' => $item->label,
-                'weight' => $item->weight,
-                'is_required' => $item->is_required,
-                'requires_photo' => $item->requires_photo,
-                'is_critical' => $item->is_critical,
-                'sort_order' => $item->sort_order,
-            ])
-            ->toArray();
+    public function cancelEdit(): void
+    {
+        $this->selectedTemplateId = null;
+        $this->items = [];
+        $this->resetAlerts();
     }
 
     public function saveItems(): void
@@ -77,11 +69,10 @@ final class InspectionTemplateManager extends Component
             }
 
             $template = InspectionTemplate::findOrFail($this->selectedTemplateId);
-            app(TemplateEditor::class)->handle($template, $this->items);
+            $newTemplate = app(TemplateEditor::class)->handle($template, $this->items);
 
-            $this->successMessage = __('admin.templates.save_success');
-            $this->selectedTemplateId = null;
-            $this->items = [];
+            $this->setSelectedTemplate($newTemplate);
+            $this->successMessage = __('admin.templates.save_success', ['version' => $newTemplate->version]);
         } catch (\Exception $e) {
             $this->errorMessage = $e->getMessage();
         }
@@ -89,7 +80,10 @@ final class InspectionTemplateManager extends Component
 
     public function render(): View
     {
-        $templates = InspectionTemplate::all()
+        $templates = InspectionTemplate::query()
+            ->orderBy('vehicle_type')
+            ->orderByDesc('version')
+            ->get()
             ->groupBy('vehicle_type')
             ->mapWithKeys(function ($group, $type) {
                 return [
@@ -100,10 +94,29 @@ final class InspectionTemplateManager extends Component
         return view('admin::livewire.inspection-template-manager', [
             'templates' => $templates,
             'selectedTemplate' => $this->selectedTemplateId
-                ? InspectionTemplate::findOrFail($this->selectedTemplateId)
+                ? InspectionTemplate::find($this->selectedTemplateId)
                 : null,
         ])
             ->layout('components.layouts.app', ['title' => __('admin.templates.title')]);
+    }
+
+    private function setSelectedTemplate(InspectionTemplate $template): void
+    {
+        $this->selectedTemplateId = $template->id;
+
+        $this->items = $template->items()
+            ->orderBy('sort_order')
+            ->get()
+            ->map(fn (TemplateItem $item) => [
+                'id' => $item->id,
+                'label' => $item->label,
+                'weight' => $item->weight,
+                'is_required' => $item->is_required,
+                'requires_photo' => $item->requires_photo,
+                'is_critical' => $item->is_critical,
+                'sort_order' => $item->sort_order,
+            ])
+            ->toArray();
     }
 
     private function resetAlerts(): void

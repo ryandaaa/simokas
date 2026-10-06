@@ -32,7 +32,7 @@
             <div class="md:col-span-1">
                 <div class="space-y-4">
                     @forelse ($templates as $vehicleType => $templateList)
-                        <div class="bg-color-surface rounded-xl p-4 border border-muted/20">
+                        <div class="bg-color-surface rounded-xl p-4 border border-color-muted/20">
                             <h3 class="font-semibold text-color-text mb-3">
                                 {{ $vehicleType }}
                             </h3>
@@ -43,12 +43,15 @@
                                         class="w-full text-left p-3 rounded-lg transition-colors
                                             {{ $selectedTemplate?->id === $template->id
                                                 ? 'bg-color-primary text-white'
-                                                : 'bg-muted/5 text-color-text hover:bg-muted/10'
+                                                : 'bg-color-muted/5 text-color-text hover:bg-color-muted/10'
                                             }}"
                                     >
                                         <div class="font-medium">{{ $template->name }}</div>
                                         <div class="text-sm {{ $selectedTemplate?->id === $template->id ? 'text-white opacity-90' : 'text-color-muted' }}">
                                             {{ __('admin.templates.version', ['version' => $template->version]) }}
+                                            @if (!$template->is_active)
+                                                <span class="text-xs opacity-75">({{ __('admin.templates.inactive') }})</span>
+                                            @endif
                                         </div>
                                     </button>
                                 @endforeach
@@ -67,14 +70,19 @@
             <!-- Items Editor -->
             <div class="md:col-span-3">
                 @if ($selectedTemplate)
-                    <div class="bg-color-surface rounded-xl p-6 border border-muted/20">
-                        <h2 class="text-xl font-bold text-color-text mb-6">
-                            {{ $selectedTemplate->name }}
-                        </h2>
+                    <div class="bg-color-surface rounded-xl p-6 border border-color-muted/20">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-bold text-color-text">
+                                {{ $selectedTemplate->name }}
+                            </h2>
+                            <span class="text-sm font-medium px-2.5 py-0.5 rounded bg-color-primary/10 text-color-primary">
+                                {{ __('admin.templates.version', ['version' => $selectedTemplate->version]) }}
+                            </span>
+                        </div>
 
                         <form wire:submit="saveItems" class="space-y-6">
                             @forelse ($items as $index => $item)
-                                <div class="border border-muted/20 rounded-lg p-4 space-y-4">
+                                <div class="border border-color-muted/20 rounded-lg p-4 space-y-4">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <!-- Label -->
                                         <div>
@@ -157,8 +165,8 @@
                                     </x-ui.button>
                                     <button
                                         type="button"
-                                        wire:click="$set('selectedTemplateId', null)"
-                                        class="px-4 py-2 text-color-text hover:bg-muted/10 rounded-lg transition-colors"
+                                        wire:click="cancelEdit"
+                                        class="px-4 py-2 text-color-text hover:bg-color-muted/10 rounded-lg transition-colors"
                                     >
                                         {{ __('admin.templates.cancel') }}
                                     </button>
@@ -167,7 +175,7 @@
                         </form>
                     </div>
                 @else
-                    <div class="bg-color-surface rounded-xl p-6 border border-muted/20 h-full flex items-center justify-center">
+                    <div class="bg-color-surface rounded-xl p-6 border border-color-muted/20 h-full flex items-center justify-center">
                         <x-ui.empty-state
                             icon="clipboard"
                             title="{{ __('admin.templates.empty_title') }}"

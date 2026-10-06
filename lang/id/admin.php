@@ -105,7 +105,7 @@ return [
         'sort_order' => 'Urutan',
         'save' => 'Simpan Perubahan',
         'saving' => 'Menyimpan...',
-        'save_success' => 'Template berhasil diperbarui. Versi baru diterapkan untuk inspeksi baru sementara draf lama tetap berlaku.',
+        'save_success' => 'Template berhasil diperbarui ke versi :version. Versi baru diterapkan untuk inspeksi baru sementara draf lama tetap berlaku.',
         'empty_title' => 'Pilih Template',
         'empty_description' => 'Pilih salah satu template di samping untuk mulai mengedit item inspeksi.',
         'no_templates' => 'Tidak Ada Template',
@@ -114,5 +114,7 @@ return [
         'no_items_description' => 'Template ini belum memiliki item inspeksi.',
         'add_item' => 'Tambah Item',
         'cancel' => 'Batal',
+        'active' => 'Aktif',
+        'inactive' => 'Nonaktif',
     ],
 ];
