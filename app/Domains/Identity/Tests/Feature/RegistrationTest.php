@@ -6,6 +6,7 @@ use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Livewire\Register;
 use App\Domains\Identity\Models\User;
+use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
@@ -170,7 +171,7 @@ it('AUTH-T15 rejects registration without valid terms consent', function (mixed 
 ]);
 
 it('AUTH-T16 records accepted_terms_at at registration time when consent is given', function () {
-    $frozen = \Carbon\CarbonImmutable::parse('2026-10-05 10:00:00', 'UTC');
+    $frozen = CarbonImmutable::parse('2026-10-05 10:00:00', 'UTC');
     $this->travelTo($frozen);
 
     Livewire::test(Register::class)
