@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domains\Result\Providers;
 
+use App\Domains\Result\Actions\UpdateTemplateItems;
+use App\Domains\Result\Contracts\TemplateEditor;
 use App\Domains\Result\Livewire\InspectionFormPage;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
@@ -17,7 +19,7 @@ final class ResultServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->bind(TemplateEditor::class, UpdateTemplateItems::class);
     }
 
     public function boot(): void

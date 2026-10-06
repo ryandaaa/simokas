@@ -94,18 +94,4 @@ class UserFactory extends Factory
             'status' => UserStatus::Blocked,
         ]);
     }
-
-    public function buyer(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::User,
-        ]);
-    }
-
-    public function seller(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'role' => UserRole::User,
-        ]);
-    }
 }

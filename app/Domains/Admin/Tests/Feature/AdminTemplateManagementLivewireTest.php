@@ -69,12 +69,8 @@ it('ADM-T12 old results maintain their template version after template update', 
 
     // Create job with result using current template
     $template = InspectionTemplate::forVehicleType(VehicleType::Car)->active()->firstOrFail();
-    $job = InspectionJob::factory()
-        ->forListing(
-            Listing::factory()
-                ->create(['vehicle_type' => VehicleType::Car])
-        )
-        ->create();
+    $listing = Listing::factory()->create(['vehicle_type' => VehicleType::Car]);
+    $job = InspectionJob::factory()->create(['listing_id' => $listing->id]);
 
     $result = InspectionResult::factory()
         ->for($job)
@@ -108,15 +104,13 @@ it('ADM-T12 in-progress draft maintains template version even after template upd
     (new InspectionTemplateSeeder)->run();
 
     $admin = User::factory()->admin()->create();
+    $inspector = User::factory()->inspector()->create();
 
     // Create job with draft result
+    $listing = Listing::factory()->create(['vehicle_type' => VehicleType::Car]);
     $job = InspectionJob::factory()
-        ->forListing(
-            Listing::factory()
-                ->create(['vehicle_type' => VehicleType::Car])
-        )
-        ->inProgress()
-        ->create();
+        ->inProgress($inspector)
+        ->create(['listing_id' => $listing->id]);
 
     // Get or create draft result with the current template
     $template = InspectionTemplate::forVehicleType(VehicleType::Car)->active()->firstOrFail();
@@ -124,7 +118,7 @@ it('ADM-T12 in-progress draft maintains template version even after template upd
         ['job_id' => $job->id],
         [
             'listing_id' => $job->listing_id,
-            'inspector_id' => $job->requester_id,
+            'inspector_id' => $inspector->id,
             'template_id' => $template->id,
             'status' => ResultStatus::Draft,
         ]
@@ -189,7 +183,12 @@ it('ADM-T12 allows reordering template items', function () {
 it('denies non-admin users access to template management', function (string $role) {
     (new InspectionTemplateSeeder)->run();
 
-    $user = User::factory()->{$role}()->create();
+    $factory = User::factory();
+    if ($role === 'buyer' || $role === 'seller') {
+        $user = $factory->user()->create();
+    } else {
+        $user = $factory->{$role}()->create();
+    }
     actingAs($user);
 
     Livewire::test(InspectionTemplateManager::class)

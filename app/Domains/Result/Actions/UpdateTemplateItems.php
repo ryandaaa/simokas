@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Result\Actions;
 
+use App\Domains\Result\Contracts\TemplateEditor;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\TemplateItem;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
  * Update template items (properties and sort order) and increment template version.
  * Old results and in-progress drafts maintain their original template version.
  */
-final class UpdateTemplateItems
+final class UpdateTemplateItems implements TemplateEditor
 {
     /**
      * @param  array<int, array{id: string, label: string, weight: int, is_required: bool, requires_photo: bool, is_critical: bool, sort_order: int}>  $itemsData

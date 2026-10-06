@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Admin\Livewire;
 
 use App\Domains\Listing\Enums\VehicleType;
+use App\Domains\Result\Contracts\TemplateEditor;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\TemplateItem;
 use Illuminate\Contracts\View\View;
@@ -76,9 +77,7 @@ final class InspectionTemplateManager extends Component
             }
 
             $template = InspectionTemplate::findOrFail($this->selectedTemplateId);
-            /** @var \App\Domains\Result\Actions\UpdateTemplateItems $updateAction */
-            $updateAction = app(\App\Domains\Result\Actions\UpdateTemplateItems::class);
-            $updateAction->handle($template, $this->items);
+            app(TemplateEditor::class)->handle($template, $this->items);
 
             $this->successMessage = __('admin.templates.save_success');
             $this->selectedTemplateId = null;
