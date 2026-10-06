@@ -1024,7 +1024,7 @@ Unik pada (`result_id`, `user_id`).
 
 ### 18.13 transactions (P1)
 
-`id`, `listing_id`, `buyer_id`, `seller_id`, `offered_price`, `status` (Bagian 14.3), `payment_id`, `inspector_commission`, `platform_commission`, `completed_at`.
+`id`, `listing_id`, `buyer_id`, `seller_id`, `offered_price`, `status` (Bagian 14.3), `payment_id`, `inspector_commission`, `platform_commission`, `completed_at`, `cancelled_by`, `cancel_reason`, `cancel_requested_at`, `needs_attention_at`.
 
 ### 18.14 conversations dan messages (P1)
 

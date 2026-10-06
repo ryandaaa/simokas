@@ -8,9 +8,12 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Setting\Contracts\SettingsReader;
 use App\Domains\Transaction\Actions\AcceptOffer;
+use App\Domains\Transaction\Actions\ApproveCancellationRequest;
+use App\Domains\Transaction\Actions\CancelTransaction;
 use App\Domains\Transaction\Actions\ConfirmHandover;
 use App\Domains\Transaction\Actions\OpenTransactionPayment;
 use App\Domains\Transaction\Actions\RejectOffer;
+use App\Domains\Transaction\Actions\RequestTransactionCancellation;
 use App\Domains\Transaction\Enums\TransactionStatus;
 use App\Domains\Transaction\Models\Transaction;
 use App\Domains\Transaction\Support\PurchaseBreakdown;
@@ -36,6 +39,8 @@ final class TransactionDetailPage extends Component
     public ?string $errorMessage = null;
 
     public ?string $actionSuccess = null;
+
+    public ?string $cancelReason = null;
 
     public function mount(Transaction $transaction): void
     {
@@ -127,6 +132,68 @@ final class TransactionDetailPage extends Component
         }
     }
 
+    public function cancel(CancelTransaction $action): void
+    {
+        /** @var Transaction $transaction */
+        $transaction = Transaction::query()->findOrFail($this->transactionId);
+
+        Gate::authorize('cancel', $transaction);
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        try {
+            $action->handle($user, $transaction, $this->cancelReason);
+            $this->actionSuccess = __('transaction.detail.cancel_success');
+            $this->errorMessage = null;
+            $this->cancelReason = null;
+        } catch (DomainException $e) {
+            $this->errorMessage = $e->getMessage();
+            $this->actionSuccess = null;
+        }
+    }
+
+    public function requestCancellation(RequestTransactionCancellation $action): void
+    {
+        /** @var Transaction $transaction */
+        $transaction = Transaction::query()->findOrFail($this->transactionId);
+
+        Gate::authorize('requestCancellation', $transaction);
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        try {
+            $action->handle($user, $transaction);
+            $this->actionSuccess = __('transaction.detail.cancel_request_success');
+            $this->errorMessage = null;
+        } catch (DomainException $e) {
+            $this->errorMessage = $e->getMessage();
+            $this->actionSuccess = null;
+        }
+    }
+
+    public function approveCancellation(ApproveCancellationRequest $action): void
+    {
+        /** @var Transaction $transaction */
+        $transaction = Transaction::query()->findOrFail($this->transactionId);
+
+        Gate::authorize('approveCancellation', $transaction);
+
+        /** @var User $user */
+        $user = Auth::user();
+
+        try {
+            $action->handle($user, $transaction, (string) $this->cancelReason);
+            $this->actionSuccess = __('transaction.detail.cancel_success');
+            $this->errorMessage = null;
+            $this->cancelReason = null;
+        } catch (DomainException $e) {
+            $this->errorMessage = $e->getMessage();
+            $this->actionSuccess = null;
+        }
+    }
+
     public function render(): View
     {
         /** @var Transaction $transaction */
@@ -150,6 +217,19 @@ final class TransactionDetailPage extends Component
             ->exists();
         $canConfirmHandover = ($isBuyer || $isAdmin) && $transaction->status === TransactionStatus::PaidHeld;
 
+        $canCancel = Gate::allows('cancel', $transaction);
+        $canRequestCancellation = $isBuyer
+            && $transaction->status === TransactionStatus::PaidHeld
+            && $transaction->cancel_requested_at === null
+            && Gate::allows('requestCancellation', $transaction);
+        $hasCancelRequest = $transaction->status === TransactionStatus::PaidHeld
+            && $transaction->cancel_requested_at !== null;
+        $canApproveCancellation = $isSeller
+            && $hasCancelRequest
+            && Gate::allows('approveCancellation', $transaction);
+        $showNeedsAttention = $transaction->needs_attention_at !== null
+            && ($isBuyer || $isSeller || $isAdmin);
+
         return view('transaction::livewire.transaction-detail-page', [
             'transaction' => $transaction,
             'isSeller' => $isSeller,
@@ -159,6 +239,11 @@ final class TransactionDetailPage extends Component
             'canPay' => $canPay,
             'payBlockedByJob' => $payBlockedByJob,
             'canConfirmHandover' => $canConfirmHandover,
+            'canCancel' => $canCancel,
+            'canRequestCancellation' => $canRequestCancellation,
+            'hasCancelRequest' => $hasCancelRequest,
+            'canApproveCancellation' => $canApproveCancellation,
+            'showNeedsAttention' => $showNeedsAttention,
         ])->layout('components.layouts.app', ['title' => __('transaction.detail.title')]);
     }
 
