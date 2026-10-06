@@ -6,6 +6,7 @@ namespace App\Domains\Result\Livewire;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Rating\Contracts\RatingReader;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Policies\ResultAccessPolicy;
@@ -73,12 +74,17 @@ final class ViewResultPage extends Component
             })->all();
         }
 
+        /** @var RatingReader $ratingReader */
+        $ratingReader = app(RatingReader::class);
+        $inspectorRating = $ratingReader->getInspectorRating($this->result->inspector_id);
+
         return view('result::view-result-page', [
             'result' => $this->result,
             'hasAccess' => $hasAccess,
             'canRequestAccess' => $canRequestAccess,
             'accessFee' => $this->result->job->fee_amount,
             'photoUrls' => $photoUrls,
+            'inspectorRating' => $inspectorRating,
         ])->layout('components.layouts.app', ['title' => __('result.inspection_results')]);
     }
 }
