@@ -13,6 +13,8 @@ use App\Domains\Listing\Contracts\ListingActivityChecker;
 use App\Domains\Listing\Contracts\ListingModerationContract;
 use App\Domains\Listing\Listeners\MarkListingInInspectionOnJobPaid;
 use App\Domains\Listing\Listeners\MarkListingInspectedOnJobCompleted;
+use App\Domains\Listing\Listeners\MarkListingInTransactionOnTransactionPaid;
+use App\Domains\Listing\Listeners\MarkListingSoldOnTransactionCompleted;
 use App\Domains\Listing\Listeners\ReturnListingToActiveOnJobCancelled;
 use App\Domains\Listing\Listeners\ReturnListingToActiveOnJobExpired;
 use App\Domains\Listing\Livewire\CreateListing;
@@ -22,6 +24,8 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Policies\ListingPolicy;
 use App\Domains\Listing\Services\DefaultListingActivityChecker;
 use App\Domains\Listing\Services\ListingModerationService;
+use App\Domains\Transaction\Events\TransactionCompleted;
+use App\Domains\Transaction\Events\TransactionPaid;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -51,6 +55,11 @@ final class ListingServiceProvider extends ServiceProvider
         Event::listen(JobCancelled::class, ReturnListingToActiveOnJobCancelled::class);
         Event::listen(JobExpired::class, ReturnListingToActiveOnJobExpired::class);
         Event::listen(JobCompleted::class, MarkListingInspectedOnJobCompleted::class);
+
+        // Perubahan shared TRX-2: Listing bereaksi pada event publik
+        // Transaction. Transaction tidak memanggil Action Listing langsung (A2/A3).
+        Event::listen(TransactionPaid::class, MarkListingInTransactionOnTransactionPaid::class);
+        Event::listen(TransactionCompleted::class, MarkListingSoldOnTransactionCompleted::class);
 
         Livewire::component('listing.create-listing', CreateListing::class);
         Livewire::component('listing.seller-listings', SellerListings::class);

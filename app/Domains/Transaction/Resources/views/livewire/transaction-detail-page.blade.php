@@ -97,7 +97,42 @@
         @endif
 
         @if ($isBuyer && $transaction->status->value === 'accepted')
-            <x-ui.alert variant="info" :message="__('transaction.detail.buyer_accepted_notice')" />
+            @if ($payBlockedByJob)
+                <x-ui.alert variant="info" :message="__('transaction.detail.pay_waiting_job')" />
+            @elseif ($canPay)
+                <x-ui.button
+                    type="button"
+                    variant="primary"
+                    wire:click="pay"
+                    wire:loading.attr="disabled"
+                    wire:target="pay"
+                >
+                    <span wire:loading.remove wire:target="pay">
+                        {{ __('transaction.detail.pay') }}
+                    </span>
+                    <span wire:loading wire:target="pay">
+                        {{ __('transaction.detail.paying') }}
+                    </span>
+                </x-ui.button>
+            @endif
+        @endif
+
+        @if ($canConfirmHandover)
+            <x-ui.button
+                type="button"
+                variant="primary"
+                @click="$dispatch('open-modal', 'handover-modal')"
+            >
+                {{ __('transaction.detail.confirm_handover') }}
+            </x-ui.button>
+        @endif
+
+        @if ($transaction->status->value === 'paid_held')
+            <x-ui.alert variant="info" :message="__('transaction.detail.paid_held_notice')" />
+        @endif
+
+        @if ($transaction->status->value === 'completed')
+            <x-ui.alert variant="success" :message="__('transaction.detail.completed_notice')" />
         @endif
     </div>
 
@@ -160,6 +195,38 @@
                 </span>
                 <span wire:loading wire:target="reject">
                     {{ __('transaction.detail.rejecting') }}
+                </span>
+            </x-ui.button>
+        </x-slot:footer>
+    </x-ui.modal>
+
+    <x-ui.modal
+        name="handover-modal"
+        :title="__('transaction.detail.handover_confirm_title')"
+        :description="__('transaction.detail.handover_confirm_description')"
+    >
+        <x-slot:footer>
+            <x-ui.button
+                type="button"
+                variant="secondary"
+                @click="open = false"
+                wire:loading.attr="disabled"
+            >
+                {{ __('transaction.detail.cancel') }}
+            </x-ui.button>
+
+            <x-ui.button
+                type="button"
+                variant="primary"
+                wire:click="confirmHandover"
+                wire:loading.attr="disabled"
+                wire:target="confirmHandover"
+            >
+                <span wire:loading.remove wire:target="confirmHandover">
+                    {{ __('transaction.detail.confirm_handover') }}
+                </span>
+                <span wire:loading wire:target="confirmHandover">
+                    {{ __('transaction.detail.confirming_handover') }}
                 </span>
             </x-ui.button>
         </x-slot:footer>

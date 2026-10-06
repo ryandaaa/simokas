@@ -120,13 +120,13 @@ Lihat tabel lengkap di [decisions/0002-flow-decisions.md](../decisions/0002-flow
 - [x] `TRX-T04` Rincian penjual: dengan inspeksi (komisi 3%, 10% atas komisi) dan tanpa inspeksi (TRX-E11)
 - [x] `TRX-T05` Harga, persen, dan inspektor tersalin dan tidak berubah saat pengaturan atau harga listing berubah (TRX-E3)
 - [x] `TRX-T06` Penjual setuju atau tolak, hanya penjual yang berhak
-- [ ] `TRX-T07` Bayar ditunda saat ada job aktif, terbuka setelah job final (TRX-E4, TRX-E5)
-- [ ] `TRX-T08` Bayar idempoten, dana `paid_held`, listing `in_transaction` (TRX-E6)
-- [ ] `TRX-T09` Serah terima: dana diteruskan, ledger benar, listing `sold`, akses hasil ditutup, rating dibuka
+- [x] `TRX-T07` Bayar ditunda saat ada job aktif, terbuka setelah job final (TRX-E4, TRX-E5)
+- [x] `TRX-T08` Bayar idempoten, dana `paid_held`, listing `in_transaction` (TRX-E6)
+- [x] `TRX-T09` Serah terima: dana diteruskan, ledger benar, listing `sold`, akses hasil ditutup, rating dibuka
 - [ ] `TRX-T10` Pembatalan per kondisi D-04 (dataset kondisi × pelaku), refund dan listing sesuai
 - [ ] `TRX-T11` Kedaluwarsa `offered` 48 jam dan `accepted` 24 jam (batas ±1 menit), idempoten
 - [ ] `TRX-T12` `paid_held` 7 hari ditandai perlu tindakan, tidak otomatis diselesaikan (TRX-E10)
 - [ ] `TRX-T13` Transisi status: pasangan sah diterima, selain itu ditolak
 - [ ] `TRX-T14` Aksi role tidak berhak mendapat 403 (dataset)
-- [ ] `TRX-T15` Konfirmasi serah terima ganda berefek sekali (TRX-E13)
-- [ ] `TRX-T16` Invarian ledger: harga pembeli = diterima penjual + komisi inspektor + bagian platform
+- [x] `TRX-T15` Konfirmasi serah terima ganda berefek sekali (TRX-E13)
+- [x] `TRX-T16` Invarian ledger: harga pembeli = diterima penjual + komisi inspektor + bagian platform

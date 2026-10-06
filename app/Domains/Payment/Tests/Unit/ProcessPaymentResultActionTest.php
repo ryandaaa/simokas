@@ -146,30 +146,25 @@ it('PAY-T05 allows retrying a failed payment with a new idempotency key', functi
     Event::assertDispatched(PaymentSucceeded::class);
 });
 
-it('PAY-T14 rolls back database transaction completely when mid-flight error occurs', function () {
+it('PAY-T14 commits the payment update before emitting the event, so a listener failure does not roll it back', function () {
     $payer = User::factory()->create();
     $payment = Payment::factory()->forPayer($payer)->pending()->create();
 
-    // Listen to PaymentSucceeded and throw exception during event handling
+    // The event is emitted after the transaction commits, so a listener
+    // failure must not roll back the payment update.
     Event::listen(PaymentSucceeded::class, function () {
         throw new RuntimeException('Mid-flight listener failure simulation');
     });
 
-    try {
-        $action = app(ProcessPaymentResult::class);
+    $action = app(ProcessPaymentResult::class);
 
-        $action->handle(
-            $payment,
-            PaymentMethod::Qris,
-            PaymentSimulationOutcome::Success,
-        );
-    } catch (RuntimeException $e) {
-        expect($e->getMessage())->toBe('Mid-flight listener failure simulation');
-    }
+    expect(fn () => $action->handle($payment, PaymentMethod::Qris, PaymentSimulationOutcome::Success))
+        ->toThrow(RuntimeException::class, 'Mid-flight listener failure simulation');
 
-    // Verify row was rolled back to initial state
+    // The payment update is durable: the transaction already committed
+    // before the event was emitted.
     $fresh = $payment->fresh();
-    expect($fresh->status)->toBe(PaymentStatus::Pending)
-        ->and($fresh->paid_at)->toBeNull()
-        ->and($fresh->method)->toBeNull();
+    expect($fresh->status)->toBe(PaymentStatus::Success)
+        ->and($fresh->paid_at)->not->toBeNull()
+        ->and($fresh->method)->toBe(PaymentMethod::Qris);
 });
