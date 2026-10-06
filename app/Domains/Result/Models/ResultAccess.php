@@ -29,6 +29,11 @@ final class ResultAccess extends Model
     /** @use HasFactory<ResultAccessFactory> */
     use HasFactory, HasUuids;
 
+    protected static function newFactory(): ResultAccessFactory
+    {
+        return ResultAccessFactory::new();
+    }
+
     protected $table = 'result_accesses';
 
     protected $fillable = [

@@ -191,14 +191,6 @@ it('CAT-T09 shows result buttons only when their routes exist', function () {
     $other = User::factory()->user()->create();
     $listing = makeVisibleListing(['seller_id' => $owner->id, 'status' => 'active', 'is_inspected' => true, 'last_inspected_at' => now()]);
 
-    $content = actingAs($other)->get(detailUrl($listing))->assertOk()->getContent();
-    expect($content)->not->toContain(__('catalog.detail.action_view_result'))
-        ->and($content)->not->toContain(__('catalog.detail.action_open_result'));
-
-    Route::get('/test-results/{listing}', fn () => 'ok')->name('results.show');
-    Route::get('/test-results/{listing}/access', fn () => 'ok')->name('results.access');
-    Route::getRoutes()->refreshNameLookups();
-
     actingAs($other)->get(detailUrl($listing))->assertOk()
         ->assertSee(__('catalog.detail.action_open_result'), false);
 

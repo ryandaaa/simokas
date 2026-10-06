@@ -12,12 +12,14 @@ use App\Domains\Payment\Models\Payment;
 use App\Domains\Result\Actions\GrantResultAccess;
 use App\Domains\Result\Models\InspectionResult;
 use App\Support\Money;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 final class ViewResultAccessTest extends TestCase
 {
+    use RefreshDatabase;
     #[Test]
     public function re_s_t10_grants_free_access_to_owner_inspector_requester_admin(): void
     {
