@@ -173,3 +173,40 @@ it('admin can list, filter, hide, and unhide ratings in AdminRatingList', functi
 
     expect($rating->fresh()->is_hidden)->toBeFalse();
 });
+
+it('RTG-E5 rating comment is escaped exactly once when rendered (no raw HTML, no double escaping)', function () {
+    $inspectorUser = User::factory()->inspector()->create();
+    InspectorProfile::factory()->create([
+        'user_id' => $inspectorUser->id,
+        'rating_avg' => 0.00,
+        'rating_count' => 0,
+    ]);
+    $buyer = User::factory()->user()->create();
+    $seller = User::factory()->user()->create();
+    $listing = Listing::factory()->create(['seller_id' => $seller->id]);
+    $transaction = Transaction::factory()->create([
+        'listing_id' => $listing->id,
+        'buyer_id' => $buyer->id,
+        'inspector_id' => $inspectorUser->id,
+        'status' => TransactionStatus::Completed,
+        'completed_at' => now(),
+    ]);
+    $admin = User::factory()->admin()->create();
+
+    $comment = 'Bagus & cepat <b>sekali</b>';
+
+    Rating::query()->create([
+        'transaction_id' => $transaction->id,
+        'inspector_id' => $inspectorUser->id,
+        'buyer_id' => $buyer->id,
+        'score' => 5,
+        'comment' => $comment,
+        'is_hidden' => false,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(AdminRatingList::class)
+        ->assertSee(e($comment), false)
+        ->assertDontSee('<b>sekali</b>', false)
+        ->assertDontSee('&amp;amp;', false);
+});

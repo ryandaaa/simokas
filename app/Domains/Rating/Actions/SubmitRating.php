@@ -54,7 +54,9 @@ final class SubmitRating
             if (mb_strlen($trimmed) > 500) {
                 throw InvalidRatingCommentException::create();
             }
-            $sanitizedComment = htmlspecialchars($trimmed, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            // Disimpan apa adanya; peng-escape-an dilakukan saat ditampilkan (Blade {{ }}),
+            // supaya tanda & atau kutip tidak ter-escape ganda di layar.
+            $sanitizedComment = $trimmed;
         }
 
         if (Rating::query()->where('transaction_id', $transaction->id)->exists()) {
