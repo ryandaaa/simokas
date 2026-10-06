@@ -65,4 +65,43 @@ final class InvalidLedgerPostingException extends DomainException
             [],
         );
     }
+
+    public static function invalidCommission(string $which, int $amount): self
+    {
+        return new self(
+            __('payment.errors.posting_invalid_commission', ['which' => $which, 'amount' => $amount]),
+            self::CODE_BUSINESS_RULE,
+            422,
+            null,
+            ['commission' => $which, 'amount' => $amount],
+        );
+    }
+
+    public static function inspectorExceedsCommission(int $inspectorCommission, int $saleCommission): self
+    {
+        return new self(
+            __('payment.errors.posting_inspector_exceeds_commission', [
+                'inspector' => $inspectorCommission,
+                'total' => $saleCommission,
+            ]),
+            self::CODE_BUSINESS_RULE,
+            422,
+            null,
+            ['inspector_commission' => $inspectorCommission, 'sale_commission' => $saleCommission],
+        );
+    }
+
+    public static function commissionExceedsPayment(int $saleCommission, int $paymentAmount): self
+    {
+        return new self(
+            __('payment.errors.posting_commission_exceeds_payment', [
+                'total' => $saleCommission,
+                'amount' => $paymentAmount,
+            ]),
+            self::CODE_BUSINESS_RULE,
+            422,
+            null,
+            ['sale_commission' => $saleCommission, 'payment_amount' => $paymentAmount],
+        );
+    }
 }

@@ -166,6 +166,7 @@ interface Ledger
 {
     public function postAccessPayout(string $paymentId, string $inspectorId, ?int $platformFeePct = null): void;
     public function postInspectionPayout(string $paymentId, string $inspectorId, int $platformFeePct): void;
+    public function postPurchasePayout(string $paymentId, int $saleCommission, int $inspectorCommission, string $inspectorUserId): void;
     public function refundPayment(string $paymentId): void;
     public function balanceFor(string $inspectorId): int;
 }
@@ -184,6 +185,7 @@ dan mencatat persentase yang dipakai di `note` tiap entri untuk audit. Tanpa kol
 | --- | --- | --- |
 | `postAccessPayout` | Listener `PostAccessLedger` (event `PaymentSucceeded` tujuan `access` yang membawa `beneficiaryId`), atau RES-4 eksplisit saat akses diberikan | Setelah pembayaran akses `success` |
 | `postInspectionPayout` | JOB-4 | Saat job `completed` (bukan saat bayar) |
+| `postPurchasePayout` | TRX-3 (saat serah terima dikonfirmasi) | Setelah pembayaran pembelian `success`; nominal dari salinan pada transaksi |
 | `refundPayment` | JOB-3 (pembatalan setelah bayar) | Untuk pembayaran `success` yang belum diposting |
 | `balanceFor` | Halaman Pendapatan, Dashboard (DSH-1) | Saldo = jumlah entri kredit inspektor |
 
@@ -194,11 +196,22 @@ dan mencatat persentase yang dipakai di `note` tiap entri untuk audit. Tanpa kol
    memengaruhi entri lama (persen yang dipakai juga dicatat di `note` kedua entri: `Komisi platform :pct% ...`).
 2. Setiap posting menulis dua entri dalam satu statement: `platform_fee` (akun null = platform) dan fee penerima (`access_fee` / `inspection_fee`).
 3. Posting ganda ditolak: `LedgerAlreadyPostedException` (409), diperkuat batasan unik `(payment_id, entry_type)`.
-4. Hanya pembayaran `success` yang dapat diposting; pasangan tujuan–jenis entri harus cocok (`inspection` ↔ `inspection_fee`, `access` ↔ `access_fee`); tujuan `purchase` ditolak sampai TRX-2 menetapkan basis komisi.
+4. Hanya pembayaran `success` yang dapat diposting; pasangan tujuan–jenis entri harus cocok (`inspection` ↔ `inspection_fee`, `access` ↔ `access_fee`, `purchase` ↔ `platform_fee` + `sale_commission`).
 5. Entri ledger append-only: update dan delete ditolak di kode lewat event model (`LedgerEntryImmutableException`, kode mesin `LEDGER_ENTRY_IMMUTABLE`).
    `ledger_entries.amount` bertipe signed sesuai PRD 18.12 (positif kredit, negatif debit).
 6. Foreign key `ledger_entries.payment_id` dan `account_user_id` memakai `restrictOnDelete`: menghapus pembayaran atau pengguna yang punya entri
    ledger ditolak database (`QueryException`). Ledger tidak boleh hilang.
+
+### 7.2b Aturan posting komisi penjualan (`postPurchasePayout`, TRX-2)
+
+1. Nominal disuplai penuh oleh pemanggil dari salinan pada transaksi (contoh TRX-2: harga Rp100.000.000 → komisi Rp3.000.000 → platform
+   Rp300.000, inspektor Rp2.700.000). Pengaturan saat ini TIDAK dibaca; tidak ada `Money::split` di jalur ini.
+2. Hanya pembayaran `success` dengan tujuan `purchase`. Komisi tidak boleh negatif; bagian inspektor tidak boleh melebihi total komisi;
+   total komisi tidak boleh melebihi nominal pembayaran (`InvalidLedgerPostingException`, 422).
+3. Inspektor wajib ada dan berperan inspektor bila bagiannya > 0. Bila kedua komisi nol, pemanggilan adalah no-op (tidak ada entri ditulis).
+4. Menulis `platform_fee` (akun null = platform, nilai = total komisi − bagian inspektor) dan, bila bagian inspektor > 0, `sale_commission`
+   (akun = inspektor) dalam satu statement. Hanya komisi yang dicatat; bagian penjual tidak masuk ledger.
+5. Posting ganda ditolak: `LedgerAlreadyPostedException` (409), diperkuat batasan unik `(payment_id, entry_type)`. Status pembayaran tidak diubah.
 
 ### 7.3 Aturan refund
 

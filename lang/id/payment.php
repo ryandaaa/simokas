@@ -76,6 +76,9 @@ return [
         'posting_invalid_inspector' => 'Penerima bagi hasil harus pengguna dengan peran inspektor yang valid.',
         'posting_invalid_percentage' => 'Persentase komisi platform harus bilangan bulat 0 sampai 100 (diberikan: :pct).',
         'posting_snapshot_required' => 'Posting fee inspeksi wajib memakai persentase komisi yang disalin pada job, bukan pengaturan saat ini.',
+        'posting_invalid_commission' => 'Komisi :which tidak boleh negatif (diberikan: :amount).',
+        'posting_inspector_exceeds_commission' => 'Komisi inspektor (:inspector) tidak boleh melebihi total komisi (:total).',
+        'posting_commission_exceeds_payment' => 'Total komisi (:total) tidak boleh melebihi nominal pembayaran (:amount).',
         'ledger_entry_immutable' => 'Entri ledger bersifat append-only dan tidak dapat diubah atau dihapus.',
     ],
 
@@ -90,6 +93,8 @@ return [
         'notes' => [
             'platform_fee' => 'Komisi platform :pct% dari pembayaran.',
             'payout' => 'Pembayaran :type kepada inspektor (komisi platform :pct%).',
+            'purchase_platform_fee' => 'Komisi platform dari komisi penjualan.',
+            'purchase_payout' => 'Komisi transaksi kepada inspektor.',
             'refund' => 'Pengembalian dana kepada pembayar.',
         ],
     ],
