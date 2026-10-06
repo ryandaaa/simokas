@@ -1743,8 +1743,8 @@ Jika waktu habis, korbankan **kelengkapan fitur P1**, bukan **kualitas alur P0**
 - [x] Pesan terkirim muncul pada lawan bicara secara real-time (target kurang dari 2 detik) tanpa memuat ulang halaman, dengan penanda belum dibaca.
 - [x] Pengguna hanya menerima pesan dari percakapan yang diikutinya.
 - [x] Setelah koneksi terputus dan pulih, pesan yang terlewat muncul.
-- [ ] Hanya pembeli dari transaksi selesai yang dapat memberi rating, satu kali per transaksi.
-- [ ] Rating rata-rata inspektor diperbarui dan tampil pada hasil inspeksi dan dashboard.
+- [x] Hanya pembeli dari transaksi selesai yang dapat memberi rating, satu kali per transaksi.
+- [x] Rating rata-rata inspektor diperbarui dan tampil pada hasil inspeksi dan dashboard.
 - [ ] Notifikasi untuk kejadian pada 13.15 muncul real-time dan dapat ditandai dibaca.
 - [x] Halaman kebijakan privasi dan syarat ketentuan dapat diakses, dan persetujuan dicatat saat registrasi.
 

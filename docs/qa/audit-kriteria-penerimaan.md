@@ -8,10 +8,10 @@ Dokumen ini merupakan hasil audit kriteria penerimaan produk SIMOKAS (PRD Bagian
 
 | Status | Jumlah Butir | Keterangan |
 | --- | :---: | --- |
-| **TERBUKTI** | **46** | Memiliki test otomatis yang menguji persis perilaku tersebut dan lulus. |
+| **TERBUKTI** | **48** | Memiliki test otomatis yang menguji persis perilaku tersebut dan lulus. (46 saat audit awal, ditambah butir 49 dan 50 setelah RTG-1 ter-merge.) |
 | **TERPENUHI-KODE** | **2** | Logika bisnis terpenuhi di kode, namun terdapat celah spesifik pada tampilan/UI atau perilaku tepi. |
 | **MANUAL** | **2** | Bergantung pada pengujian lingkungan fisik/perangkat nyata atau audit eksternal (Lighthouse, multi-browser). |
-| **BELUM** | **2** | Belum diimplementasikan di kode (fitur Rating pembeli dan rating rata-rata inspektor, sedang di Jalur A). |
+| **BELUM** | **0** | Dua butir yang semula BELUM (butir 49 dan 50, rating) sudah selesai lewat RTG-1 dan lulus test RTG-T01 sampai T08; PRD 28.9 sudah dicentang. |
 | **Total** | **52** | Seluruh kriteria penerimaan Bagian 28 PRD v1.6. |
 
 ---
