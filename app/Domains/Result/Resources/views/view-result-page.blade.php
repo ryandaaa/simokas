@@ -75,9 +75,9 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                             @foreach ($groupedItems as $item)
                                 <div class="flex items-start justify-between gap-4 border-b border-color-border pb-4 last:border-b-0">
                                     <div>
-                                        <p class="font-semibold text-color-text">{{ $item->template_item_id }}</p>
-                                        @if ($item->notes)
-                                            <p class="text-sm text-color-muted mt-1">{{ $item->notes }}</p>
+                                        <p class="font-semibold text-color-text">{{ $item->templateItem?->label ?? __('result.unnamed_item') }}</p>
+                                        @if ($item->note)
+                                            <p class="text-sm text-color-muted mt-1">{{ $item->note }}</p>
                                         @endif
                                     </div>
                                     <x-ui.status-chip
