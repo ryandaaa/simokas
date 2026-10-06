@@ -114,12 +114,12 @@ Lihat tabel lengkap di [decisions/0002-flow-decisions.md](../decisions/0002-flow
 
 ## 7. Daftar test case
 
-- [ ] `TRX-T01` Pembeli mengajukan beli pada listing `active` dan `in_inspection` (dataset status), ditolak pada status lain
-- [ ] `TRX-T02` Beli listing sendiri ditolak (TRX-E1), inspektor ditolak
-- [ ] `TRX-T03` Hanya satu transaksi berjalan per listing (TRX-E2)
-- [ ] `TRX-T04` Rincian penjual: dengan inspeksi (komisi 3%, 10% atas komisi) dan tanpa inspeksi (TRX-E11)
-- [ ] `TRX-T05` Harga, persen, dan inspektor tersalin dan tidak berubah saat pengaturan atau harga listing berubah (TRX-E3)
-- [ ] `TRX-T06` Penjual setuju atau tolak, hanya penjual yang berhak
+- [x] `TRX-T01` Pembeli mengajukan beli pada listing `active` dan `in_inspection` (dataset status), ditolak pada status lain
+- [x] `TRX-T02` Beli listing sendiri ditolak (TRX-E1), inspektor ditolak
+- [x] `TRX-T03` Hanya satu transaksi berjalan per listing (TRX-E2)
+- [x] `TRX-T04` Rincian penjual: dengan inspeksi (komisi 3%, 10% atas komisi) dan tanpa inspeksi (TRX-E11)
+- [x] `TRX-T05` Harga, persen, dan inspektor tersalin dan tidak berubah saat pengaturan atau harga listing berubah (TRX-E3)
+- [x] `TRX-T06` Penjual setuju atau tolak, hanya penjual yang berhak
 - [ ] `TRX-T07` Bayar ditunda saat ada job aktif, terbuka setelah job final (TRX-E4, TRX-E5)
 - [ ] `TRX-T08` Bayar idempoten, dana `paid_held`, listing `in_transaction` (TRX-E6)
 - [ ] `TRX-T09` Serah terima: dana diteruskan, ledger benar, listing `sold`, akses hasil ditutup, rating dibuka

@@ -35,10 +35,10 @@ it('TRX-T06 rejects accept from buyer or third party with 403', function () {
 
     try {
         app(AcceptOffer::class)->handle($buyer, $transaction);
-        $this->fail('Expected UnauthorizedTransactionActionException');
+        expect(false)->toBeTrue('expected UnauthorizedTransactionActionException');
     } catch (UnauthorizedTransactionActionException $e) {
-        expect($e->getStatusCode())->toBe(403)
-            ->and($e->getErrorCode())->toBe('TRANSACTION_FORBIDDEN');
+        expect($e->getErrorCode())->toBe('TRANSACTION_FORBIDDEN')
+            ->and($e->getStatusCode())->toBe(403);
     }
 
     expect($transaction->refresh()->status)->toBe(TransactionStatus::Offered);
@@ -110,10 +110,10 @@ it('TRX-T06 throws OFFER_NOT_PENDING when accepting a non-offered transaction', 
 
     try {
         app(AcceptOffer::class)->handle($seller, $transaction);
-        $this->fail('Expected OfferNotPendingException');
+        expect(false)->toBeTrue('expected OfferNotPendingException');
     } catch (OfferNotPendingException $e) {
-        expect($e->getStatusCode())->toBe(409)
-            ->and($e->getErrorCode())->toBe('OFFER_NOT_PENDING');
+        expect($e->getErrorCode())->toBe('OFFER_NOT_PENDING')
+            ->and($e->getStatusCode())->toBe(409);
     }
 });
 

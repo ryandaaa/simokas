@@ -102,11 +102,10 @@ final class TransactionDetailPage extends Component
 
     /**
      * Seller payout breakdown (K2) from the transaction's copied numbers.
-     * Platform pct is read from Setting at display time.
      *
-     * @return array{price: int, commissionPct: int|null, commission: int|null, sellerNet: int}|null
+     * @return array{price: int, commissionPct: int|null, commission: int|null, sellerNet: int}
      */
-    private function sellerBreakdown(Transaction $transaction): ?array
+    private function sellerBreakdown(Transaction $transaction): array
     {
         if ($transaction->commission_pct === null) {
             return [

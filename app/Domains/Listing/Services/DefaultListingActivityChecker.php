@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Listing\Services;
 
 use App\Domains\Listing\Contracts\ListingActivityChecker;
+use App\Domains\Transaction\Models\Transaction;
 
 /**
  * Default activity checker. hasActiveTransaction() is real since TRX-1:
@@ -27,7 +28,7 @@ final class DefaultListingActivityChecker implements ListingActivityChecker
         // Read-only cross-domain read (A1): TRX-1 real implementation.
         // A listing is locked while a transaction is offered, accepted,
         // or paid_held (LST-R7).
-        return \App\Domains\Transaction\Models\Transaction::query()
+        return Transaction::query()
             ->where('listing_id', $listingId)
             ->whereIn('status', ['offered', 'accepted', 'paid_held'])
             ->exists();

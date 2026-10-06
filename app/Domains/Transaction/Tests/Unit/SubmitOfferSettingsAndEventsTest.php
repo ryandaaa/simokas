@@ -12,6 +12,7 @@ use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Setting\Models\AppSetting;
 use App\Domains\Transaction\Actions\SubmitOffer;
 use App\Domains\Transaction\Events\TransactionOffered;
+use App\Domains\Transaction\Exceptions\InvalidListingStatusException;
 use App\Domains\Transaction\Exceptions\InvalidOfferPriceException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -39,6 +40,15 @@ it('TRX-T05 reads sale commission pct from Setting instead of hardcoding', funct
 
     expect($transaction->commission_pct)->toBe(5);
 });
+
+it('TRX-T01 rejects offers on non-offerable listing statuses', function (string $state) {
+    $seller = User::factory()->user()->create();
+    $buyer = User::factory()->user()->create();
+    $listing = Listing::factory()->$state()->create(['seller_id' => $seller->id]);
+
+    expect(fn () => app(SubmitOffer::class)->handle($buyer, $listing, $listing->price))
+        ->toThrow(InvalidListingStatusException::class);
+})->with(['pendingReview', 'rejected', 'inTransaction', 'sold', 'inactive']);
 
 it('rejects non-positive offer price with INVALID_OFFER_PRICE', function (int $price) {
     $seller = User::factory()->user()->create();
