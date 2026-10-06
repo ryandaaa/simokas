@@ -19,6 +19,7 @@ use App\Domains\Result\Models\TemplateItem;
 use App\Domains\Result\Services\ScoreCalculator;
 use App\Support\Clock;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 final class SubmitInspectionResult
@@ -55,13 +56,13 @@ final class SubmitInspectionResult
             }
 
             // 2. Load template items and existing result items with photos
-            /** @var \Illuminate\Database\Eloquent\Collection<int, TemplateItem> $templateItems */
+            /** @var Collection<int, TemplateItem> $templateItems */
             $templateItems = TemplateItem::query()
                 ->where('template_id', $lockedResult->template_id)
                 ->orderBy('sort_order')
                 ->get();
 
-            /** @var \Illuminate\Database\Eloquent\Collection<int, ResultItem> $resultItems */
+            /** @var Collection<int, ResultItem> $resultItems */
             $resultItems = ResultItem::query()
                 ->where('result_id', $lockedResult->getKey())
                 ->with('photos')

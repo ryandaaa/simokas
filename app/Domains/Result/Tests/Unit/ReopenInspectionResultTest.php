@@ -30,7 +30,7 @@ final class ReopenInspectionResultTest extends TestCase
         $this->action = app(ReopenInspectionResult::class);
     }
 
-    public function test_RES_T08_admin_can_reopen_submitted_result_and_result_locked_after_submit(): void
+    public function testResT08AdminCanReopenSubmittedResultAndResultLockedAfterSubmit(): void
     {
         Event::fake([ResultReopened::class]);
         $action = app(ReopenInspectionResult::class);
@@ -69,7 +69,7 @@ final class ReopenInspectionResultTest extends TestCase
         });
     }
 
-    public function test_RES_T08_is_idempotent_when_result_already_draft(): void
+    public function testResT08IsIdempotentWhenResultAlreadyDraft(): void
     {
         Event::fake([ResultReopened::class]);
         $action = app(ReopenInspectionResult::class);
@@ -92,7 +92,7 @@ final class ReopenInspectionResultTest extends TestCase
         Event::assertNotDispatched(ResultReopened::class);
     }
 
-    public function test_RES_T08_requires_non_empty_reason(): void
+    public function testResT08RequiresNonEmptyReason(): void
     {
         $admin = User::factory()->admin()->create();
         $inspector = User::factory()->inspector()->create();
@@ -110,7 +110,7 @@ final class ReopenInspectionResultTest extends TestCase
         $this->action->handle($admin, $result, '   ');
     }
 
-    public function test_RES_T08_rejects_non_admin_users(): void
+    public function testResT08RejectsNonAdminUsers(): void
     {
         $inspector = User::factory()->inspector()->create();
         $user = User::factory()->user()->create();
