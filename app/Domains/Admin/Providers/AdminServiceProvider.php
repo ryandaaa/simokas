@@ -18,6 +18,7 @@ use App\Domains\Admin\Livewire\JobMonitor;
 use App\Domains\Admin\Livewire\ListingValidationQueue;
 use App\Domains\Admin\Livewire\Settings;
 use App\Domains\Admin\Livewire\UnifiedAdminQueue;
+use App\Domains\Admin\Livewire\UserManagement;
 use App\Domains\Admin\Models\AuditLog;
 use App\Domains\Admin\Policies\AuditLogPolicy;
 use App\Domains\Identity\Models\User;
@@ -69,6 +70,7 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('admin.unified-admin-queue', UnifiedAdminQueue::class);
         Livewire::component('admin.job-monitor', JobMonitor::class);
         Livewire::component('admin.job-detail', JobDetail::class);
+        Livewire::component('admin.user-management', UserManagement::class);
     }
 
     private function registerEventListeners(): void

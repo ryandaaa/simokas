@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Listing\Providers;
 
+use App\Domains\Identity\Events\UserBlocked;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Events\JobCancelled;
 use App\Domains\Inspection\Events\JobCompleted;
@@ -11,6 +12,7 @@ use App\Domains\Inspection\Events\JobExpired;
 use App\Domains\Inspection\Events\JobPaid;
 use App\Domains\Listing\Contracts\ListingActivityChecker;
 use App\Domains\Listing\Contracts\ListingModerationContract;
+use App\Domains\Listing\Listeners\DeactivateListingsOnUserBlocked;
 use App\Domains\Listing\Listeners\MarkListingInInspectionOnJobPaid;
 use App\Domains\Listing\Listeners\MarkListingInspectedOnJobCompleted;
 use App\Domains\Listing\Listeners\MarkListingInTransactionOnTransactionPaid;
@@ -65,6 +67,10 @@ final class ListingServiceProvider extends ServiceProvider
 
         // Perubahan shared TRX-3: listing kembali active saat transaksi dibatalkan.
         Event::listen(TransactionCancelled::class, ReturnListingToActiveOnTransactionCancelled::class);
+
+        // Perubahan shared ADM-4: listing active milik pengguna yang diblokir
+        // menjadi inactive. Identity tidak memanggil Action Listing langsung (A2/A3).
+        Event::listen(UserBlocked::class, DeactivateListingsOnUserBlocked::class);
 
         Livewire::component('listing.create-listing', CreateListing::class);
         Livewire::component('listing.seller-listings', SellerListings::class);

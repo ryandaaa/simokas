@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 /**
- * Cancel a transaction (TRX-3, D-04).
+ * Cancel a transaction (TRX-3, D-04; ADM-4 extends admin rights).
  *
- * - offered: buyer cancels freely.
- * - accepted: buyer or seller cancels freely; reason optional.
+ * - offered: buyer cancels freely; active admin may cancel (ADM-4).
+ * - accepted: buyer or seller cancels freely; active admin may cancel (ADM-4).
  * - paid_held: seller or active admin cancels; 100% refund via Ledger;
  *   reason required. Inspector commission is never posted (T3).
  * - Conditional update (UPDATE ... WHERE status = ...) so a stale model
@@ -57,8 +57,8 @@ final class CancelTransaction
             $isAdmin = Gate::forUser($actor)->allows('admin.access');
 
             $allowed = match ($fromStatus) {
-                TransactionStatus::Offered => $isBuyer,
-                TransactionStatus::Accepted => $isBuyer || $isSeller,
+                TransactionStatus::Offered => $isBuyer || $isAdmin,
+                TransactionStatus::Accepted => $isBuyer || $isSeller || $isAdmin,
                 TransactionStatus::PaidHeld => $isSeller || $isAdmin,
             };
 
