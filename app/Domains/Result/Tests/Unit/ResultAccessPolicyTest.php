@@ -10,11 +10,14 @@ use App\Domains\Payment\Models\Payment;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultAccess;
 use App\Domains\Result\Policies\ResultAccessPolicy;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 final class ResultAccessPolicyTest extends TestCase
 {
+    use RefreshDatabase;
+
     #[Test]
     public function grants_free_access_to_listing_seller(): void
     {
