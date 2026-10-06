@@ -66,6 +66,54 @@
                         <x-ui.icon name="menu" class="w-6 h-6" />
                     </button>
 
+@php
+    $currentUser = auth()->user();
+    $roleNavLinks = [];
+
+    if ($currentUser) {
+        if ($currentUser->isAdmin()) {
+            $roleNavLinks = [
+                ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                ['label' => __('ui.layout.queue'), 'route' => 'admin.queue.index'],
+                ['label' => __('ui.layout.admin_jobs'), 'route' => 'admin.jobs.index'],
+                ['label' => __('ui.layout.inspectors'), 'route' => 'admin.inspectors.index'],
+                ['label' => __('ui.layout.admin_listings'), 'route' => 'admin.listings.index'],
+                ['label' => __('ui.layout.templates'), 'route' => 'admin.templates.index'],
+                ['label' => __('ui.layout.settings'), 'route' => 'admin.settings'],
+                ['label' => __('ui.layout.audit_logs'), 'route' => 'admin.audit-logs.index'],
+            ];
+        } elseif ($currentUser->isInspector()) {
+            $isApprovedInspector = app(\App\Domains\Inspector\Contracts\InspectorEligibility::class)->canViewAndTakeJobs($currentUser);
+
+            if ($isApprovedInspector) {
+                $roleNavLinks = [
+                    ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                    ['label' => __('ui.layout.open_jobs'), 'route' => 'jobs.open'],
+                    ['label' => __('ui.layout.my_jobs'), 'route' => 'jobs.inspector'],
+                    ['label' => __('ui.layout.earnings'), 'route' => 'inspector.earnings'],
+                    ['label' => __('ui.layout.conversations'), 'route' => 'conversations.index'],
+                    ['label' => __('ui.layout.notifications'), 'route' => 'notifications.index'],
+                ];
+            } else {
+                $roleNavLinks = [
+                    ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                    ['label' => __('ui.layout.onboarding'), 'route' => 'inspector.onboarding'],
+                ];
+            }
+        } elseif ($currentUser->isUser()) {
+            $roleNavLinks = [
+                ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
+                ['label' => __('ui.layout.my_listings'), 'route' => 'listings.mine'],
+                ['label' => __('ui.layout.create_listing'), 'route' => 'listings.create'],
+                ['label' => __('ui.layout.my_inspections'), 'route' => 'jobs.mine'],
+                ['label' => __('ui.layout.transactions'), 'route' => 'transactions.index'],
+                ['label' => __('ui.layout.conversations'), 'route' => 'conversations.index'],
+                ['label' => __('ui.layout.notifications'), 'route' => 'notifications.index'],
+            ];
+        }
+    }
+@endphp
+
                     @if ($headerActions)
                         {{ $headerActions }}
                     @else
@@ -83,11 +131,26 @@
                                 <div x-show="accountMenuOpen"
                                      x-cloak
                                      x-transition
-                                     class="absolute right-0 mt-2 w-48 rounded-xl bg-surface border border-fog shadow-lg py-1 z-50">
-                                    <a href="{{ route('dashboard') }}"
-                                       class="block px-4 py-2 text-sm text-charcoal hover:bg-fog transition-colors">
-                                        {{ __('ui.layout.dashboard') }}
-                                    </a>
+                                     class="absolute right-0 mt-2 w-56 max-h-[80vh] overflow-y-auto rounded-xl bg-surface border border-fog shadow-lg py-1.5 z-50">
+                                    @foreach ($roleNavLinks as $item)
+                                        @if (\Illuminate\Support\Facades\Route::has($item['route']))
+                                            @php
+                                                $isActive = request()->routeIs($item['route']);
+                                            @endphp
+                                            <a href="{{ route($item['route']) }}"
+                                               @class([
+                                                   'block px-4 py-2 text-sm transition-colors rounded-lg mx-1',
+                                                   'bg-linen text-forest font-bold' => $isActive,
+                                                   'text-charcoal hover:bg-fog' => !$isActive,
+                                               ])
+                                               @if ($isActive) aria-current="page" @endif>
+                                                {{ $item['label'] }}
+                                            </a>
+                                        @endif
+                                    @endforeach
+
+                                    <div class="border-t border-fog my-1"></div>
+
                                     <form method="POST" action="{{ route('identity.logout') }}">
                                         @csrf
                                         <button type="submit"
@@ -111,21 +174,44 @@
         </div>
 
         {{-- Dropdown Menu Mobile --}}
-        @if (!empty($navItems))
+        @if (!empty($navItems) || !empty($roleNavLinks))
             <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-surface border-t border-fog px-5 py-3 flex flex-col gap-2">
-                @foreach ($navItems as $item)
-                    @php
-                        $isActive = !empty($item['active']);
-                    @endphp
-                    <a href="{{ $item['url'] ?? '#' }}"
-                       @class([
-                           'py-2 px-3 rounded-full text-sm font-medium transition-colors',
-                           'bg-lime text-forest font-bold' => $isActive,
-                           'text-forest hover:bg-linen' => !$isActive,
-                       ])>
-                        {{ $item['label'] }}
-                    </a>
-                @endforeach
+                @if (!empty($navItems))
+                    @foreach ($navItems as $item)
+                        @php
+                            $isActive = !empty($item['active']);
+                        @endphp
+                        <a href="{{ $item['url'] ?? '#' }}"
+                           @class([
+                               'py-2 px-3 rounded-full text-sm font-medium transition-colors',
+                               'bg-lime text-forest font-bold' => $isActive,
+                               'text-forest hover:bg-linen' => !$isActive,
+                           ])>
+                            {{ $item['label'] }}
+                        </a>
+                    @endforeach
+                @endif
+
+                @if (!empty($roleNavLinks))
+                    <div class="border-t border-fog pt-2 mt-1 flex flex-col gap-1">
+                        @foreach ($roleNavLinks as $item)
+                            @if (\Illuminate\Support\Facades\Route::has($item['route']))
+                                @php
+                                    $isActive = request()->routeIs($item['route']);
+                                @endphp
+                                <a href="{{ route($item['route']) }}"
+                                   @class([
+                                       'py-2 px-3 rounded-full text-sm font-medium transition-colors',
+                                       'bg-lime text-forest font-bold' => $isActive,
+                                       'text-charcoal hover:bg-linen' => !$isActive,
+                                   ])
+                                   @if ($isActive) aria-current="page" @endif>
+                                    {{ $item['label'] }}
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
             </div>
         @endif
     </header>
