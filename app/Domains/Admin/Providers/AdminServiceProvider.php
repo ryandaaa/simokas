@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Admin\Providers;
 
+use App\Domains\Admin\Livewire\InspectionTemplateManager;
 use App\Domains\Admin\Livewire\InspectorVerificationQueue;
 use App\Domains\Admin\Livewire\ListingValidationQueue;
 use App\Domains\Admin\Livewire\Settings;
@@ -31,5 +32,6 @@ final class AdminServiceProvider extends ServiceProvider
         Livewire::component('admin.settings', Settings::class);
         Livewire::component('admin.inspector-verification-queue', InspectorVerificationQueue::class);
         Livewire::component('admin.listing-validation-queue', ListingValidationQueue::class);
+        Livewire::component('admin.inspection-template-manager', InspectionTemplateManager::class);
     }
 }

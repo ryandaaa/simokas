@@ -89,5 +89,5 @@ flowchart TD
 - [ ] `ADM-T09` Buka kembali hasil: status `draft`, inspektor dinotifikasi
 - [ ] `ADM-T10` Blokir pengguna: ditolak bila ada item aktif, sukses bersamaan dengan pembatalan terkonfirmasi (ADM-E5)
 - [ ] `ADM-T11` Admin tidak dapat memblokir atau mengubah role dirinya sendiri (ADM-R9)
-- [ ] `ADM-T12` Template: ubah menaikkan versi, hasil lama tidak berubah (ADM-E7)
+- [x] `ADM-T12` Template: ubah menaikkan versi, hasil lama tidak berubah (ADM-E7)
 - [ ] `ADM-T13` Aksi sensitif tercatat
