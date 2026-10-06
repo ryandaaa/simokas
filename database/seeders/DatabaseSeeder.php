@@ -14,5 +14,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(ReferenceSeeder::class);
+
+        $seedDemo = filter_var(env('SEED_DEMO', true), FILTER_VALIDATE_BOOLEAN);
+
+        if (! app()->environment('production') && $seedDemo) {
+            $this->call(DemoSeeder::class);
+        }
     }
 }

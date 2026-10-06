@@ -51,11 +51,11 @@ flowchart TD
 
 ## 4. Daftar test case
 
-- [ ] `RTG-T01` Pembeli transaksi selesai memberi rating dan tersimpan
-- [ ] `RTG-T02` Ditolak: sebelum selesai, bukan pembeli, ganda, tanpa inspeksi (dataset RTG-E1, E2, E3, E7)
-- [ ] `RTG-T03` Validasi skor dan komentar (RTG-E4, RTG-E5)
-- [ ] `RTG-T04` Rata-rata dan jumlah diperbarui benar, pembulatan 2 desimal
-- [ ] `RTG-T05` Admin menyembunyikan dan menampilkan, rata-rata dihitung ulang (RTG-E6)
-- [ ] `RTG-T06` Rating tidak dapat diubah atau dihapus pembeli (RTG-R3)
-- [ ] `RTG-T07` Rating tampil di hasil inspeksi dan dashboard inspektor
-- [ ] `RTG-T08` Penghitungan ulang konsisten pada rating bersamaan (RTG-E9)
+- [x] `RTG-T01` Pembeli transaksi selesai memberi rating dan tersimpan
+- [x] `RTG-T02` Ditolak: sebelum selesai, bukan pembeli, ganda, tanpa inspeksi (dataset RTG-E1, E2, E3, E7)
+- [x] `RTG-T03` Validasi skor dan komentar (RTG-E4, RTG-E5)
+- [x] `RTG-T04` Rata-rata dan jumlah diperbarui benar, pembulatan 2 desimal
+- [x] `RTG-T05` Admin menyembunyikan dan menampilkan, rata-rata dihitung ulang (RTG-E6)
+- [x] `RTG-T06` Rating tidak dapat diubah atau dihapus pembeli (RTG-R3)
+- [x] `RTG-T07` Rating tampil di hasil inspeksi dan dashboard inspektor
+- [x] `RTG-T08` Penghitungan ulang konsisten pada rating bersamaan (RTG-E9)

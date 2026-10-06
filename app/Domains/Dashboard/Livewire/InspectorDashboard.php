@@ -7,6 +7,7 @@ namespace App\Domains\Dashboard\Livewire;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
+use App\Domains\Inspector\Models\InspectorProfile;
 use App\Domains\Payment\Enums\LedgerEntryType;
 use App\Domains\Payment\Models\LedgerEntry;
 use Illuminate\Contracts\View\View;
@@ -51,8 +52,11 @@ final class InspectorDashboard extends Component
             ->where('status', JobStatus::Completed)
             ->count();
 
-        // Rating: placeholder for now (P1 feature)
-        $rating = 0;
+        // Rating: read from inspector_profiles
+        /** @var InspectorProfile|null $profile */
+        $profile = InspectorProfile::query()->where('user_id', $this->user->id)->first();
+        $rating = $profile !== null ? (float) $profile->rating_avg : 0.0;
+        $ratingCount = $profile !== null ? (int) $profile->rating_count : 0;
 
         return view('dashboard::livewire.inspector-dashboard', [
             'availableJobs' => $availableJobs,
@@ -60,6 +64,7 @@ final class InspectorDashboard extends Component
             'netEarnings' => $netEarnings,
             'totalInspections' => $totalInspections,
             'rating' => $rating,
+            'ratingCount' => $ratingCount,
             'user' => $this->user,
         ]);
     }
