@@ -33,13 +33,8 @@ final class GrantAccessOnPaymentSuccess
             return;
         }
 
-        $payer = $payment->payer;
-        if ($payer === null) {
-            return;
-        }
-
         // Grant access and post ledger
         // Note: GrantResultAccess will internally call ledger->postAccessPayout
-        $this->grantAccess->handle($result, $payer, $event->paymentId);
+        $this->grantAccess->handle($result, $payment->payer, $event->paymentId);
     }
 }

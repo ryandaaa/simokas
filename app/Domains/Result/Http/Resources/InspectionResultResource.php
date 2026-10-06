@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Result\Http\Resources;
 
 use App\Domains\Result\Models\InspectionResult;
+use App\Domains\Result\Models\ResultItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -84,15 +85,15 @@ final class InspectionResultResource extends JsonResource
                 'model' => $this->listing->model,
                 'year' => $this->listing->year,
             ],
-            'items' => $this->items->map(fn ($item) => [
+            'items' => $this->items->map(fn (ResultItem $item) => [
                 'id' => $item->id,
                 'template_item_id' => $item->template_item_id,
                 'rating' => $item->rating->value,
-                'notes' => $item->notes,
+                'notes' => $item->note,
             ])->all(),
             'photos' => $this->photos->map(fn ($photo) => [
                 'id' => $photo->id,
-                'captured_at' => $photo->captured_at?->toIso8601String(),
+                'captured_at' => $photo->captured_at->toIso8601String(),
                 'stamped_at' => $photo->stamped_at?->toIso8601String(),
                 'url' => route('results.photos.show', ['result' => $this->id, 'photo' => $photo->id]),
             ])->all(),
