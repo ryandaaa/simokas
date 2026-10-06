@@ -17,6 +17,7 @@ use App\Domains\Listing\Listeners\MarkListingInTransactionOnTransactionPaid;
 use App\Domains\Listing\Listeners\MarkListingSoldOnTransactionCompleted;
 use App\Domains\Listing\Listeners\ReturnListingToActiveOnJobCancelled;
 use App\Domains\Listing\Listeners\ReturnListingToActiveOnJobExpired;
+use App\Domains\Listing\Listeners\ReturnListingToActiveOnTransactionCancelled;
 use App\Domains\Listing\Livewire\CreateListing;
 use App\Domains\Listing\Livewire\EditListing;
 use App\Domains\Listing\Livewire\SellerListings;
@@ -24,6 +25,7 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Policies\ListingPolicy;
 use App\Domains\Listing\Services\DefaultListingActivityChecker;
 use App\Domains\Listing\Services\ListingModerationService;
+use App\Domains\Transaction\Events\TransactionCancelled;
 use App\Domains\Transaction\Events\TransactionCompleted;
 use App\Domains\Transaction\Events\TransactionPaid;
 use Illuminate\Support\Facades\Event;
@@ -60,6 +62,9 @@ final class ListingServiceProvider extends ServiceProvider
         // Transaction. Transaction tidak memanggil Action Listing langsung (A2/A3).
         Event::listen(TransactionPaid::class, MarkListingInTransactionOnTransactionPaid::class);
         Event::listen(TransactionCompleted::class, MarkListingSoldOnTransactionCompleted::class);
+
+        // Perubahan shared TRX-3: listing kembali active saat transaksi dibatalkan.
+        Event::listen(TransactionCancelled::class, ReturnListingToActiveOnTransactionCancelled::class);
 
         Livewire::component('listing.create-listing', CreateListing::class);
         Livewire::component('listing.seller-listings', SellerListings::class);
