@@ -32,7 +32,7 @@
             <div class="md:col-span-1">
                 <div class="space-y-4">
                     @forelse ($templates as $vehicleType => $templateList)
-                        <div class="bg-color-surface rounded-xl p-4 border border-gray-200">
+                        <div class="bg-color-surface rounded-xl p-4 border border-muted/20">
                             <h3 class="font-semibold text-color-text mb-3">
                                 {{ $vehicleType }}
                             </h3>
@@ -43,7 +43,7 @@
                                         class="w-full text-left p-3 rounded-lg transition-colors
                                             {{ $selectedTemplate?->id === $template->id
                                                 ? 'bg-color-primary text-white'
-                                                : 'bg-gray-100 text-color-text hover:bg-gray-200'
+                                                : 'bg-muted/5 text-color-text hover:bg-muted/10'
                                             }}"
                                     >
                                         <div class="font-medium">{{ $template->name }}</div>
@@ -67,14 +67,14 @@
             <!-- Items Editor -->
             <div class="md:col-span-3">
                 @if ($selectedTemplate)
-                    <div class="bg-color-surface rounded-xl p-6 border border-gray-200">
+                    <div class="bg-color-surface rounded-xl p-6 border border-muted/20">
                         <h2 class="text-xl font-bold text-color-text mb-6">
                             {{ $selectedTemplate->name }}
                         </h2>
 
                         <form wire:submit="saveItems" class="space-y-6">
                             @forelse ($items as $index => $item)
-                                <div class="border border-gray-200 rounded-lg p-4 space-y-4">
+                                <div class="border border-muted/20 rounded-lg p-4 space-y-4">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <!-- Label -->
                                         <div>
@@ -158,7 +158,7 @@
                                     <button
                                         type="button"
                                         wire:click="$set('selectedTemplateId', null)"
-                                        class="px-4 py-2 text-color-text hover:bg-gray-100 rounded-lg transition-colors"
+                                        class="px-4 py-2 text-color-text hover:bg-muted/10 rounded-lg transition-colors"
                                     >
                                         {{ __('admin.templates.cancel') }}
                                     </button>
@@ -167,7 +167,7 @@
                         </form>
                     </div>
                 @else
-                    <div class="bg-color-surface rounded-xl p-6 border border-gray-200 h-full flex items-center justify-center">
+                    <div class="bg-color-surface rounded-xl p-6 border border-muted/20 h-full flex items-center justify-center">
                         <x-ui.empty-state
                             icon="clipboard"
                             title="{{ __('admin.templates.empty_title') }}"

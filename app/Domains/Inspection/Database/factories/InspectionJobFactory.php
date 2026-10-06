@@ -113,4 +113,11 @@ class InspectionJobFactory extends Factory
             'cancelled_by' => $cancelledBy?->id,
         ]);
     }
+
+    public function forListing(Listing $listing): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'listing_id' => $listing->id,
+        ]);
+    }
 }

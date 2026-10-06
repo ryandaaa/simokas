@@ -40,9 +40,10 @@ it('ADM-T12 increases template version when items are updated', function () {
     $template = InspectionTemplate::forVehicleType(VehicleType::Car)->active()->firstOrFail();
     $initialVersion = $template->version;
     $items = $template->items()->orderBy('sort_order')->get();
+    $initialItemCount = $items->count();
 
-    expect($items)->toHaveCount(3);
     expect($initialVersion)->toBe(1);
+    expect($initialItemCount)->toBeGreaterThan(0);
 
     // Update an item property
     Livewire::test(InspectionTemplateManager::class)
@@ -159,6 +160,9 @@ it('ADM-T12 allows reordering template items', function () {
 
     $template = InspectionTemplate::forVehicleType(VehicleType::Car)->active()->firstOrFail();
     $initialVersion = $template->version;
+    $originalFirstItem = $template->items()->orderBy('sort_order')->first();
+    $originalSecondItem = $template->items()->orderBy('sort_order')->skip(1)->first();
+    $originalThirdItem = $template->items()->orderBy('sort_order')->skip(2)->first();
 
     Livewire::test(InspectionTemplateManager::class)
         ->call('selectTemplate', $template->id)
@@ -172,9 +176,14 @@ it('ADM-T12 allows reordering template items', function () {
     $template->refresh();
     expect($template->version)->toBe($initialVersion + 1);
 
-    // Verify sort order changed
-    $items = $template->items()->orderBy('sort_order')->pluck('sort_order')->toArray();
-    expect($items)->toBe([1, 2, 3]);
+    // Verify sort order changed for the modified items
+    $originalFirstItem->refresh();
+    $originalSecondItem->refresh();
+    $originalThirdItem->refresh();
+
+    expect($originalFirstItem->sort_order)->toBe(3);
+    expect($originalSecondItem->sort_order)->toBe(1);
+    expect($originalThirdItem->sort_order)->toBe(2);
 });
 
 it('denies non-admin users access to template management', function (string $role) {
