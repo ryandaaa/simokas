@@ -7,10 +7,14 @@ namespace App\Domains\Transaction\Actions;
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Models\InspectionResult;
+use App\Domains\Setting\Contracts\SettingsReader;
 use App\Domains\Transaction\Enums\TransactionStatus;
+use App\Domains\Transaction\Events\TransactionOffered;
 use App\Domains\Transaction\Exceptions\InspectorCannotBuyException;
 use App\Domains\Transaction\Exceptions\InvalidListingStatusException;
+use App\Domains\Transaction\Exceptions\InvalidOfferPriceException;
 use App\Domains\Transaction\Exceptions\OwnListingOfferException;
 use App\Domains\Transaction\Exceptions\TransactionAlreadyRunningException;
 use App\Domains\Transaction\Models\Transaction;
@@ -24,12 +28,24 @@ use Illuminate\Support\Facades\DB;
  * - Inspector cannot buy (D-06)
  * - Only one transaction per listing (TRX-R2)
  * - Price, commission pct, and inspector are copied at time of offer (TRX-R3)
+ * - Commission pct comes from Setting (snapshot), never hardcoded
+ * - Only a submitted inspection result counts for commission; a draft
+ *   (re-inspection in progress) must never attach commission to an
+ *   unfinished inspector
  */
 final class SubmitOffer
 {
+    public function __construct(
+        private readonly SettingsReader $settings,
+    ) {}
+
     public function handle(User $buyer, Listing $listing, int $priceAmount, ?string $notes = null): Transaction
     {
-        return DB::transaction(function () use ($buyer, $listing, $priceAmount, $notes): Transaction {
+        if ($priceAmount <= 0) {
+            throw InvalidOfferPriceException::create();
+        }
+
+        $transaction = DB::transaction(function () use ($buyer, $listing, $priceAmount, $notes): Transaction {
             // TRX-R1: Only active or in_inspection listings
             if (! in_array($listing->status, [ListingStatus::Active, ListingStatus::InInspection], true)) {
                 throw InvalidListingStatusException::create();
@@ -55,19 +71,21 @@ final class SubmitOffer
                 throw TransactionAlreadyRunningException::create();
             }
 
-            // TRX-R3: Copy price, commission percent, and inspector
-            // Commission is 3% if listing has a completed inspection result
+            // TRX-R3: Copy price, commission percent, and inspector.
+            // Only a submitted inspection result counts; a draft result
+            // (re-inspection being filled) must not attach commission.
             $commissionPct = null;
             $inspectorId = null;
 
             if ($listing->is_inspected) {
                 $latestResult = InspectionResult::query()
                     ->where('listing_id', $listing->id)
+                    ->where('status', ResultStatus::Submitted->value)
                     ->orderBy('submitted_at', 'desc')
                     ->first();
 
                 if ($latestResult !== null) {
-                    $commissionPct = 3; // Default from flow section 3
+                    $commissionPct = $this->settings->getSaleCommissionPct();
                     $inspectorId = $latestResult->inspector_id;
                 }
             }
@@ -83,5 +101,14 @@ final class SubmitOffer
                 'expires_at' => now()->addHours(48),
             ]);
         });
+
+        TransactionOffered::dispatch(
+            transactionId: (string) $transaction->getKey(),
+            listingId: (string) $listing->getKey(),
+            buyerId: (string) $buyer->getKey(),
+            sellerId: (string) $listing->seller_id,
+        );
+
+        return $transaction;
     }
 }

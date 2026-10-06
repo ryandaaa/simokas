@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domains\Transaction\Providers;
 
+use App\Domains\Transaction\Livewire\OfferPage;
+use App\Domains\Transaction\Livewire\TransactionDetailPage;
+use App\Domains\Transaction\Livewire\TransactionsIndexPage;
 use App\Domains\Transaction\Models\Transaction;
 use App\Domains\Transaction\Policies\TransactionPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 final class TransactionServiceProvider extends ServiceProvider
 {
@@ -23,5 +27,9 @@ final class TransactionServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
 
         Gate::policy(Transaction::class, TransactionPolicy::class);
+
+        Livewire::component('transaction.offer-page', OfferPage::class);
+        Livewire::component('transaction.transactions-index-page', TransactionsIndexPage::class);
+        Livewire::component('transaction.transaction-detail-page', TransactionDetailPage::class);
     }
 }
