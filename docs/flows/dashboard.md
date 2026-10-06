@@ -53,12 +53,12 @@ Satu akun `user` yang menjadi pembeli sekaligus penjual melihat kedua bagian dal
 
 ## 5. Daftar test case
 
-- [ ] `DSH-T01` Setiap role melihat kartu sesuai tabel
-- [ ] `DSH-T02` Pengguna hanya melihat data miliknya (DSH-R1), dataset dua pengguna
-- [ ] `DSH-T03` Pendapatan inspektor sama dengan jumlah ledger (DSH-R3)
-- [ ] `DSH-T04` Angka admin sesuai data (job per status, antrean)
-- [ ] `DSH-T05` Empty state untuk pengguna baru (DSH-E1)
-- [ ] `DSH-T06` Inspektor belum diverifikasi diarahkan ke halaman status (DSH-E2)
-- [ ] `DSH-T07` Jumlah query tidak bertambah seiring data (DSH-E4)
-- [ ] `DSH-T08` Kegagalan satu kartu tidak merusak halaman (DSH-E5)
-- [ ] `DSH-T09` Respons tidak memuat data persis (DSH-R4)
+- [x] `DSH-T01` Setiap role melihat kartu sesuai tabel
+- [x] `DSH-T02` Pengguna hanya melihat data miliknya (DSH-R1), dataset dua pengguna
+- [x] `DSH-T03` Pendapatan inspektor sama dengan jumlah ledger (DSH-R3)
+- [x] `DSH-T04` Angka admin sesuai data (job per status, antrean)
+- [x] `DSH-T05` Empty state untuk pengguna baru (DSH-E1)
+- [x] `DSH-T06` Inspektor belum diverifikasi diarahkan ke halaman status (DSH-E2)
+- [x] `DSH-T07` Jumlah query tidak bertambah seiring data (DSH-E4)
+- [x] `DSH-T08` Kegagalan satu kartu tidak merusak halaman (DSH-E5)
+- [x] `DSH-T09` Respons tidak memuat data persis (DSH-R4)
