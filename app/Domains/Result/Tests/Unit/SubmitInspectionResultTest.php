@@ -20,7 +20,6 @@ use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\ResultItem;
 use App\Domains\Result\Models\TemplateItem;
-use App\Domains\Result\Services\ScoreCalculator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
