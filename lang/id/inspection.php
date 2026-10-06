@@ -108,6 +108,8 @@ return [
         'empty_desc' => 'Buka halaman job terbuka untuk mengambil tugas inspeksi baru.',
         'open_jobs_button' => 'Lihat Job Terbuka',
         'view_detail' => 'Lihat Detail',
+        'fill_result' => 'Isi Hasil Inspeksi',
+        'view_result' => 'Lihat Hasil Inspeksi',
         'load_failed' => 'Gagal memuat job Anda. Silakan coba lagi.',
     ],
     'detail' => [
@@ -138,6 +140,9 @@ return [
         'starting' => 'Memulai...',
         'start_success' => 'Inspeksi telah dimulai.',
         'start_hint' => 'Tombol Mulai Inspeksi aktif setelah jadwal ditetapkan.',
+        'fill_button' => 'Isi Hasil Inspeksi',
+        'fill_hint' => 'Isi checklist per kategori, ambil foto dengan kamera, lalu kirim hasilnya. Draf tersimpan otomatis.',
+        'view_result_button' => 'Lihat Hasil Inspeksi',
         'cancel_job_button' => 'Batalkan Job',
         'cancelling' => 'Membatalkan...',
         'inspector_cancel_modal_title' => 'Batalkan Job Inspeksi?',

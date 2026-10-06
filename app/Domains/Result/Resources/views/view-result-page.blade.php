@@ -116,7 +116,9 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                         <img
                             src="{{ $photoUrls[$photo->id] ?? '' }}"
                             alt="{{ __('result.inspection_photo') }}"
-                            class="w-full h-auto"
+                            class="w-full h-auto aspect-[4/3] object-cover"
+                            width="800"
+                            height="600"
                             loading="lazy"
                         />
                         <div class="p-4">

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Blade;
 use Symfony\Component\Finder\Finder;
 
 it('ensures no hex color codes or style attributes exist in blade views', function () {
@@ -115,4 +116,56 @@ it('ensures app.css declares satoshi font-face locally without external urls', f
         expect($resolvedPath)->not->toBeFalse("Berkas font '{$fontUrl}' tidak ditemukan di disk.")
             ->and($resolvedPath)->toStartWith(resource_path('fonts/satoshi'));
     }
+});
+
+it('ensures satoshi font-face uses font-display swap', function () {
+    $cssContent = (string) file_get_contents(resource_path('css/app.css'));
+
+    preg_match_all('/@font-face\s*\{([^}]+)\}/s', $cssContent, $matches);
+    expect($matches[1])->not->toBeEmpty();
+
+    foreach ($matches[1] as $block) {
+        if (str_contains($block, "'Satoshi'") || str_contains($block, '"Satoshi"')) {
+            expect($block)->toContain('font-display: swap;');
+        }
+    }
+});
+
+it('ensures layout contains two preload links for above-the-fold satoshi fonts', function () {
+    $layoutContent = (string) file_get_contents(resource_path('views/components/layouts/app.blade.php'));
+
+    // Verifikasi tag preload untuk Satoshi Regular dan Bold
+    expect($layoutContent)->toMatch('/<link\s+rel=["\']preload["\'][^>]+Satoshi-Regular\.woff2[^>]+as=["\']font["\'][^>]+type=["\']font\/woff2["\'][^>]+crossorigin/i')
+        ->and($layoutContent)->toMatch('/<link\s+rel=["\']preload["\'][^>]+Satoshi-Bold\.woff2[^>]+as=["\']font["\'][^>]+type=["\']font\/woff2["\'][^>]+crossorigin/i');
+
+    // Render layout sederhana untuk memastikan ekspresi Vite dievaluasi tanpa galat
+    $rendered = Blade::render('<x-layouts.app :title="\'Uji Preload\'"><div>Konten</div></x-layouts.app>');
+    expect($rendered)->toContain('as="font"')
+        ->and($rendered)->toContain('type="font/woff2"')
+        ->and($rendered)->toContain('crossorigin')
+        ->and($rendered)->toMatch('/href=["\'][^"\']*Satoshi-Regular[^"\']*\.woff2["\']/')
+        ->and($rendered)->toMatch('/href=["\'][^"\']*Satoshi-Bold[^"\']*\.woff2["\']/');
+});
+
+it('ensures listing-card component renders img with lazy loading, dimensions and alt', function () {
+    $rendered = Blade::render(
+        '<x-ui.listing-card :title="\'Toyota Yaris 2020\'" :price="180000000" image-url="https://example.com/test.jpg" />'
+    );
+
+    expect($rendered)->toContain('loading="lazy"')
+        ->and($rendered)->toContain('width="400"')
+        ->and($rendered)->toContain('height="250"')
+        ->and($rendered)->toContain('alt="Toyota Yaris 2020"')
+        ->and($rendered)->toContain('aspect-[16/10]');
+});
+
+it('ensures catalog detail view marks main photo above the fold eager and thumbnails lazy', function () {
+    $viewContent = (string) file_get_contents(app_path('Domains/Catalog/Resources/views/show.blade.php'));
+
+    // Foto utama di atas lipatan: index 0 eager, berikutnya lazy
+    expect($viewContent)->toContain('@if ($index > 0) loading="lazy" @else loading="eager" @endif')
+        ->and($viewContent)->toContain('width="800"')
+        ->and($viewContent)->toContain('height="600"')
+        ->and($viewContent)->toContain('width="200"')
+        ->and($viewContent)->toContain('height="150"');
 });

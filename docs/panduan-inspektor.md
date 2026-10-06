@@ -67,7 +67,7 @@
 3. Pengaturan `auto_accept_days` dapat diubah admin.
 4. Setelah job selesai, fee masuk ke saldo simulasi inspektor.
 5. Buka **Pendapatan** untuk melihat saldo dan rincian.
-> [Gambar: Halaman Pendapatan dengan saldo dan rincian komisi, rute `/earnings`]
+> [Gambar: Halaman Pendapatan dengan saldo dan rincian komisi, rute `/inspector/earnings`]
 
 ## 8. Membatalkan job
 1. Sebelum inspeksi dimulai, inspektor dapat membatalkan job.
@@ -81,5 +81,5 @@
 - `/jobs/open` [perlu dikonfirmasi] — daftar job terbuka.
 - `/jobs/{id}` [perlu dikonfirmasi] — detail job, jadwal, dan aksi.
 - `/jobs/{id}/fill` [perlu dikonfirmasi] — checklist dan kamera.
-- `/earnings` [perlu dikonfirmasi] — pendapatan.
+- `/inspector/earnings` [perlu dikonfirmasi] — pendapatan.
 - `/inspector/register` [perlu dikonfirmasi] — pendaftaran dan dokumen verifikasi.

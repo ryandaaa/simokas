@@ -47,7 +47,24 @@
         </div>
     </x-ui.card>
 
+    {{-- Alerts --}}
+    @if (session('error'))
+        <x-ui.alert variant="danger" :message="session('error')" />
+    @endif
+    @if (session('success'))
+        <x-ui.alert variant="success" :message="session('success')" />
+    @endif
+
+    {{-- Loading indicator --}}
+    <div wire:loading class="w-full">
+        <x-ui.card class="p-6 text-center text-sm text-slate">
+            <x-ui.icon name="jam" class="w-5 h-5 animate-spin inline-block mr-2" />
+            {{ __('ui.actions.loading') }}
+        </x-ui.card>
+    </div>
+
     {{-- Job List --}}
+    <div wire:loading.remove class="space-y-6">
     @if ($jobs->isEmpty())
         <x-ui.card class="p-8">
             <x-ui.empty-state
@@ -174,4 +191,5 @@
             {{ $jobs->links() }}
         </div>
     @endif
+    </div>
 </div>

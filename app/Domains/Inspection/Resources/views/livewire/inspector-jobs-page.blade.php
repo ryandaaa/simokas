@@ -13,6 +13,11 @@
         <x-ui.alert variant="danger" :message="$errorMessage" :retry-action="'retry'" />
     @endif
 
+    <div wire:loading class="w-full text-center py-4 text-sm text-slate">
+        <x-ui.icon name="jam" class="w-5 h-5 animate-spin inline-block mr-2" />
+        {{ __('ui.actions.loading') }}
+    </div>
+
     @if ($jobs === null || $jobs->isEmpty())
         <x-ui.empty-state
             icon="dokumen"
@@ -53,7 +58,24 @@
                         </div>
                     </div>
 
-                    <div class="mt-5 pt-3 border-t border-muted/15">
+                    <div class="mt-5 pt-3 border-t border-muted/15 space-y-2">
+                        @if ($job->status === \App\Domains\Inspection\Enums\JobStatus::InProgress)
+                            <x-ui.button
+                                :href="route('result.fill', ['job' => $job->id])"
+                                variant="primary"
+                                class="w-full"
+                            >
+                                {{ __('inspection.inspector_jobs.fill_result') }}
+                            </x-ui.button>
+                        @elseif (in_array($job->status, [\App\Domains\Inspection\Enums\JobStatus::ResultSubmitted, \App\Domains\Inspection\Enums\JobStatus::Completed], true) && \Illuminate\Support\Facades\Route::has('results.show'))
+                            <x-ui.button
+                                :href="route('results.show', ['listing' => $job->listing_id])"
+                                variant="primary"
+                                class="w-full"
+                            >
+                                {{ __('inspection.inspector_jobs.view_result') }}
+                            </x-ui.button>
+                        @endif
                         <x-ui.button
                             :href="route('jobs.show', ['job' => $job->id])"
                             variant="secondary"

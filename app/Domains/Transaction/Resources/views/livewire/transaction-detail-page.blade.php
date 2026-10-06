@@ -94,6 +94,17 @@
 
         @if ($isBuyer && $transaction->status->value === 'offered')
             <x-ui.alert variant="info" :message="__('transaction.detail.buyer_offered_notice')" />
+
+            @if ($canCancel)
+                <x-ui.button
+                    type="button"
+                    variant="secondary"
+                    @click="$dispatch('open-modal', 'cancel-modal')"
+                    wire:loading.attr="disabled"
+                >
+                    {{ __('transaction.detail.cancel') }}
+                </x-ui.button>
+            @endif
         @endif
 
         @if ($isBuyer && $transaction->status->value === 'accepted')
@@ -115,6 +126,28 @@
                     </span>
                 </x-ui.button>
             @endif
+
+            @if ($canCancel)
+                <x-ui.button
+                    type="button"
+                    variant="secondary"
+                    @click="$dispatch('open-modal', 'cancel-modal')"
+                    wire:loading.attr="disabled"
+                >
+                    {{ __('transaction.detail.cancel') }}
+                </x-ui.button>
+            @endif
+        @endif
+
+        @if ($isSeller && $transaction->status->value === 'accepted' && $canCancel)
+            <x-ui.button
+                type="button"
+                variant="secondary"
+                @click="$dispatch('open-modal', 'cancel-modal')"
+                wire:loading.attr="disabled"
+            >
+                {{ __('transaction.detail.cancel') }}
+            </x-ui.button>
         @endif
 
         @if ($canConfirmHandover)
@@ -129,6 +162,64 @@
 
         @if ($transaction->status->value === 'paid_held')
             <x-ui.alert variant="info" :message="__('transaction.detail.paid_held_notice')" />
+
+            @if ($showNeedsAttention)
+                <x-ui.alert variant="warning" :message="__('transaction.detail.needs_attention_notice')" />
+            @endif
+
+            <div class="flex flex-col gap-3 sm:flex-row">
+                @if ($canRequestCancellation)
+                    <x-ui.button
+                        type="button"
+                        variant="secondary"
+                        @click="$dispatch('open-modal', 'request-cancellation-modal')"
+                        wire:loading.attr="disabled"
+                    >
+                        {{ __('transaction.detail.request_cancellation') }}
+                    </x-ui.button>
+                @elseif ($isBuyer && $hasCancelRequest)
+                    <x-ui.alert variant="info" :message="__('transaction.detail.cancel_request_waiting')" />
+                @endif
+
+                @if ($canApproveCancellation)
+                    <x-ui.button
+                        type="button"
+                        variant="primary"
+                        @click="$dispatch('open-modal', 'approve-cancellation-modal')"
+                        wire:loading.attr="disabled"
+                    >
+                        {{ __('transaction.detail.approve_cancellation') }}
+                    </x-ui.button>
+                @endif
+
+                @if ($canCancel && $isSeller)
+                    <x-ui.button
+                        type="button"
+                        variant="danger"
+                        @click="$dispatch('open-modal', 'cancel-refund-modal')"
+                        wire:loading.attr="disabled"
+                    >
+                        {{ __('transaction.detail.cancel_refund') }}
+                    </x-ui.button>
+                @elseif ($canCancel && $isAdmin)
+                    <x-ui.button
+                        type="button"
+                        variant="danger"
+                        @click="$dispatch('open-modal', 'cancel-refund-modal')"
+                        wire:loading.attr="disabled"
+                    >
+                        {{ __('transaction.detail.cancel_admin') }}
+                    </x-ui.button>
+                @endif
+            </div>
+        @endif
+
+        @if ($transaction->status->value === 'cancelled')
+            <x-ui.alert variant="muted" :message="__('transaction.detail.cancelled_notice')" />
+        @endif
+
+        @if ($transaction->status->value === 'expired')
+            <x-ui.alert variant="muted" :message="__('transaction.detail.expired_notice')" />
         @endif
 
         @if ($transaction->status->value === 'completed')
@@ -233,6 +324,157 @@
                 </span>
                 <span wire:loading wire:target="confirmHandover">
                     {{ __('transaction.detail.confirming_handover') }}
+                </span>
+            </x-ui.button>
+        </x-slot:footer>
+    </x-ui.modal>
+
+    <x-ui.modal
+        name="cancel-modal"
+        :title="__('transaction.detail.cancel_confirm_title')"
+        :description="__('transaction.detail.cancel_confirm_description')"
+    >
+        <x-ui.textarea
+            name="cancelReason"
+            :label="__('transaction.detail.cancel_reason_label')"
+            wire:model="cancelReason"
+            rows="3"
+        />
+
+        <x-slot:footer>
+            <x-ui.button
+                type="button"
+                variant="secondary"
+                @click="open = false"
+                wire:loading.attr="disabled"
+            >
+                {{ __('transaction.detail.cancel') }}
+            </x-ui.button>
+
+            <x-ui.button
+                type="button"
+                variant="danger"
+                wire:click="cancel"
+                wire:loading.attr="disabled"
+                wire:target="cancel"
+            >
+                <span wire:loading.remove wire:target="cancel">
+                    {{ __('transaction.detail.cancel') }}
+                </span>
+                <span wire:loading wire:target="cancel">
+                    {{ __('transaction.detail.cancelling') }}
+                </span>
+            </x-ui.button>
+        </x-slot:footer>
+    </x-ui.modal>
+
+    <x-ui.modal
+        name="cancel-refund-modal"
+        :title="__('transaction.detail.cancel_refund_confirm_title')"
+        :description="__('transaction.detail.cancel_refund_confirm_description')"
+    >
+        <x-ui.textarea
+            name="cancelReason"
+            :label="__('transaction.detail.cancel_reason_required_label')"
+            wire:model="cancelReason"
+            rows="3"
+            required
+        />
+
+        <x-slot:footer>
+            <x-ui.button
+                type="button"
+                variant="secondary"
+                @click="open = false"
+                wire:loading.attr="disabled"
+            >
+                {{ __('transaction.detail.cancel') }}
+            </x-ui.button>
+
+            <x-ui.button
+                type="button"
+                variant="danger"
+                wire:click="cancel"
+                wire:loading.attr="disabled"
+                wire:target="cancel"
+            >
+                <span wire:loading.remove wire:target="cancel">
+                    {{ __('transaction.detail.cancel_refund') }}
+                </span>
+                <span wire:loading wire:target="cancel">
+                    {{ __('transaction.detail.cancelling') }}
+                </span>
+            </x-ui.button>
+        </x-slot:footer>
+    </x-ui.modal>
+
+    <x-ui.modal
+        name="request-cancellation-modal"
+        :title="__('transaction.detail.request_cancellation_confirm_title')"
+        :description="__('transaction.detail.request_cancellation_confirm_description')"
+    >
+        <x-slot:footer>
+            <x-ui.button
+                type="button"
+                variant="secondary"
+                @click="open = false"
+                wire:loading.attr="disabled"
+            >
+                {{ __('transaction.detail.cancel') }}
+            </x-ui.button>
+
+            <x-ui.button
+                type="button"
+                variant="primary"
+                wire:click="requestCancellation"
+                wire:loading.attr="disabled"
+                wire:target="requestCancellation"
+            >
+                <span wire:loading.remove wire:target="requestCancellation">
+                    {{ __('transaction.detail.request_cancellation') }}
+                </span>
+                <span wire:loading wire:target="requestCancellation">
+                    {{ __('transaction.detail.requesting_cancellation') }}
+                </span>
+            </x-ui.button>
+        </x-slot:footer>
+    </x-ui.modal>
+
+    <x-ui.modal
+        name="approve-cancellation-modal"
+        :title="__('transaction.detail.approve_cancellation_confirm_title')"
+        :description="__('transaction.detail.approve_cancellation_confirm_description')"
+    >
+        <x-ui.textarea
+            name="cancelReason"
+            :label="__('transaction.detail.cancel_reason_required_label')"
+            wire:model="cancelReason"
+            rows="3"
+            required
+        />
+
+        <x-slot:footer>
+            <x-ui.button
+                type="button"
+                variant="secondary"
+                @click="open = false"
+                wire:loading.attr="disabled"
+            >
+                {{ __('transaction.detail.cancel') }}
+            </x-ui.button>
+
+            <x-ui.button
+                type="button"
+                variant="primary"
+                wire:click="approveCancellation"
+                wire:loading.attr="disabled"
+                wire:target="approveCancellation"
+            >
+                <span wire:loading.remove wire:target="approveCancellation">
+                    {{ __('transaction.detail.approve_cancellation') }}
+                </span>
+                <span wire:loading wire:target="approveCancellation">
+                    {{ __('transaction.detail.approving_cancellation') }}
                 </span>
             </x-ui.button>
         </x-slot:footer>

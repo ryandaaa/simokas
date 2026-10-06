@@ -4,9 +4,16 @@
 
 <div class="space-y-6">
     {{-- Header --}}
-    <div>
-        <h1 class="text-3xl font-bold text-text">{{ __('dashboard.title') }}</h1>
-        <p class="text-sm text-muted mt-1">{{ __('dashboard.welcome', ['name' => auth()->user()->name]) }}</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-obs tracking-tight">{{ __('dashboard.title') }}</h1>
+            <p class="text-sm text-slate mt-1">{{ __('dashboard.welcome', ['name' => auth()->user()->name]) }}</p>
+        </div>
+        @if (\Illuminate\Support\Facades\Route::has('history'))
+            <x-ui.button :href="route('history')" variant="secondary" icon="dokumen">
+                {{ __('dashboard.view_history') }}
+            </x-ui.button>
+        @endif
     </div>
 
     {{-- Role-based Dashboard --}}

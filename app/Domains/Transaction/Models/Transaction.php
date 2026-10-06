@@ -30,6 +30,10 @@ use Illuminate\Support\Carbon;
  * @property int|null $platform_commission
  * @property Carbon|null $expires_at
  * @property Carbon|null $completed_at
+ * @property string|null $cancelled_by
+ * @property string|null $cancel_reason
+ * @property Carbon|null $cancel_requested_at
+ * @property Carbon|null $needs_attention_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Listing $listing
@@ -62,6 +66,8 @@ final class Transaction extends Model
             'updated_at' => 'datetime',
             'expires_at' => 'datetime',
             'completed_at' => 'datetime',
+            'cancel_requested_at' => 'datetime',
+            'needs_attention_at' => 'datetime',
         ];
     }
 
