@@ -118,7 +118,7 @@ it('ensures app.css declares satoshi font-face locally without external urls', f
     }
 });
 
-it('ensures satoshi font-face uses font-display swap', function () {
+it('ensures satoshi font-face uses font-display block', function () {
     $cssContent = (string) file_get_contents(resource_path('css/app.css'));
 
     preg_match_all('/@font-face\s*\{([^}]+)\}/s', $cssContent, $matches);
@@ -126,7 +126,7 @@ it('ensures satoshi font-face uses font-display swap', function () {
 
     foreach ($matches[1] as $block) {
         if (str_contains($block, "'Satoshi'") || str_contains($block, '"Satoshi"')) {
-            expect($block)->toContain('font-display: swap;');
+            expect($block)->toContain('font-display: block;');
         }
     }
 });
