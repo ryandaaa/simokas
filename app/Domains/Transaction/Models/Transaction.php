@@ -6,6 +6,7 @@ namespace App\Domains\Transaction\Models;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Payment\Models\Payment;
 use App\Domains\Transaction\Database\factories\TransactionFactory;
 use App\Domains\Transaction\Enums\TransactionStatus;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,12 +25,17 @@ use Illuminate\Support\Carbon;
  * @property int|null $commission_pct
  * @property string|null $inspector_id
  * @property string|null $notes
+ * @property string|null $payment_id
+ * @property int|null $inspector_commission
+ * @property int|null $platform_commission
  * @property Carbon|null $expires_at
+ * @property Carbon|null $completed_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read Listing $listing
  * @property-read User $buyer
  * @property-read User|null $inspector
+ * @property-read Payment|null $payment
  */
 final class Transaction extends Model
 {
@@ -55,6 +61,7 @@ final class Transaction extends Model
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'expires_at' => 'datetime',
+            'completed_at' => 'datetime',
         ];
     }
 
@@ -80,6 +87,14 @@ final class Transaction extends Model
     public function inspector(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inspector_id');
+    }
+
+    /**
+     * @return BelongsTo<Payment, $this>
+     */
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class, 'payment_id');
     }
 
     /**

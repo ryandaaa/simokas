@@ -24,7 +24,7 @@ final class ProcessPaymentResult
         PaymentSimulationOutcome $outcome,
         ?string $newIdempotencyKey = null,
     ): Payment {
-        return DB::transaction(function () use ($payment, $method, $outcome, $newIdempotencyKey) {
+        $result = DB::transaction(function () use ($payment, $method, $outcome, $newIdempotencyKey) {
             /** @var Payment $freshPayment */
             $freshPayment = Payment::query()->whereKey($payment->id)->lockForUpdate()->firstOrFail();
 
@@ -81,18 +81,26 @@ final class ProcessPaymentResult
 
             $freshPayment->refresh();
 
-            // Only emit PaymentSucceeded when target status is success
-            if ($targetStatus === PaymentStatus::Success) {
-                event(new PaymentSucceeded(
-                    paymentId: $freshPayment->id,
-                    purpose: $freshPayment->purpose,
-                    refId: $freshPayment->ref_id,
-                    amount: (int) $freshPayment->amount,
-                    payerId: $freshPayment->payer_id,
-                ));
-            }
-
-            return $freshPayment;
+            return [
+                'payment' => $freshPayment,
+                'succeeded' => $targetStatus === PaymentStatus::Success,
+            ];
         });
+
+        // Events are emitted only after the transaction commits — never inside it.
+        if ($result['succeeded']) {
+            /** @var Payment $succeededPayment */
+            $succeededPayment = $result['payment'];
+
+            event(new PaymentSucceeded(
+                paymentId: $succeededPayment->id,
+                purpose: $succeededPayment->purpose,
+                refId: $succeededPayment->ref_id,
+                amount: (int) $succeededPayment->amount,
+                payerId: $succeededPayment->payer_id,
+            ));
+        }
+
+        return $result['payment'];
     }
 }

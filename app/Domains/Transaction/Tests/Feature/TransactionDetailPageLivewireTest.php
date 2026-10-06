@@ -80,7 +80,7 @@ it('TRX-T04 shows full price to seller when there is no inspection', function ()
         ->assertDontSee('Rp3.000.000');
 });
 
-it('shows the accepted notice to the buyer without a pay button yet', function () {
+it('shows the pay button to the buyer on an accepted transaction (TRX-T08 UI)', function () {
     $seller = User::factory()->user()->create();
     $buyer = User::factory()->user()->create();
     $listing = Listing::factory()->active()->create(['seller_id' => $seller->id]);
@@ -92,7 +92,7 @@ it('shows the accepted notice to the buyer without a pay button yet', function (
 
     Livewire::test(TransactionDetailPage::class, ['transaction' => $transaction])
         ->assertOk()
-        ->assertSee(__('transaction.detail.buyer_accepted_notice'));
+        ->assertSee(__('transaction.detail.pay'));
 });
 
 it('TRX-T06 lets the seller accept from the detail page', function () {
