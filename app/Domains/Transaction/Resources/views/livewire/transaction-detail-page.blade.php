@@ -133,6 +133,12 @@
 
         @if ($transaction->status->value === 'completed')
             <x-ui.alert variant="success" :message="__('transaction.detail.completed_notice')" />
+
+            @if ($isBuyer && $transaction->inspector_id)
+                <div class="pt-4">
+                    <livewire:rating-form :transaction-id="$transaction->id" :key="'rating-'.$transaction->id" />
+                </div>
+            @endif
         @endif
     </div>
 
