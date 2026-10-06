@@ -7,8 +7,10 @@ namespace App\Domains\Result\Livewire;
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Result\Models\InspectionResult;
+use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Policies\ResultAccessPolicy;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\URL;
 use Livewire\Component;
 
 final class ViewResultPage extends Component
@@ -22,9 +24,11 @@ final class ViewResultPage extends Component
     public function mount(Listing $listing): void
     {
         // Find the inspection result for this listing
-        $result = InspectionResult::whereHas('job', function ($query) use ($listing) {
-            $query->where('listing_id', $listing->id);
-        })->first();
+        $result = InspectionResult::query()
+            ->with(['inspector', 'photos', 'items.templateItem'])
+            ->whereHas('job', function ($query) use ($listing) {
+                $query->where('listing_id', $listing->id);
+            })->first();
 
         if ($result === null) {
             abort(404);
@@ -52,11 +56,29 @@ final class ViewResultPage extends Component
         $hasAccess = $policy->viewDetails($user, $this->result);
         $canRequestAccess = $policy->canRequestPaidAccess($user, $this->result);
 
+        $photoUrls = [];
+        if ($hasAccess) {
+            $this->result->loadMissing(['photos', 'items.templateItem', 'inspector']);
+            $photoUrls = $this->result->photos->mapWithKeys(function (ResultPhoto $photo): array {
+                return [
+                    $photo->id => URL::temporarySignedRoute(
+                        'results.photos.show',
+                        now()->addMinutes(15),
+                        [
+                            'result' => $this->result->id,
+                            'photo' => $photo->id,
+                        ]
+                    ),
+                ];
+            })->all();
+        }
+
         return view('result::view-result-page', [
             'result' => $this->result,
             'hasAccess' => $hasAccess,
             'canRequestAccess' => $canRequestAccess,
             'accessFee' => $this->result->job->fee_amount,
+            'photoUrls' => $photoUrls,
         ])->layout('components.layouts.app', ['title' => __('result.inspection_results')]);
     }
 }
