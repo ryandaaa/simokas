@@ -85,11 +85,19 @@
             <x-ui.checkbox
                 id="accepted_terms"
                 name="accepted_terms"
-                :label="__('identity.register.terms_agreement')"
                 wire:model="accepted_terms"
                 :error="$errors->first('accepted_terms')"
                 required
-            />
+            >
+                <span class="font-medium text-text">
+                    {{ __('identity.register.terms_prefix') }}
+                    <a href="{{ route('legal.terms') }}" class="text-primary underline focus:outline-none focus:ring-2 focus:ring-accent rounded">{{ __('legal.footer_terms') }}</a>
+                    {{ __('identity.register.terms_and') }}
+                    <a href="{{ route('legal.privacy') }}" class="text-primary underline focus:outline-none focus:ring-2 focus:ring-accent rounded">{{ __('legal.footer_privacy') }}</a>
+                    <span class="text-danger ml-0.5" aria-hidden="true">*</span>
+                    <span class="sr-only">(wajib)</span>
+                </span>
+            </x-ui.checkbox>
 
             <div class="pt-2">
                 <x-ui.button

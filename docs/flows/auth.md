@@ -50,7 +50,7 @@ flowchart TD
 | AUTH-R6 | Pesan login gagal generik. Respons lupa password selalu sama, ada atau tidak emailnya |
 | AUTH-R7 | Sesi berakhir setelah 7 hari tidak aktif [USULAN] |
 | AUTH-R8 | Verifikasi email dimatikan pada P0 [OPEN] |
-| AUTH-R9 | Persetujuan syarat ketentuan dicatat di `accepted_terms_at` (P1) |
+| AUTH-R9 | Persetujuan syarat ketentuan dicatat di `accepted_terms_at` (P1). Siapa yang menyusun dan menelaah teks hukum final masih terbuka (Q23 [OPEN], sementara memakai draf berlabel "DRAF") |
 | AUTH-R10 | Inspektor tidak dapat mengajukan inspeksi, membeli, atau menjual (D-06, [OPEN]) |
 | AUTH-R11 | Pengaturan akun: nama dan nomor HP dapat diubah, email TIDAK bisa diubah (PRD 13.10 [OPEN]: perubahan email memerlukan verifikasi email yang ditunda hingga P1). Ganti password wajib menyertakan password lama |
 
@@ -85,3 +85,7 @@ flowchart TD
 - [x] `AUTH-T12` Setiap role mengakses rute role lain mendapat 403 (dataset role × rute)
 - [x] `AUTH-T13` Ubah profil dan ganti password
 - [x] `AUTH-T14` Seeder membuat admin dan admin tidak bisa dibuat dari rute publik
+- [x] `AUTH-T15` Registrasi tanpa persetujuan syarat ketentuan dan kebijakan privasi ditolak (dataset false, kosong, aneh)
+- [x] `AUTH-T16` Registrasi dengan persetujuan berhasil mencatat `accepted_terms_at`
+- [x] `AUTH-T17` Halaman Kebijakan Privasi dan Syarat Ketentuan dapat diakses publik (tamu dan semua role), memiliki satu h1, label DRAF, dan teks dari lang
+- [x] `AUTH-T18` Footer di layout utama dan halaman auth memuat tautan ke kedua halaman legal, checkbox registrasi terhubung ke rute legal

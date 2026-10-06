@@ -44,6 +44,12 @@ it('renders application layout with desktop navbar, mobile bottom bar, skip-link
     $view->assertSee('id="notifications-live-region"', false);
     $view->assertSee('aria-live="polite"', false);
     $view->assertSee('Pemberitahuan penting');
+
+    // Footer dan tautan hukum
+    $view->assertSee(route('legal.privacy'), false);
+    $view->assertSee(route('legal.terms'), false);
+    $view->assertSee(__('legal.footer_privacy'));
+    $view->assertSee(__('legal.footer_terms'));
 });
 
 it('loads livewire and alpine scripts and styles exactly once in application layout', function () {

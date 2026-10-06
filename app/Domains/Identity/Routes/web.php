@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Http\Controllers\LogoutController;
+use App\Domains\Identity\Http\Controllers\PrivacyPolicyController;
+use App\Domains\Identity\Http\Controllers\TermsController;
 use App\Domains\Identity\Livewire\AccountSettings;
 use App\Domains\Identity\Livewire\AdminDashboard;
 use App\Domains\Identity\Livewire\Blocked;
@@ -18,6 +20,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
+    Route::get('/privacy', PrivacyPolicyController::class)->name('legal.privacy');
+    Route::get('/terms', TermsController::class)->name('legal.terms');
+
     Route::middleware('guest')->group(function () {
         Route::get('/register', Register::class)->name('identity.register');
         Route::get('/login', Login::class)->name('login');
