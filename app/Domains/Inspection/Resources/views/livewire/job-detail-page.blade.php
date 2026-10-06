@@ -227,6 +227,29 @@
                         </x-ui.button>
                     </div>
                 </x-ui.card>
+            @elseif ($job->status === \App\Domains\Inspection\Enums\JobStatus::InProgress && (string) auth()->id() === (string) $job->inspector_id)
+                <x-ui.card :title="__('inspection.detail.fill_button')">
+                    <div class="space-y-3">
+                        <x-ui.button
+                            :href="route('result.fill', ['job' => $job->id])"
+                            variant="primary"
+                            class="w-full justify-center"
+                        >
+                            {{ __('inspection.detail.fill_button') }}
+                        </x-ui.button>
+                        <p class="text-xs text-muted text-center">{{ __('inspection.detail.fill_hint') }}</p>
+                    </div>
+                </x-ui.card>
+            @elseif (in_array($job->status, [\App\Domains\Inspection\Enums\JobStatus::ResultSubmitted, \App\Domains\Inspection\Enums\JobStatus::Completed], true) && \Illuminate\Support\Facades\Route::has('results.show'))
+                <x-ui.card :title="__('inspection.detail.view_result_button')">
+                    <x-ui.button
+                        :href="route('results.show', ['listing' => $job->listing_id])"
+                        variant="secondary"
+                        class="w-full justify-center"
+                    >
+                        {{ __('inspection.detail.view_result_button') }}
+                    </x-ui.button>
+                </x-ui.card>
             @endif
         </div>
     </div>
