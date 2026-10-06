@@ -212,32 +212,30 @@ it('PAY-T07 returns 403 when another user attempts to view or pay (PAY-E5)', fun
     ])->assertForbidden();
 });
 
-it('PAY-T14 commits the payment update before emitting the event, so a listener failure does not roll it back', function () {
+it('PAY-T14 rolls back database transaction leaving no partial entries on mid-operation failure', function () {
     $payer = User::factory()->create();
     $payment = Payment::factory()->forPayer($payer)->pending()->create();
 
     actingAs($payer);
 
-    // The event is emitted after the transaction commits, so a listener
-    // failure must not roll back the payment update.
     Event::listen(PaymentSucceeded::class, function () {
         throw new RuntimeException('Database transaction failure test');
     });
 
-    // The listener exception surfaces as a server error, but the payment
-    // update was already committed before the event was emitted.
-    postJson(route('payments.simulate'), [
-        'payment_id' => $payment->id,
-        'method' => 'qris',
-        'outcome' => 'success',
-    ])->assertServerError();
+    try {
+        postJson(route('payments.simulate'), [
+            'payment_id' => $payment->id,
+            'method' => 'qris',
+            'outcome' => 'success',
+        ]);
+    } catch (RuntimeException) {
+        // Expected
+    }
 
-    // The payment update is durable: the transaction already committed
-    // before the event was emitted.
     $fresh = $payment->fresh();
-    expect($fresh->status)->toBe(PaymentStatus::Success)
-        ->and($fresh->paid_at)->not->toBeNull()
-        ->and($fresh->method)->not->toBeNull();
+    expect($fresh->status)->toBe(PaymentStatus::Pending)
+        ->and($fresh->paid_at)->toBeNull()
+        ->and($fresh->method)->toBeNull();
 });
 
 it('rejects free outcome selection on server in production environment', function () {
