@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Domains\Transaction\Tests\Unit;
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Models\InspectionResult;
+use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Transaction\Actions\SubmitOffer;
 use App\Domains\Transaction\Enums\TransactionStatus;
 use App\Domains\Transaction\Exceptions\InspectorCannotBuyException;
@@ -221,9 +223,22 @@ it('TRX-T05 copies inspector ID and does not change when new result is added', f
         'is_inspected' => true,
     ]);
 
+    // Create template once to avoid unique constraint violations
+    $template = InspectionTemplate::firstOrCreate(
+        [
+            'vehicle_type' => VehicleType::Car->value,
+            'version' => 1,
+        ],
+        [
+            'name' => 'Template Inspeksi Mobil v1',
+            'is_active' => true,
+        ]
+    );
+
     $result1 = InspectionResult::factory()->create([
         'listing_id' => $listing->id,
         'inspector_id' => $inspector1->id,
+        'template_id' => $template->id,
         'status' => ResultStatus::Submitted,
         'submitted_at' => now(),
     ]);
@@ -237,6 +252,7 @@ it('TRX-T05 copies inspector ID and does not change when new result is added', f
     InspectionResult::factory()->create([
         'listing_id' => $listing->id,
         'inspector_id' => $inspector2->id,
+        'template_id' => $template->id,
         'status' => ResultStatus::Submitted,
         'submitted_at' => now()->addDay(),
     ]);
