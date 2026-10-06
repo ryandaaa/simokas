@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use App\Domains\Identity\Models\User;
+use App\Domains\Inspector\Models\InspectorProfile;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 it('renders application layout with desktop navbar, mobile bottom bar, skip-link, and aria-live region', function () {
     $navItems = [
@@ -104,4 +108,176 @@ it('does not show account menu or Keluar for guests', function () {
     $view->assertDontSee('Keluar');
     $view->assertDontSee(__('ui.layout.account_menu'));
     $view->assertSee(__('Masuk'));
+});
+
+it('renders role-based navigation links for regular users and hides other role links', function () {
+    $user = User::factory()->user()->create([
+        'name' => 'Budi Pembeli',
+        'email' => 'budi.user@example.test',
+    ]);
+
+    $view = $this->actingAs($user)->blade('<x-layouts.app title="Uji Menu User"><p>Konten</p></x-layouts.app>');
+
+    // User links
+    $view->assertSee(__('ui.layout.dashboard'));
+    $view->assertSee(route('dashboard'), false);
+    $view->assertSee(__('ui.layout.my_listings'));
+    $view->assertSee(route('listings.mine'), false);
+    $view->assertSee(__('ui.layout.create_listing'));
+    $view->assertSee(route('listings.create'), false);
+    $view->assertSee(__('ui.layout.my_inspections'));
+    $view->assertSee(route('jobs.mine'), false);
+    $view->assertSee(__('ui.layout.transactions'));
+    $view->assertSee(route('transactions.index'), false);
+    $view->assertSee(__('ui.layout.conversations'));
+    $view->assertSee(route('conversations.index'), false);
+    $view->assertSee(__('ui.layout.notifications'));
+    $view->assertSee(route('notifications.index'), false);
+
+    // Other role links hidden from user
+    $view->assertDontSee(__('ui.layout.queue'));
+    $view->assertDontSee(route('admin.queue.index'), false);
+    $view->assertDontSee(__('ui.layout.open_jobs'));
+    $view->assertDontSee(route('jobs.open'), false);
+    $view->assertDontSee(__('ui.layout.my_jobs'));
+    $view->assertDontSee(route('jobs.inspector'), false);
+    $view->assertDontSee(__('ui.layout.earnings'));
+    $view->assertDontSee(route('inspector.earnings'), false);
+    $view->assertDontSee(__('ui.layout.onboarding'));
+    $view->assertDontSee(route('inspector.onboarding'), false);
+    $view->assertDontSee(__('ui.layout.audit_logs'));
+    $view->assertDontSee(route('admin.audit-logs.index'), false);
+});
+
+it('renders role-based navigation links for approved inspectors and hides other role links', function () {
+    $inspector = User::factory()->inspector()->create([
+        'name' => 'Eko Inspektor',
+        'email' => 'eko.inspector@example.test',
+    ]);
+
+    InspectorProfile::factory()->approved()->create([
+        'user_id' => $inspector->id,
+    ]);
+
+    $view = $this->actingAs($inspector)->blade('<x-layouts.app title="Uji Menu Inspektor"><p>Konten</p></x-layouts.app>');
+
+    // Approved inspector links
+    $view->assertSee(__('ui.layout.dashboard'));
+    $view->assertSee(route('dashboard'), false);
+    $view->assertSee(__('ui.layout.open_jobs'));
+    $view->assertSee(route('jobs.open'), false);
+    $view->assertSee(__('ui.layout.my_jobs'));
+    $view->assertSee(route('jobs.inspector'), false);
+    $view->assertSee(__('ui.layout.earnings'));
+    $view->assertSee(route('inspector.earnings'), false);
+    $view->assertSee(__('ui.layout.conversations'));
+    $view->assertSee(route('conversations.index'), false);
+    $view->assertSee(__('ui.layout.notifications'));
+    $view->assertSee(route('notifications.index'), false);
+
+    // Other role links hidden from approved inspector
+    $view->assertDontSee(__('ui.layout.onboarding'));
+    $view->assertDontSee(route('inspector.onboarding'), false);
+    $view->assertDontSee(__('ui.layout.queue'));
+    $view->assertDontSee(route('admin.queue.index'), false);
+    $view->assertDontSee(__('ui.layout.my_listings'));
+    $view->assertDontSee(route('listings.mine'), false);
+    $view->assertDontSee(__('ui.layout.create_listing'));
+    $view->assertDontSee(route('listings.create'), false);
+    $view->assertDontSee(__('ui.layout.my_inspections'));
+    $view->assertDontSee(route('jobs.mine'), false);
+    $view->assertDontSee(__('ui.layout.audit_logs'));
+    $view->assertDontSee(route('admin.audit-logs.index'), false);
+});
+
+it('renders only Dashboard and Onboarding for unapproved inspectors without job links', function () {
+    $unapprovedInspector = User::factory()->inspector()->create([
+        'name' => 'Doni Calon Inspektor',
+        'email' => 'doni.unapproved@example.test',
+    ]);
+
+    InspectorProfile::factory()->pending()->create([
+        'user_id' => $unapprovedInspector->id,
+    ]);
+
+    $view = $this->actingAs($unapprovedInspector)->blade('<x-layouts.app title="Uji Menu Unapproved"><p>Konten</p></x-layouts.app>');
+
+    // Allowed links
+    $view->assertSee(__('ui.layout.dashboard'));
+    $view->assertSee(route('dashboard'), false);
+    $view->assertSee(__('ui.layout.onboarding'));
+    $view->assertSee(route('inspector.onboarding'), false);
+
+    // Job and other links must NOT be visible
+    $view->assertDontSee(__('ui.layout.open_jobs'));
+    $view->assertDontSee(route('jobs.open'), false);
+    $view->assertDontSee(__('ui.layout.my_jobs'));
+    $view->assertDontSee(route('jobs.inspector'), false);
+    $view->assertDontSee(__('ui.layout.earnings'));
+    $view->assertDontSee(route('inspector.earnings'), false);
+    $view->assertDontSee(__('ui.layout.conversations'));
+    $view->assertDontSee(route('conversations.index'), false);
+    $view->assertDontSee(__('ui.layout.notifications'));
+    $view->assertDontSee(route('notifications.index'), false);
+    $view->assertDontSee(__('ui.layout.queue'));
+    $view->assertDontSee(route('admin.queue.index'), false);
+    $view->assertDontSee(__('ui.layout.my_listings'));
+    $view->assertDontSee(route('listings.mine'), false);
+});
+
+it('renders role-based navigation links for admin and hides other role links', function () {
+    $admin = User::factory()->admin()->create([
+        'name' => 'Siti Admin',
+        'email' => 'siti.admin@example.test',
+    ]);
+
+    $view = $this->actingAs($admin)->blade('<x-layouts.app title="Uji Menu Admin"><p>Konten</p></x-layouts.app>');
+
+    // Admin links
+    $view->assertSee(__('ui.layout.dashboard'));
+    $view->assertSee(route('dashboard'), false);
+    $view->assertSee(__('ui.layout.queue'));
+    $view->assertSee(route('admin.queue.index'), false);
+    $view->assertSee(__('ui.layout.admin_jobs'));
+    $view->assertSee(route('admin.jobs.index'), false);
+    $view->assertSee(__('ui.layout.inspectors'));
+    $view->assertSee(route('admin.inspectors.index'), false);
+    $view->assertSee(__('ui.layout.admin_listings'));
+    $view->assertSee(route('admin.listings.index'), false);
+    $view->assertSee(__('ui.layout.templates'));
+    $view->assertSee(route('admin.templates.index'), false);
+    $view->assertSee(__('ui.layout.settings'));
+    $view->assertSee(route('admin.settings'), false);
+    $view->assertSee(__('ui.layout.audit_logs'));
+    $view->assertSee(route('admin.audit-logs.index'), false);
+
+    // Other role links hidden from admin
+    $view->assertDontSee(__('ui.layout.open_jobs'));
+    $view->assertDontSee(route('jobs.open'), false);
+    $view->assertDontSee(__('ui.layout.my_jobs'));
+    $view->assertDontSee(route('jobs.inspector'), false);
+    $view->assertDontSee(__('ui.layout.earnings'));
+    $view->assertDontSee(route('inspector.earnings'), false);
+    $view->assertDontSee(__('ui.layout.onboarding'));
+    $view->assertDontSee(route('inspector.onboarding'), false);
+    $view->assertDontSee(__('ui.layout.my_inspections'));
+    $view->assertDontSee(route('jobs.mine'), false);
+    $view->assertDontSee(__('ui.layout.my_listings'));
+    $view->assertDontSee(route('listings.mine'), false);
+    $view->assertDontSee(__('ui.layout.create_listing'));
+    $view->assertDontSee(route('listings.create'), false);
+});
+
+it('marks active role navigation link with active styling and aria-current page', function () {
+    $user = User::factory()->user()->create([
+        'name' => 'Budi Pembeli',
+        'email' => 'budi.active@example.test',
+    ]);
+
+    $response = $this->actingAs($user)->get(route('dashboard'));
+    $response->assertOk();
+
+    $content = $response->getContent();
+    expect($content)->toContain('aria-current="page"')
+        ->and($content)->toContain('bg-linen text-forest font-bold');
 });
