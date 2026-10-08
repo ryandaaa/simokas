@@ -119,7 +119,7 @@
                            x-ref="fallbackInput"
                            @change="handleFileInput($event)"
                            {{ $attributes->whereStartsWith('wire:model') }} />
-                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full text-base font-medium bg-lime text-forest hover:bg-lime-hover transition-colors focus-within:ring-2 focus-within:ring-forest">
+                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full text-base font-medium bg-ds-blue text-white hover:bg-ds-blue-ink transition-colors">
                         <x-ui.icon name="kamera" class="w-4 h-4" />
                         <span>{{ __('ui.actions.take_photo') }}</span>
                     </span>
@@ -195,7 +195,7 @@
                            x-ref="fallbackInput"
                            @change="handleFileInput($event)"
                            {{ $attributes->whereStartsWith('wire:model') }} />
-                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full text-base font-medium bg-lime text-forest hover:bg-lime-hover transition-colors focus-within:ring-2 focus-within:ring-forest">
+                    <span class="inline-flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 rounded-full text-base font-medium bg-ds-blue text-white hover:bg-ds-blue-ink transition-colors">
                         <x-ui.icon name="kamera" class="w-4 h-4" />
                         <span>{{ __('ui.actions.take_photo') }}</span>
                     </span>

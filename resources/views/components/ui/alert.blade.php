@@ -51,12 +51,13 @@
                         {{ $retryLabel ?? __('ui.actions.retry') }}
                     </x-ui.button>
                 @elseif ($retryAction)
-                    <button type="button"
-                            wire:click="{{ $retryAction }}"
-                            class="inline-flex items-center gap-1.5 min-h-[36px] px-4 py-1.5 rounded-full text-sm font-medium bg-surface border border-forest text-forest hover:bg-linen transition-colors">
-                        <x-ui.icon name="panah-putar" class="w-3.5 h-3.5" />
-                        <span>{{ $retryLabel ?? __('ui.actions.retry') }}</span>
-                    </button>
+                    <x-ui.button type="button"
+                                 variant="secondary"
+                                 wire:click="{{ $retryAction }}"
+                                 class="!min-h-[36px] !px-4 !py-1.5 !text-sm"
+                                 icon="panah-putar">
+                        {{ $retryLabel ?? __('ui.actions.retry') }}
+                    </x-ui.button>
                 @endif
             </div>
         @endif
@@ -65,7 +66,7 @@
     @if ($dismissible)
         <button type="button"
                 @click="show = false"
-                class="shrink-0 p-1 text-muted hover:text-text rounded-md"
+                class="shrink-0 p-1 text-ds-muted hover:text-ds-ink rounded-md"
                 aria-label="{{ __('ui.actions.close') }}">
             <x-ui.icon name="silang" class="w-4 h-4" />
         </button>

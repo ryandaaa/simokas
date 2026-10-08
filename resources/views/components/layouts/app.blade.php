@@ -31,7 +31,7 @@
 <body class="min-h-full flex flex-col ds-sans bg-slate-50 text-slate-900">
     {{-- Skip-link untuk aksesibilitas keyboard --}}
     <a href="#main-content"
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-yellow-400 focus:text-slate-900 focus:rounded-xl focus:shadow-md">
+       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-ds-yellow focus:text-ds-ink focus:rounded-xl focus:shadow-md">
         {{ __('ui.layout.skip_link') }}
     </a>
 
@@ -48,7 +48,7 @@
 
                 {{-- Navigasi Desktop (tengah) --}}
                 @if (!empty($navItems))
-                    <nav class="hidden md:flex items-center justify-center gap-8 text-sm font-semibold text-slate-600 flex-1 px-8" aria-label="Navigasi Utama">
+                    <nav class="hidden md:flex items-center justify-center gap-8 text-sm font-semibold text-ds-muted flex-1 px-8" aria-label="Navigasi Utama">
                             @foreach ($navItems as $item)
                                 @php
                                     $isActive = !empty($item['active']);
@@ -56,8 +56,8 @@
                                 <a href="{{ $item['url'] ?? '#' }}"
                                    @class([
                                        'transition-colors rounded-lg',
-                                       'text-green-600 hover:text-green-700' => $isActive,
-                                       'hover:text-green-600' => !$isActive,
+                                       'text-ds-blue hover:text-ds-blue-ink' => $isActive,
+                                       'hover:text-ds-blue' => !$isActive,
                                    ])
                                    @if ($isActive) aria-current="page" @endif>
                                     <span>{{ $item['label'] }}</span>
@@ -168,11 +168,11 @@
                                 </div>
                             </div>
                         @else
-                            <a href="{{ route('login') }}" class="px-2 sm:px-4 py-2 text-sm font-semibold text-slate-700 hover:text-green-600 transition-colors">
+                            <a href="{{ route('login') }}" class="px-2 sm:px-4 py-2 text-sm font-semibold text-ds-ink hover:text-ds-blue transition-colors">
                                 {{ __('Masuk') }}
                             </a>
-                            <a href="{{ route('identity.register') }}" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-green-600 text-white px-4 sm:px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all">
-                                <i aria-hidden="true" class="fa-solid fa-circle-plus text-yellow-400"></i>
+                            <a href="{{ route('identity.register') }}" class="inline-flex items-center gap-2 bg-ds-blue hover:bg-ds-blue-ink text-white px-4 sm:px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all">
+                                <i aria-hidden="true" class="fa-solid fa-circle-plus text-ds-yellow"></i>
                                 <span>{{ __('Daftar') }}</span>
                             </a>
                         @endauth
@@ -293,8 +293,8 @@
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
                            'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
-                           'text-green-600' => $isActive,
-                           'text-slate-500 hover:text-green-600' => !$isActive,
+                           'text-ds-blue' => $isActive,
+                           'text-ds-muted hover:text-ds-blue' => !$isActive,
                        ])
                        @if ($isActive) aria-current="page" @endif>
                         <i aria-hidden="true" class="fa-solid {{ $itemIcon }} text-lg mb-0.5"></i>
@@ -323,8 +323,8 @@
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
                            'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
-                           'text-green-600' => $isActive,
-                           'text-slate-500 hover:text-green-600' => !$isActive,
+                           'text-ds-blue' => $isActive,
+                           'text-ds-muted hover:text-ds-blue' => !$isActive,
                        ])
                        @if ($isActive) aria-current="page" @endif>
                         <i aria-hidden="true" class="fa-solid {{ $itemIcon }} text-lg mb-0.5"></i>
