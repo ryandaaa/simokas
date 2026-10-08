@@ -202,67 +202,67 @@
 
     {{-- Footer --}}
     @if (auth()->guest() || request()->routeIs('home'))
-    <footer class="mt-auto bg-slate-900 text-slate-400 text-xs border-t border-slate-800">
+    <footer class="mt-auto bg-white text-ds-muted text-xs border-t border-ds-line">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="space-y-3 col-span-2 md:col-span-1">
-                    <a href="{{ url('/') }}" class="flex items-center gap-2 text-white font-extrabold text-lg">
-                        <i aria-hidden="true" class="fa-solid fa-shield-halved text-emerald-500"></i> SIMOKAS
+                    <a href="{{ url('/') }}" class="flex items-center gap-2 text-ds-ink font-extrabold text-lg">
+                        <i aria-hidden="true" class="fa-solid fa-shield-halved text-ds-blue"></i> SIMOKAS
                     </a>
-                    <p class="text-slate-400 leading-relaxed">
+                    <p class="text-ds-muted leading-relaxed">
                         Platform jual beli kendaraan bekas dengan inspeksi independen di Kota Pekanbaru. Netral 100% — kami tidak menjual kendaraan.
                     </p>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold mb-3">NAVIGASI</h4>
+                    <h4 class="text-ds-ink font-bold mb-3">NAVIGASI</h4>
                     <ul class="space-y-2">
-                        <li><a class="hover:text-white transition-colors" href="{{ route('catalog.index') }}">Kendaraan</a></li>
-                        <li><a class="hover:text-white transition-colors" href="{{ route('catalog.how-it-works') }}">Cara Kerja</a></li>
-                        <li><a class="hover:text-white transition-colors" href="{{ route('catalog.help') }}">Bantuan</a></li>
-                        <li><a class="hover:text-white transition-colors" href="{{ route('login') }}">Masuk</a></li>
-                        <li><a class="hover:text-white transition-colors" href="{{ route('identity.register') }}">Daftar</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('catalog.index') }}">Kendaraan</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('catalog.how-it-works') }}">Cara Kerja</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('catalog.help') }}">Bantuan</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('login') }}">Masuk</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('identity.register') }}">Daftar</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold mb-3">LAYANAN</h4>
+                    <h4 class="text-ds-ink font-bold mb-3">LAYANAN</h4>
                     <ul class="space-y-2">
-                        <li><a class="hover:text-white transition-colors" href="{{ route('catalog.index', ['type' => 'car']) }}">Inspeksi Mobil — Rp 50.000</a></li>
-                        <li><a class="hover:text-white transition-colors" href="{{ route('catalog.index', ['type' => 'motorcycle']) }}">Inspeksi Motor — Rp 15.000</a></li>
-                        <li><a class="hover:text-white transition-colors" href="{{ route('identity.register') }}">Jadi Inspektor</a></li>
-                        <li><a class="hover:text-white transition-colors" href="{{ route('dashboard') }}">Dashboard</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('catalog.index', ['type' => 'car']) }}">Inspeksi Mobil — Rp 50.000</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('catalog.index', ['type' => 'motorcycle']) }}">Inspeksi Motor — Rp 15.000</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('identity.register') }}">Jadi Inspektor</a></li>
+                        <li><a class="hover:text-ds-blue transition-colors" href="{{ route('dashboard') }}">Dashboard</a></li>
                     </ul>
                 </div>
                 <div>
-                    <h4 class="text-white font-bold mb-3">WILAYAH &amp; LEGAL</h4>
-                    <p class="text-slate-400 leading-relaxed">
+                    <h4 class="text-ds-ink font-bold mb-3">WILAYAH &amp; LEGAL</h4>
+                    <p class="text-ds-muted leading-relaxed">
                         Tampan · Sukajadi · Marpoyan Damai · Bukit Raya · Rumbai · Payung Sekaki<br/>
                         Kota Pekanbaru, Riau
                     </p>
                     <nav class="flex flex-col gap-2 mt-3" aria-label="Tautan Hukum">
-                        <a href="{{ route('legal.terms') }}" class="hover:text-white text-left transition-colors">
+                        <a href="{{ route('legal.terms') }}" class="hover:text-ds-blue text-left transition-colors">
                             {{ __('legal.footer_terms') }}
                         </a>
-                        <a href="{{ route('legal.privacy') }}" class="hover:text-white text-left transition-colors">
+                        <a href="{{ route('legal.privacy') }}" class="hover:text-ds-blue text-left transition-colors">
                             {{ __('legal.footer_privacy') }}
                         </a>
                     </nav>
                 </div>
             </div>
-            <div class="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div class="pt-8 border-t border-ds-line flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
                 <span>&copy; {{ date('Y') }} {{ config('app.name', 'SIMOKAS') }} — {{ __('legal.footer_rights') }}</span>
                 <span>Seluruh waktu ditampilkan dalam WIB</span>
             </div>
         </div>
     </footer>
     @else
-    <footer class="mt-auto bg-slate-900 text-slate-400 text-xs border-t border-slate-800">
+    <footer class="mt-auto bg-white text-ds-muted text-xs border-t border-ds-line">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
             <span>&copy; {{ date('Y') }} {{ config('app.name', 'SIMOKAS') }} — {{ __('legal.footer_rights') }}</span>
             <nav class="flex items-center gap-4" aria-label="Tautan Hukum">
-                <a href="{{ route('legal.terms') }}" class="hover:text-white transition-colors">
+                <a href="{{ route('legal.terms') }}" class="hover:text-ds-blue transition-colors">
                     {{ __('legal.footer_terms') }}
                 </a>
-                <a href="{{ route('legal.privacy') }}" class="hover:text-white transition-colors">
+                <a href="{{ route('legal.privacy') }}" class="hover:text-ds-blue transition-colors">
                     {{ __('legal.footer_privacy') }}
                 </a>
             </nav>
