@@ -14,6 +14,36 @@ return [
     'hero_search_car' => 'Cari Mobil',
     'hero_search_motorcycle' => 'Cari Motor',
     'hero_browse_all' => 'Lihat Semua Kendaraan',
+
+    'trust_verified' => 'Inspektor Terverifikasi',
+    'trust_from_price' => 'Mulai Rp 15.000',
+    'trust_area' => 'Kota Pekanbaru',
+
+    'cat_all' => 'Semua',
+    'cat_car' => 'Mobil',
+    'cat_motorcycle' => 'Motor',
+    'cat_inspected' => 'Terinspeksi',
+
+    'featured_eyebrow' => 'Pilihan Terverifikasi',
+    'sidebar_quick_nav' => 'Navigasi Cepat',
+    'browse_title' => 'Jelajahi',
+    'browse_car_budget' => 'Mobil di bawah Rp 100 jt',
+    'browse_motor_budget' => 'Motor di bawah Rp 20 jt',
+    'browse_inspected' => 'Sudah Diinspeksi',
+    'sidebar_catalog' => 'Katalog',
+    'sidebar_how' => 'Cara Kerja',
+    'sidebar_help' => 'Bantuan',
+    'sidebar_dashboard' => 'Dashboard',
+
+    'steps_eyebrow' => 'Proses Mudah',
+
+    'banner_eyebrow' => 'Untuk Mekanik',
+    'banner_stat_fee' => 'fee bersih mobil',
+    'banner_stat_platform' => 'komisi platform',
+    'banner_stat_share' => 'bagian inspektor',
+
+    'faq_subtitle' => 'Jawaban cepat sebelum Anda bertanya lebih jauh.',
+    'faq_more' => 'Lihat Semua Bantuan',
     'hero_guest_hint' => 'Masuk atau daftar untuk mengajukan inspeksi dan menyimpan kendaraan favorit Anda.',
     'hero_login' => 'Masuk',
     'hero_register' => 'Daftar',

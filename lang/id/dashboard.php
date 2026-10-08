@@ -5,6 +5,7 @@ declare(strict_types=1);
 return [
     'title' => 'Dashboard',
     'welcome' => 'Selamat datang, :name',
+    'subtitle' => 'Pantau inspeksi, transaksi, dan aktivitas Anda dalam satu tempat.',
     'coming_soon' => 'Segera hadir',
     'unknown_role' => 'Peran pengguna tidak dikenal',
 

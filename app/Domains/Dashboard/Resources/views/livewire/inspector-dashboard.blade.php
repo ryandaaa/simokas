@@ -1,115 +1,89 @@
-<div class="space-y-6">
-    <div>
-        <h2 class="text-lg font-bold text-text mb-4">{{ __('dashboard.inspector.title') }}</h2>
-    </div>
+<div class="space-y-10">
+    <section>
+        <div class="mb-6 space-y-1">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.inspector.title') }}</span>
+            <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.inspector.title') }}</h2>
+        </div>
 
-    {{-- Key Metrics Cards --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {{-- Available Jobs Card --}}
-        <x-ui.card class="p-6">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-sm text-muted">{{ __('dashboard.inspector.available_jobs') }}</p>
-                    <p class="text-3xl font-bold text-text mt-2">{{ $availableJobs }}</p>
+        {{-- Key Metrics Cards --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {{-- Available Jobs Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
+                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                    <i aria-hidden="true" class="fa-solid fa-briefcase"></i>
                 </div>
-                <div class="p-3 bg-primary/10 rounded-lg">
-                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                    </svg>
-                </div>
+                <p class="text-3xl font-extrabold text-ds-ink">{{ $availableJobs }}</p>
+                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.available_jobs') }}</p>
             </div>
-        </x-ui.card>
 
-        {{-- Active Jobs Card --}}
-        <x-ui.card class="p-6">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-sm text-muted">{{ __('dashboard.inspector.active_jobs') }}</p>
-                    <p class="text-3xl font-bold text-text mt-2">{{ $activeJobs }}</p>
+            {{-- Active Jobs Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
+                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                    <i aria-hidden="true" class="fa-solid fa-bolt"></i>
                 </div>
-                <div class="p-3 bg-warning/10 rounded-lg">
-                    <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                    </svg>
-                </div>
+                <p class="text-3xl font-extrabold text-ds-ink">{{ $activeJobs }}</p>
+                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.active_jobs') }}</p>
             </div>
-        </x-ui.card>
 
-        {{-- Net Earnings Card --}}
-        <x-ui.card class="p-6">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-sm text-muted">{{ __('dashboard.inspector.net_earnings') }}</p>
-                    <p class="text-2xl font-bold text-text mt-2">
-                        <x-ui.money :amount="$netEarnings" />
-                    </p>
+            {{-- Net Earnings Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
+                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                    <i aria-hidden="true" class="fa-solid fa-wallet"></i>
                 </div>
-                <div class="p-3 bg-success/10 rounded-lg">
-                    <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
+                <p class="text-2xl font-extrabold text-ds-ink">{{ \App\Support\Money::format($netEarnings) }}</p>
+                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.net_earnings') }}</p>
             </div>
-        </x-ui.card>
 
-        {{-- Total Inspections Card --}}
-        <x-ui.card class="p-6">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-sm text-muted">{{ __('dashboard.inspector.total_inspections') }}</p>
-                    <p class="text-3xl font-bold text-text mt-2">{{ $totalInspections }}</p>
+            {{-- Total Inspections Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
+                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                    <i aria-hidden="true" class="fa-solid fa-clipboard-check"></i>
                 </div>
-                <div class="p-3 bg-primary/10 rounded-lg">
-                    <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
+                <p class="text-3xl font-extrabold text-ds-ink">{{ $totalInspections }}</p>
+                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.total_inspections') }}</p>
             </div>
-        </x-ui.card>
 
-        {{-- Rating Card --}}
-        <x-ui.card class="p-6">
-            <div class="flex items-start justify-between">
-                <div>
-                    <p class="text-sm text-muted">{{ __('dashboard.inspector.rating') }}</p>
-                    <p class="text-3xl font-bold text-text mt-2">
-                        {{ $ratingCount > 0 ? number_format($rating, 2) : '-' }}
-                    </p>
-                    <p class="text-xs text-muted mt-1">
-                        {{ $ratingCount > 0 ? __('rating.display.rating_count', ['count' => $ratingCount]) : __('rating.display.no_ratings') }}
-                    </p>
+            {{-- Rating Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
+                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                    <i aria-hidden="true" class="fa-solid fa-star"></i>
                 </div>
-                <div class="p-3 bg-accent/10 rounded-lg">
-                    <svg class="w-6 h-6 text-accent fill-current" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
-                    </svg>
-                </div>
+                <p class="text-3xl font-extrabold text-ds-ink">
+                    {{ $ratingCount > 0 ? number_format($rating, 2) : '-' }}
+                </p>
+                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.rating') }}</p>
+                <p class="text-[11px] text-ds-faint mt-1 font-semibold">
+                    {{ $ratingCount > 0 ? __('rating.display.rating_count', ['count' => $ratingCount]) : __('rating.display.no_ratings') }}
+                </p>
             </div>
-        </x-ui.card>
-    </div>
+        </div>
+    </section>
 
     {{-- Action Buttons --}}
-    <div class="flex gap-3 flex-wrap">
-        <x-ui.button :href="route('jobs.inspector')" variant="primary">
-            {{ __('dashboard.inspector.view_available_jobs') }}
-        </x-ui.button>
-        <x-ui.button :href="route('inspector.earnings')" variant="secondary">
+    <div class="flex flex-col sm:flex-row gap-3">
+        <a href="{{ route('jobs.inspector') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-ds-yellow/30">
+            <span>{{ __('dashboard.inspector.view_available_jobs') }}</span>
+            <i aria-hidden="true" class="fa-solid fa-arrow-right text-xs"></i>
+        </a>
+        <a href="{{ route('inspector.earnings') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs hover:shadow-md">
             {{ __('dashboard.inspector.view_earnings') }}
-        </x-ui.button>
+        </a>
     </div>
 
     {{-- Empty State --}}
     @if ($availableJobs === 0 && $activeJobs === 0 && $totalInspections === 0)
-        <x-ui.empty-state
-            icon="briefcase"
-            :title="__('dashboard.inspector.empty_state.title')"
-            :message="__('dashboard.inspector.empty_state.message')"
-        >
-            <div class="flex gap-3 justify-center mt-6">
-                <x-ui.button :href="route('jobs.inspector')" variant="primary">
-                    {{ __('dashboard.inspector.empty_state.browse_jobs') }}
-                </x-ui.button>
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                <i aria-hidden="true" class="fa-solid fa-briefcase"></i>
             </div>
-        </x-ui.empty-state>
+            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('dashboard.inspector.empty_state.title') }}</h3>
+            <p class="text-xs text-ds-muted mt-2 leading-relaxed">{{ __('dashboard.inspector.empty_state.message') }}</p>
+            <div class="flex justify-center mt-6">
+                <a href="{{ route('jobs.inspector') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-ds-yellow/30">
+                    <span>{{ __('dashboard.inspector.empty_state.browse_jobs') }}</span>
+                    <i aria-hidden="true" class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+            </div>
+        </div>
     @endif
 </div>

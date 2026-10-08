@@ -314,3 +314,39 @@ it('CAT-R5 renders gallery images with lazy load, dimensions, and meaningful alt
         ->and($content)->toContain(route('listings.photos.show', ['listing' => $listing->getKey(), 'photo' => $photoId], false))
         ->and($content)->toContain(e('CAT gallery Avanza 999'));
 });
+
+it('CAT-T09 shows Chat Penjual button for eligible buyers and login for guests', function () {
+    $seller = User::factory()->user()->create();
+    $buyer = User::factory()->user()->create();
+    $listing = makeVisibleListing(['seller_id' => $seller->id]);
+
+    // Pembeli lain melihat tombol chat (form POST ke conversations.start)
+    $buyerContent = actingAs($buyer)->get(detailUrl($listing))->assertOk()->getContent();
+
+    expect($buyerContent)->toContain('Chat Penjual')
+        ->and($buyerContent)->toContain(route('conversations.start', absolute: false));
+
+    // Tamu melihat tombol chat yang mengarah ke login
+    $guestContent = get(detailUrl($listing))->assertOk()->getContent();
+
+    expect($guestContent)->toContain('Chat Penjual')
+        ->and($guestContent)->toContain(route('login', absolute: false));
+});
+
+it('CAT-T09 hides Chat Penjual button for owners, inspectors, and sold listings', function () {
+    $seller = User::factory()->user()->create();
+    $buyer = User::factory()->user()->create();
+    $inspector = User::factory()->inspector()->create();
+    $listing = makeVisibleListing(['seller_id' => $seller->id]);
+    $sold = makeVisibleListing(['seller_id' => $seller->id, 'title' => 'CAT sold vehicle 998']);
+    $sold->update(['status' => 'sold']);
+
+    expect(actingAs($seller)->get(detailUrl($listing))->assertOk()->getContent())
+        ->not->toContain('Chat Penjual');
+
+    expect(actingAs($inspector)->get(detailUrl($listing))->assertOk()->getContent())
+        ->not->toContain('Chat Penjual');
+
+    expect(actingAs($buyer)->get(detailUrl($sold))->assertOk()->getContent())
+        ->not->toContain('Chat Penjual');
+});

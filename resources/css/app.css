@@ -94,6 +94,36 @@
     border-color: var(--color-fog);
 }
 
+/* Token ClassiAds design system (lihat design.md). Dipakai halaman dashboard. */
+@theme {
+    --color-ds-blue: #16A34A;
+    --color-ds-indigo: #059669;
+    --color-ds-yellow: #FACC15;
+    --color-ds-yellow-deep: #EAB308;
+    --color-ds-green: #10B981;
+    --color-ds-danger: #DC2626;
+    --color-ds-canvas: #F8FAFC;
+    --color-ds-soft: #F1F5F9;
+    --color-ds-ink: #0F172A;
+    --color-ds-muted: #64748B;
+    --color-ds-faint: #94A3B8;
+    --color-ds-line: #E2E8F0;
+    --color-ds-blue-soft: #DCFCE7;
+    --color-ds-blue-ink: #15803D;
+    --color-ds-green-soft: #D1FAE5;
+    --color-ds-green-ink: #047857;
+    --color-ds-amber-soft: #FEF3C7;
+    --color-ds-amber-ink: #92400E;
+    --color-ds-red-soft: #FEE2E2;
+    --color-ds-red-ink: #B91C1C;
+    --color-ds-yellow-soft: #FEF9C3;
+}
+
+/* Font ClassiAds: Plus Jakarta Sans untuk heading, Inter untuk body. */
+.ds-sans {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
 [x-cloak] {
     display: none !important;
 }

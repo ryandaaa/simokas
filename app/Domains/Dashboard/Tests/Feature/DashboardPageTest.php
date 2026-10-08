@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Dashboard\Tests\Feature;
 
+use App\Domains\Dashboard\Livewire\BuyerSellerDashboard;
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
 use App\Domains\Identity\Models\User;
@@ -15,7 +16,9 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Enums\LedgerEntryType;
 use App\Domains\Payment\Models\LedgerEntry;
 use App\Domains\Payment\Models\Payment;
+use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 
@@ -232,6 +235,30 @@ it('DSH-T09 response does not leak sensitive data', function () {
     // - $listing->lat, $listing->lng
     // - $listing->address_full
     // - $listing->chassis_number
+});
+
+it('DSH-T01 shows real transaction counts for buyer and seller', function () {
+    $seller = User::factory()->user()->create();
+    $buyer = User::factory()->user()->create();
+    $other = User::factory()->user()->create();
+    $listing = Listing::factory()->active()->create(['seller_id' => $seller->id]);
+
+    Transaction::factory()->offered()->create([
+        'listing_id' => $listing->getKey(),
+        'buyer_id' => $buyer->getKey(),
+    ]);
+
+    Livewire::test(BuyerSellerDashboard::class, ['user' => $buyer])
+        ->assertViewHas('activeTransactions', 1)
+        ->assertViewHas('buyOffers', 0);
+
+    Livewire::test(BuyerSellerDashboard::class, ['user' => $seller])
+        ->assertViewHas('activeTransactions', 0)
+        ->assertViewHas('buyOffers', 1);
+
+    Livewire::test(BuyerSellerDashboard::class, ['user' => $other])
+        ->assertViewHas('activeTransactions', 0)
+        ->assertViewHas('buyOffers', 0);
 });
 
 it('redirects to dashboard by role from login', function (string $role) {

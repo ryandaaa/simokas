@@ -201,3 +201,12 @@ it('CAT-T15 loads home texts from language files instead of hard-coding them', f
         ->and($content)->toContain(__('home.step_1_title'))
         ->and($content)->toContain(__('home.inspector_title'));
 });
+
+it('CAT-T15 renders no raw translation keys on the home page', function () {
+    Listing::factory()->active()->create(['title' => 'CAT home keys vehicle 999']);
+
+    $content = get(route('home'))->assertOk()->getContent();
+
+    expect($content)->not->toContain('__(')
+        ->and($content)->toContain('CAT home keys vehicle 999');
+});
