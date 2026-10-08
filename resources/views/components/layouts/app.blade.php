@@ -328,7 +328,7 @@
                 <a href="{{ \Illuminate\Support\Facades\Route::has('listings.create') ? route('listings.create') : url('/') }}"
                    class="flex flex-col items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl"
                    aria-label="Pasang Iklan">
-                    <span class="w-12 h-12 -mt-8 rounded-full bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink flex items-center justify-center shadow-xl transition-colors">
+                    <span class="w-12 h-12 -mt-6 rounded-full bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink flex items-center justify-center shadow-xl transition-colors">
                         <i aria-hidden="true" class="fa-solid fa-plus text-lg"></i>
                     </span>
                     <span class="text-[10px] font-bold text-ds-ink mt-0.5">Jual</span>
