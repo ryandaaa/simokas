@@ -84,6 +84,24 @@ final class InspectorDashboard extends Component
             ];
         }
 
+        // Current month summary
+        $monthStart = now()->startOfMonth();
+        $completedThisMonth = InspectionJob::query()
+            ->where('inspector_id', $this->user->id)
+            ->where('status', JobStatus::Completed)
+            ->where('completed_at', '>=', $monthStart)
+            ->count();
+
+        $earningsThisMonth = LedgerEntry::query()
+            ->where('account_user_id', $this->user->id)
+            ->where(function ($q) {
+                $q->where('entry_type', LedgerEntryType::InspectionFee)
+                    ->orWhere('entry_type', LedgerEntryType::AccessFee)
+                    ->orWhere('entry_type', LedgerEntryType::SaleCommission);
+            })
+            ->where('created_at', '>=', $monthStart)
+            ->sum('amount');
+
         return view('dashboard::livewire.inspector-dashboard', [
             'availableJobs' => $availableJobs,
             'activeJobs' => $activeJobs,
@@ -93,6 +111,8 @@ final class InspectorDashboard extends Component
             'ratingCount' => $ratingCount,
             'recentJobs' => $recentJobs,
             'monthlySeries' => $monthlySeries,
+            'completedThisMonth' => $completedThisMonth,
+            'earningsThisMonth' => $earningsThisMonth,
             'user' => $this->user,
         ]);
     }

@@ -50,6 +50,11 @@ return [
         'table_status' => 'Status',
         'no_activity' => 'Belum ada aktivitas. Ambil job pertama Anda untuk memulai.',
         'view_all_jobs' => 'Lihat Semua Job',
+        'earnings_this_month' => 'Pendapatan Bulan Ini',
+        'completed_this_month' => 'Selesai Bulan Ini',
+        'composition_title' => 'Komposisi Job',
+        'composition_subtitle' => 'Tersedia, aktif, dan selesai',
+        'showing_recent' => 'Menampilkan :count job terakhir',
         'empty_state' => [
             'title' => 'Belum Ada Job',
             'message' => 'Belum ada job yang tersedia untuk Anda saat ini. Cek kembali nanti atau hubungi admin.',
