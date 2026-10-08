@@ -1,95 +1,113 @@
-<div class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+<div class="ds-sans max-w-6xl mx-auto px-4 py-6 space-y-8 pb-12">
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-text">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div class="space-y-2">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('listing.mine.title') }}</span>
+            <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
                 {{ __('listing.mine.title') }}
             </h1>
-            <p class="text-sm text-muted">
+            <p class="text-sm text-ds-muted">
                 {{ __('listing.mine.subtitle') }}
             </p>
         </div>
 
         <div>
-            <x-ui.button
-                :href="route('listings.create')"
-                variant="primary"
-                icon="plus"
-            >
+            <a href="{{ route('listings.create') }}"
+                class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                <i aria-hidden="true" class="fa-solid fa-plus text-xs"></i>
                 {{ __('listing.mine.btn_create') }}
-            </x-ui.button>
+            </a>
         </div>
     </div>
 
     {{-- Flash Message --}}
     @if (session()->has('success'))
-        <x-ui.alert variant="success" :message="session('success')" dismissible />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('success') }}
+        </div>
     @endif
 
     @if ($successMessage)
-        <x-ui.alert variant="success" :message="$successMessage" />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $successMessage }}
+        </div>
     @endif
 
     @if ($errorMessage)
-        <x-ui.alert variant="danger" :message="$errorMessage" />
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $errorMessage }}
+        </div>
     @endif
+
+    @php
+        $chip = function (?string $variant): string {
+            return match ($variant) {
+                'success' => 'bg-ds-green-soft text-ds-green-ink',
+                'warning' => 'bg-ds-amber-soft text-ds-amber-ink',
+                'danger' => 'bg-ds-red-soft text-ds-red-ink',
+                'primary' => 'bg-ds-blue-soft text-ds-blue-ink',
+                default => 'bg-ds-soft text-ds-muted',
+            };
+        };
+    @endphp
 
     {{-- Content --}}
     @if ($listings->isEmpty())
-        <x-ui.card>
-            <x-ui.empty-state
-                icon="dokumen"
-                :title="__('listing.mine.empty_title')"
-                :description="__('listing.mine.empty_desc')"
-                :actionLabel="__('listing.mine.btn_create')"
-                :actionUrl="route('listings.create')"
-                actionIcon="plus"
-            />
-        </x-ui.card>
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                <i aria-hidden="true" class="fa-solid fa-file-lines"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('listing.mine.empty_title') }}</h3>
+            <p class="text-xs text-ds-muted mt-2">{{ __('listing.mine.empty_desc') }}</p>
+            <div class="flex justify-center mt-6">
+                <a href="{{ route('listings.create') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                    <i aria-hidden="true" class="fa-solid fa-plus text-xs"></i>
+                    {{ __('listing.mine.btn_create') }}
+                </a>
+            </div>
+        </div>
     @else
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach ($listings as $listing)
-                <div class="rounded-xl border border-muted/20 bg-surface overflow-hidden shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                <article class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between relative">
                     <div>
                         {{-- Photo Thumbnail --}}
-                        <div class="aspect-16/9 bg-muted/10 relative overflow-hidden">
+                        <div class="relative aspect-16/10 overflow-hidden bg-ds-soft">
                             @if ($listing->coverPhoto !== null)
                                 <img
                                     src="{{ route('listings.photos.show', ['listing' => $listing->id, 'photo' => $listing->coverPhoto->id]) }}"
                                     alt="{{ $listing->title }}"
-                                    class="w-full h-full object-cover"
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     width="400"
                                     height="225"
                                     loading="lazy"
                                 />
                             @else
-                                <div class="w-full h-full flex items-center justify-center text-muted">
-                                    <x-ui.icon name="kamera" class="w-10 h-10" />
+                                <div class="w-full h-full flex items-center justify-center text-ds-faint text-3xl">
+                                    <i aria-hidden="true" class="fa-solid fa-camera"></i>
                                 </div>
                             @endif
 
                             {{-- Status Chip --}}
-                            <div class="absolute top-2 right-2">
-                                <x-ui.status-chip
-                                    :label="$listing->status->label()"
-                                    :variant="$listing->status->color()"
-                                    :icon="$listing->status->icon()"
-                                />
+                            <div class="absolute top-3 right-3">
+                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider {{ $chip($listing->status->color()) }}">
+                                    {{ $listing->status->label() }}
+                                </span>
                             </div>
                         </div>
 
                         {{-- Card Details --}}
                         <div class="p-4 space-y-2">
-                            <span class="text-xs uppercase font-bold tracking-wider text-muted">
+                            <p class="text-[11px] uppercase font-bold tracking-wider text-ds-muted">
                                 {{ $listing->vehicle_type->label() }} &bull; {{ $listing->year }}
-                            </span>
-                            <h2 class="text-base font-bold text-text line-clamp-1" title="{{ $listing->title }}">
+                            </p>
+                            <h2 class="text-base font-extrabold text-ds-ink line-clamp-1 group-hover:text-ds-blue transition-colors" title="{{ $listing->title }}">
                                 {{ $listing->title }}
                             </h2>
-                            <div class="text-lg font-bold text-primary">
-                                <x-ui.money :amount="$listing->price" />
-                            </div>
-                            <div class="flex items-center gap-3 text-xs text-muted pt-1">
+                            <p class="text-xl font-extrabold text-ds-ink">
+                                {{ \App\Support\Money::format($listing->price) }}
+                            </p>
+                            <div class="flex items-center gap-3 text-xs text-ds-muted pt-1">
                                 <span>{{ number_format($listing->odometer_km, 0, ',', '.') }} km</span>
                                 <span>&bull;</span>
                                 <span>{{ $listing->transmission->label() }}</span>
@@ -102,37 +120,36 @@
                     </div>
 
                     {{-- Card Footer --}}
-                    <div class="px-4 py-3 border-t border-muted/10 bg-bg/50 space-y-2">
+                    <div class="px-4 py-3 border-t border-ds-line/60 bg-ds-canvas/80 space-y-2">
                         @if ($listing->status->isRejected() && $listing->rejection_reason)
-                            <x-ui.alert
-                                variant="danger"
-                                :title="__('listing.mine.rejection_reason')"
-                                :message="$listing->rejection_reason"
-                            />
-                            <x-ui.button
+                            <div role="alert" class="p-3 rounded-xl border border-ds-red-soft bg-ds-red-soft/40">
+                                <p class="text-xs font-extrabold text-ds-ink">{{ __('listing.mine.rejection_reason') }}</p>
+                                <p class="mt-1 text-xs text-ds-muted">{{ $listing->rejection_reason }}</p>
+                            </div>
+                            <button
                                 type="button"
-                                variant="primary"
                                 wire:click="confirmResubmit('{{ $listing->id }}')"
                                 wire:loading.attr="disabled"
+                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
                             >
                                 {{ __('listing.mine.resubmit') }}
-                            </x-ui.button>
+                            </button>
                         @endif
                         <div class="flex items-center justify-between">
-                            <span class="text-xs text-muted">
+                            <span class="text-xs text-ds-muted">
                                 {{ $listing->created_at?->diffForHumans() }}
                             </span>
 
                             <a
                                 href="{{ route('listings.edit', $listing) }}"
-                                class="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
+                                class="text-xs font-bold text-ds-blue hover:text-ds-blue-ink inline-flex items-center gap-1"
                             >
                                 <span>{{ __('listing.mine.edit') }}</span>
-                                <x-ui.icon name="panah-kanan" class="w-3.5 h-3.5" />
+                                <i aria-hidden="true" class="fa-solid fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
-                </div>
+                </article>
             @endforeach
         </div>
 
