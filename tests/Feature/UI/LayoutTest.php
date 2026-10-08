@@ -58,6 +58,31 @@ it('renders application layout with desktop navbar, mobile bottom bar, skip-link
     $view->assertSee(__('legal.footer_terms'));
 });
 
+it('shows slim footer to logged-in users and full footer to guests', function () {
+    $user = User::factory()->active()->create();
+
+    $this->actingAs($user);
+    $authed = (string) $this->blade('<x-layouts.app title="Uji Footer"><p>Konten</p></x-layouts.app>');
+
+    expect($authed)->not->toContain('NAVIGASI')
+        ->and($authed)->toContain(__('legal.footer_terms'))
+        ->and($authed)->toContain(__('legal.footer_privacy'));
+
+    auth()->logout();
+    $guest = (string) $this->blade('<x-layouts.app title="Uji Footer"><p>Konten</p></x-layouts.app>');
+
+    expect($guest)->toContain('NAVIGASI');
+});
+
+it('shows full footer on home page even when logged in', function () {
+    $user = User::factory()->active()->create();
+
+    $this->actingAs($user);
+    $this->get(route('home'))
+        ->assertOk()
+        ->assertSee('NAVIGASI', false);
+});
+
 it('loads livewire and alpine scripts and styles exactly once in application layout', function () {
     $view = $this->blade('<x-layouts.app title="Uji Script"><p>Konten</p></x-layouts.app>');
 

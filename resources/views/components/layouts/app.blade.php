@@ -201,6 +201,7 @@
     </main>
 
     {{-- Footer --}}
+    @if (auth()->guest() || request()->routeIs('home'))
     <footer class="mt-auto bg-slate-900 text-slate-400 text-xs border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
@@ -253,6 +254,21 @@
             </div>
         </div>
     </footer>
+    @else
+    <footer class="mt-auto bg-slate-900 text-slate-400 text-xs border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+            <span>&copy; {{ date('Y') }} {{ config('app.name', 'SIMOKAS') }} — {{ __('legal.footer_rights') }}</span>
+            <nav class="flex items-center gap-4" aria-label="Tautan Hukum">
+                <a href="{{ route('legal.terms') }}" class="hover:text-white transition-colors">
+                    {{ __('legal.footer_terms') }}
+                </a>
+                <a href="{{ route('legal.privacy') }}" class="hover:text-white transition-colors">
+                    {{ __('legal.footer_privacy') }}
+                </a>
+            </nav>
+        </div>
+    </footer>
+    @endif
 
     {{-- Menu bawah di HP: Center FAB (tengah = Pasang Iklan) --}}
     @if (!empty($navItems))
