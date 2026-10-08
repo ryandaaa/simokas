@@ -279,7 +279,7 @@
         <section aria-labelledby="home-faq-heading" class="py-16 bg-white border-t border-ds-line/60">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
-                    <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('home.sidebar_help') }}</span>
+                    <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('home.help_eyebrow') }}</span>
                     <h2 id="home-faq-heading" class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('home.help.faq_title') }}</h2>
                     <p class="text-sm text-ds-muted">{{ __('home.faq_subtitle') }}</p>
                 </div>

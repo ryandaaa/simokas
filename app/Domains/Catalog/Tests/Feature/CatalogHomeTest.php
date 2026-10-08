@@ -210,3 +210,15 @@ it('CAT-T15 renders no raw translation keys on the home page', function () {
     expect($content)->not->toContain('__(')
         ->and($content)->toContain('CAT home keys vehicle 999');
 });
+
+it('CAT-T15 every translation key used by home view exists in lang files', function () {
+    $blade = file_get_contents(app_path('Domains/Catalog/Resources/views/home.blade.php'));
+
+    preg_match_all("/__\(\s*'([a-z0-9_.]+)'/", $blade, $matches);
+
+    expect($matches[1])->not->toBeEmpty();
+
+    foreach (array_unique($matches[1]) as $key) {
+        expect(__($key))->not->toBe($key, "Missing translation for key: {$key}");
+    }
+});
