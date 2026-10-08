@@ -63,7 +63,7 @@
         {{-- Category Icon Navigation Bar --}}
         <section aria-label="Kategori Kendaraan" class="py-8 bg-white border-y border-ds-line/60 shadow-xs">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-start md:justify-center gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-2 pt-1">
+                <div class="flex items-center [justify-content:safe_center] gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-2 pt-1">
                     <a href="{{ route('catalog.index') }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group focus:outline-none">
                         <span class="w-14 h-14 rounded-2xl bg-ds-soft group-hover:bg-ds-blue group-hover:text-white text-ds-ink flex items-center justify-center text-xl transition-all shadow-xs group-hover:-translate-y-1">
                             <i aria-hidden="true" class="fa-solid fa-border-all"></i>
