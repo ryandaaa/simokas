@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 return [
-    'previous' => '&laquo; Sebelumnya',
-    'next' => 'Berikutnya &raquo;',
+    'previous' => 'Sebelumnya',
+    'next' => 'Berikutnya',
     'showing' => 'Menampilkan',
     'to' => 'sampai',
     'of' => 'dari',

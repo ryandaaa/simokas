@@ -31,14 +31,14 @@
 
 <nav role="navigation" aria-label="Navigasi Halaman" {{ $attributes->merge(['class' => 'flex flex-col sm:flex-row items-center justify-between gap-4 py-3']) }}>
     {{-- Info Hasil --}}
-    <div class="text-sm text-slate">
+    <div class="text-sm text-ds-muted">
         @if ($totalItems !== null)
             <span>{{ __('pagination.showing') }}</span>
-            <span class="font-bold text-obs">{{ $totalItems }}</span>
+            <span class="font-bold text-ds-ink">{{ $totalItems }}</span>
             <span>{{ __('pagination.results') }}</span>
-            <span class="text-pebble">(Halaman <span class="font-bold text-obs">{{ $cur }}</span> dari <span class="font-bold text-obs">{{ $totalP }}</span>)</span>
+            <span class="text-ds-faint">(Halaman <span class="font-bold text-ds-ink">{{ $cur }}</span> dari <span class="font-bold text-ds-ink">{{ $totalP }}</span>)</span>
         @else
-            <span>Halaman <span class="font-bold text-obs">{{ $cur }}</span> dari <span class="font-bold text-obs">{{ $totalP }}</span></span>
+            <span>Halaman <span class="font-bold text-ds-ink">{{ $cur }}</span> dari <span class="font-bold text-ds-ink">{{ $totalP }}</span></span>
         @endif
     </div>
 
@@ -49,8 +49,8 @@
                      icon="chevron-left"
                      :disabled="!$hasPrev"
                      class="min-h-[44px] px-3.5"
-                     aria-label="Halaman Sebelumnya">
-            <span>{!! __('pagination.previous') !!}</span>
+                      aria-label="Halaman Sebelumnya">
+            <span>{{ __('pagination.previous') }}</span>
         </x-ui.button>
 
         <x-ui.button :href="$hasNext ? $nextUrl : null"
@@ -58,8 +58,8 @@
                      iconRight="chevron-right"
                      :disabled="!$hasNext"
                      class="min-h-[44px] px-3.5"
-                     aria-label="Halaman Berikutnya">
-            <span>{!! __('pagination.next') !!}</span>
+                      aria-label="Halaman Berikutnya">
+            <span>{{ __('pagination.next') }}</span>
         </x-ui.button>
     </div>
 </nav>
