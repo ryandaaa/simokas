@@ -28,7 +28,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="min-h-full flex flex-col ds-sans bg-slate-50 text-slate-900" x-data="{ mobileMenuOpen: false }">
+<body class="min-h-full flex flex-col ds-sans bg-slate-50 text-slate-900">
     {{-- Skip-link untuk aksesibilitas keyboard --}}
     <a href="#main-content"
        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-yellow-400 focus:text-slate-900 focus:rounded-xl focus:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600">
@@ -68,13 +68,6 @@
 
                 {{-- Header Actions / User Slot --}}
                 <div class="flex items-center gap-2">
-                    <button type="button"
-                            @click="mobileMenuOpen = !mobileMenuOpen"
-                            class="md:hidden p-2.5 rounded-full text-slate-600 hover:text-green-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
-                            aria-label="Menu navigasi">
-                        <x-ui.icon name="menu" class="w-6 h-6" />
-                    </button>
-
 @php
     $currentUser = auth()->user();
     $roleNavLinks = [];
@@ -188,47 +181,6 @@
             </div>
         </div>
 
-        {{-- Dropdown Menu Mobile --}}
-        @if (!empty($navItems) || !empty($roleNavLinks))
-            <div x-show="mobileMenuOpen" x-cloak class="md:hidden bg-white border-t border-slate-100 px-5 py-3 flex flex-col gap-2">
-                @if (!empty($navItems))
-                    @foreach ($navItems as $item)
-                        @php
-                            $isActive = !empty($item['active']);
-                        @endphp
-                        <a href="{{ $item['url'] ?? '#' }}"
-                           @class([
-                               'py-2 px-3 min-h-[44px] inline-flex items-center rounded-xl text-sm font-semibold transition-colors',
-                               'bg-slate-900 text-white' => $isActive,
-                               'text-slate-600 hover:text-green-600' => !$isActive,
-                           ])>
-                            {{ $item['label'] }}
-                        </a>
-                    @endforeach
-                @endif
-
-                @if (!empty($roleNavLinks))
-                    <div class="border-t border-slate-100 pt-2 mt-1 flex flex-col gap-1">
-                        @foreach ($roleNavLinks as $item)
-                            @if (\Illuminate\Support\Facades\Route::has($item['route']))
-                                @php
-                                    $isActive = request()->routeIs($item['route']);
-                                @endphp
-                                <a href="{{ route($item['route']) }}"
-                                   @class([
-                                       'py-2 px-3 min-h-[44px] inline-flex items-center rounded-xl text-sm font-semibold transition-colors',
-                                       'bg-slate-900 text-white' => $isActive,
-                                       'text-slate-600 hover:text-green-600' => !$isActive,
-                                   ])
-                                   @if ($isActive) aria-current="page" @endif>
-                                    {{ $item['label'] }}
-                                </a>
-                            @endif
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        @endif
     </header>
 
     {{-- Region aria-live untuk pembaca layar --}}
