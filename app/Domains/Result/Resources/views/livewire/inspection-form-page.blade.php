@@ -67,7 +67,7 @@
                         {{ $categories[$currentCategoryIndex] ?? '' }}
                     </span>
                 </div>
-                <div class="grid grid-flow-col auto-cols-fr gap-1.5 mt-3">
+                <div class="grid grid-flow-col auto-cols-fr gap-1.5 mt-3" role="progressbar" aria-label="{{ __('inspection.form.category_progress', ['current' => $currentCategoryIndex + 1, 'total' => $totalCategories]) }}" aria-valuenow="{{ $currentCategoryIndex + 1 }}" aria-valuemin="1" aria-valuemax="{{ $totalCategories }}">
                     @foreach ($categories as $idx => $catName)
                         <div
                             @class([
