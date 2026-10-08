@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Vite;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -12,6 +13,6 @@ abstract class TestCase extends BaseTestCase
 
         // Paksa Vite memakai manifest build agar hasil test deterministik
         // walau `npm run dev` sedang jalan (public/hot diabaikan).
-        \Illuminate\Support\Facades\Vite::useHotFile('hot.testing-missing');
+        Vite::useHotFile('hot.testing-missing');
     }
 }
