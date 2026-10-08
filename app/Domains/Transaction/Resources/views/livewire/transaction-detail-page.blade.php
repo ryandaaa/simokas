@@ -124,7 +124,7 @@
                     wire:loading.attr="disabled"
                     class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                 >
-                    {{ __('transaction.detail.cancel') }}
+                    {{ __('transaction.detail.confirm_cancel') }}
                 </button>
             @endif
         @endif
@@ -158,7 +158,7 @@
                     wire:loading.attr="disabled"
                     class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                 >
-                    {{ __('transaction.detail.cancel') }}
+                    {{ __('transaction.detail.confirm_cancel') }}
                 </button>
             @endif
         @endif
@@ -170,7 +170,7 @@
                 wire:loading.attr="disabled"
                 class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
             >
-                {{ __('transaction.detail.cancel') }}
+                {{ __('transaction.detail.confirm_cancel') }}
             </button>
         @endif
 
@@ -396,7 +396,7 @@
                 wire:target="cancel"
             >
                 <span wire:loading.remove wire:target="cancel">
-                    {{ __('transaction.detail.cancel') }}
+                    {{ __('transaction.detail.confirm_cancel') }}
                 </span>
                 <span wire:loading wire:target="cancel">
                     {{ __('transaction.detail.cancelling') }}

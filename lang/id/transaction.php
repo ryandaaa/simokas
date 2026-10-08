@@ -92,7 +92,7 @@ return [
         'seller_offered_notice' => 'Tinjau rincian di bawah sebelum menyetujui atau menolak penawaran ini.',
         'expires_label' => 'Berlaku hingga',
         'transaction_id_label' => 'ID Transaksi',
-        'cancel' => 'Batalkan Transaksi',
+        'confirm_cancel' => 'Batalkan Transaksi',
         'cancelling' => 'Membatalkan...',
         'cancel_confirm_title' => 'Batalkan transaksi?',
         'cancel_confirm_description' => 'Transaksi yang dibatalkan tidak dapat dikembalikan. Listing akan bebas kembali.',

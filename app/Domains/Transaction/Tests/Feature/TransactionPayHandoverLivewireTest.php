@@ -110,6 +110,24 @@ it('shows the handover button to the buyer on a paid_held transaction', function
         ->assertSee(__('transaction.detail.confirm_handover'));
 });
 
+it('TRX-T15 handover modal uses Batal for dismiss and full label for confirm', function () {
+    expect(__('transaction.detail.cancel'))->toBe('Batal')
+        ->and(__('transaction.detail.confirm_cancel'))->toBe('Batalkan Transaksi');
+
+    $transaction = makeAcceptedTransactionForPage();
+    $bill = app(OpenTransactionPayment::class)->handle($transaction->buyer, $transaction);
+    $payment = Payment::query()->findOrFail($bill->id);
+    app(ProcessPaymentResult::class)->handle($payment, PaymentMethod::Qris, PaymentSimulationOutcome::Success);
+
+    actingAs($transaction->buyer);
+
+    Livewire::test(TransactionDetailPage::class, ['transaction' => $transaction->fresh()])
+        ->assertOk()
+        ->assertSee(__('transaction.detail.handover_confirm_title'))
+        ->assertSee(__('transaction.detail.confirm_handover'))
+        ->assertSee(__('transaction.detail.cancel'));
+});
+
 it('lets an active admin confirm the handover through the action and policy', function () {
     $transaction = makeAcceptedTransactionForPage();
     $bill = app(OpenTransactionPayment::class)->handle($transaction->buyer, $transaction);
