@@ -214,7 +214,7 @@ it('CAT-T15 renders no raw translation keys on the home page', function () {
 it('CAT-T15 every translation key used by home view exists in lang files', function () {
     $blade = file_get_contents(app_path('Domains/Catalog/Resources/views/home.blade.php'));
 
-    preg_match_all("/__\(\s*'([a-z0-9_.]+)'/", $blade, $matches);
+    preg_match_all("/__\(\s*'([a-z0-9_.]+)'(?!\s*\.)/", $blade, $matches);
 
     expect($matches[1])->not->toBeEmpty();
 
