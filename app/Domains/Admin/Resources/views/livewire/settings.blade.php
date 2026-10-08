@@ -1,17 +1,18 @@
-<div class="max-w-4xl mx-auto py-6 space-y-6">
+<div class="ds-sans max-w-4xl mx-auto py-6 space-y-8 pb-12">
     {{-- Header & Last Updated Info --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-text">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div class="space-y-2">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('admin.settings.title') }}</span>
+            <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
                 {{ __('admin.settings.title') }}
             </h1>
-            <p class="mt-1 text-sm text-muted">
+            <p class="text-sm text-ds-muted">
                 {{ __('admin.settings.subtitle') }}
             </p>
         </div>
 
-        <div class="p-3 rounded-xl border border-muted/20 bg-surface text-xs text-muted">
-            <div class="font-medium text-text">
+        <div class="p-4 rounded-2xl border border-ds-line/80 bg-white shadow-xs text-xs text-ds-muted">
+            <div class="font-extrabold text-ds-ink">
                 {{ __('admin.settings.title') }}
             </div>
             <div class="mt-0.5">
@@ -26,114 +27,127 @@
 
     {{-- Flash Alerts --}}
     @if ($successMessage)
-        <x-ui.alert variant="success" :message="$successMessage" />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $successMessage }}
+        </div>
     @endif
 
     @if ($errorMessage)
-        <x-ui.alert variant="danger" :message="$errorMessage" />
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $errorMessage }}
+        </div>
     @endif
 
     {{-- Form --}}
     <form wire:submit.prevent="confirmSave" class="space-y-6">
         {{-- Section 1: Tarif Inspeksi & Biaya Akses --}}
-        <x-ui.card :title="__('admin.settings.section_fees')">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                    <x-ui.input
-                        id="inspection_fee_car"
-                        name="form.inspection_fee_car"
-                        type="number"
-                        wire:model="form.inspection_fee_car"
-                        :label="__('setting.keys.inspection_fee_car')"
-                        :hint="__('setting.hints.inspection_fee_car')"
-                        :error="$errors->first('form.inspection_fee_car')"
-                        required
-                    />
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+            <h2 class="text-lg font-extrabold text-ds-ink">{{ __('admin.settings.section_fees') }}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                <div class="w-full">
+                    <label for="inspection_fee_car" class="block text-xs font-bold text-ds-ink mb-1.5">
+                        {{ __('setting.keys.inspection_fee_car') }}
+                        <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                        <span class="sr-only">(wajib diisi)</span>
+                    </label>
+                    <input type="number" id="inspection_fee_car" name="form.inspection_fee_car" wire:model="form.inspection_fee_car" required
+                        class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                    <p class="text-xs text-ds-faint mt-1.5">{{ __('setting.hints.inspection_fee_car') }}</p>
+                    @error('form.inspection_fee_car')
+                        <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <div>
-                    <x-ui.input
-                        id="inspection_fee_motorcycle"
-                        name="form.inspection_fee_motorcycle"
-                        type="number"
-                        wire:model="form.inspection_fee_motorcycle"
-                        :label="__('setting.keys.inspection_fee_motorcycle')"
-                        :hint="__('setting.hints.inspection_fee_motorcycle')"
-                        :error="$errors->first('form.inspection_fee_motorcycle')"
-                        required
-                    />
+                <div class="w-full">
+                    <label for="inspection_fee_motorcycle" class="block text-xs font-bold text-ds-ink mb-1.5">
+                        {{ __('setting.keys.inspection_fee_motorcycle') }}
+                        <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                        <span class="sr-only">(wajib diisi)</span>
+                    </label>
+                    <input type="number" id="inspection_fee_motorcycle" name="form.inspection_fee_motorcycle" wire:model="form.inspection_fee_motorcycle" required
+                        class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                    <p class="text-xs text-ds-faint mt-1.5">{{ __('setting.hints.inspection_fee_motorcycle') }}</p>
+                    @error('form.inspection_fee_motorcycle')
+                        <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
-        </x-ui.card>
+        </div>
 
         {{-- Section 2: Persentase Komisi --}}
-        <x-ui.card :title="__('admin.settings.section_commissions')">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                    <x-ui.input
-                        id="platform_fee_pct"
-                        name="form.platform_fee_pct"
-                        type="number"
-                        wire:model="form.platform_fee_pct"
-                        :label="__('setting.keys.platform_fee_pct')"
-                        :hint="__('setting.hints.platform_fee_pct')"
-                        :error="$errors->first('form.platform_fee_pct')"
-                        required
-                    />
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+            <h2 class="text-lg font-extrabold text-ds-ink">{{ __('admin.settings.section_commissions') }}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                <div class="w-full">
+                    <label for="platform_fee_pct" class="block text-xs font-bold text-ds-ink mb-1.5">
+                        {{ __('setting.keys.platform_fee_pct') }}
+                        <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                        <span class="sr-only">(wajib diisi)</span>
+                    </label>
+                    <input type="number" id="platform_fee_pct" name="form.platform_fee_pct" wire:model="form.platform_fee_pct" required
+                        class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                    <p class="text-xs text-ds-faint mt-1.5">{{ __('setting.hints.platform_fee_pct') }}</p>
+                    @error('form.platform_fee_pct')
+                        <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <div>
-                    <x-ui.input
-                        id="sale_commission_pct"
-                        name="form.sale_commission_pct"
-                        type="number"
-                        wire:model="form.sale_commission_pct"
-                        :label="__('setting.keys.sale_commission_pct')"
-                        :hint="__('setting.hints.sale_commission_pct')"
-                        :error="$errors->first('form.sale_commission_pct')"
-                        required
-                    />
+                <div class="w-full">
+                    <label for="sale_commission_pct" class="block text-xs font-bold text-ds-ink mb-1.5">
+                        {{ __('setting.keys.sale_commission_pct') }}
+                        <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                        <span class="sr-only">(wajib diisi)</span>
+                    </label>
+                    <input type="number" id="sale_commission_pct" name="form.sale_commission_pct" wire:model="form.sale_commission_pct" required
+                        class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                    <p class="text-xs text-ds-faint mt-1.5">{{ __('setting.hints.sale_commission_pct') }}</p>
+                    @error('form.sale_commission_pct')
+                        <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
-        </x-ui.card>
+        </div>
 
         {{-- Section 3: Parameter Waktu Operasional --}}
-        <x-ui.card :title="__('admin.settings.section_timeouts')">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                    <x-ui.input
-                        id="auto_accept_days"
-                        name="form.auto_accept_days"
-                        type="number"
-                        wire:model="form.auto_accept_days"
-                        :label="__('setting.keys.auto_accept_days')"
-                        :hint="__('setting.hints.auto_accept_days')"
-                        :error="$errors->first('form.auto_accept_days')"
-                        required
-                    />
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+            <h2 class="text-lg font-extrabold text-ds-ink">{{ __('admin.settings.section_timeouts') }}</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                <div class="w-full">
+                    <label for="auto_accept_days" class="block text-xs font-bold text-ds-ink mb-1.5">
+                        {{ __('setting.keys.auto_accept_days') }}
+                        <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                        <span class="sr-only">(wajib diisi)</span>
+                    </label>
+                    <input type="number" id="auto_accept_days" name="form.auto_accept_days" wire:model="form.auto_accept_days" required
+                        class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                    <p class="text-xs text-ds-faint mt-1.5">{{ __('setting.hints.auto_accept_days') }}</p>
+                    @error('form.auto_accept_days')
+                        <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <div>
-                    <x-ui.input
-                        id="paid_job_timeout_days"
-                        name="form.paid_job_timeout_days"
-                        type="number"
-                        wire:model="form.paid_job_timeout_days"
-                        :label="__('setting.keys.paid_job_timeout_days')"
-                        :hint="__('setting.hints.paid_job_timeout_days')"
-                        :error="$errors->first('form.paid_job_timeout_days')"
-                        required
-                    />
+                <div class="w-full">
+                    <label for="paid_job_timeout_days" class="block text-xs font-bold text-ds-ink mb-1.5">
+                        {{ __('setting.keys.paid_job_timeout_days') }}
+                        <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                        <span class="sr-only">(wajib diisi)</span>
+                    </label>
+                    <input type="number" id="paid_job_timeout_days" name="form.paid_job_timeout_days" wire:model="form.paid_job_timeout_days" required
+                        class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                    <p class="text-xs text-ds-faint mt-1.5">{{ __('setting.hints.paid_job_timeout_days') }}</p>
+                    @error('form.paid_job_timeout_days')
+                        <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
-        </x-ui.card>
+        </div>
 
         {{-- Actions --}}
         <div class="flex items-center justify-end gap-3 pt-2">
-            <x-ui.button
+            <button
                 type="submit"
-                variant="primary"
                 wire:loading.attr="disabled"
+                class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60"
             >
                 <span wire:loading.remove wire:target="confirmSave">
                     {{ __('admin.settings.save') }}
@@ -141,7 +155,7 @@
                 <span wire:loading wire:target="confirmSave">
                     {{ __('ui.actions.loading') }}
                 </span>
-            </x-ui.button>
+            </button>
         </div>
     </form>
 

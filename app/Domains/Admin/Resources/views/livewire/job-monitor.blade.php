@@ -1,32 +1,38 @@
-<div class="max-w-7xl mx-auto py-6 space-y-6">
+<div class="ds-sans max-w-7xl mx-auto py-6 space-y-8 pb-12">
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-text">
-                {{ __('admin.jobs.title') }}
-            </h1>
-            <p class="text-sm text-muted mt-1">
-                {{ __('admin.jobs.subtitle') }}
-            </p>
-        </div>
+    <div class="space-y-2">
+        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('admin.jobs.title') }}</span>
+        <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
+            {{ __('admin.jobs.title') }}
+        </h1>
+        <p class="text-sm text-ds-muted">
+            {{ __('admin.jobs.subtitle') }}
+        </p>
     </div>
 
     {{-- Filter Bar --}}
-    <x-ui.card class="p-4">
+    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-5">
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
             <div class="lg:col-span-2">
-                <x-ui.input
-                    id="search"
-                    name="search"
-                    wire:model.live.debounce.300ms="search"
-                    :placeholder="__('admin.jobs.search_placeholder')"
-                />
+                <div class="relative">
+                    <i aria-hidden="true" class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-ds-faint text-sm"></i>
+                    <input
+                        id="search"
+                        name="search"
+                        type="search"
+                        wire:model.live.debounce.300ms="search"
+                        placeholder="{{ __('admin.jobs.search_placeholder') }}"
+                        aria-label="{{ __('admin.jobs.search_placeholder') }}"
+                        class="w-full h-11 pl-11 pr-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"
+                    />
+                </div>
             </div>
             <div>
                 <select
                     id="filterStatus"
                     wire:model.live="filterStatus"
-                    class="w-full rounded-lg border border-muted/30 bg-surface px-3 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-accent"
+                    aria-label="{{ __('admin.jobs.filter_all_status') }}"
+                    class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"
                 >
                     <option value="">{{ __('admin.jobs.filter_all_status') }}</option>
                     @foreach ($statuses as $status)
@@ -35,154 +41,160 @@
                 </select>
             </div>
             <div class="flex items-center">
-                <label class="inline-flex items-center gap-2 cursor-pointer text-sm font-medium text-text">
+                <label class="inline-flex items-center gap-2 cursor-pointer text-sm font-bold text-ds-ink">
                     <input
                         type="checkbox"
                         wire:model.live="filterAttentionOnly"
-                        class="rounded border-muted/30 text-primary focus:ring-accent w-4 h-4"
+                        class="rounded border-ds-line text-ds-blue focus:ring-ds-blue/30 w-4 h-4"
                     />
                     <span>{{ __('admin.jobs.filter_attention_only') }}</span>
                 </label>
             </div>
         </div>
-    </x-ui.card>
+    </div>
 
     {{-- Alerts --}}
     @if (session('error'))
-        <x-ui.alert variant="danger" :message="session('error')" />
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('error') }}
+        </div>
     @endif
     @if (session('success'))
-        <x-ui.alert variant="success" :message="session('success')" />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('success') }}
+        </div>
     @endif
 
     {{-- Loading indicator --}}
     <div wire:loading class="w-full">
-        <x-ui.card class="p-6 text-center text-sm text-slate">
-            <x-ui.icon name="jam" class="w-5 h-5 animate-spin inline-block mr-2" />
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6 flex items-center justify-center gap-3 text-sm text-ds-muted">
+            <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
             {{ __('ui.actions.loading') }}
-        </x-ui.card>
+        </div>
     </div>
+
+    @php
+        $chip = function (?string $variant): string {
+            return match ($variant) {
+                'success' => 'bg-ds-green-soft text-ds-green-ink',
+                'warning' => 'bg-ds-amber-soft text-ds-amber-ink',
+                'danger' => 'bg-ds-red-soft text-ds-red-ink',
+                'primary' => 'bg-ds-blue-soft text-ds-blue-ink',
+                default => 'bg-ds-soft text-ds-muted',
+            };
+        };
+    @endphp
 
     {{-- Job List --}}
     <div wire:loading.remove class="space-y-6">
     @if ($jobs->isEmpty())
-        <x-ui.card class="p-8">
-            <x-ui.empty-state
-                icon="kaca-pembesar"
-                :title="__('admin.jobs.empty_title')"
-                :description="__('admin.jobs.empty_description')"
-            />
-        </x-ui.card>
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                <i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('admin.jobs.empty_title') }}</h3>
+            <p class="text-xs text-ds-muted mt-2">{{ __('admin.jobs.empty_description') }}</p>
+        </div>
     @else
         {{-- Desktop Table --}}
         <div class="hidden md:block">
-            <x-ui.card class="overflow-hidden">
-                <table class="min-w-full divide-y divide-muted/20 text-left text-sm">
-                    <thead class="bg-bg text-muted">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-hidden">
+                <table class="min-w-full divide-y divide-ds-line/60 text-left text-sm">
+                    <thead class="bg-ds-canvas/80 text-ds-muted">
                         <tr>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.jobs.table_vehicle') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.jobs.table_requester') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.jobs.table_inspector') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.jobs.table_status') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.jobs.table_created') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium text-right">{{ __('admin.jobs.action_detail') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.jobs.table_vehicle') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.jobs.table_requester') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.jobs.table_inspector') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.jobs.table_status') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.jobs.table_created') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider text-right">{{ __('admin.jobs.action_detail') }}</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-muted/20 bg-surface">
+                    <tbody class="divide-y divide-ds-line/60 bg-white">
                         @foreach ($jobs as $job)
-                            <tr class="hover:bg-bg/50 transition-colors">
+                            <tr class="hover:bg-ds-canvas/60 transition-colors">
                                 <td class="px-4 py-3">
-                                    <div class="font-medium text-text">{{ $job->listing?->title ?? '-' }}</div>
-                                    <div class="font-mono text-xs text-muted truncate max-w-xs">{{ $job->id }}</div>
+                                    <div class="font-bold text-ds-ink">{{ $job->listing?->title ?? '-' }}</div>
+                                    <div class="font-mono text-xs text-ds-faint truncate max-w-xs">{{ $job->id }}</div>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
-                                    <div class="text-text">{{ $job->requester?->name ?? '-' }}</div>
-                                    <div class="text-xs text-muted">{{ $job->requester?->email ?? '-' }}</div>
+                                    <div class="text-ds-ink font-bold">{{ $job->requester?->name ?? '-' }}</div>
+                                    <div class="text-xs text-ds-muted">{{ $job->requester?->email ?? '-' }}</div>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     @if ($job->inspector)
-                                        <div class="text-text">{{ $job->inspector->name }}</div>
-                                        <div class="text-xs text-muted">{{ $job->inspector->email }}</div>
+                                        <div class="text-ds-ink font-bold">{{ $job->inspector->name }}</div>
+                                        <div class="text-xs text-ds-muted">{{ $job->inspector->email }}</div>
                                     @else
-                                        <span class="text-xs text-muted italic">{{ __('admin.jobs.no_inspector') }}</span>
+                                        <span class="text-xs text-ds-muted italic">{{ __('admin.jobs.no_inspector') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     <div class="flex items-center gap-2">
-                                        <x-ui.status-chip
-                                            :label="$job->status->label()"
-                                            :variant="$job->status->color()"
-                                            :icon="$job->status->icon()"
-                                        />
+                                        <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($job->status->color()) }}">
+                                            {{ $job->status->label() }}
+                                        </span>
                                         @if ($job->needs_attention_at && !$job->isFinal())
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-danger/10 text-danger" title="Perlu Tindakan">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-ds-red-soft text-ds-red-ink" title="Perlu Tindakan">
                                                 !
                                             </span>
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-xs text-muted">
-                                    <x-ui.datetime :value="$job->created_at" />
+                                <td class="px-4 py-3 whitespace-nowrap text-xs text-ds-muted">
+                                    {{ $job->created_at?->translatedFormat('d M Y H:i') }}
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap text-right">
-                                    <x-ui.button
-                                        :href="route('admin.jobs.show', $job->id)"
-                                        variant="secondary"
-                                        class="text-xs py-1.5 px-3 min-h-[36px]"
-                                    >
+                                    <a href="{{ route('admin.jobs.show', $job->id) }}"
+                                        class="inline-flex items-center justify-center px-3 py-1.5 min-h-[36px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                         {{ __('admin.jobs.action_detail') }}
-                                    </x-ui.button>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-            </x-ui.card>
+            </div>
         </div>
 
         {{-- Mobile Cards --}}
         <div class="md:hidden space-y-4">
             @foreach ($jobs as $job)
-                <x-ui.card class="p-4 space-y-3">
+                <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-4 space-y-3">
                     <div class="flex items-center justify-between">
-                        <x-ui.status-chip
-                            :label="$job->status->label()"
-                            :variant="$job->status->color()"
-                            :icon="$job->status->icon()"
-                        />
+                        <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($job->status->color()) }}">
+                            {{ $job->status->label() }}
+                        </span>
                         @if ($job->needs_attention_at && !$job->isFinal())
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-danger/10 text-danger">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-ds-red-soft text-ds-red-ink">
                                 Perlu Tindakan
                             </span>
                         @endif
                     </div>
 
                     <div>
-                        <div class="text-sm font-semibold text-text">{{ $job->listing?->title ?? '-' }}</div>
-                        <div class="font-mono text-xs text-muted truncate mt-0.5">{{ $job->id }}</div>
+                        <div class="text-sm font-extrabold text-ds-ink">{{ $job->listing?->title ?? '-' }}</div>
+                        <div class="font-mono text-xs text-ds-faint truncate mt-0.5">{{ $job->id }}</div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-muted/10">
+                    <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-ds-line/60">
                         <div>
-                            <span class="text-muted block">Pemohon:</span>
-                            <span class="text-text font-medium">{{ $job->requester?->name ?? '-' }}</span>
+                            <span class="text-ds-muted block">Pemohon:</span>
+                            <span class="text-ds-ink font-bold">{{ $job->requester?->name ?? '-' }}</span>
                         </div>
                         <div>
-                            <span class="text-muted block">Inspektor:</span>
-                            <span class="text-text font-medium">{{ $job->inspector?->name ?? __('admin.jobs.no_inspector') }}</span>
+                            <span class="text-ds-muted block">Inspektor:</span>
+                            <span class="text-ds-ink font-bold">{{ $job->inspector?->name ?? __('admin.jobs.no_inspector') }}</span>
                         </div>
                     </div>
 
                     <div class="pt-2">
-                        <x-ui.button
-                            :href="route('admin.jobs.show', $job->id)"
-                            variant="secondary"
-                            class="w-full text-xs justify-center"
-                        >
+                        <a href="{{ route('admin.jobs.show', $job->id) }}"
+                            class="w-full inline-flex items-center justify-center px-4 py-2.5 text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                             {{ __('admin.jobs.action_detail') }}
-                        </x-ui.button>
+                        </a>
                     </div>
-                </x-ui.card>
+                </div>
             @endforeach
         </div>
 

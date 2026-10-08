@@ -1,52 +1,52 @@
-<x-ui.card class="p-6">
+<div class="ds-sans bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
     <div class="space-y-4">
-        <div class="border-b border-fog pb-3">
-            <h3 class="text-lg font-bold text-obs tracking-tight">
+        <div class="border-b border-ds-line/60 pb-3">
+            <h3 class="text-lg font-extrabold text-ds-ink tracking-tight">
                 {{ __('rating.title') }}
             </h3>
             @if ($transaction?->inspector)
-                <p class="text-sm text-charcoal mt-1">
-                    Inspektor: <span class="font-medium text-forest">{{ $transaction->inspector->name }}</span>
+                <p class="text-sm text-ds-muted mt-1">
+                    Inspektor: <span class="font-bold text-ds-ink">{{ $transaction->inspector->name }}</span>
                 </p>
             @endif
         </div>
 
         @if ($errorMessage)
-            <x-ui.alert variant="danger" :message="$errorMessage" />
+            <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+                {{ $errorMessage }}
+            </div>
         @endif
 
         @if ($successMessage)
-            <x-ui.alert variant="success" :message="$successMessage" />
+            <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+                {{ $successMessage }}
+            </div>
         @endif
 
         @if ($isSubmitted)
-            <div class="bg-linen/40 rounded-xl p-4 border border-fog space-y-2">
+            <div class="bg-ds-canvas/60 rounded-2xl p-4 border border-ds-line/60 space-y-2">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-charcoal">{{ __('rating.score') }}:</span>
-                    <div class="flex items-center text-warning" aria-label="{{ __('rating.display.out_of_five', ['score' => $existingScore]) }}">
+                    <span class="text-sm font-bold text-ds-muted">{{ __('rating.score') }}:</span>
+                    <div class="flex items-center text-ds-yellow-deep" aria-label="{{ __('rating.display.out_of_five', ['score' => $existingScore]) }}">
                         @for ($i = 1; $i <= 5; $i++)
                             @if ($i <= ($existingScore ?? 5))
-                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
+                                <i aria-hidden="true" class="fa-solid fa-star w-5 h-5"></i>
                             @else
-                                <svg class="w-5 h-5 text-fog fill-current" viewBox="0 0 20 20">
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
+                                <i aria-hidden="true" class="fa-regular fa-star w-5 h-5 text-ds-faint"></i>
                             @endif
                         @endfor
-                        <span class="ml-2 font-bold text-obs">{{ $existingScore }} / 5</span>
+                        <span class="ml-2 font-extrabold text-ds-ink">{{ $existingScore }} / 5</span>
                     </div>
                 </div>
 
                 @if ($existingComment)
                     <div class="pt-2">
-                        <span class="text-xs text-muted block mb-1">{{ __('rating.comment') }}:</span>
-                        <p class="text-sm text-charcoal italic whitespace-pre-wrap">{{ $existingComment }}</p>
+                        <span class="text-xs text-ds-muted block mb-1">{{ __('rating.comment') }}:</span>
+                        <p class="text-sm text-ds-ink italic whitespace-pre-wrap">{{ $existingComment }}</p>
                     </div>
                 @endif
 
-                <p class="text-xs text-muted pt-2 border-t border-fog/60">
+                <p class="text-xs text-ds-muted pt-2 border-t border-ds-line/60">
                     {{ __('rating.cannot_modify') }}
                 </p>
             </div>
@@ -54,35 +54,33 @@
             <form wire:submit.prevent="submit" class="space-y-4">
                 {{-- Star rating selector --}}
                 <div>
-                    <label class="block text-base font-medium text-charcoal mb-2">
+                    <span class="block text-sm font-bold text-ds-ink mb-2" id="rating-score-label">
                         {{ __('rating.score') }}
-                    </label>
-                    <div class="flex items-center gap-2">
+                    </span>
+                    <div class="flex items-center gap-2" role="radiogroup" aria-labelledby="rating-score-label">
                         @for ($i = 1; $i <= 5; $i++)
                             <button
                                 type="button"
                                 wire:click="$set('score', {{ $i }})"
-                                class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-forest transition"
+                                class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-ds-blue transition"
                                 title="{{ __('rating.display.out_of_five', ['score' => $i]) }}"
+                                role="radio"
+                                aria-checked="{{ $i === $score ? 'true' : 'false' }}"
+                                aria-label="{{ __('rating.display.out_of_five', ['score' => $i]) }}"
                             >
-                                <svg
-                                    class="w-8 h-8 {{ $i <= $score ? 'text-warning fill-current' : 'text-fog fill-current' }} hover:scale-110 transition-transform"
-                                    viewBox="0 0 20 20"
-                                >
-                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                </svg>
+                                <i aria-hidden="true" class="fa-{{ $i <= $score ? 'solid' : 'regular' }} fa-star w-8 h-8 {{ $i <= $score ? 'text-ds-yellow-deep' : 'text-ds-faint' }} hover:scale-110 transition-transform"></i>
                             </button>
                         @endfor
-                        <span class="ml-2 font-bold text-obs text-base">{{ $score }} / 5</span>
+                        <span class="ml-2 font-extrabold text-ds-ink text-base">{{ $score }} / 5</span>
                     </div>
                     @error('score')
-                        <p class="text-xs text-alarm mt-1">{{ $message }}</p>
+                        <p class="text-xs text-ds-danger mt-1" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
 
                 {{-- Comment textarea --}}
-                <div>
-                    <label for="rating-comment" class="block text-base font-medium text-charcoal mb-1">
+                <div class="w-full">
+                    <label for="rating-comment" class="block text-sm font-bold text-ds-ink mb-1">
                         {{ __('rating.comment') }}
                     </label>
                     <textarea
@@ -91,25 +89,24 @@
                         rows="3"
                         maxlength="500"
                         placeholder="{{ __('rating.comment_placeholder') }}"
-                        class="w-full rounded-[10px] border border-pebble bg-paper p-3 text-charcoal placeholder-pebble focus:border-forest focus:outline-none text-base"
+                        class="w-full rounded-xl border border-ds-line bg-white p-3 text-ds-ink placeholder:text-ds-faint focus:border-ds-blue focus:outline-none focus:ring-2 focus:ring-ds-blue/20 text-sm"
                     ></textarea>
-                    <div class="flex justify-between items-center text-xs text-muted mt-1">
+                    <div class="flex justify-between items-center text-xs text-ds-muted mt-1">
                         <span>{{ __('rating.comment_hint') }}</span>
                         <span>{{ __('rating.character_count', ['count' => strlen($comment)]) }}</span>
                     </div>
                     @error('comment')
-                        <p class="text-xs text-alarm mt-1">{{ $message }}</p>
+                        <p class="text-xs text-ds-danger mt-1" role="alert">{{ $message }}</p>
                     @enderror
                 </div>
 
                 {{-- Submit Button --}}
                 <div class="pt-2">
-                    <x-ui.button
+                    <button
                         type="submit"
-                        variant="primary"
                         wire:loading.attr="disabled"
                         wire:target="submit"
-                        class="w-full sm:w-auto"
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60"
                     >
                         <span wire:loading.remove wire:target="submit">
                             {{ __('rating.submit') }}
@@ -117,11 +114,13 @@
                         <span wire:loading wire:target="submit">
                             {{ __('rating.submitting') }}
                         </span>
-                    </x-ui.button>
+                    </button>
                 </div>
             </form>
         @else
-            <x-ui.alert variant="info" :message="__('rating.already_rated')" />
+            <div class="p-4 rounded-2xl border border-ds-blue-soft bg-ds-blue-soft/40 text-xs font-semibold text-ds-ink">
+                {{ __('rating.already_rated') }}
+            </div>
         @endif
     </div>
-</x-ui.card>
+</div>

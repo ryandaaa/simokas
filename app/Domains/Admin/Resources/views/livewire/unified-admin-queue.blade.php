@@ -1,173 +1,132 @@
-<div class="max-w-7xl mx-auto py-6 space-y-6">
+<div class="ds-sans max-w-7xl mx-auto py-6 space-y-8 pb-12">
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-text">
-                {{ __('admin.unified_queue.title') }}
-            </h1>
-            <p class="text-sm text-muted mt-1">
-                {{ __('admin.unified_queue.subtitle') }}
-            </p>
-        </div>
+    <div class="space-y-2">
+        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('admin.unified_queue.title') }}</span>
+        <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
+            {{ __('admin.unified_queue.title') }}
+        </h1>
+        <p class="text-sm text-ds-muted">
+            {{ __('admin.unified_queue.subtitle') }}
+        </p>
     </div>
 
     {{-- Filter Tabs / Badges --}}
     <div class="flex flex-wrap gap-2">
-        <button
-            type="button"
-            wire:click="$set('filterType', 'all')"
-            @class([
-                'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent min-h-[44px]',
-                'bg-primary text-surface shadow-sm' => $filterType === 'all',
-                'bg-surface border border-muted/20 text-muted hover:text-text' => $filterType !== 'all',
-            ])
-        >
-            <span>{{ __('admin.unified_queue.filter_all') }}</span>
-            <span @class([
-                'px-2 py-0.5 rounded-full text-xs font-bold',
-                'bg-surface/20 text-surface' => $filterType === 'all',
-                'bg-bg text-muted' => $filterType !== 'all',
-            ])>
-                {{ $totalCount }}
-            </span>
-        </button>
-
-        <button
-            type="button"
-            wire:click="$set('filterType', 'listing')"
-            @class([
-                'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent min-h-[44px]',
-                'bg-primary text-surface shadow-sm' => $filterType === 'listing',
-                'bg-surface border border-muted/20 text-muted hover:text-text' => $filterType !== 'listing',
-            ])
-        >
-            <span>{{ __('admin.unified_queue.filter_listing') }}</span>
-            <span @class([
-                'px-2 py-0.5 rounded-full text-xs font-bold',
-                'bg-surface/20 text-surface' => $filterType === 'listing',
-                'bg-bg text-muted' => $filterType !== 'listing',
-            ])>
-                {{ $listingCount }}
-            </span>
-        </button>
-
-        <button
-            type="button"
-            wire:click="$set('filterType', 'inspector')"
-            @class([
-                'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent min-h-[44px]',
-                'bg-primary text-surface shadow-sm' => $filterType === 'inspector',
-                'bg-surface border border-muted/20 text-muted hover:text-text' => $filterType !== 'inspector',
-            ])
-        >
-            <span>{{ __('admin.unified_queue.filter_inspector') }}</span>
-            <span @class([
-                'px-2 py-0.5 rounded-full text-xs font-bold',
-                'bg-surface/20 text-surface' => $filterType === 'inspector',
-                'bg-bg text-muted' => $filterType !== 'inspector',
-            ])>
-                {{ $inspectorCount }}
-            </span>
-        </button>
-
-        <button
-            type="button"
-            wire:click="$set('filterType', 'job')"
-            @class([
-                'inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-accent min-h-[44px]',
-                'bg-primary text-surface shadow-sm' => $filterType === 'job',
-                'bg-surface border border-muted/20 text-muted hover:text-text' => $filterType !== 'job',
-            ])
-        >
-            <span>{{ __('admin.unified_queue.filter_job') }}</span>
-            <span @class([
-                'px-2 py-0.5 rounded-full text-xs font-bold',
-                'bg-surface/20 text-surface' => $filterType === 'job',
-                'bg-bg text-muted' => $filterType !== 'job',
-            ])>
-                {{ $jobCount }}
-            </span>
-        </button>
+        @foreach ([
+            'all' => ['label' => __('admin.unified_queue.filter_all'), 'count' => $totalCount],
+            'listing' => ['label' => __('admin.unified_queue.filter_listing'), 'count' => $listingCount],
+            'inspector' => ['label' => __('admin.unified_queue.filter_inspector'), 'count' => $inspectorCount],
+            'job' => ['label' => __('admin.unified_queue.filter_job'), 'count' => $jobCount],
+        ] as $key => $tab)
+            <button
+                type="button"
+                wire:click="$set('filterType', '{{ $key }}')"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue min-h-[44px] {{ $filterType === $key ? 'bg-ds-ink text-white shadow-md' : 'bg-white border border-ds-line text-ds-muted hover:border-ds-blue hover:text-ds-blue shadow-xs' }}"
+            >
+                <span>{{ $tab['label'] }}</span>
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold {{ $filterType === $key ? 'bg-white/20 text-white' : 'bg-ds-canvas text-ds-muted' }}">
+                    {{ $tab['count'] }}
+                </span>
+            </button>
+        @endforeach
     </div>
 
     {{-- Alerts --}}
     @if (session('error'))
-        <x-ui.alert variant="danger" :message="session('error')" />
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('error') }}
+        </div>
     @endif
     @if (session('success'))
-        <x-ui.alert variant="success" :message="session('success')" />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('success') }}
+        </div>
     @endif
 
     {{-- Loading indicator --}}
     <div wire:loading class="w-full">
-        <x-ui.card class="p-6 text-center text-sm text-slate">
-            <x-ui.icon name="jam" class="w-5 h-5 animate-spin inline-block mr-2" />
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6 flex items-center justify-center gap-3 text-sm text-ds-muted">
+            <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
             {{ __('ui.actions.loading') }}
-        </x-ui.card>
+        </div>
     </div>
+
+    @php
+        $typePill = function (string $type): string {
+            return match ($type) {
+                'listing' => 'bg-ds-blue-soft text-ds-blue-ink',
+                'inspector' => 'bg-ds-amber-soft text-ds-amber-ink',
+                default => 'bg-ds-red-soft text-ds-red-ink',
+            };
+        };
+        $chip = function (?string $variant): string {
+            return match ($variant) {
+                'success' => 'bg-ds-green-soft text-ds-green-ink',
+                'warning' => 'bg-ds-amber-soft text-ds-amber-ink',
+                'danger' => 'bg-ds-red-soft text-ds-red-ink',
+                'primary' => 'bg-ds-blue-soft text-ds-blue-ink',
+                default => 'bg-ds-soft text-ds-muted',
+            };
+        };
+    @endphp
 
     {{-- Queue Items List --}}
     <div wire:loading.remove class="space-y-6">
     @if ($queueItems->isEmpty())
-        <x-ui.card class="p-8">
-            <x-ui.empty-state
-                icon="centang"
-                :title="__('admin.unified_queue.empty_title')"
-                :description="__('admin.unified_queue.empty_description')"
-            />
-        </x-ui.card>
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-green-soft text-ds-green-ink flex items-center justify-center text-xl mb-4">
+                <i aria-hidden="true" class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('admin.unified_queue.empty_title') }}</h3>
+            <p class="text-xs text-ds-muted mt-2">{{ __('admin.unified_queue.empty_description') }}</p>
+        </div>
     @else
         {{-- Desktop Table --}}
         <div class="hidden md:block">
-            <x-ui.card class="overflow-hidden">
-                <table class="min-w-full divide-y divide-muted/20 text-left text-sm">
-                    <thead class="bg-bg text-muted">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-hidden">
+                <table class="min-w-full divide-y divide-ds-line/60 text-left text-sm">
+                    <thead class="bg-ds-canvas/80 text-ds-muted">
                         <tr>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.unified_queue.table_type') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.unified_queue.table_item') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.unified_queue.table_status') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium">{{ __('admin.unified_queue.table_waiting') }}</th>
-                            <th scope="col" class="px-4 py-3 font-medium text-right">{{ __('admin.unified_queue.table_action') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.unified_queue.table_type') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.unified_queue.table_item') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.unified_queue.table_status') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider">{{ __('admin.unified_queue.table_waiting') }}</th>
+                            <th scope="col" class="px-4 py-3 font-bold text-xs uppercase tracking-wider text-right">{{ __('admin.unified_queue.table_action') }}</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-muted/20 bg-surface">
+                    <tbody class="divide-y divide-ds-line/60 bg-white">
                         @foreach ($queueItems as $item)
-                            <tr class="hover:bg-bg/50 transition-colors">
+                            <tr class="hover:bg-ds-canvas/60 transition-colors">
                                 <td class="px-4 py-3 whitespace-nowrap">
                                     @if ($item['type'] === 'listing')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-ds-blue-soft text-ds-blue-ink">
                                             {{ __('admin.unified_queue.type_listing') }}
                                         </span>
                                     @elseif ($item['type'] === 'inspector')
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-warning/10 text-warning">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-ds-amber-soft text-ds-amber-ink">
                                             {{ __('admin.unified_queue.type_inspector') }}
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-danger/10 text-danger">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-ds-red-soft text-ds-red-ink">
                                             {{ __('admin.unified_queue.type_job') }}
                                         </span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
-                                    <div class="font-medium text-text">{{ $item['title'] }}</div>
-                                    <div class="text-xs text-muted">{{ $item['subtitle'] }}</div>
+                                    <div class="font-bold text-ds-ink">{{ $item['title'] }}</div>
+                                    <div class="text-xs text-ds-muted">{{ $item['subtitle'] }}</div>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
-                                    <x-ui.status-chip
-                                        :label="$item['status_label']"
-                                        :variant="$item['status_variant']"
-                                        :icon="$item['status_icon']"
-                                    />
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($item['status_variant']) }}">
+                                        {{ $item['status_label'] }}
+                                    </span>
                                 </td>
-                                <td class="px-4 py-3 whitespace-nowrap text-xs text-muted">
-                                    <x-ui.datetime :value="$item['time']" />
+                                <td class="px-4 py-3 whitespace-nowrap text-xs text-ds-muted">
+                                    {{ $item['time']?->translatedFormat('d M Y H:i') }}
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap text-right">
-                                    <x-ui.button
-                                        :href="$item['url']"
-                                        variant="secondary"
-                                        class="text-xs py-1.5 px-3 min-h-[36px]"
-                                    >
+                                    <a href="{{ $item['url'] }}"
+                                        class="inline-flex items-center justify-center px-4 py-1.5 min-h-[36px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                         @if ($item['type'] === 'listing')
                                             {{ __('admin.unified_queue.action_review_listing') }}
                                         @elseif ($item['type'] === 'inspector')
@@ -175,57 +134,52 @@
                                         @else
                                             {{ __('admin.unified_queue.action_review_job') }}
                                         @endif
-                                    </x-ui.button>
+                                    </a>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-            </x-ui.card>
+            </div>
         </div>
 
         {{-- Mobile Cards --}}
         <div class="md:hidden space-y-4">
             @foreach ($queueItems as $item)
-                <x-ui.card class="p-4 space-y-3">
+                <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-4 space-y-3">
                     <div class="flex items-center justify-between">
                         @if ($item['type'] === 'listing')
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-ds-blue-soft text-ds-blue-ink">
                                 {{ __('admin.unified_queue.type_listing') }}
                             </span>
                         @elseif ($item['type'] === 'inspector')
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-warning/10 text-warning">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-ds-amber-soft text-ds-amber-ink">
                                 {{ __('admin.unified_queue.type_inspector') }}
                             </span>
                         @else
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-danger/10 text-danger">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-ds-red-soft text-ds-red-ink">
                                 {{ __('admin.unified_queue.type_job') }}
                             </span>
                         @endif
 
-                        <x-ui.status-chip
-                            :label="$item['status_label']"
-                            :variant="$item['status_variant']"
-                            :icon="$item['status_icon']"
-                        />
+                        <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($item['status_variant']) }}">
+                            {{ $item['status_label'] }}
+                        </span>
                     </div>
 
                     <div>
-                        <div class="text-sm font-semibold text-text">{{ $item['title'] }}</div>
-                        <div class="text-xs text-muted mt-0.5">{{ $item['subtitle'] }}</div>
+                        <div class="text-sm font-extrabold text-ds-ink">{{ $item['title'] }}</div>
+                        <div class="text-xs text-ds-muted mt-0.5">{{ $item['subtitle'] }}</div>
                     </div>
 
-                    <div class="flex items-center justify-between text-xs text-muted pt-2 border-t border-muted/10">
+                    <div class="flex items-center justify-between text-xs text-ds-muted pt-2 border-t border-ds-line/60">
                         <span>Menunggu sejak:</span>
-                        <x-ui.datetime :value="$item['time']" />
+                        <span>{{ $item['time']?->translatedFormat('d M Y H:i') }}</span>
                     </div>
 
                     <div class="pt-2">
-                        <x-ui.button
-                            :href="$item['url']"
-                            variant="secondary"
-                            class="w-full text-xs justify-center"
-                        >
+                        <a href="{{ $item['url'] }}"
+                            class="w-full inline-flex items-center justify-center px-4 py-2.5 text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                             @if ($item['type'] === 'listing')
                                 {{ __('admin.unified_queue.action_review_listing') }}
                             @elseif ($item['type'] === 'inspector')
@@ -233,9 +187,9 @@
                             @else
                                 {{ __('admin.unified_queue.action_review_job') }}
                             @endif
-                        </x-ui.button>
+                        </a>
                     </div>
-                </x-ui.card>
+                </div>
             @endforeach
         </div>
 

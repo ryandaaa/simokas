@@ -1,34 +1,35 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h1 class="text-2xl font-bold text-obs tracking-tight">
+<div class="ds-sans max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-12">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div class="space-y-2">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('rating.admin.heading') }}</span>
+            <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
                 {{ __('rating.admin.heading') }}
             </h1>
-            <p class="text-sm text-charcoal mt-1">
+            <p class="text-sm text-ds-muted">
                 {{ __('rating.admin.subheading') }}
             </p>
         </div>
 
         {{-- Filter Buttons --}}
-        <div class="flex items-center gap-2 bg-fog/40 p-1 rounded-full border border-fog">
+        <div class="flex items-center gap-1 bg-ds-canvas p-1 rounded-full border border-ds-line/80">
             <button
                 type="button"
                 wire:click="setFilter('all')"
-                class="px-4 py-1.5 text-sm font-medium rounded-full transition {{ $filter === 'all' ? 'bg-paper text-obs shadow-sm' : 'text-charcoal hover:text-obs' }}"
+                class="px-4 py-1.5 text-sm font-bold rounded-full transition {{ $filter === 'all' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
             >
                 {{ __('rating.admin.filter_all') }}
             </button>
             <button
                 type="button"
                 wire:click="setFilter('visible')"
-                class="px-4 py-1.5 text-sm font-medium rounded-full transition {{ $filter === 'visible' ? 'bg-paper text-obs shadow-sm' : 'text-charcoal hover:text-obs' }}"
+                class="px-4 py-1.5 text-sm font-bold rounded-full transition {{ $filter === 'visible' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
             >
                 {{ __('rating.admin.filter_visible') }}
             </button>
             <button
                 type="button"
                 wire:click="setFilter('hidden')"
-                class="px-4 py-1.5 text-sm font-medium rounded-full transition {{ $filter === 'hidden' ? 'bg-paper text-obs shadow-sm' : 'text-charcoal hover:text-obs' }}"
+                class="px-4 py-1.5 text-sm font-bold rounded-full transition {{ $filter === 'hidden' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
             >
                 {{ __('rating.admin.filter_hidden') }}
             </button>
@@ -36,79 +37,77 @@
     </div>
 
     @if ($feedbackMessage)
-        <x-ui.alert variant="success" :message="$feedbackMessage" />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $feedbackMessage }}
+        </div>
     @endif
 
     @if ($errorMessage)
-        <x-ui.alert variant="danger" :message="$errorMessage" />
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $errorMessage }}
+        </div>
     @endif
 
     @if ($ratings->isEmpty())
-        <x-ui.card class="p-12 text-center">
-            <x-ui.empty-state
-                icon="chat-bubble-bottom-center-text"
-                :title="__('rating.admin.empty')"
-                description=""
-            />
-        </x-ui.card>
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-12 text-center">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                <i aria-hidden="true" class="fa-solid fa-comments"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('rating.admin.empty') }}</h3>
+        </div>
     @else
         <div class="space-y-4">
             @foreach ($ratings as $rating)
-                <x-ui.card class="p-6">
+                <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div class="space-y-2 flex-1">
                             <div class="flex flex-wrap items-center gap-3">
                                 {{-- Score badge --}}
-                                <div class="flex items-center gap-1 text-warning bg-linen/50 px-3 py-1 rounded-full border border-fog">
-                                    <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                                    </svg>
-                                    <span class="font-bold text-sm text-obs">{{ $rating->score }} / 5</span>
+                                <div class="flex items-center gap-1 bg-ds-yellow-soft px-3 py-1 rounded-full">
+                                    <i aria-hidden="true" class="fa-solid fa-star text-ds-yellow-deep text-sm"></i>
+                                    <span class="font-extrabold text-sm text-ds-ink">{{ $rating->score }} / 5</span>
                                 </div>
 
                                 {{-- Status chip --}}
                                 @if ($rating->is_hidden)
-                                    <x-ui.status-chip
-                                        :label="__('rating.admin.status_hidden')"
-                                        color="danger"
-                                    />
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-ds-red-soft text-ds-red-ink">
+                                        {{ __('rating.admin.status_hidden') }}
+                                    </span>
                                 @else
-                                    <x-ui.status-chip
-                                        :label="__('rating.admin.status_visible')"
-                                        color="success"
-                                    />
+                                    <span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-ds-green-soft text-ds-green-ink">
+                                        {{ __('rating.admin.status_visible') }}
+                                    </span>
                                 @endif
 
-                                <span class="text-xs text-muted">
-                                    {{ $rating->created_at?->format('d M Y, H:i') }} WIB
+                                <span class="text-xs text-ds-muted">
+                                    {{ $rating->created_at?->translatedFormat('d M Y, H:i') }} WIB
                                 </span>
                             </div>
 
-                            <div class="text-sm text-charcoal">
-                                <span class="font-medium text-obs">{{ __('rating.admin.inspector') }}:</span>
+                            <div class="text-sm text-ds-muted">
+                                <span class="font-bold text-ds-ink">{{ __('rating.admin.inspector') }}:</span>
                                 {{ $rating->inspector?->name ?? '-' }}
-                                <span class="mx-2 text-fog">•</span>
-                                <span class="font-medium text-obs">{{ __('rating.admin.buyer') }}:</span>
+                                <span class="mx-2 text-ds-line">•</span>
+                                <span class="font-bold text-ds-ink">{{ __('rating.admin.buyer') }}:</span>
                                 {{ $rating->buyer?->name ?? '-' }}
                             </div>
 
                             @if ($rating->comment)
-                                <p class="text-sm text-charcoal bg-paper/60 p-3 rounded-lg border border-fog italic whitespace-pre-wrap">
+                                <p class="text-sm text-ds-ink bg-ds-canvas/60 p-3 rounded-xl border border-ds-line/60 italic whitespace-pre-wrap">
                                     "{{ $rating->comment }}"
                                 </p>
                             @endif
                         </div>
 
                         {{-- Moderation action button --}}
-                        <div class="flex items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-fog">
+                        <div class="flex items-center gap-2 pt-2 md:pt-0 border-t md:border-t-0 border-ds-line/60">
                             @if ($rating->is_hidden)
-                                <x-ui.button
+                                <button
                                     type="button"
-                                    variant="secondary"
                                     wire:click="unhide('{{ $rating->id }}')"
                                     wire:loading.attr="disabled"
                                     wire:target="unhide('{{ $rating->id }}')"
-                                    class="w-full md:w-auto"
+                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                                 >
                                     <span wire:loading.remove wire:target="unhide('{{ $rating->id }}')">
                                         {{ __('rating.admin.unhide') }}
@@ -116,15 +115,14 @@
                                     <span wire:loading wire:target="unhide('{{ $rating->id }}')">
                                         ...
                                     </span>
-                                </x-ui.button>
+                                </button>
                             @else
-                                <x-ui.button
+                                <button
                                     type="button"
-                                    variant="danger"
                                     wire:click="hide('{{ $rating->id }}')"
                                     wire:loading.attr="disabled"
                                     wire:target="hide('{{ $rating->id }}')"
-                                    class="w-full md:w-auto"
+                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                                 >
                                     <span wire:loading.remove wire:target="hide('{{ $rating->id }}')">
                                         {{ __('rating.admin.hide') }}
@@ -132,11 +130,11 @@
                                     <span wire:loading wire:target="hide('{{ $rating->id }}')">
                                         ...
                                     </span>
-                                </x-ui.button>
+                                </button>
                             @endif
                         </div>
                     </div>
-                </x-ui.card>
+                </div>
             @endforeach
 
             <div class="pt-4">
