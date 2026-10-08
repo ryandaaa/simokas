@@ -49,7 +49,7 @@ use Illuminate\Support\Str;
 
 final class DemoSeeder extends Seeder
 {
-    public const string DEMO_PASSWORD = 'password123';
+    public const string DEMO_PASSWORD = 'Password123!';
 
     public function run(): void
     {
@@ -1058,9 +1058,9 @@ final class DemoSeeder extends Seeder
     private function createListingPhotos(Listing $listing): void
     {
         $colors = [
-            [22, 51, 0],   // Forest
-            [11, 76, 114], // Signal blue
-            [69, 71, 69],  // Charcoal
+            [30, 41, 59],    // Slate-800 netral untuk cover utama
+            [71, 85, 105],   // Slate-600 netral
+            [100, 116, 139], // Slate-500 netral
         ];
 
         for ($i = 0; $i < 3; $i++) {
@@ -1101,7 +1101,7 @@ final class DemoSeeder extends Seeder
                 text: $caption,
                 width: 600,
                 height: 450,
-                rgb: [30, 45, 60]
+                rgb: [51, 65, 85]
             );
 
             $path = "results/{$result->id}/inspect_{$item->id}_{$index}.jpg";
@@ -1124,7 +1124,7 @@ final class DemoSeeder extends Seeder
             text: "Dokumen {$type->value} - {$user->name}",
             width: 400,
             height: 300,
-            rgb: [40, 40, 40]
+            rgb: [71, 85, 105]
         );
 
         $path = "inspectors/{$user->id}/{$type->value}.jpg";
@@ -1151,8 +1151,8 @@ final class DemoSeeder extends Seeder
         $fg = imagecolorallocate($img, 255, 255, 255);
         imagefilledrectangle($img, 0, 0, $width, $height, $bg);
 
-        // Garis bingkai aksen
-        $border = imagecolorallocate($img, 159, 232, 112); // lime accent
+        // Garis bingkai aksen netral
+        $border = imagecolorallocate($img, 203, 213, 225); // slate-300
         imagerectangle($img, 4, 4, $width - 5, $height - 5, $border);
 
         $font = 5;

@@ -166,8 +166,13 @@ it('does not run DemoSeeder in production environment', function (): void {
 });
 
 it('does not run DemoSeeder when SEED_DEMO is false', function (): void {
+    // Timpa ketiga sumber env (putenv, $_ENV, $_SERVER) karena .env dapat
+    // memuat SEED_DEMO=true ke $_SERVER yang menutupi dua sumber lainnya.
+    $originalServer = $_SERVER['SEED_DEMO'] ?? null;
+
     putenv('SEED_DEMO=false');
     $_ENV['SEED_DEMO'] = 'false';
+    $_SERVER['SEED_DEMO'] = 'false';
 
     try {
         seed(DatabaseSeeder::class);
@@ -177,6 +182,12 @@ it('does not run DemoSeeder when SEED_DEMO is false', function (): void {
     } finally {
         putenv('SEED_DEMO');
         unset($_ENV['SEED_DEMO']);
+
+        if ($originalServer === null) {
+            unset($_SERVER['SEED_DEMO']);
+        } else {
+            $_SERVER['SEED_DEMO'] = $originalServer;
+        }
     }
 });
 

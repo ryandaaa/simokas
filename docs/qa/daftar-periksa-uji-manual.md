@@ -7,7 +7,7 @@ Dokumen ini adalah daftar periksa untuk QA-P0. Pengujian dilakukan oleh manusia 
 | No | Persiapan | Hasil yang diharapkan | Sumber | Lulus? | Catatan |
 | --- | --- | --- | --- | :---: | --- |
 | 1 | Catat alamat aplikasi yang akan diuji sebelum mulai. | Alamat aplikasi tersedia. Jika belum ditetapkan, tulis `[perlu dikonfirmasi]`. | QA-P0 | [ ] | |
-| 2 | Siapkan akun pembeli/penjual, inspektor terverifikasi, inspektor menunggu verifikasi, dan admin dari `docs/DEMO.md`. | Akun demo tersedia untuk setiap role. Saat ini `docs/DEMO.md` belum ada: `[perlu dikonfirmasi]`. | PRD 23.4 | [ ] | |
+| 2 | Siapkan akun pembeli/penjual, inspektor terverifikasi, inspektor menunggu verifikasi, dan admin dari `docs/DEMO.md` (kata sandi demo: `Password123!`). | Akun demo tersedia untuk setiap role. | PRD 23.4 | [ ] | |
 | 3 | Siapkan Chrome Android. | Alur utama dapat dijalankan tanpa bantuan developer. | PRD 23.3, 28.8 | [ ] | |
 | 4 | Siapkan Safari iPhone. | Alur utama dapat dijalankan tanpa bantuan developer. | PRD 23.3, 28.8 | [ ] | |
 | 5 | Siapkan Chrome desktop. | Alur utama dapat dijalankan tanpa bantuan developer. | Issue #33, PRD 23.3 | [ ] | |
@@ -269,6 +269,6 @@ Jangan melaporkan hal berikut sebagai bug hanya karena berbeda dari sistem pemba
 | No | Hal yang perlu dikonfirmasi | Mengapa |
 | --- | --- | --- |
 | 1 | Alamat aplikasi yang menjadi target pengujian. | Tidak ada alamat aplikasi pada dokumen sumber yang dibaca. |
-| 2 | Akun demo untuk tiap role. | `docs/DEMO.md` belum tersedia di repo. |
+| 2 | Kredensial demo dan `SEED_DEMO=true` sebelum seed (lihat `docs/DEMO.md`). | `docs/DEMO.md` tersedia; kata sandi demo `Password123!` sama dengan `DemoSeeder::DEMO_PASSWORD`. |
 | 3 | Nilai dan cara pengujian data demo yang belum tersedia pada environment. | PRD hanya menentukan bentuk data demo, bukan kredensial aktual. |
 | 4 | Bagian aturan yang masih berstatus [OPEN]/[USULAN] jika hasil manual berbeda. | Penguji tidak boleh mengambil keputusan bisnis sendiri. |

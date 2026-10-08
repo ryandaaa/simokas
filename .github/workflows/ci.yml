@@ -94,3 +94,7 @@ jobs:
       - name: Tests (Pest) with coverage threshold
         if: steps.detect.outputs.laravel == 'true'
         run: ./vendor/bin/pest --parallel --coverage --min=80
+
+      - name: Critical money-path specs (Support Money, ledger, status enums)
+        if: steps.detect.outputs.laravel == 'true'
+        run: ./vendor/bin/pest tests/Unit/Support/MoneyTest.php app/Domains/Payment/Tests app/Domains/Inspection/Tests/Unit/JobStatusTest.php app/Domains/Transaction/Tests/Unit/TransactionStatusTest.php app/Domains/Listing/Tests/Unit/ListingStatusTest.php app/Domains/Payment/Tests/Unit/PaymentStatusTest.php --parallel

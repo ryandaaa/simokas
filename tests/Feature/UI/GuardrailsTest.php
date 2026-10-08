@@ -113,8 +113,11 @@ it('ensures app.css declares satoshi font-face locally without external urls', f
     foreach ($matches[1] as $fontUrl) {
         $resolvedPath = realpath(resource_path('css/'.$fontUrl));
 
+        $normalizedResolved = $resolvedPath === false ? false : str_replace('\\', '/', $resolvedPath);
+        $normalizedBase = str_replace('\\', '/', (string) resource_path('fonts/satoshi'));
+
         expect($resolvedPath)->not->toBeFalse("Berkas font '{$fontUrl}' tidak ditemukan di disk.")
-            ->and($resolvedPath)->toStartWith(resource_path('fonts/satoshi'));
+            ->and($normalizedResolved)->toStartWith($normalizedBase);
     }
 });
 

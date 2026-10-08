@@ -10,13 +10,13 @@ Seluruh akun demo telah diisi dengan data awal yang realistis di Kota Pekanbaru.
 
 | Peran (Role) | Nama Pengguna | Alamat Email | Kata Sandi (Password) | Keterangan |
 |---|---|---|---|---|
-| **Admin** | Administrator Utama | `admin@demo.id` | `Password123!` | Akses panel moderasi, antrean inspeksi, audit log, moderasi rating |
-| **Penjual (User)** | Budi Santoso | `penjual@demo.id` | `Password123!` | Pemilik listing unit aktif, penawaran transaksi, dan penjual terverifikasi |
-| **Pembeli (User)** | Siti Rahma | `pembeli@demo.id` | `Password123!` | Pembeli unit, pemohon inspeksi, pembayar escrow, pemberi rating |
-| **User Tambahan** | Hendra Wijaya | `user3@demo.id` | `Password123!` | Pengguna alternatif untuk simulasi multi-user |
-| **Inspektor 1** | Agus Kurniawan | `inspektor@demo.id` | `Password123!` | Inspektor tersertifikasi (Mobil & Motor), status Approved, rating aktif |
-| **Inspektor 2** | Doni Siregar | `inspektor2@demo.id` | `Password123!` | Inspektor mobil tersertifikasi, status Approved |
-| **Inspektor Pending** | Eko Prasetyo | `inspektor_pending@demo.id` | `Password123!` | Inspektor baru menunggu verifikasi berkas KTP & Portofolio oleh admin |
+| **Admin** | Admin Demo Pekanbaru | `admin@demo.id` | `Password123!` | Akses panel moderasi, antrean inspeksi, audit log, moderasi rating |
+| **Penjual (User)** | Budi Hartono (Penjual Demo) | `penjual@demo.id` | `Password123!` | Pemilik listing unit aktif, penawaran transaksi, dan penjual terverifikasi |
+| **Pembeli (User)** | Siti Rahma (Pembeli Demo) | `pembeli@demo.id` | `Password123!` | Pembeli unit, pemohon inspeksi, pembayar escrow, pemberi rating |
+| **User Tambahan** | Rian Pratama (Pengguna Demo) | `user3@demo.id` | `Password123!` | Pengguna alternatif untuk simulasi multi-user |
+| **Inspektor 1** | Ahmad Syahputra (Inspektor Mobil & Motor) | `inspektor@demo.id` | `Password123!` | Inspektor tersertifikasi (Mobil & Motor), status Approved, rating aktif |
+| **Inspektor 2** | Doni Saputra (Inspektor Mobil) | `inspektor2@demo.id` | `Password123!` | Inspektor mobil tersertifikasi, status Approved |
+| **Inspektor Pending** | Eko Prasetyo (Menunggu Verifikasi) | `inspektor_pending@demo.id` | `Password123!` | Inspektor baru menunggu verifikasi berkas KTP & Portofolio oleh admin |
 
 > **PERINGATAN KEAMANAN:**
 > Nonaktifkan atau ganti password akun demo setelah lomba selesai (`SEED_DEMO=false` pada lingkungan produksi).

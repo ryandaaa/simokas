@@ -33,10 +33,10 @@
     {{-- Info Hasil --}}
     <div class="text-sm text-slate">
         @if ($totalItems !== null)
-            <span>{{ __('ui.pagination.showing', ['default' => 'Menampilkan']) }}</span>
+            <span>{{ __('pagination.showing') }}</span>
             <span class="font-bold text-obs">{{ $totalItems }}</span>
-            <span>{{ __('ui.pagination.results', ['default' => 'hasil']) }}</span>
-            <span class="text-pebble">({{ __('ui.stepper.step', ['step' => "{$cur} / {$totalP}"]) }})</span>
+            <span>{{ __('pagination.results') }}</span>
+            <span class="text-pebble">(Halaman <span class="font-bold text-obs">{{ $cur }}</span> dari <span class="font-bold text-obs">{{ $totalP }}</span>)</span>
         @else
             <span>Halaman <span class="font-bold text-obs">{{ $cur }}</span> dari <span class="font-bold text-obs">{{ $totalP }}</span></span>
         @endif
@@ -50,7 +50,7 @@
                      :disabled="!$hasPrev"
                      class="min-h-[44px] px-3.5"
                      aria-label="Halaman Sebelumnya">
-            <span>{{ __('pagination.previous') }}</span>
+            <span>{!! __('pagination.previous') !!}</span>
         </x-ui.button>
 
         <x-ui.button :href="$hasNext ? $nextUrl : null"
@@ -59,7 +59,7 @@
                      :disabled="!$hasNext"
                      class="min-h-[44px] px-3.5"
                      aria-label="Halaman Berikutnya">
-            <span>{{ __('pagination.next') }}</span>
+            <span>{!! __('pagination.next') !!}</span>
         </x-ui.button>
     </div>
 </nav>

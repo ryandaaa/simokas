@@ -1,6 +1,6 @@
 # Audit Kriteria Penerimaan PRD (Bagian 28)
 
-Dokumen ini merupakan hasil audit kriteria penerimaan produk SIMOKAS (PRD Bagian 28) terhadap kode implementasi (`app/`, `resources/`, `routes/`, `database/`) dan pengujian otomatis (`tests/`, `app/Domains/*/Tests/`). Audit dilakukan per 6 Oktober 2026.
+Dokumen ini merupakan hasil audit kriteria penerimaan produk SIMOKAS (PRD Bagian 28) terhadap kode implementasi (`app/`, `resources/`, `routes/`, `database/`) dan pengujian otomatis (`tests/`, `app/Domains/*/Tests/`). Audit awal per 6 Oktober 2026, pemutakhiran per 7 Oktober 2026.
 
 ---
 
@@ -8,40 +8,32 @@ Dokumen ini merupakan hasil audit kriteria penerimaan produk SIMOKAS (PRD Bagian
 
 | Status | Jumlah Butir | Keterangan |
 | --- | :---: | --- |
-| **TERBUKTI** | **48** | Memiliki test otomatis yang menguji persis perilaku tersebut dan lulus. (46 saat audit awal, ditambah butir 49 dan 50 setelah RTG-1 ter-merge.) |
-| **TERPENUHI-KODE** | **2** | Logika bisnis terpenuhi di kode, namun terdapat celah spesifik pada tampilan/UI atau perilaku tepi. |
+| **TERBUKTI** | **50** | Memiliki test otomatis yang menguji persis perilaku tersebut dan lulus. (46 saat audit awal, +2 butir rating setelah RTG-1, +1 tombol inspeksi dan +1 notifikasi real-time pada pemutakhiran 7 Oktober.) |
+| **TERPENUHI-KODE** | **0** | Seluruh celah UI/perilaku tepi dari audit awal sudah diperbaiki di kode. |
 | **MANUAL** | **2** | Bergantung pada pengujian lingkungan fisik/perangkat nyata atau audit eksternal (Lighthouse, multi-browser). |
-| **BELUM** | **0** | Dua butir yang semula BELUM (butir 49 dan 50, rating) sudah selesai lewat RTG-1 dan lulus test RTG-T01 sampai T08; PRD 28.9 sudah dicentang. |
+| **BELUM** | **0** | Tidak ada. |
 | **Total** | **52** | Seluruh kriteria penerimaan Bagian 28 PRD v1.6. |
 
 ---
 
 ## 2. Daftar Celah dan Usulan Perbaikan
 
-Berikut adalah daftar seluruh butir berstatus **TERPENUHI-KODE** dan **BELUM** beserta analisis celah, usulan perbaikan satu kalimat, dan perkiraan ukuran bobot (S/M/L):
+Berikut adalah daftar seluruh butir yang pernah berstatus **TERPENUHI-KODE** dan **BELUM** beserta status penyelesaiannya per 7 Oktober 2026:
 
-1. **Butir 13 (PRD 28.3) — Tombol Ajukan Inspeksi pada Listing Aktif dengan Job Requested**
-   - **Status:** TERPENUHI-KODE
-   - **Celah:** Pada halaman detail katalog publik (`ShowListingController:83`), tombol "Ajukan Inspeksi" ditampilkan hanya dengan memeriksa `$detail->status === 'active'`. Jika sebuah listing memiliki job inspeksi yang sedang berstatus `requested` (menunggu pembayaran pemohon pertama dalam batas 30 menit), status listing di basis data masih `active` sehingga tombol tetap tampak bagi pengunjung lain. Walaupun aksi submit di backend akan menolak dengan `409 ListingHasActiveJobException` (`JOB-E2`), tombol seharusnya sudah dinonaktifkan/disembunyikan sejak di halaman katalog.
-   - **Usulan Perbaikan:** Tambahkan pengecekan `hasActiveJob($listing->id)` pada `ShowListingDetail` / `ShowListingController` agar tombol dinonaktifkan atau disembunyikan bila terdapat job berstatus `requested`.
+1. **Butir 13 (PRD 28.3) — Tombol Ajukan Inspeksi pada Listing Aktif dengan Job Requested — SELESAI**
+   - **Perbaikan:** `ShowListingController` kini memeriksa `hasActiveJob()` (`CatalogDetailInspectionJobTest.php`), tombol disembunyikan dan diganti pemberitahuan saat ada job aktif. Status menjadi **TERBUKTI**.
    - **Perkiraan Ukuran:** **S** (Small)
 
-2. **Butir 51 (PRD 28.9) — Pembaruan Lonceng Notifikasi Real-time Tanpa Reload**
-   - **Status:** TERPENUHI-KODE
-   - **Celah:** Penyimpanan notifikasi dari seluruh kejadian sistem (13.15) dan fitur tandai dibaca sudah terbukti dan berfungsi penuh. Namun, siaran real-time via Pusher ditunda (`NTF-T06`), dan komponen lonceng `NotificationBell` belum dipasangi direktif polling Livewire (`wire:poll`), sehingga jumlah notifikasi belum bertambah secara otomatis tanpa memuat ulang halaman.
-   - **Usulan Perbaikan:** Pasang direktif polling periodik (misal `wire:poll.10s`) pada komponen Blade `NotificationBell` sebagai mekanisme fallback real-time.
+2. **Butir 51 (PRD 28.9) — Pembaruan Lonceng Notifikasi Real-time Tanpa Reload — SELESAI**
+   - **Perbaikan:** siaran `NotificationCreated` ke `private-user.{id}` (`NTF-T06`), klien Echo di `notification-bell` dengan polling 15 detik sebagai cadangan. Aktif penuh bila kredensial Pusher diisi (`BROADCAST_CONNECTION=pusher`). Status menjadi **TERBUKTI**.
    - **Perkiraan Ukuran:** **S** (Small)
 
-3. **Butir 49 (PRD 28.9) — Hak Rating Pembeli Transaksi Selesai (1x per Transaksi)**
-   - **Status:** BELUM
-   - **Celah:** Fitur ulasan/rating pembeli terhadap inspektor untuk transaksi selesai belum diimplementasikan di kode (folder `app/Domains/Rating` saat ini masih berupa kerangka kerja/stub, sedang dikerjakan secara terpisah di Jalur A).
-   - **Usulan Perbaikan:** Lengkapi implementasi domain Rating yang mencakup model `Rating`, migration, aksi simpan rating, policy otorisasi transaksi selesai pembeli, dan komponen form Livewire.
+3. **Butir 49 (PRD 28.9) — Hak Rating Pembeli Transaksi Selesai (1x per Transaksi) — SELESAI via RTG-1**
+   - **Status:** **TERBUKTI** (`SubmitRatingActionTest`, `RatingLivewireTest`, `RTG-T01–T08`).
    - **Perkiraan Ukuran:** **M** (Medium)
 
-4. **Butir 50 (PRD 28.9) — Rating Rata-rata Inspektor pada Hasil Inspeksi dan Dashboard**
-   - **Status:** BELUM
-   - **Celah:** Agregasi nilai rating inspektor belum dihitung dan belum ditampilkan secara dinamis pada kartu profil hasil inspeksi (`results.show`) maupun dashboard inspektor (`dashboard`), menunggu ketersediaan data ulasan dari domain Rating.
-   - **Usulan Perbaikan:** Tambahkan kalkulasi rata-rata ulasan pada profil inspektor dan tampilkan bintang/nilai rating pada tampilan hasil inspeksi serta dashboard.
+4. **Butir 50 (PRD 28.9) — Rating Rata-rata Inspektor pada Hasil Inspeksi dan Dashboard — SELESAI via RTG-1**
+   - **Status:** **TERBUKTI** (agregasi `RecalculateInspectorRating`, tampil di hasil dan dashboard).
    - **Perkiraan Ukuran:** **S** (Small)
 
 ---
@@ -62,7 +54,7 @@ Berikut adalah daftar seluruh butir berstatus **TERPENUHI-KODE** dan **BELUM** b
 | 10 | Pin di luar Pekanbaru ditolak | **TERBUKTI** | `app/Domains/Listing/Tests/Feature/ListingLocationTest.php:63` (`LST-T03 rejects a listing pin outside Pekanbaru on the server`), `app/Domains/Listing/Tests/Unit/WithinPekanbaruTest.php` | Validasi batas koordinat batas geografis Pekanbaru teruji dengan dataset titik luar. |
 | 11 | Respons publik tidak memuat koordinat persis, alamat lengkap, maupun nomor rangka | **TERBUKTI** | `app/Domains/Listing/Tests/Feature/ListingLocationTest.php:185` (`LST-T11 never leaks exact location values...`), `app/Domains/Catalog/Tests/Feature/CatalogDetailTest.php:36` (`CAT-T06 keeps exact data out...`) | Helper `ListingPrivacyHelper` memverifikasi ketiadaan koordinat riil, alamat persis, dan nomor rangka pada JSON & HTML publik. |
 | 12 | Daftar barang dapat disaring dan diurutkan sesuai Bagian 13.2 | **TERBUKTI** | `app/Domains/Catalog/Tests/Feature/CatalogBrowseTest.php:42` (`CAT-T02`), `app/Domains/Catalog/Tests/Feature/CatalogBrowseTest.php:91` (`CAT-T03`) | Filter jenis kendaraan, merek, harga, tahun, area, status inspeksi, dan opsi pengurutan teruji. |
-| 13 | Tombol Ajukan Inspeksi hanya muncul pada listing Aktif tanpa job aktif | **TERPENUHI-KODE** | `app/Domains/Catalog/Http/Controllers/ShowListingController.php:83`, `app/Domains/Inspection/Actions/RequestInspection.php:51`, `tests/Feature/Acceptance/AcceptanceCriteria28Test.php` (`PRD-28.3-Item-13`) | Tombol tersembunyi pada status `in_inspection`, `in_transaction`, `sold`. Celah: pada status `active` dengan job `requested` tombol masih tampil di katalog (namun submit ditolak backend). |
+| 13 | Tombol Ajukan Inspeksi hanya muncul pada listing Aktif tanpa job aktif | **TERBUKTI** | `app/Domains/Catalog/Tests/Feature/CatalogDetailInspectionJobTest.php:16` (tombol tampil tanpa job aktif), `:45` (tombol disembunyikan + pemberitahuan saat job aktif), `:95` (tombol pulih saat job final) | Controller memeriksa `hasActiveJob()`; backend tetap menolak `409` bila lolos. |
 | 14 | Pembayaran simulasi sukses mengubah job menjadi Dibayar dan listing menjadi Dalam Inspeksi | **TERBUKTI** | `app/Domains/Inspection/Tests/Feature/InspectionPaymentFlowTest.php:21` (`executes full end-to-end flow...`), `tests/Feature/Journeys/InspectionJourneyJ1Test.php` | Alur lintas domain: `ProcessPaymentResult` -> `PaymentSucceeded` -> job `paid` -> listing `in_inspection` teruji. |
 | 15 | Klik ganda pada Bayar tidak menghasilkan tagihan ganda | **TERBUKTI** | `app/Domains/Payment/Tests/Unit/CreateBillActionTest.php:43` (`PAY-T03`), `app/Domains/Payment/Tests/Feature/PaymentSimulationTest.php:49` (`PAY-T03`), `app/Domains/Inspection/Tests/Unit/RequestInspectionActionTest.php:99` | Idempotency key mencegah pembuatan tagihan duplikat dan mengembalikan record eksisting. |
 | 16 | Pembayaran gagal tidak membuat job tampil di daftar inspektor | **TERBUKTI** | `app/Domains/Inspection/Tests/Feature/InspectionPaymentFlowTest.php:59` (`does not transition job... (PAY-R10)`), `app/Domains/Inspection/Tests/Unit/BrowseOpenJobsActionTest.php` | Job gagal bayar tetap berstatus `requested` dan tidak masuk ke filter `paid` pada daftar open jobs. |
@@ -95,10 +87,10 @@ Berikut adalah daftar seluruh butir berstatus **TERPENUHI-KODE** dan **BELUM** b
 | 43 | Penjual melihat rincian potongan sebelum menyetujui pembelian | **TERBUKTI** | `app/Domains/Transaction/Tests/Feature/TransactionDetailPageLivewireTest.php:39` (`TRX-T04 shows the seller breakdown with commission`), `app/Domains/Transaction/Tests/Unit/PurchaseBreakdownTest.php` | Komponen detail transaksi menampilkan rincian harga jual, potongan komisi inspektor (bila ada), dan penerimaan bersih penjual. |
 | 44 | Komisi inspektor 3% dari harga transaksi dihitung benar, dipotong platform sesuai aturan yang disepakati, dan tercatat di ledger | **TERBUKTI** | `app/Domains/Transaction/Tests/Unit/ConfirmHandoverTest.php:51` (`TRX-T09 completes the handover and posts the commission ledger`), `app/Domains/Transaction/Tests/Unit/PurchaseBreakdownTest.php:22` (`TRX-T16`) | Perhitungan potongan 3% dari harga, pembagian 10% platform fee, serta posting kredit ledger inspektor teruji presisi. |
 | 45 | Transaksi pada listing tanpa hasil inspeksi tidak menghasilkan komisi inspektor | **TERBUKTI** | `app/Domains/Transaction/Tests/Unit/SubmitOfferActionTest.php:25` (`TRX-T01`), `app/Domains/Transaction/Tests/Unit/ConfirmHandoverTest.php:85` (`TRX-T09b`), `app/Domains/Transaction/Tests/Feature/TransactionDetailPageLivewireTest.php:64` (`TRX-T04 shows full price...`) | Nilai `commission_pct` dan `inspector_id` bernilai null; penjual menerima 100% harga tanpa potongan komisi inspeksi di ledger. |
-| 46 | Pesan terkirim muncul pada lawan bicara secara real-time (target kurang dari 2 detik) tanpa memuat ulang halaman, dengan penanda belum dibaca | **TERBUKTI** | `app/Domains/Chat/Tests/Unit/SendMessageTest.php:24` (`CHT-T02`), `app/Domains/Chat/Tests/Feature/ConversationLivewireTest.php:38` (`CHT-T11`), `tests/Feature/Acceptance/AcceptanceCriteria28Test.php` (`PRD-28.9-Item-46`) | Pengiriman pesan instan, pengambilan via polling, dan indikator unread badge teruji otomatis. Latensi sub-2-detik koneksi Pusher dipantau via manual test #98/#104. |
-| 47 | Pengguna hanya menerima pesan dari percakapan yang diikutinya | **TERBUKTI** | `app/Domains/Chat/Tests/Unit/ConversationPolicyTest.php:16` & `38` (`CHT-T03`), `app/Domains/Chat/Tests/Feature/ConversationHttpTest.php:40` | Kebijakan otorisasi membatasi pembacaan, pengiriman, dan langganan kanal hanya untuk anggota percakapan sah. |
+| 46 | Pesan terkirim muncul pada lawan bicara secara real-time (target kurang dari 2 detik) tanpa memuat ulang halaman, dengan penanda belum dibaca | **TERBUKTI** | `app/Domains/Chat/Tests/Unit/SendMessageTest.php:24` (`CHT-T02`), `app/Domains/Chat/Tests/Feature/ConversationLivewireTest.php:38` (`CHT-T11`), `app/Domains/Chat/Tests/Feature/ConversationHttpTest.php` (`CHT-T03` otorisasi kanal broadcast), `resources/js/echo.js` + `conversation-detail.blade.php` (langganan Echo `private-conversation.{id}` dengan polling 3 detik sebagai cadangan), `tests/Feature/Acceptance/AcceptanceCriteria28Test.php` (`PRD-28.9-Item-46`) | Klien Echo aktif bila kredensial Pusher diisi; tanpa itu polling mengambil alih. Latensi sub-2-detik koneksi Pusher dipantau via manual test #98/#104. |
+| 47 | Pengguna hanya menerima pesan dari percakapan yang diikutinya | **TERBUKTI** | `app/Domains/Chat/Tests/Unit/ConversationPolicyTest.php:16` & `38` (`CHT-T03`), `app/Domains/Chat/Tests/Feature/ConversationHttpTest.php:40`, otorisasi kanal broadcast `routes/channels.php` | Kebijakan otorisasi membatasi pembacaan, pengiriman, dan langganan kanal hanya untuk anggota percakapan sah. |
 | 48 | Setelah koneksi terputus dan pulih, pesan yang terlewat muncul | **TERBUKTI** | `app/Domains/Chat/Tests/Unit/GetMissedMessagesTest.php:19` (`CHT-T07 retrieves missed messages created after last known message (CHT-E1)`) | Aksi `GetMissedMessages` mengambil secara akurat daftar pesan yang dibuat setelah ID pesan terakhir klien. |
-| 49 | Hanya pembeli dari transaksi selesai yang dapat memberi rating, satu kali per transaksi | **BELUM** | `app/Domains/Rating/` | Fitur Rating belum diimplementasikan di kode (folder masih berupa stub/gitkeep, dikerjakan terpisah di Jalur A). |
-| 50 | Rating rata-rata inspektor diperbarui dan tampil pada hasil inspeksi dan dashboard | **BELUM** | `app/Domains/Rating/` | Bergantung pada ketersediaan implementasi domain Rating (dikerjakan di Jalur A). |
-| 51 | Notifikasi untuk kejadian pada 13.15 muncul real-time dan dapat ditandai dibaca | **TERPENUHI-KODE** | `app/Domains/Notification/Tests/Feature/NotificationListenerTest.php:47` (`NTF-T01`), `app/Domains/Notification/Tests/Feature/NotificationIndexTest.php:37` & `64` (`NTF-T04`), `app/Domains/Notification/Tests/Feature/NotificationBellTest.php:17` (`NTF-T05`) | Penyimpanan notifikasi dan aksi tandai dibaca teruji lengkap. Celah: pembaruan real-time pada lonceng belum terhubung Pusher/polling tanpa reload. |
+| 49 | Hanya pembeli dari transaksi selesai yang dapat memberi rating, satu kali per transaksi | **TERBUKTI** | `app/Domains/Rating/Tests/Feature/SubmitRatingActionTest.php` (`RTG-T01`), `app/Domains/Rating/Tests/Feature/RatingLivewireTest.php` (`RTG-T06`), `tests/Feature/Journeys/TransactionJourneyJ3Test.php` (alur penuh sampai rating) | Satu rating per transaksi, hanya pembeli transaksi `completed`. |
+| 50 | Rating rata-rata inspektor diperbarui dan tampil pada hasil inspeksi dan dashboard | **TERBUKTI** | `app/Domains/Rating/Actions/RecalculateInspectorRating.php`, `app/Domains/Rating/Tests/Feature/RatingLivewireTest.php` (`RTG-T07`), `tests/Feature/Journeys/TransactionJourneyJ3Test.php` (avg 5.0, count 1) | Agregasi `rating_avg`/`rating_count` dihitung ulang dengan kunci baris dan tampil di hasil serta dashboard. |
+| 51 | Notifikasi untuk kejadian pada 13.15 muncul real-time dan dapat ditandai dibaca | **TERBUKTI** | `app/Domains/Notification/Tests/Feature/NotificationListenerTest.php` (`NTF-T01` semua pemicu incl. transaksi + `InspectorSubmitted`; `NTF-T06` siaran `NotificationCreated` ke `private-user.{id}` + otorisasi kanal), `app/Domains/Notification/Tests/Feature/NotificationIndexTest.php:37` & `64` (`NTF-T04`), `app/Domains/Notification/Tests/Feature/NotificationBellTest.php:17` (`NTF-T05`) | Siaran aktif bila kredensial Pusher diisi; tanpa itu lonceng memakai `wire:poll.15s`. |
 | 52 | Halaman kebijakan privasi dan syarat ketentuan dapat diakses, dan persetujuan dicatat saat registrasi | **TERBUKTI** | `app/Domains/Identity/Tests/Feature/LegalPagesTest.php:17` & `33` & `57` (`AUTH-T17`, `AUTH-T18`), `app/Domains/Identity/Tests/Feature/RegistrationTest.php:17` (`AUTH-T01`) | Halaman publik privasi dan syarat ketentuan dapat dibuka semua peran; pencatatan `accepted_terms_at` saat registrasi teruji. |

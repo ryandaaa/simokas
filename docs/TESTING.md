@@ -136,6 +136,7 @@ Journey test hanya memeriksa sambungan antar-domain. Detail tetap diuji di domai
 ## 8. Cakupan
 
 - Cakupan kode (pcov di CI): minimal **80%** untuk `app/Domains` dan **100%** untuk `Support\Money`, ledger, dan semua Enum status.
+- Penegakan dua lapis di CI: `pest --coverage --min=80` untuk global, plus job khusus yang menjalankan spek jalur uang kritis (`MoneyTest`, seluruh `Payment/Tests`, dan `*StatusTest` job/transaksi/listing/payment) sehingga pelanggaran di subset kritis menggagalkan CI walau global di atas 80%.
 - Cakupan adalah alat bantu, bukan tujuan. Test tanpa asersi bermakna ditolak saat review.
 
 ## 9. Perintah

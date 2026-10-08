@@ -1056,6 +1056,8 @@ Pesan dan notifikasi baru disiarkan lewat Laravel Echo pada **kanal privat** (`p
 
 Endpoint internal Laravel di bawah `/api/v1`. Halaman utama dirender server (Blade + Livewire) dan memakai service/action yang sama dengan endpoint ini, sehingga aturan bisnis hanya ada di satu tempat. **Operasi yang mengubah uang, status job, atau akses data sensitif selalu dijalankan di server** dan dilindungi Policy, agar aturan bisnis tidak dapat dilewati dari browser. Login dan logout ditangani Laravel Breeze (sesi dan CSRF).
 
+> **Adendum 7 Oktober 2026 (keputusan implementasi):** versi lomba memakai **Blade-first** — seluruh alur di tabel 19.1 berjalan lewat halaman Blade/Livewire yang memanggil Action yang sama, dan satu-satunya endpoint REST yang dibuka adalah `POST /api/v1/payments/simulate`. Tabel endpoint di bawah tetap menjadi kontrak bila API REST penuh dibutuhkan (P2/pascahlomba), bukan syarat lulus P0/P1.
+
 Format respons: `{ "data": ..., "error": null }` atau `{ "data": null, "error": { "code": "...", "message": "..." } }`.
 
 ### 19.1 Ringkasan Endpoint

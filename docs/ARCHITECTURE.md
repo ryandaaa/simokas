@@ -148,7 +148,9 @@ Laravel Scheduler dijalankan cron hPanel setiap menit (`php artisan schedule:run
 | Batalkan dan refund job `paid` yang tidak diambil 7 hari | Inspection | Harian |
 | Otomatis selesaikan job `result_submitted` setelah 3 hari | Inspection | Harian |
 | Tandai job "perlu tindakan" bila jadwal belum ditetapkan 48 jam | Inspection | Tiap jam |
-| Kedaluwarsakan penawaran beli | Transaction | Tiap jam |
+| Kedaluwarsakan penawaran beli `offered` 48 jam | Transaction | Tiap menit |
+| Kedaluwarsakan persetujuan `accepted` 24 jam tanpa bayar | Transaction | Tiap menit |
+| Tandai transaksi `paid_held` 7 hari tanpa serah terima | Transaction | Harian |
 
 Antrean memakai driver `database` atau dijalankan sinkron. Proses yang harus terus hidup tidak diandalkan di hosting.
 
