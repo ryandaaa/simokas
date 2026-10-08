@@ -327,6 +327,100 @@
         </nav>
     @endif
 
+    {{-- Widget aksesibilitas (disabilitas): menempel di semua halaman --}}
+    <div x-data="a11yWidget()" x-init="init()" class="fixed bottom-20 md:bottom-6 right-4 z-50 flex flex-col items-end gap-2">
+        <div x-show="open" x-cloak x-transition
+            class="w-64 bg-white rounded-2xl border border-ds-line/80 shadow-xl p-4 space-y-4"
+            role="dialog" aria-label="{{ __('ui.layout.a11y_title') }}">
+            <p class="text-xs font-extrabold text-ds-ink uppercase tracking-wider">{{ __('ui.layout.a11y_title') }}</p>
+
+            <div>
+                <p class="text-xs font-bold text-ds-ink mb-2">{{ __('ui.layout.a11y_font_size') }}: <span x-text="font + '%'"></span></p>
+                <div class="flex items-center gap-2">
+                    <button type="button" @click="changeFont(-10)" :disabled="font <= 90"
+                        class="flex-1 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-40"
+                        aria-label="{{ __('ui.layout.a11y_decrease') }}">A-</button>
+                    <button type="button" @click="changeFont(10)" :disabled="font >= 130"
+                        class="flex-1 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-40"
+                        aria-label="{{ __('ui.layout.a11y_increase') }}">A+</button>
+                </div>
+            </div>
+
+            <button type="button" @click="toggle('contrast')" role="switch" :aria-checked="contrast.toString()"
+                class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all"
+                :class="contrast ? 'bg-ds-blue-soft border-ds-blue text-ds-blue-ink' : 'bg-white border-ds-line text-ds-ink'">
+                <span>{{ __('ui.layout.a11y_high_contrast') }}</span>
+                <span class="w-9 h-5 rounded-full relative transition-colors" :class="contrast ? 'bg-ds-blue' : 'bg-ds-soft'">
+                    <span class="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all" :class="contrast ? 'left-[18px]' : 'left-0.5'"></span>
+                </span>
+            </button>
+
+            <button type="button" @click="toggle('invert')" role="switch" :aria-checked="invert.toString()"
+                class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl border text-xs font-bold transition-all"
+                :class="invert ? 'bg-ds-ink border-ds-ink text-white' : 'bg-white border-ds-line text-ds-ink'">
+                <span>{{ __('ui.layout.a11y_negative') }}</span>
+                <span class="w-9 h-5 rounded-full relative transition-colors" :class="invert ? 'bg-ds-yellow' : 'bg-ds-soft'">
+                    <span class="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all" :class="invert ? 'left-[18px]' : 'left-0.5'"></span>
+                </span>
+            </button>
+
+            <button type="button" @click="reset()"
+                class="w-full py-2 text-xs font-bold text-ds-muted hover:text-ds-ink transition-colors">
+                {{ __('ui.layout.a11y_reset') }}
+            </button>
+        </div>
+
+        <button type="button" @click="open = !open"
+            class="w-12 h-12 rounded-full bg-ds-ink hover:bg-ds-blue text-white flex items-center justify-center shadow-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ds-yellow"
+            aria-label="{{ __('ui.layout.a11y_button') }}" :aria-expanded="open.toString()">
+            <i aria-hidden="true" class="fa-solid fa-universal-access text-xl"></i>
+        </button>
+    </div>
+    <script>
+        function a11yWidget() {
+            return {
+                open: false,
+                font: 100,
+                contrast: false,
+                invert: false,
+                init() {
+                    try {
+                        const saved = JSON.parse(localStorage.getItem('simokas-a11y') || '{}');
+                        if (saved.font) this.font = Math.min(130, Math.max(90, saved.font));
+                        this.contrast = !!saved.contrast;
+                        this.invert = !!saved.invert;
+                    } catch (e) { /* abaikan penyimpanan rusak */ }
+                    this.apply();
+                },
+                apply() {
+                    const root = document.documentElement;
+                    root.style.fontSize = this.font + '%';
+                    root.classList.toggle('a11y-contrast', this.contrast);
+                    root.classList.toggle('a11y-invert', this.invert);
+                    try {
+                        localStorage.setItem('simokas-a11y', JSON.stringify({
+                            font: this.font, contrast: this.contrast, invert: this.invert,
+                        }));
+                    } catch (e) { /* abaikan */ }
+                },
+                changeFont(delta) {
+                    this.font = Math.min(130, Math.max(90, this.font + delta));
+                    this.apply();
+                },
+                toggle(key) {
+                    this[key] = !this[key];
+                    this.apply();
+                },
+                reset() {
+                    this.font = 100;
+                    this.contrast = false;
+                    this.invert = false;
+                    this.apply();
+                },
+            };
+        }
+    </script>
+
     @livewireScripts
 </body>
 </html>

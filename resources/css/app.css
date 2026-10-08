@@ -124,6 +124,18 @@
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
+/* Widget aksesibilitas (disabilitas): kelas dipasang di <html> via Alpine,
+   preferensi tersimpan di localStorage. */
+html.a11y-contrast {
+    --color-ds-muted: #334155;
+    --color-ds-faint: #475569;
+    --color-ds-line: #94A3B8;
+}
+
+html.a11y-invert body {
+    filter: invert(1) hue-rotate(180deg);
+}
+
 [x-cloak] {
     display: none !important;
 }

@@ -281,3 +281,12 @@ it('marks active role navigation link with active styling and aria-current page'
     expect($content)->toContain('aria-current="page"')
         ->and($content)->toContain('bg-ds-blue-soft text-ds-blue-ink font-bold');
 });
+
+it('renders floating accessibility widget on every page', function () {
+    $view = $this->blade('<x-layouts.app title="Uji A11y"><p>Konten</p></x-layouts.app>');
+
+    $view->assertSee(__('ui.layout.a11y_button'));
+    $view->assertSee(__('ui.layout.a11y_title'));
+    $view->assertSee('simokas-a11y', false);
+    $view->assertSee('fa-universal-access', false);
+});
