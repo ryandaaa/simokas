@@ -5,7 +5,7 @@
                 <i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i>
             </div>
 
-            <p class="text-xs font-extrabold text-ds-blue uppercase tracking-wider mb-1">Galat 404</p>
+            <p class="text-xs font-extrabold text-ds-blue uppercase tracking-wider mb-1">{{ __('ui.errors.code', ['code' => 404]) }}</p>
             <h1 class="text-2xl font-extrabold text-ds-ink mb-2">{{ __('ui.errors.404_title') }}</h1>
             <p class="text-sm text-ds-muted mb-6">{{ __('ui.errors.404_message') }}</p>
 

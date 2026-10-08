@@ -70,7 +70,7 @@
                 <div class="flex items-center gap-2">
                     <button type="button"
                             @click="mobileMenuOpen = !mobileMenuOpen"
-                            class="md:hidden p-2 rounded-full text-slate-600 hover:text-green-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
+                            class="md:hidden p-2.5 rounded-full text-slate-600 hover:text-green-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
                             aria-label="Menu navigasi">
                         <x-ui.icon name="menu" class="w-6 h-6" />
                     </button>
@@ -198,7 +198,7 @@
                         @endphp
                         <a href="{{ $item['url'] ?? '#' }}"
                            @class([
-                               'py-2 px-3 rounded-xl text-sm font-semibold transition-colors',
+                               'py-2 px-3 min-h-[44px] inline-flex items-center rounded-xl text-sm font-semibold transition-colors',
                                'bg-slate-900 text-white' => $isActive,
                                'text-slate-600 hover:text-green-600' => !$isActive,
                            ])>
@@ -216,7 +216,7 @@
                                 @endphp
                                 <a href="{{ route($item['route']) }}"
                                    @class([
-                                       'py-2 px-3 rounded-xl text-sm font-semibold transition-colors',
+                                       'py-2 px-3 min-h-[44px] inline-flex items-center rounded-xl text-sm font-semibold transition-colors',
                                        'bg-slate-900 text-white' => $isActive,
                                        'text-slate-600 hover:text-green-600' => !$isActive,
                                    ])
@@ -244,7 +244,7 @@
     @endif
 
     {{-- Slot Konten Utama --}}
-    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 focus:outline-none" tabindex="-1">
+    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 md:pb-8 focus:outline-none" tabindex="-1">
         {{ $slot }}
     </main>
 

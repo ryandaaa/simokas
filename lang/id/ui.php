@@ -18,6 +18,7 @@ return [
         'take_photo' => 'Ambil Foto',
         'retake_photo' => 'Ulangi',
         'use_photo' => 'Pakai foto ini',
+        'required_mark' => '(wajib diisi)',
     ],
     'badges' => [
         'inspected' => 'Sudah Diinspeksi',
@@ -99,6 +100,7 @@ return [
         'a11y_reset' => 'Kembalikan awal',
     ],
     'errors' => [
+        'code' => 'Galat :code',
         '403_title' => 'Akses Ditolak',
         '403_message' => 'Maaf, Anda tidak memiliki izin untuk mengakses halaman ini.',
         '404_title' => 'Halaman Tidak Ditemukan',

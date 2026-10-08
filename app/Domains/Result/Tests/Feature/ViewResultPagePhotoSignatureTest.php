@@ -70,9 +70,14 @@ final class ViewResultPagePhotoSignatureTest extends TestCase
 
         $content = $response->getContent();
 
-        // Must find img src containing photo URL
-        preg_match('/<img[^>]+src=["\']([^"\']+)["\']/i', $content, $matches);
-        $this->assertNotEmpty($matches, 'No img src found on authorized result page');
+        // Must find the result photo img (by its alt text, not the header logo)
+        preg_match('/<img[^>]+alt="Foto Inspeksi"[^>]*src=["\']([^"\']+)["\']/i', $content, $matches);
+
+        if ($matches === []) {
+            preg_match('/<img[^>]+src=["\']([^"\']+)["\'][^>]*alt="Foto Inspeksi"/i', $content, $matches);
+        }
+
+        $this->assertNotEmpty($matches, 'No result photo img found on authorized result page');
 
         $photoUrl = html_entity_decode($matches[1]);
 

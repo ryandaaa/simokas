@@ -5,7 +5,7 @@
                 <i aria-hidden="true" class="fa-solid fa-triangle-exclamation"></i>
             </div>
 
-            <p class="text-xs font-extrabold text-ds-red-ink uppercase tracking-wider mb-1">Galat 500</p>
+            <p class="text-xs font-extrabold text-ds-red-ink uppercase tracking-wider mb-1">{{ __('ui.errors.code', ['code' => 500]) }}</p>
             <h1 class="text-2xl font-extrabold text-ds-ink mb-2">{{ __('ui.errors.500_title') }}</h1>
             <p class="text-sm text-ds-muted mb-6">{{ __('ui.errors.500_message') }}</p>
 

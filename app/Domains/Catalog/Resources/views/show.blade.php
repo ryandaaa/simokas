@@ -10,7 +10,7 @@
     @vite('resources/js/catalog-map.js')
 
     <div class="ds-sans space-y-6 pb-12">
-        <a href="{{ route('catalog.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
+        <a href="{{ route('catalog.index') }}" class="min-h-[44px] inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
             <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
             {{ __('catalog.detail.back_to_list') }}
         </a>
@@ -75,6 +75,9 @@
                         x-data="{ active: 0, total: {{ count($detail->photos) }} }"
                         @keydown.arrow-right.prevent="active = Math.min(active + 1, total - 1)"
                         @keydown.arrow-left.prevent="active = Math.max(active - 1, 0)"
+                        tabindex="0"
+                        role="region"
+                        aria-label="{{ __('catalog.detail.gallery_title') }}"
                         class="space-y-3"
                     >
                         <div class="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-ds-line/80 bg-ds-soft shadow-xs">
@@ -93,6 +96,7 @@
 
                         <p class="text-xs text-ds-muted font-semibold" aria-live="polite" role="status">
                             {{ __('catalog.detail.photo_counter', ['current' => 1, 'total' => count($detail->photos)]) }}
+                            <span class="sr-only">(<span x-text="active + 1"></span> / {{ count($detail->photos) }})</span>
                         </p>
 
                         <div class="grid grid-cols-4 gap-2" role="list">
@@ -238,7 +242,7 @@
                         data-lat="{{ $detail->approximate->lat }}"
                         data-lng="{{ $detail->approximate->lng }}"
                         class="h-72 w-full overflow-hidden rounded-2xl border border-ds-line/80 bg-ds-soft sm:h-80"
-                        role="application"
+                        role="region"
                         aria-label="{{ __('catalog.detail.map_title') }}"
                         tabindex="0"
                     ></div>

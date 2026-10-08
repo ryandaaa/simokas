@@ -5,7 +5,7 @@
                 <i aria-hidden="true" class="fa-regular fa-clock"></i>
             </div>
 
-            <p class="text-xs font-extrabold text-ds-amber-ink uppercase tracking-wider mb-1">Galat 419</p>
+            <p class="text-xs font-extrabold text-ds-amber-ink uppercase tracking-wider mb-1">{{ __('ui.errors.code', ['code' => 419]) }}</p>
             <h1 class="text-2xl font-extrabold text-ds-ink mb-2">{{ __('ui.errors.419_title') }}</h1>
             <p class="text-sm text-ds-muted mb-6">{{ __('ui.errors.419_message') }}</p>
 

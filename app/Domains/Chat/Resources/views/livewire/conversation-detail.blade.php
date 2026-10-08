@@ -10,7 +10,7 @@
             this.realtime = true;
         }
     }"
-    class="ds-sans max-w-4xl mx-auto px-4 py-4 flex flex-col h-[calc(100vh-6rem)] sm:h-[calc(100vh-7rem)]"
+    class="ds-sans max-w-4xl mx-auto px-4 py-4 flex flex-col h-[calc(100dvh-6rem)] sm:h-[calc(100dvh-7rem)]"
 >
     {{-- Header --}}
     <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-4 mb-3 shrink-0">
@@ -117,6 +117,7 @@
                 <div class="relative">
                     <textarea
                         wire:model="newMessage"
+                        x-on:focus="$el.scrollIntoView({ behavior: 'smooth', block: 'center' })"
                         rows="2"
                         maxlength="1000"
                         class="w-full text-sm text-ds-ink bg-ds-canvas/60 border border-ds-line/80 rounded-xl p-2.5 focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue resize-none placeholder:text-ds-faint"
