@@ -1,291 +1,305 @@
-<div class="max-w-3xl mx-auto px-4 py-6 space-y-6">
+<div class="ds-sans max-w-3xl mx-auto px-4 py-6 space-y-8 pb-12">
     {{-- Header --}}
-    <div class="space-y-1">
-        <h1 class="text-2xl sm:text-3xl font-bold text-text">
+    <div class="space-y-2">
+        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('listing.create.title') }}</span>
+        <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
             {{ __('listing.create.title') }}
         </h1>
-        <p class="text-sm text-muted">
+        <p class="text-sm text-ds-muted">
             {{ __('listing.create.subtitle') }}
         </p>
     </div>
 
     {{-- Step Indicator --}}
-    <x-ui.card>
+    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-5 sm:p-6">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <span class="flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold {{ $step === 1 ? 'bg-primary text-white' : ($step > 1 ? 'bg-success text-white' : 'bg-muted/20 text-muted') }}">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold {{ $step === 1 ? 'bg-ds-blue text-white' : ($step > 1 ? 'bg-ds-green text-white' : 'bg-ds-soft text-ds-muted') }}">
                     @if ($step > 1)
-                        <x-ui.icon name="centang" class="w-4 h-4" />
+                        <i aria-hidden="true" class="fa-solid fa-check"></i>
                     @else
                         1
                     @endif
                 </span>
-                <span class="text-sm font-medium {{ $step === 1 ? 'text-primary font-bold' : 'text-muted' }} hidden sm:inline">
+                <span class="text-sm font-bold {{ $step === 1 ? 'text-ds-blue' : 'text-ds-muted' }} hidden sm:inline">
                     {{ __('listing.steps.vehicle') }}
                 </span>
             </div>
 
-            <div class="flex-1 h-0.5 mx-3 bg-muted/20">
-                <div class="h-full bg-primary transition-all duration-300 {{ $step === 1 ? 'w-0' : ($step === 2 ? 'w-1/2' : 'w-full') }}"></div>
+            <div class="flex-1 h-0.5 mx-3 bg-ds-line/60">
+                <div class="h-full bg-ds-blue transition-all duration-300 {{ $step === 1 ? 'w-0' : ($step === 2 ? 'w-1/2' : 'w-full') }}"></div>
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold {{ $step === 2 ? 'bg-primary text-white' : ($step > 2 ? 'bg-success text-white' : 'bg-muted/20 text-muted') }}">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold {{ $step === 2 ? 'bg-ds-blue text-white' : ($step > 2 ? 'bg-ds-green text-white' : 'bg-ds-soft text-ds-muted') }}">
                     @if ($step > 2)
-                        <x-ui.icon name="centang" class="w-4 h-4" />
+                        <i aria-hidden="true" class="fa-solid fa-check"></i>
                     @else
                         2
                     @endif
                 </span>
-                <span class="text-sm font-medium {{ $step === 2 ? 'text-primary font-bold' : 'text-muted' }} hidden sm:inline">
+                <span class="text-sm font-bold {{ $step === 2 ? 'text-ds-blue' : 'text-ds-muted' }} hidden sm:inline">
                     {{ __('listing.steps.photos') }}
                 </span>
             </div>
 
-            <div class="flex-1 h-0.5 mx-3 bg-muted/20">
-                <div class="h-full bg-primary transition-all duration-300 {{ $step === 3 ? 'w-full' : 'w-0' }}"></div>
+            <div class="flex-1 h-0.5 mx-3 bg-ds-line/60">
+                <div class="h-full bg-ds-blue transition-all duration-300 {{ $step === 3 ? 'w-full' : 'w-0' }}"></div>
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="flex items-center justify-center w-8 h-8 rounded-full text-sm font-semibold {{ $step === 3 ? 'bg-primary text-white' : 'bg-muted/20 text-muted' }}">
+                <span class="flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold {{ $step === 3 ? 'bg-ds-blue text-white' : 'bg-ds-soft text-ds-muted' }}">
                     3
                 </span>
-                <span class="text-sm font-medium {{ $step === 3 ? 'text-primary font-bold' : 'text-muted' }} hidden sm:inline">
+                <span class="text-sm font-bold {{ $step === 3 ? 'text-ds-blue' : 'text-ds-muted' }} hidden sm:inline">
                     {{ __('listing.steps.inspection') }}
                 </span>
             </div>
         </div>
-    </x-ui.card>
+    </div>
 
     {{-- Error Banner --}}
     @if ($errors->any())
-        <x-ui.alert variant="danger" title="Periksa Kembali Isian Anda">
-            <ul class="list-disc list-inside text-sm space-y-1">
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40">
+            <p class="text-xs font-extrabold text-ds-ink">Periksa Kembali Isian Anda</p>
+            <ul class="list-disc list-inside text-xs text-ds-muted space-y-1 mt-2">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
             </ul>
-        </x-ui.alert>
+        </div>
     @endif
 
     {{-- Form Body --}}
     <form wire:submit.prevent="submit" class="space-y-6">
         {{-- STEP 1: DATA KENDARAAN --}}
         @if ($step === 1)
-            <x-ui.card :title="__('listing.steps.vehicle')" subtitle="Lengkapi spesifikasi umum kendaraan Anda.">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+                <h2 class="text-lg font-extrabold text-ds-ink">{{ __('listing.steps.vehicle') }}</h2>
+                <p class="text-xs text-ds-muted mt-1 mb-5">Lengkapi spesifikasi umum kendaraan Anda.</p>
                 <div class="space-y-4">
                     {{-- Jenis Kendaraan --}}
-                    <div>
-                        <x-ui.select
-                            id="vehicle_type"
-                            name="vehicle_type"
-                            wire:model.live="vehicle_type"
-                            :label="__('listing.fields.vehicle_type')"
-                            :options="[
-                                'car' => __('listing.vehicle_types.car'),
-                                'motorcycle' => __('listing.vehicle_types.motorcycle'),
-                            ]"
-                            required
-                        />
+                    <div class="w-full">
+                        <label for="vehicle_type" class="block text-xs font-bold text-ds-ink mb-1.5">
+                            {{ __('listing.fields.vehicle_type') }}
+                            <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                            <span class="sr-only">(wajib diisi)</span>
+                        </label>
+                        <select id="vehicle_type" name="vehicle_type" wire:model.live="vehicle_type" required
+                            class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                            <option value="car">{{ __('listing.vehicle_types.car') }}</option>
+                            <option value="motorcycle">{{ __('listing.vehicle_types.motorcycle') }}</option>
+                        </select>
+                        @error('vehicle_type')
+                            <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Judul Iklan --}}
-                    <div>
-                        <x-ui.input
-                            id="title"
-                            name="title"
-                            wire:model="title"
-                            :label="__('listing.fields.title')"
-                            :hint="__('listing.fields.title_hint')"
-                            :error="$errors->first('title')"
-                            required
-                        />
+                    <div class="w-full">
+                        <label for="title" class="block text-xs font-bold text-ds-ink mb-1.5">
+                            {{ __('listing.fields.title') }}
+                            <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                            <span class="sr-only">(wajib diisi)</span>
+                        </label>
+                        <input type="text" id="title" name="title" wire:model="title" required
+                            class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                        <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.title_hint') }}</p>
+                        @error('title')
+                            <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Merek & Model --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <x-ui.input
-                                id="brand"
-                                name="brand"
-                                list="brand-suggestions"
-                                wire:model="brand"
-                                :label="__('listing.fields.brand')"
-                                :hint="__('listing.fields.brand_placeholder')"
-                                :error="$errors->first('brand')"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="brand" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.brand') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <input type="text" id="brand" name="brand" list="brand-suggestions" wire:model="brand" required
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
                             <datalist id="brand-suggestions">
                                 @foreach ($brandSuggestions as $suggestedBrand)
                                     <option value="{{ $suggestedBrand }}"></option>
                                 @endforeach
                             </datalist>
+                            <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.brand_placeholder') }}</p>
+                            @error('brand')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <div>
-                            <x-ui.input
-                                id="model"
-                                name="model"
-                                wire:model="model"
-                                :label="__('listing.fields.model')"
-                                :hint="__('listing.fields.model_hint')"
-                                :error="$errors->first('model')"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="model" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.model') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <input type="text" id="model" name="model" wire:model="model" required
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                            <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.model_hint') }}</p>
+                            @error('model')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     {{-- Tahun & Kilometer --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <x-ui.input
-                                id="year"
-                                name="year"
-                                type="number"
-                                inputmode="numeric"
-                                wire:model="year"
-                                :label="__('listing.fields.year')"
-                                hint="1990 - {{ date('Y') }}"
-                                :error="$errors->first('year')"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="year" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.year') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <input type="number" id="year" name="year" inputmode="numeric" wire:model="year" required
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                            <p class="text-xs text-ds-faint mt-1.5">1990 - {{ date('Y') }}</p>
+                            @error('year')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <div>
-                            <x-ui.input
-                                id="odometer_km"
-                                name="odometer_km"
-                                type="number"
-                                inputmode="numeric"
-                                wire:model="odometer_km"
-                                :label="__('listing.fields.odometer_km')"
-                                hint="Contoh: 45000"
-                                :error="$errors->first('odometer_km')"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="odometer_km" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.odometer_km') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <input type="number" id="odometer_km" name="odometer_km" inputmode="numeric" wire:model="odometer_km" required placeholder="Contoh: 45000"
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                            @error('odometer_km')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     {{-- Harga & Nego --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                        <div>
-                            <x-ui.input
-                                id="price"
-                                name="price"
-                                type="number"
-                                inputmode="numeric"
-                                wire:model="price"
-                                :label="__('listing.fields.price')"
-                                :hint="__('listing.fields.price_hint')"
-                                :error="$errors->first('price')"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="price" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.price') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <input type="number" id="price" name="price" inputmode="numeric" wire:model="price" required
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                            <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.price_hint') }}</p>
+                            @error('price')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="p-2">
-                            <x-ui.checkbox
-                                id="negotiable"
-                                name="negotiable"
-                                wire:model="negotiable"
-                                :label="__('listing.fields.negotiable_yes')"
-                            />
+                            <label for="negotiable" class="inline-flex items-center gap-2 text-sm text-ds-muted cursor-pointer">
+                                <input type="checkbox" id="negotiable" name="negotiable" wire:model="negotiable"
+                                    class="w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30">
+                                {{ __('listing.fields.negotiable_yes') }}
+                            </label>
                         </div>
                     </div>
 
                     {{-- Transmisi & Bahan Bakar --}}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <x-ui.select
-                                id="transmission"
-                                name="transmission"
-                                wire:model="transmission"
-                                :label="__('listing.fields.transmission')"
-                                :options="[
-                                    'manual' => __('listing.transmissions.manual'),
-                                    'automatic' => __('listing.transmissions.automatic'),
-                                ]"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="transmission" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.transmission') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <select id="transmission" name="transmission" wire:model="transmission" required
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                                <option value="manual">{{ __('listing.transmissions.manual') }}</option>
+                                <option value="automatic">{{ __('listing.transmissions.automatic') }}</option>
+                            </select>
+                            @error('transmission')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <div>
-                            <x-ui.select
-                                id="fuel"
-                                name="fuel"
-                                wire:model="fuel"
-                                :label="__('listing.fields.fuel')"
-                                :options="[
-                                    'petrol' => __('listing.fuel_types.petrol'),
-                                    'diesel' => __('listing.fuel_types.diesel'),
-                                    'electric' => __('listing.fuel_types.electric'),
-                                    'hybrid' => __('listing.fuel_types.hybrid'),
-                                ]"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="fuel" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.fuel') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <select id="fuel" name="fuel" wire:model="fuel" required
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                                <option value="petrol">{{ __('listing.fuel_types.petrol') }}</option>
+                                <option value="diesel">{{ __('listing.fuel_types.diesel') }}</option>
+                                <option value="electric">{{ __('listing.fuel_types.electric') }}</option>
+                                <option value="hybrid">{{ __('listing.fuel_types.hybrid') }}</option>
+                            </select>
+                            @error('fuel')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     {{-- Warna --}}
-                    <div>
-                        <x-ui.input
-                            id="color"
-                            name="color"
-                            wire:model="color"
-                            :label="__('listing.fields.color')"
-                            hint="Contoh: Hitam Metalik, Putih"
-                            :error="$errors->first('color')"
-                            required
-                        />
+                    <div class="w-full">
+                        <label for="color" class="block text-xs font-bold text-ds-ink mb-1.5">
+                            {{ __('listing.fields.color') }}
+                            <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                            <span class="sr-only">(wajib diisi)</span>
+                        </label>
+                        <input type="text" id="color" name="color" wire:model="color" required placeholder="Contoh: Hitam Metalik, Putih"
+                            class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                        @error('color')
+                            <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Nomor Rangka (Sensitif / Terenkripsi) --}}
-                    <div>
-                        <x-ui.input
-                            id="chassis_number"
-                            name="chassis_number"
-                            wire:model="chassis_number"
-                            :label="__('listing.fields.chassis_number')"
-                            :hint="__('listing.fields.chassis_number_hint')"
-                            :error="$errors->first('chassis_number')"
-                        />
+                    <div class="w-full">
+                        <label for="chassis_number" class="block text-xs font-bold text-ds-ink mb-1.5">
+                            {{ __('listing.fields.chassis_number') }}
+                        </label>
+                        <input type="text" id="chassis_number" name="chassis_number" wire:model="chassis_number"
+                            class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                        <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.chassis_number_hint') }}</p>
+                        @error('chassis_number')
+                            <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Deskripsi --}}
-                    <div>
-                        <x-ui.textarea
-                            id="description"
-                            name="description"
-                            wire:model="description"
-                            rows="4"
-                            :label="__('listing.fields.description')"
-                            :hint="__('listing.fields.description_hint')"
-                            :error="$errors->first('description')"
-                        />
+                    <div class="w-full">
+                        <label for="description" class="block text-xs font-bold text-ds-ink mb-1.5">
+                            {{ __('listing.fields.description') }}
+                        </label>
+                        <textarea id="description" name="description" wire:model="description" rows="4"
+                            class="w-full px-4 py-3 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"></textarea>
+                        <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.description_hint') }}</p>
+                        @error('description')
+                            <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <x-ui.button
-                        type="button"
-                        wire:click="nextStep"
-                        variant="primary"
-                        iconRight="panah-kanan"
-                    >
+                    <button type="button" wire:click="nextStep"
+                        class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
                         {{ __('listing.create.btn_next') }}
-                    </x-ui.button>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
                 </div>
-            </x-ui.card>
+            </div>
         @endif
 
         {{-- STEP 2: FOTO KENDARAAN --}}
         @if ($step === 2)
-            <x-ui.card :title="__('listing.steps.photos')" :subtitle="__('listing.fields.photos_hint')">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+                <h2 class="text-lg font-extrabold text-ds-ink">{{ __('listing.steps.photos') }}</h2>
+                <p class="text-xs text-ds-muted mt-1 mb-5">{{ __('listing.fields.photos_hint') }}</p>
                 <div class="space-y-6" x-data="{
                     compressing: false,
                     async handleFiles(event) {
                         const input = event.target;
                         if (!input.files || input.files.length === 0) return;
-                        
+
                         this.compressing = true;
                         try {
                             const compressedList = [];
@@ -298,7 +312,7 @@
                                     compressedList.push(file);
                                 }
                             }
-                            
+
                             // Upload through Livewire upload multiple
                             @this.uploadMultiple('photos', compressedList, () => {
                                 this.compressing = false;
@@ -312,13 +326,13 @@
                     }
                 }">
                     {{-- Upload Area --}}
-                    <div class="border-2 border-dashed border-muted/30 rounded-xl p-6 text-center space-y-3 bg-bg">
-                        <div class="flex justify-center text-muted">
-                            <x-ui.icon name="kamera" class="w-10 h-10" />
+                    <div class="border-2 border-dashed border-ds-line rounded-2xl p-6 text-center space-y-3 bg-ds-canvas/60">
+                        <div class="flex justify-center text-ds-faint">
+                            <i aria-hidden="true" class="fa-solid fa-camera text-3xl"></i>
                         </div>
                         <div>
-                            <label for="photo-input" class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary/90 transition">
-                                <x-ui.icon name="panah-atas" class="w-4 h-4" />
+                            <label for="photo-input" class="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 bg-ds-blue hover:bg-ds-blue-ink text-white text-sm font-bold rounded-xl transition-all shadow-md">
+                                <i aria-hidden="true" class="fa-solid fa-upload text-xs"></i>
                                 <span>Pilih Foto dari Galeri / Kamera</span>
                             </label>
                             <input
@@ -330,21 +344,21 @@
                                 @change="handleFiles($event)"
                             />
                         </div>
-                        <p class="text-xs text-muted">
+                        <p class="text-xs text-ds-muted">
                             Pilih minimal 3 dan maksimal 10 foto (JPG, PNG, WebP). Kompresi otomatis berjalan di browser.
                         </p>
 
                         {{-- Compression & Upload Loading Indicator --}}
                         <div x-show="compressing" x-cloak class="pt-2">
-                            <div class="inline-flex items-center gap-2 text-sm text-primary font-medium">
-                                <span class="animate-spin inline-block w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></span>
+                            <div class="inline-flex items-center gap-2 text-sm text-ds-blue font-semibold">
+                                <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
                                 <span>Mengompresi dan mengunggah foto...</span>
                             </div>
                         </div>
 
                         <div wire:loading wire:target="photos" class="pt-2">
-                            <div class="inline-flex items-center gap-2 text-sm text-primary font-medium">
-                                <span class="animate-spin inline-block w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></span>
+                            <div class="inline-flex items-center gap-2 text-sm text-ds-blue font-semibold">
+                                <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
                                 <span>Memproses foto ke server...</span>
                             </div>
                         </div>
@@ -354,18 +368,18 @@
                     @if (!empty($photos))
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
-                                <span class="text-sm font-semibold text-text">
+                                <span class="text-sm font-bold text-ds-ink">
                                     Foto Terpilih ({{ count($photos) }} dari maks 10):
                                 </span>
-                                <span class="text-xs text-muted">
+                                <span class="text-xs text-ds-muted">
                                     Klik tombol "Sampul" untuk menetapkan foto utama.
                                 </span>
                             </div>
 
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 @foreach ($photos as $index => $photo)
-                                    <div class="relative group rounded-xl overflow-hidden border {{ $cover_index === $index ? 'border-accent ring-2 ring-accent' : 'border-muted/20' }} bg-surface">
-                                        <div class="aspect-4/3 overflow-hidden bg-muted/10">
+                                    <div class="relative group rounded-2xl overflow-hidden border {{ $cover_index === $index ? 'border-ds-yellow ring-2 ring-ds-yellow' : 'border-ds-line/80' }} bg-white shadow-xs">
+                                        <div class="aspect-4/3 overflow-hidden bg-ds-soft">
                                             @if (is_object($photo) && method_exists($photo, 'temporaryUrl'))
                                                 <img src="{{ $photo->temporaryUrl() }}" alt="Pratinjau foto {{ $index + 1 }}" class="w-full h-full object-cover" />
                                             @endif
@@ -373,28 +387,27 @@
 
                                         {{-- Cover Badge --}}
                                         @if ($cover_index === $index)
-                                            <div class="absolute top-2 left-2 px-2 py-0.5 bg-accent text-white text-xs font-bold rounded shadow">
+                                            <div class="absolute top-2 left-2 px-2 py-0.5 bg-ds-yellow text-ds-ink text-[10px] font-bold rounded-full shadow uppercase tracking-wider">
                                                 Sampul
                                             </div>
                                         @endif
 
                                         {{-- Actions --}}
-                                        <div class="p-2 flex items-center justify-between gap-1 bg-surface">
+                                        <div class="p-2 flex items-center justify-between gap-1 bg-white">
                                             <button
                                                 type="button"
                                                 wire:click="setCover({{ $index }})"
-                                                class="text-xs px-2 py-1 rounded {{ $cover_index === $index ? 'bg-accent/10 text-accent font-semibold' : 'text-muted hover:text-text' }}"
+                                                class="text-xs px-2 py-1 rounded-lg {{ $cover_index === $index ? 'bg-ds-yellow-soft text-ds-ink font-bold' : 'text-ds-muted hover:text-ds-ink' }}"
                                             >
                                                 {{ $cover_index === $index ? 'Foto Sampul' : 'Jadikan Sampul' }}
                                             </button>
-
                                             <button
                                                 type="button"
                                                 wire:click="removePhoto({{ $index }})"
-                                                class="text-xs text-danger hover:underline p-1"
+                                                class="text-xs text-ds-danger hover:underline p-1 inline-flex items-center gap-1"
                                                 title="Hapus foto"
                                             >
-                                                <x-ui.icon name="silang" class="w-4 h-4" />
+                                                <i aria-hidden="true" class="fa-solid fa-xmark"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -405,39 +418,34 @@
                 </div>
 
                 <div class="mt-6 flex justify-between items-center">
-                    <x-ui.button
-                        type="button"
-                        wire:click="previousStep"
-                        variant="secondary"
-                        icon="panah-kiri"
-                    >
+                    <button type="button" wire:click="previousStep"
+                        class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs">
+                        <i aria-hidden="true" class="fa-solid fa-arrow-left text-xs"></i>
                         {{ __('listing.create.btn_prev') }}
-                    </x-ui.button>
+                    </button>
 
-                    <x-ui.button
-                        type="button"
-                        wire:click="nextStep"
-                        variant="primary"
-                        iconRight="panah-kanan"
-                        :disabled="count($photos) < 3 || count($photos) > 10"
-                    >
+                    <button type="button" wire:click="nextStep" @disabled(count($photos) < 3 || count($photos) > 10)
+                        class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60">
                         {{ __('listing.create.btn_next') }}
-                    </x-ui.button>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
                 </div>
-            </x-ui.card>
+            </div>
         @endif
 
         {{-- STEP 3: INSPEKSI --}}
         @if ($step === 3)
-            <x-ui.card :title="__('listing.steps.inspection')" subtitle="Atur kesiapan waktu dan tempat bertemu dengan teknisi inspeksi SIMOKAS.">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+                <h2 class="text-lg font-extrabold text-ds-ink">{{ __('listing.steps.inspection') }}</h2>
+                <p class="text-xs text-ds-muted mt-1 mb-5">Atur kesiapan waktu dan tempat bertemu dengan teknisi inspeksi SIMOKAS.</p>
                 <div class="space-y-6">
                     {{-- Lokasi: peta + alamat (PRD 16.1) --}}
                     <div class="space-y-4">
                         <div>
-                            <h3 class="text-sm font-semibold text-text">
+                            <h3 class="text-sm font-extrabold text-ds-ink">
                                 {{ __('listing.fields.location_title') }}
                             </h3>
-                            <p class="text-xs text-muted">
+                            <p class="text-xs text-ds-muted">
                                 {{ __('listing.fields.location_hint') }}
                             </p>
                         </div>
@@ -445,101 +453,103 @@
                         @include('listing::partials.location-picker')
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <x-ui.input
-                                    id="lat"
-                                    name="lat"
-                                    type="text"
-                                    inputmode="decimal"
-                                    wire:model="lat"
-                                    :label="__('listing.fields.lat')"
-                                    :hint="__('listing.fields.lat_hint')"
-                                    :error="$errors->first('lat')"
-                                    required
-                                />
+                            <div class="w-full">
+                                <label for="lat" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                    {{ __('listing.fields.lat') }}
+                                    <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                    <span class="sr-only">(wajib diisi)</span>
+                                </label>
+                                <input type="text" id="lat" name="lat" inputmode="decimal" wire:model="lat" required
+                                    class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                                <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.lat_hint') }}</p>
+                                @error('lat')
+                                    <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            <div>
-                                <x-ui.input
-                                    id="lng"
-                                    name="lng"
-                                    type="text"
-                                    inputmode="decimal"
-                                    wire:model="lng"
-                                    :label="__('listing.fields.lng')"
-                                    :hint="__('listing.fields.lng_hint')"
-                                    :error="$errors->first('lng')"
-                                    required
-                                />
+                            <div class="w-full">
+                                <label for="lng" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                    {{ __('listing.fields.lng') }}
+                                    <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                    <span class="sr-only">(wajib diisi)</span>
+                                </label>
+                                <input type="text" id="lng" name="lng" inputmode="decimal" wire:model="lng" required
+                                    class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                                <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.lng_hint') }}</p>
+                                @error('lng')
+                                    <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
-                        <div>
-                            <x-ui.textarea
-                                id="address_full"
-                                name="address_full"
-                                wire:model="address_full"
-                                rows="3"
-                                :label="__('listing.fields.address_full')"
-                                :hint="__('listing.fields.address_full_hint')"
-                                :error="$errors->first('address_full')"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="address_full" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.address_full') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <textarea id="address_full" name="address_full" wire:model="address_full" rows="3" required
+                                class="w-full px-4 py-3 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"></textarea>
+                            <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.address_full_hint') }}</p>
+                            @error('address_full')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
 
-                        <div>
-                            <x-ui.input
-                                id="area_name"
-                                name="area_name"
-                                wire:model="area_name"
-                                :label="__('listing.fields.area_name')"
-                                :hint="__('listing.fields.area_name_hint') . ' ' . __('listing.fields.area_name_public_note')"
-                                :error="$errors->first('area_name')"
-                                required
-                            />
+                        <div class="w-full">
+                            <label for="area_name" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                {{ __('listing.fields.area_name') }}
+                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                <span class="sr-only">(wajib diisi)</span>
+                            </label>
+                            <input type="text" id="area_name" name="area_name" wire:model="area_name" required
+                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                            <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.area_name_hint') }} {{ __('listing.fields.area_name_public_note') }}</p>
+                            @error('area_name')
+                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
                     {{-- Tempat Inspeksi --}}
-                    <div>
-                        <x-ui.input
-                            id="inspection_place"
-                            name="inspection_place"
-                            wire:model="inspection_place"
-                            :label="__('listing.fields.inspection_place')"
-                            :hint="__('listing.fields.inspection_place_hint')"
-                            :error="$errors->first('inspection_place')"
-                            required
-                        />
+                    <div class="w-full">
+                        <label for="inspection_place" class="block text-xs font-bold text-ds-ink mb-1.5">
+                            {{ __('listing.fields.inspection_place') }}
+                            <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                            <span class="sr-only">(wajib diisi)</span>
+                        </label>
+                        <input type="text" id="inspection_place" name="inspection_place" wire:model="inspection_place" required
+                            class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                        <p class="text-xs text-ds-faint mt-1.5">{{ __('listing.fields.inspection_place_hint') }}</p>
+                        @error('inspection_place')
+                            <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Opsi Waktu Inspeksi --}}
                     <div class="space-y-4">
                         <div class="flex items-center justify-between">
                             <div>
-                                <h3 class="text-sm font-semibold text-text">
+                                <h3 class="text-sm font-extrabold text-ds-ink">
                                     {{ __('listing.fields.inspection_slots') }}
                                 </h3>
-                                <p class="text-xs text-muted">
+                                <p class="text-xs text-ds-muted">
                                     {{ __('listing.fields.inspection_slots_hint') }}
                                 </p>
                             </div>
 
-                            <x-ui.button
-                                type="button"
-                                wire:click="addSlot"
-                                variant="secondary"
-                                icon="plus"
-                            >
+                            <button type="button" wire:click="addSlot"
+                                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                                <i aria-hidden="true" class="fa-solid fa-plus text-xs"></i>
                                 {{ __('listing.fields.add_slot') }}
-                            </x-ui.button>
+                            </button>
                         </div>
 
                         <div class="space-y-3">
                             @foreach ($inspection_slots as $index => $slot)
-                                <div class="p-4 rounded-xl border border-muted/20 bg-bg space-y-3">
+                                <div class="p-4 rounded-2xl border border-ds-line/80 bg-ds-canvas/60 space-y-3">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-xs font-bold text-primary uppercase tracking-wide">
+                                        <span class="text-xs font-extrabold text-ds-blue uppercase tracking-wide">
                                             Opsi Waktu #{{ $index + 1 }}
                                         </span>
 
@@ -547,36 +557,37 @@
                                             <button
                                                 type="button"
                                                 wire:click="removeSlot({{ $index }})"
-                                                class="text-xs text-danger hover:underline inline-flex items-center gap-1"
+                                                class="text-xs text-ds-danger hover:underline inline-flex items-center gap-1"
                                             >
-                                                <x-ui.icon name="silang" class="w-3.5 h-3.5" />
+                                                <i aria-hidden="true" class="fa-solid fa-xmark"></i>
                                                 <span>{{ __('listing.fields.remove_slot') }}</span>
                                             </button>
                                         @endif
                                     </div>
 
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                        <div>
-                                            <x-ui.input
-                                                id="slot_{{ $index }}_start"
-                                                name="inspection_slots.{{ $index }}.slot_start"
-                                                type="datetime-local"
-                                                wire:model="inspection_slots.{{ $index }}.slot_start"
-                                                :label="__('listing.fields.slot_time')"
-                                                :error="$errors->first('inspection_slots.'.$index.'.slot_start')"
-                                                required
-                                            />
+                                        <div class="w-full">
+                                            <label for="slot_{{ $index }}_start" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                                {{ __('listing.fields.slot_time') }}
+                                                <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
+                                                <span class="sr-only">(wajib diisi)</span>
+                                            </label>
+                                            <input type="datetime-local" id="slot_{{ $index }}_start" name="inspection_slots.{{ $index }}.slot_start" wire:model="inspection_slots.{{ $index }}.slot_start" required
+                                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                                            @error('inspection_slots.'.$index.'.slot_start')
+                                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                                            @enderror
                                         </div>
 
-                                        <div>
-                                            <x-ui.input
-                                                id="slot_{{ $index }}_note"
-                                                name="inspection_slots.{{ $index }}.note"
-                                                wire:model="inspection_slots.{{ $index }}.note"
-                                                :label="__('listing.fields.slot_note')"
-                                                hint="Contoh: Di atas jam kerja"
-                                                :error="$errors->first('inspection_slots.'.$index.'.note')"
-                                            />
+                                        <div class="w-full">
+                                            <label for="slot_{{ $index }}_note" class="block text-xs font-bold text-ds-ink mb-1.5">
+                                                {{ __('listing.fields.slot_note') }}
+                                            </label>
+                                            <input type="text" id="slot_{{ $index }}_note" name="inspection_slots.{{ $index }}.note" wire:model="inspection_slots.{{ $index }}.note" placeholder="Contoh: Di atas jam kerja"
+                                                class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                                            @error('inspection_slots.'.$index.'.note')
+                                                <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
@@ -587,30 +598,24 @@
                 </div>
 
                 <div class="mt-6 flex justify-between items-center">
-                    <x-ui.button
-                        type="button"
-                        wire:click="previousStep"
-                        variant="secondary"
-                        icon="panah-kiri"
-                    >
+                    <button type="button" wire:click="previousStep"
+                        class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs">
+                        <i aria-hidden="true" class="fa-solid fa-arrow-left text-xs"></i>
                         {{ __('listing.create.btn_prev') }}
-                    </x-ui.button>
+                    </button>
 
-                    <x-ui.button
-                        type="submit"
-                        variant="primary"
-                        wire:loading.attr="disabled"
-                        icon="centang"
-                    >
+                    <button type="submit" wire:loading.attr="disabled"
+                        class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60">
                         <span wire:loading.remove wire:target="submit">
+                            <i aria-hidden="true" class="fa-solid fa-check text-xs"></i>
                             {{ __('listing.create.btn_submit') }}
                         </span>
                         <span wire:loading wire:target="submit">
                             {{ __('listing.create.submitting') }}
                         </span>
-                    </x-ui.button>
+                    </button>
                 </div>
-            </x-ui.card>
+            </div>
         @endif
     </form>
 </div>
