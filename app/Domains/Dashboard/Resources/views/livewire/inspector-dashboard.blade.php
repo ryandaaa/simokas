@@ -118,10 +118,13 @@
             <h3 class="text-lg font-extrabold text-ds-ink">{{ __('dashboard.inspector.trend_title') }}</h3>
             <p class="text-xs text-ds-muted mt-1 mb-6">{{ __('dashboard.inspector.trend_subtitle') }}</p>
 
-            <div class="flex items-end justify-between gap-2 h-36" role="img" aria-label="{{ __('dashboard.inspector.trend_title') }}">
+            <div class="flex items-start justify-between gap-2 h-36" role="img" aria-label="{{ __('dashboard.inspector.trend_title') }}">
                 @foreach ($monthlySeries as $point)
-                    <div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-                        <div class="w-full max-w-10 rounded-lg bg-ds-blue transition-all {{ $barClass($point['value'], $maxTrend) }}"></div>
+                    <div class="flex-1 flex flex-col items-center gap-2 h-full">
+                        <span class="text-xs font-extrabold text-ds-ink">{{ $point['value'] }}</span>
+                        <div class="flex-1 w-full max-w-10 flex items-end">
+                            <div class="w-full rounded-lg bg-ds-blue transition-all {{ $barClass($point['value'], $maxTrend) }}"></div>
+                        </div>
                         <span class="text-[10px] font-bold text-ds-faint uppercase">{{ $point['label'] }}</span>
                     </div>
                 @endforeach
@@ -133,7 +136,7 @@
             <p class="text-xs text-ds-muted mt-1 mb-4">{{ __('dashboard.inspector.composition_subtitle') }}</p>
 
             <div class="flex justify-center">
-                <svg viewBox="0 0 140 140" class="w-40 h-40" role="img" aria-label="{{ __('dashboard.inspector.composition_title') }}">
+                <svg viewBox="0 0 140 140" class="w-32 h-32" role="img" aria-label="{{ __('dashboard.inspector.composition_title') }}">
                     <circle cx="70" cy="70" r="54" fill="none" class="text-ds-soft" stroke="currentColor" stroke-width="18" />
                     @foreach ($donutSegs as $seg)
                         @php
