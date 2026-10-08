@@ -38,11 +38,11 @@
     {{-- Bilah atas --}}
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20 gap-4">
+            <div class="flex items-center justify-between h-20 gap-2 sm:gap-4">
                 {{-- Brand/Logo --}}
                 <div class="flex items-center">
                     <a href="{{ url('/') }}" class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl px-1 py-1 select-none">
-                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" class="h-12 w-auto">
+                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" class="h-9 sm:h-12 w-auto">
                     </a>
                 </div>
 
@@ -175,10 +175,10 @@
                                 </div>
                             </div>
                         @else
-                            <a href="{{ route('login') }}" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-green-600 transition-colors">
+                            <a href="{{ route('login') }}" class="px-2 sm:px-4 py-2 text-sm font-semibold text-slate-700 hover:text-green-600 transition-colors">
                                 {{ __('Masuk') }}
                             </a>
-                            <a href="{{ route('identity.register') }}" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-green-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all">
+                            <a href="{{ route('identity.register') }}" class="inline-flex items-center gap-2 bg-slate-900 hover:bg-green-600 text-white px-4 sm:px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all">
                                 <i aria-hidden="true" class="fa-solid fa-circle-plus text-yellow-400"></i>
                                 <span>{{ __('Daftar') }}</span>
                             </a>
@@ -314,6 +314,13 @@
                 @foreach ($bottomNavLeft as $item)
                     @php
                         $isActive = !empty($item['active']);
+                        $itemIcon = match ($item['icon'] ?? null) {
+                            'home', 'rumah' => 'fa-house',
+                            'search', 'kaca-pembesar' => 'fa-magnifying-glass',
+                            'document-text', 'dokumen' => 'fa-file-lines',
+                            'information-circle', 'info' => 'fa-circle-info',
+                            default => 'fa-circle',
+                        };
                     @endphp
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
@@ -322,6 +329,7 @@
                            'text-slate-500 hover:text-green-600' => !$isActive,
                        ])
                        @if ($isActive) aria-current="page" @endif>
+                        <i aria-hidden="true" class="fa-solid {{ $itemIcon }} text-lg mb-0.5"></i>
                         <span class="truncate max-w-[64px]">{{ $item['label'] }}</span>
                     </a>
                 @endforeach
@@ -336,6 +344,13 @@
                 @foreach ($bottomNavRight as $item)
                     @php
                         $isActive = !empty($item['active']);
+                        $itemIcon = match ($item['icon'] ?? null) {
+                            'home', 'rumah' => 'fa-house',
+                            'search', 'kaca-pembesar' => 'fa-magnifying-glass',
+                            'document-text', 'dokumen' => 'fa-file-lines',
+                            'information-circle', 'info' => 'fa-circle-info',
+                            default => 'fa-circle',
+                        };
                     @endphp
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
@@ -344,6 +359,7 @@
                            'text-slate-500 hover:text-green-600' => !$isActive,
                        ])
                        @if ($isActive) aria-current="page" @endif>
+                        <i aria-hidden="true" class="fa-solid {{ $itemIcon }} text-lg mb-0.5"></i>
                         <span class="truncate max-w-[64px]">{{ $item['label'] }}</span>
                     </a>
                 @endforeach
