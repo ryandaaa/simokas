@@ -132,7 +132,14 @@ html.a11y-contrast {
     --color-ds-line: #94A3B8;
 }
 
-html.a11y-invert body {
+html.a11y-invert header,
+html.a11y-invert main,
+html.a11y-invert footer {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+/* Foto dikembalikan normal agar tetap terlihat wajar dalam mode negatif. */
+html.a11y-invert img {
     filter: invert(1) hue-rotate(180deg);
 }
 
