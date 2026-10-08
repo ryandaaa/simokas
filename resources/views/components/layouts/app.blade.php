@@ -55,14 +55,11 @@
                                 @endphp
                                 <a href="{{ $item['url'] ?? '#' }}"
                                    @class([
-                                       'flex items-center gap-2 transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 rounded-lg',
+                                       'transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 rounded-lg',
                                        'text-green-600 hover:text-green-700' => $isActive,
                                        'hover:text-green-600' => !$isActive,
                                    ])
                                    @if ($isActive) aria-current="page" @endif>
-                                    @if (!empty($item['icon']))
-                                        <x-ui.icon :name="$item['icon']" class="w-4 h-4" />
-                                    @endif
                                     <span>{{ $item['label'] }}</span>
                                 </a>
                             @endforeach
@@ -323,9 +320,6 @@
                            'text-slate-500 hover:text-green-600' => !$isActive,
                        ])
                        @if ($isActive) aria-current="page" @endif>
-                        @if (!empty($item['icon']))
-                            <x-ui.icon :name="$item['icon']" class="w-5 h-5 mb-0.5" />
-                        @endif
                         <span class="truncate max-w-[64px]">{{ $item['label'] }}</span>
                     </a>
                 @endforeach

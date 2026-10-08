@@ -56,19 +56,6 @@
                         </div>
                     </div>
 
-                    @guest
-                        <p class="text-xs text-ds-faint">
-                            {{ __('home.hero_guest_hint') }}
-                        </p>
-                        <div class="flex flex-row justify-center gap-2">
-                            <a href="{{ route('login') }}" class="px-4 py-1.5 text-sm font-semibold text-ds-ink hover:text-ds-blue transition-colors">
-                                {{ __('home.hero_login') }}
-                            </a>
-                            <a href="{{ route('identity.register') }}" class="px-4 py-1.5 text-sm font-semibold text-ds-ink hover:text-ds-blue transition-colors">
-                                {{ __('home.hero_register') }}
-                            </a>
-                        </div>
-                    @endguest
                 </div>
             </div>
         </section>
@@ -142,11 +129,8 @@
 
                             <hr class="border-ds-line/60">
 
-                            <div class="bg-gradient-to-br from-ds-ink to-ds-indigo text-white rounded-2xl p-4 text-center space-y-3">
-                                <div class="w-10 h-10 mx-auto rounded-full bg-ds-blue/20 text-ds-blue flex items-center justify-center text-lg">
-                                    <i aria-hidden="true" class="fa-solid fa-screwdriver-wrench"></i>
-                                </div>
-                                <h4 class="text-xs font-bold">{{ __('home.inspector_title') }}</h4>
+                    <div class="bg-gradient-to-br from-ds-ink to-ds-indigo text-white rounded-2xl p-4 text-center space-y-3">
+                        <h4 class="text-xs font-bold">{{ __('home.inspector_title') }}</h4>
                                 <p class="text-[11px] text-ds-soft">{{ __('home.inspector_description') }}</p>
                                 <a href="{{ route('identity.register') }}" class="block w-full py-2 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-extrabold text-xs rounded-xl transition-all">
                                     {{ __('home.inspector_action') }}
