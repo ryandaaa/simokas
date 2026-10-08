@@ -1,123 +1,145 @@
-<div class="space-y-6">
-    {{-- Buyer Section --}}
-    <div>
-        <h2 class="text-lg font-bold text-text mb-4">{{ __('dashboard.buyer.title') }}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="space-y-10">
+    {{-- Buyer Section (kartu disembunyikan bila tidak ada aktivitas pembeli) --}}
+    <section>
+        <div class="mb-6 space-y-1">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.buyer.title') }}</span>
+            <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.buyer.title') }}</h2>
+        </div>
+        @if ($runningInspections > 0 || $accessibleResults > 0 || $activeTransactions > 0)
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {{-- Running Inspections Card --}}
-            <x-ui.card class="p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm text-muted">{{ __('dashboard.buyer.running_inspections') }}</p>
-                        <p class="text-3xl font-bold text-text mt-2">{{ $runningInspections }}</p>
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                <div class="p-5">
+                    <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                        <i aria-hidden="true" class="fa-solid fa-clipboard-list"></i>
                     </div>
-                    <div class="p-3 bg-primary/10 rounded-lg">
-                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
+                    <p class="text-3xl font-extrabold text-ds-ink">{{ $runningInspections }}</p>
+                    <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.buyer.running_inspections') }}</p>
                 </div>
-            </x-ui.card>
+                <div class="px-5 py-3 bg-ds-canvas/80 border-t border-ds-line/80 flex items-center justify-between text-xs font-bold text-ds-blue">
+                    <a href="{{ route('jobs.mine') }}" class="inline-flex items-center gap-1 hover:text-ds-blue-ink">
+                        <span>{{ __('dashboard.view_history') }}</span>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
 
             {{-- Accessible Results Card --}}
-            <x-ui.card class="p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm text-muted">{{ __('dashboard.buyer.accessible_results') }}</p>
-                        <p class="text-3xl font-bold text-text mt-2">{{ $accessibleResults }}</p>
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                <div class="p-5">
+                    <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                        <i aria-hidden="true" class="fa-solid fa-circle-check"></i>
                     </div>
-                    <div class="p-3 bg-success/10 rounded-lg">
-                        <svg class="w-6 h-6 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
+                    <p class="text-3xl font-extrabold text-ds-ink">{{ $accessibleResults }}</p>
+                    <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.buyer.accessible_results') }}</p>
                 </div>
-            </x-ui.card>
+                <div class="px-5 py-3 bg-ds-canvas/80 border-t border-ds-line/80 flex items-center justify-between text-xs font-bold text-ds-blue">
+                    <a href="{{ route('dashboard.history') }}" class="inline-flex items-center gap-1 hover:text-ds-blue-ink">
+                        <span>{{ __('dashboard.view_history') }}</span>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
 
-            {{-- Active Transactions Card (P1 - Hidden) --}}
-            <x-ui.card class="p-6 opacity-50">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm text-muted">{{ __('dashboard.buyer.active_transactions') }}</p>
-                        <p class="text-3xl font-bold text-text mt-2 blur-sm">-</p>
-                        <p class="text-xs text-warning mt-1">{{ __('dashboard.coming_soon') }}</p>
+            {{-- Active Transactions Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                <div class="p-5">
+                    <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                        <i aria-hidden="true" class="fa-solid fa-wallet"></i>
                     </div>
-                    <div class="p-3 bg-warning/10 rounded-lg">
-                        <svg class="w-6 h-6 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
+                    <p class="text-3xl font-extrabold text-ds-ink">{{ $activeTransactions }}</p>
+                    <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.buyer.active_transactions') }}</p>
                 </div>
-            </x-ui.card>
+                <div class="px-5 py-3 bg-ds-canvas/80 border-t border-ds-line/80 flex items-center justify-between text-xs font-bold text-ds-blue">
+                    <a href="{{ route('transactions.index') }}" class="inline-flex items-center gap-1 hover:text-ds-blue-ink">
+                        <span>{{ __('dashboard.view_history') }}</span>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+        @endif
+    </section>
 
-    {{-- Seller Section --}}
-    <div>
-        <h2 class="text-lg font-bold text-text mb-4">{{ __('dashboard.seller.title') }}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    {{-- Seller Section (kartu disembunyikan bila tidak ada aktivitas penjual) --}}
+    <section>
+        <div class="mb-6 space-y-1">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.seller.title') }}</span>
+            <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.seller.title') }}</h2>
+        </div>
+        @if ($activeListings > 0 || $buyOffers > 0)
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             {{-- Active Listings Card --}}
-            <x-ui.card class="p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm text-muted">{{ __('dashboard.seller.active_listings') }}</p>
-                        <p class="text-3xl font-bold text-text mt-2">{{ $activeListings }}</p>
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                <div class="p-5">
+                    <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                        <i aria-hidden="true" class="fa-solid fa-car"></i>
                     </div>
-                    <div class="p-3 bg-primary/10 rounded-lg">
-                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5.5m0 0h-5m5 0v-5.5"></path>
-                        </svg>
-                    </div>
+                    <p class="text-3xl font-extrabold text-ds-ink">{{ $activeListings }}</p>
+                    <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.seller.active_listings') }}</p>
                 </div>
-            </x-ui.card>
+                <div class="px-5 py-3 bg-ds-canvas/80 border-t border-ds-line/80 flex items-center justify-between text-xs font-bold text-ds-blue">
+                    <a href="{{ route('listings.mine') }}" class="inline-flex items-center gap-1 hover:text-ds-blue-ink">
+                        <span>{{ __('dashboard.view_history') }}</span>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
 
-            {{-- Listing Status Card --}}
-            <x-ui.card class="p-6">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm text-muted">{{ __('dashboard.seller.inspection_status') }}</p>
-                        <p class="text-3xl font-bold text-text mt-2">{{ $runningInspections }}</p>
+            {{-- Inspection Status Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                <div class="p-5">
+                    <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                        <i aria-hidden="true" class="fa-solid fa-list-check"></i>
                     </div>
-                    <div class="p-3 bg-primary/10 rounded-lg">
-                        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7-1a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
+                    <p class="text-3xl font-extrabold text-ds-ink">{{ $runningInspections }}</p>
+                    <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.seller.inspection_status') }}</p>
                 </div>
-            </x-ui.card>
+                <div class="px-5 py-3 bg-ds-canvas/80 border-t border-ds-line/80 flex items-center justify-between text-xs font-bold text-ds-blue">
+                    <a href="{{ route('jobs.mine') }}" class="inline-flex items-center gap-1 hover:text-ds-blue-ink">
+                        <span>{{ __('dashboard.view_history') }}</span>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
 
-            {{-- Buy Offers Card (P1 - Hidden) --}}
-            <x-ui.card class="p-6 opacity-50">
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-sm text-muted">{{ __('dashboard.seller.buy_offers') }}</p>
-                        <p class="text-3xl font-bold text-text mt-2 blur-sm">-</p>
-                        <p class="text-xs text-warning mt-1">{{ __('dashboard.coming_soon') }}</p>
+            {{-- Buy Offers Card --}}
+            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between">
+                <div class="p-5">
+                    <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
+                        <i aria-hidden="true" class="fa-solid fa-tag"></i>
                     </div>
-                    <div class="p-3 bg-accent/10 rounded-lg">
-                        <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.646 7.23a2 2 0 01-1.788 1.106H2.4a2 2 0 01-2-2V4a2 2 0 012-2h2.4"></path>
-                        </svg>
-                    </div>
+                    <p class="text-3xl font-extrabold text-ds-ink">{{ $buyOffers }}</p>
+                    <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.seller.buy_offers') }}</p>
                 </div>
-            </x-ui.card>
+                <div class="px-5 py-3 bg-ds-canvas/80 border-t border-ds-line/80 flex items-center justify-between text-xs font-bold text-ds-blue">
+                    <a href="{{ route('transactions.index') }}" class="inline-flex items-center gap-1 hover:text-ds-blue-ink">
+                        <span>{{ __('dashboard.view_history') }}</span>
+                        <i aria-hidden="true" class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+        @endif
+    </section>
 
     {{-- Empty State --}}
-    @if ($runningInspections === 0 && $accessibleResults === 0 && $activeListings === 0)
-        <x-ui.empty-state
-            icon="inbox"
-            :title="__('dashboard.empty_state.title')"
-            :message="__('dashboard.empty_state.message')"
-        >
-            <div class="flex gap-3 justify-center mt-6">
-                <x-ui.button :href="route('catalog.index')" variant="primary">
-                    {{ __('dashboard.empty_state.search_vehicles') }}
-                </x-ui.button>
-                <x-ui.button :href="route('listings.create')" variant="secondary">
-                    {{ __('dashboard.empty_state.add_listing') }}
-                </x-ui.button>
+    @if ($runningInspections === 0 && $accessibleResults === 0 && $activeListings === 0 && $activeTransactions === 0 && $buyOffers === 0)
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+            <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                <i aria-hidden="true" class="fa-solid fa-inbox"></i>
             </div>
-        </x-ui.empty-state>
+            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('dashboard.empty_state.title') }}</h3>
+            <p class="text-xs text-ds-muted mt-2 leading-relaxed">{{ __('dashboard.empty_state.message') }}</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+                <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-ds-yellow/30">
+                    <span>{{ __('dashboard.empty_state.search_vehicles') }}</span>
+                    <i aria-hidden="true" class="fa-solid fa-arrow-right text-xs"></i>
+                </a>
+                <a href="{{ route('listings.create') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs hover:shadow-md">
+                    {{ __('dashboard.empty_state.add_listing') }}
+                </a>
+            </div>
+        </div>
     @endif
 </div>

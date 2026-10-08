@@ -1,41 +1,50 @@
 <x-layouts.app :title="__('legal.terms.title')">
-    <div class="max-w-4xl mx-auto space-y-6">
-        <x-ui.alert variant="warning" :title="__('legal.draft_label')" :message="__('legal.draft_notice')" />
+    <div class="ds-sans max-w-4xl mx-auto space-y-8 pb-12">
+        <div class="p-4 rounded-2xl border border-ds-amber-soft bg-ds-amber-soft/40 flex items-start gap-3">
+            <i aria-hidden="true" class="fa-solid fa-triangle-exclamation text-ds-amber-ink mt-0.5"></i>
+            <div>
+                <p class="text-xs font-extrabold text-ds-ink">{{ __('legal.draft_label') }}</p>
+                <p class="mt-1 text-xs text-ds-muted leading-relaxed">{{ __('legal.draft_notice') }}</p>
+            </div>
+        </div>
 
-        <div class="space-y-2">
-            <h1 class="text-2xl sm:text-3xl font-bold text-text">{{ __('legal.terms.title') }}</h1>
-            <p class="text-sm sm:text-base text-muted leading-relaxed">{{ __('legal.terms.intro') }}</p>
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">Legal</span>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-ds-ink tracking-tight">{{ __('legal.terms.title') }}</h1>
+            <p class="text-sm sm:text-base text-ds-muted leading-relaxed">{{ __('legal.terms.intro') }}</p>
         </div>
 
         <div class="space-y-6">
             @foreach (__('legal.terms.sections') as $section)
-                <x-ui.card>
-                    <h2 class="text-lg font-bold text-text mb-3">{{ $section['heading'] }}</h2>
+                <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+                    <h2 class="text-lg font-extrabold text-ds-ink mb-3">{{ $section['heading'] }}</h2>
                     @if (!empty($section['paragraphs']))
-                        <div class="space-y-2 text-sm text-text leading-relaxed">
+                        <div class="space-y-2 text-sm text-ds-ink leading-relaxed">
                             @foreach ($section['paragraphs'] as $paragraph)
                                 <p>{{ $paragraph }}</p>
                             @endforeach
                         </div>
                     @endif
                     @if (!empty($section['items']))
-                        <ul class="mt-3 list-disc list-inside space-y-1 text-sm text-text">
+                        <ul class="mt-3 list-disc list-inside space-y-1 text-sm text-ds-ink">
                             @foreach ($section['items'] as $item)
                                 <li>{{ $item }}</li>
                             @endforeach
                         </ul>
                     @endif
-                </x-ui.card>
+                </div>
             @endforeach
         </div>
 
         <div class="pt-2 flex flex-col sm:flex-row gap-3">
-            <x-ui.button :href="route('legal.privacy')" variant="secondary" icon="shield-check">
+            <a href="{{ route('legal.privacy') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                <i aria-hidden="true" class="fa-solid fa-file-lines text-xs"></i>
                 {{ __('legal.footer_privacy') }}
-            </x-ui.button>
-            <x-ui.button :href="url('/')" variant="ghost" icon="rumah">
+            </a>
+            <a href="{{ url('/') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs">
+                <i aria-hidden="true" class="fa-solid fa-house text-xs"></i>
                 {{ __('ui.layout.home') }}
-            </x-ui.button>
+            </a>
         </div>
     </div>
 </x-layouts.app>
