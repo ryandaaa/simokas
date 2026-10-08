@@ -1,5 +1,5 @@
 <div class="ds-sans mx-auto max-w-2xl px-4 py-6 sm:py-8 space-y-6 pb-12">
-    <a href="{{ route('catalog.show', ['listing' => $listing->id]) }}" class="inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
+    <a href="{{ route('catalog.show', ['listing' => $listing->id]) }}" class="min-h-[44px] inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
         <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
         {{ __('transaction.offer.back_to_listing') }}
     </a>
@@ -53,7 +53,7 @@
                     <label for="priceAmount" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('transaction.offer.price_label') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="text" id="priceAmount" name="priceAmount" inputmode="numeric" wire:model="priceAmount" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">

@@ -43,7 +43,7 @@
                 wire:click="setTab('{{ $key }}')"
                 role="tab"
                 aria-selected="{{ $tab === $key ? 'true' : 'false' }}"
-                class="shrink-0 px-4 py-1.5 text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === $key ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
+                class="shrink-0 px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === $key ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
                 {{ $label }}
             </button>
         @endforeach
@@ -53,7 +53,7 @@
                 wire:click="setTab('jobs')"
                 role="tab"
                 aria-selected="{{ $tab === 'jobs' ? 'true' : 'false' }}"
-                class="shrink-0 px-4 py-1.5 text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === 'jobs' ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
+                class="shrink-0 px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === 'jobs' ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
                 {{ __('dashboard.history.tabs.jobs') }}
             </button>
         @endif
@@ -133,7 +133,7 @@
                                     </div>
                                     <div class="shrink-0">
                                         <a href="{{ route('transactions.show', $tx) }}"
-                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                             {{ __('dashboard.history.view_detail') }}
                                         </a>
                                     </div>
@@ -198,7 +198,7 @@
                                     </div>
                                     <div class="shrink-0">
                                         <a href="{{ route('transactions.show', $tx) }}"
-                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                             {{ __('dashboard.history.view_detail') }}
                                         </a>
                                     </div>
@@ -273,7 +273,7 @@
                                     <div class="shrink-0">
                                         @if ($result->listing)
                                             <a href="{{ route('results.show', $result->listing) }}"
-                                                class="inline-flex items-center justify-center gap-2 px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                                                class="inline-flex items-center justify-center gap-2 px-4 py-1.5 min-h-[44px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                                 <i aria-hidden="true" class="fa-solid fa-file-lines text-xs"></i>
                                                 {{ __('dashboard.history.view_result') }}
                                             </a>
@@ -337,7 +337,7 @@
                                     </div>
                                     <div class="shrink-0">
                                         <a href="{{ route('jobs.show', $job) }}"
-                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                             {{ __('dashboard.history.view_detail') }}
                                         </a>
                                     </div>

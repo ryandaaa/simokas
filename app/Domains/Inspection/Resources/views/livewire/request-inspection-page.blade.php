@@ -1,5 +1,5 @@
 <div class="ds-sans mx-auto max-w-2xl px-4 py-6 sm:py-8 space-y-6 pb-12">
-    <a href="{{ route('catalog.show', ['listing' => $listing->id]) }}" class="inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
+    <a href="{{ route('catalog.show', ['listing' => $listing->id]) }}" class="min-h-[44px] inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
         <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
         {{ __('catalog.detail.back_to_list') }}
     </a>
@@ -51,7 +51,7 @@
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-ds-muted">{{ __('inspection.request.expires_label') }}</span>
-                    <span class="font-bold text-ds-ink">30 menit</span>
+                    <span class="font-bold text-ds-ink">{{ __("inspection.request.expires_value") }}</span>
                 </div>
             </div>
         </div>

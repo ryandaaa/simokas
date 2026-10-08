@@ -227,7 +227,7 @@
                                 <button
                                     type="button"
                                     wire:click="openDetail('{{ $item->id }}')"
-                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs"
+                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs"
                                 >
                                     <i aria-hidden="true" class="fa-solid fa-eye text-xs mr-1.5"></i>
                                     {{ __('admin.listing_queue.view_detail') }}
@@ -236,7 +236,7 @@
                                 <button
                                     type="button"
                                     wire:click="confirmReject('{{ $item->id }}')"
-                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs"
+                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs"
                                 >
                                     {{ __('admin.listing_queue.reject') }}
                                 </button>
@@ -244,7 +244,7 @@
                                 <button
                                     type="button"
                                     wire:click="confirmApprove('{{ $item->id }}')"
-                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md"
+                                    class="inline-flex items-center justify-center gap-1.5 px-4 py-2 min-h-[44px] bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md"
                                 >
                                     {{ __('admin.listing_queue.approve') }}
                                 </button>
@@ -305,7 +305,7 @@
                     <label for="rejection_reason_input" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('admin.listing_queue.reason_label') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <textarea id="rejection_reason_input" wire:model="rejectionReason" rows="4" required
                         placeholder="{{ __('admin.listing_queue.reason_placeholder') }}"

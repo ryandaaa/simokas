@@ -41,6 +41,7 @@
                                 @foreach ($templateList as $template)
                                     <button
                                         wire:click="selectTemplate('{{ $template->id }}')"
+                                        aria-pressed="{{ $selectedTemplate?->id === $template->id ? 'true' : 'false' }}"
                                         class="w-full text-left p-3 rounded-xl transition-colors min-h-[44px]
                                             {{ $selectedTemplate?->id === $template->id
                                                 ? 'bg-ds-blue text-white shadow-md'
@@ -92,7 +93,7 @@
                                             <label for="item-label-{{ $index }}" class="block text-xs font-bold text-ds-ink mb-1.5">
                                                 {{ __('admin.templates.label') }}
                                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                                <span class="sr-only">(wajib diisi)</span>
+                                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                                             </label>
                                             <input type="text" id="item-label-{{ $index }}" wire:model="items.{{ $index }}.label" required
                                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -106,7 +107,7 @@
                                             <label for="item-weight-{{ $index }}" class="block text-xs font-bold text-ds-ink mb-1.5">
                                                 {{ __('admin.templates.weight') }}
                                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                                <span class="sr-only">(wajib diisi)</span>
+                                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                                             </label>
                                             <input type="number" id="item-weight-{{ $index }}" wire:model.number="items.{{ $index }}.weight" min="1" required
                                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -122,7 +123,7 @@
                                             <label for="item-sort-{{ $index }}" class="block text-xs font-bold text-ds-ink mb-1.5">
                                                 {{ __('admin.templates.sort_order') }}
                                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                                <span class="sr-only">(wajib diisi)</span>
+                                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                                             </label>
                                             <input type="number" id="item-sort-{{ $index }}" wire:model.number="items.{{ $index }}.sort_order" min="0" required
                                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -176,7 +177,7 @@
                                     <button
                                         type="button"
                                         wire:click="cancelEdit"
-                                        class="px-4 py-2 text-ds-muted hover:text-ds-ink text-sm font-bold transition-colors"
+                                        class="min-h-[44px] inline-flex items-center px-4 py-2 text-ds-muted hover:text-ds-ink text-sm font-bold transition-colors"
                                     >
                                         {{ __('admin.templates.cancel') }}
                                     </button>

@@ -37,6 +37,7 @@ return [
         'subtitle' => 'Periksa kembali ringkasan sebelum membuat tagihan.',
         'fee_label' => 'Tarif inspeksi',
         'expires_label' => 'Tagihan berlaku sampai',
+        'expires_value' => '30 menit',
         'warning_title' => 'Perhatian sebelum memesan',
         'warning' => 'Biaya dipotong sesuai tarif saat ini dan tidak berubah setelah dipesan. Tagihan kedaluwarsa dalam 30 menit bila tidak dibayar.',
         'confirm_title' => 'Buat tagihan inspeksi?',

@@ -1,7 +1,7 @@
 <x-layouts.app :title="__('home.help.title')" :navItems="$navItems">
     <div class="ds-sans space-y-12 pb-12">
         <div class="text-center max-w-2xl mx-auto space-y-3">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">Bantuan</span>
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __("home.help_eyebrow") }}</span>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-ds-ink tracking-tight">{{ __('home.help.heading') }}</h1>
             <p class="text-sm sm:text-base text-ds-muted leading-relaxed">{{ __('home.help.intro') }}</p>
         </div>
@@ -22,11 +22,11 @@
                     ['q' => __('home.help.faq_q6'), 'a' => __('home.help.faq_a6')],
                 ] as $i => $faq)
                     <div class="border border-ds-line/80 rounded-2xl overflow-hidden bg-white transition-all shadow-xs">
-                        <button @click="open = (open === {{ $i + 1 }} ? 0 : {{ $i + 1 }})" class="w-full px-6 py-4 text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors focus:outline-none">
+                        <button @click="open = (open === {{ $i + 1 }} ? 0 : {{ $i + 1 }})" :aria-expanded="(open === {{ $i + 1 }}).toString()" aria-controls="help-faq-{{ $i + 1 }}" class="w-full px-6 py-4 min-h-[44px] text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ds-blue">
                             <span>{{ $faq['q'] }}</span>
                             <i aria-hidden="true" class="fa-solid text-xs text-ds-faint transition-transform" :class="open === {{ $i + 1 }} ? 'fa-minus rotate-180' : 'fa-plus'"></i>
                         </button>
-                        <div x-show="open === {{ $i + 1 }}" x-cloak class="px-6 pb-4 text-xs text-ds-muted leading-relaxed border-t border-ds-line/60 pt-3">
+                        <div id="help-faq-{{ $i + 1 }}" role="region" x-show="open === {{ $i + 1 }}" x-cloak class="px-6 pb-4 text-xs text-ds-muted leading-relaxed border-t border-ds-line/60 pt-3">
                             {{ $faq['a'] }}
                         </div>
                     </div>

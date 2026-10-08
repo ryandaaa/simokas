@@ -287,11 +287,11 @@
                 <div class="max-w-3xl mx-auto space-y-4" x-data="{ open: 1 }">
                     @foreach ([1, 2, 3] as $i)
                         <div class="border border-ds-line/80 rounded-2xl overflow-hidden bg-white transition-all shadow-xs">
-                            <button @click="open = (open === {{ $i }} ? 0 : {{ $i }})" class="w-full px-6 py-4 text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors focus:outline-none">
+                            <button @click="open = (open === {{ $i }} ? 0 : {{ $i }})" :aria-expanded="(open === {{ $i }}).toString()" aria-controls="home-faq-{{ $i }}" class="w-full px-6 py-4 min-h-[44px] text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ds-blue">
                                 <span>{{ __('home.help.faq_q'.$i) }}</span>
                                 <i aria-hidden="true" class="fa-solid text-xs text-ds-faint transition-transform" :class="open === {{ $i }} ? 'fa-minus rotate-180' : 'fa-plus'"></i>
                             </button>
-                            <div x-show="open === {{ $i }}" x-cloak class="px-6 pb-4 text-xs text-ds-muted leading-relaxed border-t border-ds-line/60 pt-3">
+                            <div id="home-faq-{{ $i }}" role="region" x-show="open === {{ $i }}" x-cloak class="px-6 pb-4 text-xs text-ds-muted leading-relaxed border-t border-ds-line/60 pt-3">
                                 {{ __('home.help.faq_a'.$i) }}
                             </div>
                         </div>

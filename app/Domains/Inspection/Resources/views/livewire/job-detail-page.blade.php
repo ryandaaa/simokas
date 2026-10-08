@@ -1,7 +1,7 @@
 <div class="ds-sans space-y-8 pb-12">
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div class="space-y-2">
-            <a href="{{ route('jobs.inspector') }}" class="inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
+            <a href="{{ route('jobs.inspector') }}" class="min-h-[44px] inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
                 <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
                 {{ __('inspection.detail.back_button') }}
             </a>
@@ -159,7 +159,7 @@
                             <label for="scheduled_date" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('inspection.detail.scheduled_date_label') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="date" id="scheduled_date" name="scheduled_date" wire:model="scheduled_date" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -172,7 +172,7 @@
                             <label for="scheduled_time" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('inspection.detail.scheduled_time_label') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="time" id="scheduled_time" name="scheduled_time" wire:model="scheduled_time" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">

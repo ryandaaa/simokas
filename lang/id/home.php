@@ -31,6 +31,8 @@ return [
     'browse_inspected' => 'Sudah Diinspeksi',
 
     'steps_eyebrow' => 'Proses Mudah',
+    'how_eyebrow' => 'Panduan',
+    'help_eyebrow' => 'Bantuan',
 
     'banner_eyebrow' => 'Untuk Mekanik',
     'banner_stat_fee' => 'fee bersih mobil',

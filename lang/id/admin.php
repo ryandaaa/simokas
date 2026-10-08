@@ -137,6 +137,10 @@ return [
         'table_id' => 'ID Target',
         'table_meta' => 'Rincian / Alasan',
         'no_meta' => '-',
+        'system_actor' => 'Sistem',
+        'actor_label' => 'Aktor:',
+        'target_label' => 'Target:',
+        'reason_prefix' => 'Alasan:',
         'actions' => [
             'cancel_job' => 'Batalkan Job',
             'complete_job' => 'Selesaikan Job',

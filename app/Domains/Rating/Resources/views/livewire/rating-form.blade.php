@@ -6,7 +6,7 @@
             </h3>
             @if ($transaction?->inspector)
                 <p class="text-sm text-ds-muted mt-1">
-                    Inspektor: <span class="font-bold text-ds-ink">{{ $transaction->inspector->name }}</span>
+                    {{ __("rating.inspector_label") }} <span class="font-bold text-ds-ink">{{ $transaction->inspector->name }}</span>
                 </p>
             @endif
         </div>
@@ -62,7 +62,7 @@
                             <button
                                 type="button"
                                 wire:click="$set('score', {{ $i }})"
-                                class="p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-ds-blue transition"
+                                class="p-1.5 rounded-full focus:outline-none focus:ring-2 focus:ring-ds-blue transition"
                                 title="{{ __('rating.display.out_of_five', ['score' => $i]) }}"
                                 role="radio"
                                 aria-checked="{{ $i === $score ? 'true' : 'false' }}"

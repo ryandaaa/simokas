@@ -66,7 +66,7 @@
     @endif
 
     {{-- Loading indicator --}}
-    <div wire:loading class="w-full">
+    <div wire:loading role="status" class="w-full">
         <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6 flex items-center justify-center gap-3 text-sm text-ds-muted">
             <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
             {{ __('ui.actions.loading') }}
@@ -98,7 +98,7 @@
     @else
         {{-- Desktop Table --}}
         <div class="hidden md:block">
-            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-hidden">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-x-auto">
                 <table class="min-w-full divide-y divide-ds-line/60 text-left text-sm">
                     <thead class="bg-ds-canvas/80 text-ds-muted">
                         <tr>
@@ -136,7 +136,7 @@
                                         </span>
                                         @if ($job->needs_attention_at && !$job->isFinal())
                                             <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-ds-red-soft text-ds-red-ink" title="{{ __('admin.jobs.needs_action') }}">
-                                                !
+                                                !<span class="sr-only">{{ __('admin.jobs.needs_action') }}</span>
                                             </span>
                                         @endif
                                     </div>

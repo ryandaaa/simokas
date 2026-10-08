@@ -91,7 +91,7 @@
         @else
             {{-- Desktop Table --}}
             <div class="hidden md:block">
-                <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-hidden">
+                <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-x-auto">
                     <table class="min-w-full divide-y divide-ds-line/60 text-left text-sm">
                         <thead class="bg-ds-canvas/80 text-ds-muted">
                             <tr>
@@ -122,7 +122,7 @@
                                             <button
                                                 type="button"
                                                 wire:click="openActivateModal('{{ $user->id }}')"
-                                                class="inline-flex items-center justify-center px-4 py-1.5 min-h-[36px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs"
+                                                class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs"
                                             >
                                                 {{ __('admin.users.activate') }}
                                             </button>
@@ -130,7 +130,7 @@
                                             <button
                                                 type="button"
                                                 wire:click="openBlockModal('{{ $user->id }}')"
-                                                class="inline-flex items-center justify-center px-4 py-1.5 min-h-[36px] text-xs font-bold bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 rounded-xl transition-all shadow-xs"
+                                                class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-xs font-bold bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 rounded-xl transition-all shadow-xs"
                                             >
                                                 {{ __('admin.users.block') }}
                                             </button>
@@ -168,7 +168,7 @@
                                     <button
                                         type="button"
                                         wire:click="openActivateModal('{{ $user->id }}')"
-                                        class="inline-flex items-center justify-center px-4 py-1.5 min-h-[36px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs"
+                                        class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs"
                                     >
                                         {{ __('admin.users.activate') }}
                                     </button>
@@ -176,7 +176,7 @@
                                     <button
                                         type="button"
                                         wire:click="openBlockModal('{{ $user->id }}')"
-                                        class="inline-flex items-center justify-center px-4 py-1.5 min-h-[36px] text-xs font-bold bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 rounded-xl transition-all shadow-xs"
+                                        class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-xs font-bold bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 rounded-xl transition-all shadow-xs"
                                     >
                                         {{ __('admin.users.block') }}
                                     </button>
@@ -215,7 +215,7 @@
                             </li>
                         @endforeach
                     </ul>
-                    <label class="flex items-start gap-2 cursor-pointer text-sm">
+                    <label class="flex items-start gap-2 cursor-pointer text-sm min-h-[44px]">
                         <input type="checkbox" wire:model.live="confirmCancelItems"
                             class="mt-0.5 w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30" />
                         <span>{{ __('admin.users.confirm_cancel_items') }}</span>

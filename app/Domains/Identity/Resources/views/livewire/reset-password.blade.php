@@ -25,7 +25,7 @@
                     <label for="email" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.register.email') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="email" id="email" name="email" wire:model="email" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -38,7 +38,7 @@
                     <label for="password" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.reset_password.password') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="password" id="password" name="password" wire:model="password" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -52,7 +52,7 @@
                     <label for="password_confirmation" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.reset_password.password_confirmation') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="password" id="password_confirmation" name="password_confirmation" wire:model="password_confirmation" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">

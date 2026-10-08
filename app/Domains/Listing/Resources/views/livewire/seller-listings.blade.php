@@ -130,7 +130,7 @@
                                 type="button"
                                 wire:click="confirmResubmit('{{ $listing->id }}')"
                                 wire:loading.attr="disabled"
-                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
+                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
                             >
                                 {{ __('listing.mine.resubmit') }}
                             </button>
@@ -142,7 +142,7 @@
 
                             <a
                                 href="{{ route('listings.edit', $listing) }}"
-                                class="text-xs font-bold text-ds-blue hover:text-ds-blue-ink inline-flex items-center gap-1"
+                                class="min-h-[44px] inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink"
                             >
                                 <span>{{ __('listing.mine.edit') }}</span>
                                 <i aria-hidden="true" class="fa-solid fa-arrow-right"></i>

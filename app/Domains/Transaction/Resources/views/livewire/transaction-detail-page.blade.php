@@ -1,5 +1,5 @@
 <div class="ds-sans mx-auto max-w-2xl px-4 py-6 sm:py-8 space-y-6 pb-12">
-    <a href="{{ route('transactions.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
+    <a href="{{ route('transactions.index') }}" class="min-h-[44px] inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
         <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
         {{ __('transaction.detail.back') }}
     </a>
@@ -122,7 +122,7 @@
                     type="button"
                     @click="$dispatch('open-modal', 'cancel-modal')"
                     wire:loading.attr="disabled"
-                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                 >
                     {{ __('transaction.detail.cancel') }}
                 </button>
@@ -156,7 +156,7 @@
                     type="button"
                     @click="$dispatch('open-modal', 'cancel-modal')"
                     wire:loading.attr="disabled"
-                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                 >
                     {{ __('transaction.detail.cancel') }}
                 </button>
@@ -168,7 +168,7 @@
                 type="button"
                 @click="$dispatch('open-modal', 'cancel-modal')"
                 wire:loading.attr="disabled"
-                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
             >
                 {{ __('transaction.detail.cancel') }}
             </button>
@@ -201,7 +201,7 @@
                         type="button"
                         @click="$dispatch('open-modal', 'request-cancellation-modal')"
                         wire:loading.attr="disabled"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                     >
                         {{ __('transaction.detail.request_cancellation') }}
                     </button>
@@ -227,7 +227,7 @@
                         type="button"
                         @click="$dispatch('open-modal', 'cancel-refund-modal')"
                         wire:loading.attr="disabled"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                     >
                         {{ __('transaction.detail.cancel_refund') }}
                     </button>
@@ -236,7 +236,7 @@
                         type="button"
                         @click="$dispatch('open-modal', 'cancel-refund-modal')"
                         wire:loading.attr="disabled"
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                     >
                         {{ __('transaction.detail.cancel_admin') }}
                     </button>

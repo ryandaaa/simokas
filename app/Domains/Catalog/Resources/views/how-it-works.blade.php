@@ -1,7 +1,7 @@
 <x-layouts.app :title="__('home.how.title')" :navItems="$navItems">
     <div class="ds-sans space-y-12 pb-12">
         <div class="text-center max-w-2xl mx-auto space-y-3">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">Panduan</span>
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __("home.how_eyebrow") }}</span>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-ds-ink tracking-tight">{{ __('home.how.heading') }}</h1>
             <p class="text-sm sm:text-base text-ds-muted leading-relaxed">{{ __('home.how.intro') }}</p>
         </div>

@@ -28,7 +28,7 @@
                     <label for="account_type" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.register.account_type') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <select id="account_type" name="account_type" wire:model="account_type" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -44,7 +44,7 @@
                     <label for="name" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.register.name') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="text" id="name" name="name" wire:model="name" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -58,7 +58,7 @@
                     <label for="email" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.register.email') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="email" id="email" name="email" wire:model="email" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -71,7 +71,7 @@
                     <label for="phone" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.register.phone') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="tel" id="phone" name="phone" wire:model="phone" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -85,7 +85,7 @@
                     <label for="password" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.register.password') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="password" id="password" name="password" wire:model="password" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -99,7 +99,7 @@
                     <label for="password_confirmation" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.register.password_confirmation') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="password" id="password_confirmation" name="password_confirmation" wire:model="password_confirmation" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -109,7 +109,7 @@
                 </div>
 
                 <div class="w-full">
-                    <label for="accepted_terms" class="flex items-start gap-2 text-sm text-ds-muted cursor-pointer">
+                    <label for="accepted_terms" class="flex items-start gap-2 text-sm text-ds-muted cursor-pointer min-h-[44px]">
                         <input type="checkbox" id="accepted_terms" name="accepted_terms" wire:model="accepted_terms" required
                             class="mt-0.5 w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30">
                         <span>
@@ -118,7 +118,7 @@
                             {{ __('identity.register.terms_and') }}
                             <a href="{{ route('legal.privacy') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">{{ __('legal.footer_privacy') }}</a>
                             <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                            <span class="sr-only">(wajib)</span>
+                            <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                         </span>
                     </label>
                     @error('accepted_terms')

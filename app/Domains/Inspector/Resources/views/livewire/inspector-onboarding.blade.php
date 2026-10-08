@@ -74,12 +74,12 @@
                 </span>
                 <p class="text-xs text-ds-faint mb-3">{{ __('inspector.onboarding.vehicle_types_hint') }}</p>
                 <div class="flex flex-wrap gap-6" role="group" aria-labelledby="vehicle-types-label">
-                    <label for="type_car" class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer">
+                    <label for="type_car" class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer min-h-[44px]">
                         <input type="checkbox" id="type_car" value="car" wire:model="vehicle_types"
                             class="w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30">
                         {{ __('inspector.vehicle_types.car') }}
                     </label>
-                    <label for="type_motorcycle" class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer">
+                    <label for="type_motorcycle" class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer min-h-[44px]">
                         <input type="checkbox" id="type_motorcycle" value="motorcycle" wire:model="vehicle_types"
                             class="w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30">
                         {{ __('inspector.vehicle_types.motorcycle') }}
@@ -97,7 +97,7 @@
                 <label for="experience_years" class="block text-xs font-bold text-ds-ink mb-1.5">
                     {{ __('inspector.onboarding.experience_label') }}
                     <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                    <span class="sr-only">(wajib diisi)</span>
+                    <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                 </label>
                 <input type="number" id="experience_years" min="0" max="50" wire:model="experience_years" required
                     class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -166,12 +166,12 @@
                             <a href="{{ $ktpDocument->getTemporarySignedUrl() }}"
                                 target="_blank"
                                 rel="noopener noreferrer nofollow"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                                class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
                                 <i aria-hidden="true" class="fa-solid fa-eye text-xs"></i>
                                 {{ __('inspector.documents.view') }}
                             </a>
                             <button type="button" wire:click="confirmDeleteDocument('{{ $ktpDocument->id }}')"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
+                                class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
                                 <i aria-hidden="true" class="fa-solid fa-trash text-xs"></i>
                                 {{ __('inspector.documents.delete') }}
                             </button>
@@ -179,7 +179,7 @@
                     </div>
                 @else
                     <form wire:submit="uploadKtp" class="space-y-3">
-                        <input id="ktp_file" type="file" wire:model="ktp_file"
+                        <input id="ktp_file" type="file" wire:model="ktp_file" aria-label="{{ __('inspector.documents.types.ktp') }}"
                             class="w-full min-h-[44px] px-3 py-2.5 rounded-xl text-sm bg-white text-ds-ink border border-ds-line file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-ds-blue file:text-white file:text-xs file:font-bold" />
                         @error('ktp_file')
                             <p class="text-xs text-ds-danger" role="alert">{{ $message }}</p>
@@ -245,12 +245,12 @@
                                     <a href="{{ $cert->getTemporarySignedUrl() }}"
                                         target="_blank"
                                         rel="noopener noreferrer nofollow"
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
                                         <i aria-hidden="true" class="fa-solid fa-eye text-xs"></i>
                                         {{ __('inspector.documents.view') }}
                                     </a>
                                     <button type="button" wire:click="confirmDeleteDocument('{{ $cert->id }}')"
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
                                         <i aria-hidden="true" class="fa-solid fa-trash text-xs"></i>
                                         {{ __('inspector.documents.delete') }}
                                     </button>
@@ -264,7 +264,7 @@
 
                 @if ($certificateDocuments->count() < 3)
                     <form wire:submit="uploadCertificate" class="space-y-3 pt-2">
-                        <input id="certificate_file" type="file" wire:model="certificate_file"
+                        <input id="certificate_file" type="file" wire:model="certificate_file" aria-label="{{ __('inspector.documents.types.certificate') }}"
                             class="w-full min-h-[44px] px-3 py-2.5 rounded-xl text-sm bg-white text-ds-ink border border-ds-line file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-ds-blue file:text-white file:text-xs file:font-bold" />
                         @error('certificate_file')
                             <p class="text-xs text-ds-danger" role="alert">{{ $message }}</p>
@@ -323,12 +323,12 @@
                             <a href="{{ $cvDocument->getTemporarySignedUrl() }}"
                                 target="_blank"
                                 rel="noopener noreferrer nofollow"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                                class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
                                 <i aria-hidden="true" class="fa-solid fa-eye text-xs"></i>
                                 {{ __('inspector.documents.view') }}
                             </a>
                             <button type="button" wire:click="confirmDeleteDocument('{{ $cvDocument->id }}')"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
+                                class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
                                 <i aria-hidden="true" class="fa-solid fa-trash text-xs"></i>
                                 {{ __('inspector.documents.delete') }}
                             </button>
@@ -336,7 +336,7 @@
                     </div>
                 @else
                     <form wire:submit="uploadCv" class="space-y-3">
-                        <input id="cv_file" type="file" wire:model="cv_file"
+                        <input id="cv_file" type="file" wire:model="cv_file" aria-label="{{ __('inspector.documents.types.cv') }}"
                             class="w-full min-h-[44px] px-3 py-2.5 rounded-xl text-sm bg-white text-ds-ink border border-ds-line file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-ds-blue file:text-white file:text-xs file:font-bold" />
                         @error('cv_file')
                             <p class="text-xs text-ds-danger" role="alert">{{ $message }}</p>
@@ -404,7 +404,7 @@
                                     <a href="{{ $portfolioDocument->getSafeUrl() }}"
                                         target="_blank"
                                         rel="noopener noreferrer nofollow"
-                                        class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                                        class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
                                         <i aria-hidden="true" class="fa-solid fa-link text-xs"></i>
                                         {{ __('inspector.documents.open_url') }}
                                     </a>
@@ -417,13 +417,13 @@
                                 <a href="{{ $portfolioDocument->getTemporarySignedUrl() }}"
                                     target="_blank"
                                     rel="noopener noreferrer nofollow"
-                                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                                    class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
                                     <i aria-hidden="true" class="fa-solid fa-eye text-xs"></i>
                                     {{ __('inspector.documents.view') }}
                                 </a>
                             @endif
                             <button type="button" wire:click="confirmDeleteDocument('{{ $portfolioDocument->id }}')"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
+                                class="inline-flex items-center gap-1.5 px-4 py-2 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs">
                                 <i aria-hidden="true" class="fa-solid fa-trash text-xs"></i>
                                 {{ __('inspector.documents.delete') }}
                             </button>
@@ -432,7 +432,7 @@
                 @else
                     <div class="space-y-4">
                         <div class="flex gap-4">
-                            <label class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer">
+                            <label class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer min-h-[44px]">
                                 <input
                                     type="radio"
                                     wire:model.live="portfolio_mode"
@@ -441,7 +441,7 @@
                                 />
                                 {{ __('inspector.documents.portfolio_mode_file') }}
                             </label>
-                            <label class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer">
+                            <label class="inline-flex items-center gap-2 text-sm text-ds-ink cursor-pointer min-h-[44px]">
                                 <input
                                     type="radio"
                                     wire:model.live="portfolio_mode"
@@ -454,7 +454,7 @@
 
                         <form wire:submit="uploadPortfolio" class="space-y-3">
                             @if ($portfolio_mode === 'file')
-                                <input id="portfolio_file" type="file" wire:model="portfolio_file"
+                                <input id="portfolio_file" type="file" wire:model="portfolio_file" aria-label="{{ __('inspector.documents.types.portfolio') }}"
                                     class="w-full min-h-[44px] px-3 py-2.5 rounded-xl text-sm bg-white text-ds-ink border border-ds-line file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-ds-blue file:text-white file:text-xs file:font-bold" />
                                 @error('portfolio_file')
                                     <p class="text-xs text-ds-danger" role="alert">{{ $message }}</p>

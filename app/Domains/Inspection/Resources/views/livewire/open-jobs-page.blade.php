@@ -5,7 +5,7 @@
             <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('inspection.open_jobs.title') }}</h1>
             <p class="text-sm text-ds-muted">{{ __('inspection.open_jobs.subtitle') }}</p>
         </div>
-        <a href="{{ route('jobs.inspector') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+        <a href="{{ route('jobs.inspector') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
             <i aria-hidden="true" class="fa-solid fa-briefcase text-xs"></i>
             {{ __('inspection.inspector_jobs.title') }}
         </a>
@@ -71,7 +71,7 @@
     </div>
 
     {{-- Loading state --}}
-    <div wire:loading.delay wire:target="applyFilter, resetFilter, take" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div wire:loading.delay wire:target="applyFilter, resetFilter, take" role="status" aria-label="Memuat" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         @for ($i = 0; $i < 6; $i++)
             <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-5 animate-pulse">
                 <div class="h-5 w-2/3 rounded bg-ds-soft"></div>
@@ -125,7 +125,7 @@
                                 type="button"
                                 wire:click="confirmTake('{{ $job->id }}')"
                                 wire:loading.attr="disabled"
-                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
+                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
                             >
                                 {{ __('inspection.open_jobs.take_button') }}
                             </button>

@@ -83,7 +83,7 @@
                         <label for="vehicle_type" class="block text-xs font-bold text-ds-ink mb-1.5">
                             {{ __('listing.fields.vehicle_type') }}
                             <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                            <span class="sr-only">(wajib diisi)</span>
+                            <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                         </label>
                         <select id="vehicle_type" name="vehicle_type" wire:model.live="vehicle_type" required
                             class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -100,7 +100,7 @@
                         <label for="title" class="block text-xs font-bold text-ds-ink mb-1.5">
                             {{ __('listing.fields.title') }}
                             <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                            <span class="sr-only">(wajib diisi)</span>
+                            <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                         </label>
                         <input type="text" id="title" name="title" wire:model="title" required
                             class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -116,7 +116,7 @@
                             <label for="brand" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.brand') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="text" id="brand" name="brand" list="brand-suggestions" wire:model="brand" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -135,7 +135,7 @@
                             <label for="model" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.model') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="text" id="model" name="model" wire:model="model" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -152,7 +152,7 @@
                             <label for="year" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.year') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="number" id="year" name="year" inputmode="numeric" wire:model="year" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -166,7 +166,7 @@
                             <label for="odometer_km" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.odometer_km') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="number" id="odometer_km" name="odometer_km" inputmode="numeric" wire:model="odometer_km" required placeholder="Contoh: 45000"
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -182,7 +182,7 @@
                             <label for="price" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.price') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="number" id="price" name="price" inputmode="numeric" wire:model="price" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -193,7 +193,7 @@
                         </div>
 
                         <div class="p-2">
-                            <label for="negotiable" class="inline-flex items-center gap-2 text-sm text-ds-muted cursor-pointer">
+                            <label for="negotiable" class="inline-flex items-center gap-2 text-sm text-ds-muted cursor-pointer min-h-[44px]">
                                 <input type="checkbox" id="negotiable" name="negotiable" wire:model="negotiable"
                                     class="w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30">
                                 {{ __('listing.fields.negotiable_yes') }}
@@ -207,7 +207,7 @@
                             <label for="transmission" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.transmission') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <select id="transmission" name="transmission" wire:model="transmission" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -223,7 +223,7 @@
                             <label for="fuel" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.fuel') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <select id="fuel" name="fuel" wire:model="fuel" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -243,7 +243,7 @@
                         <label for="color" class="block text-xs font-bold text-ds-ink mb-1.5">
                             {{ __('listing.fields.color') }}
                             <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                            <span class="sr-only">(wajib diisi)</span>
+                            <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                         </label>
                         <input type="text" id="color" name="color" wire:model="color" required placeholder="Contoh: Hitam Metalik, Putih"
                             class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -404,7 +404,7 @@
                                             <button
                                                 type="button"
                                                 wire:click="removePhoto({{ $index }})"
-                                                class="text-xs text-ds-danger hover:underline p-1 inline-flex items-center gap-1"
+                                                class="min-h-[44px] inline-flex items-center gap-1 text-xs text-ds-danger hover:underline p-1"
                                                 title="Hapus foto"
                                             >
                                                 <i aria-hidden="true" class="fa-solid fa-xmark"></i>
@@ -457,7 +457,7 @@
                                 <label for="lat" class="block text-xs font-bold text-ds-ink mb-1.5">
                                     {{ __('listing.fields.lat') }}
                                     <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                    <span class="sr-only">(wajib diisi)</span>
+                                    <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                                 </label>
                                 <input type="text" id="lat" name="lat" inputmode="decimal" wire:model="lat" required
                                     class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -471,7 +471,7 @@
                                 <label for="lng" class="block text-xs font-bold text-ds-ink mb-1.5">
                                     {{ __('listing.fields.lng') }}
                                     <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                    <span class="sr-only">(wajib diisi)</span>
+                                    <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                                 </label>
                                 <input type="text" id="lng" name="lng" inputmode="decimal" wire:model="lng" required
                                     class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -486,7 +486,7 @@
                             <label for="address_full" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.address_full') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <textarea id="address_full" name="address_full" wire:model="address_full" rows="3" required
                                 class="w-full px-4 py-3 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"></textarea>
@@ -500,7 +500,7 @@
                             <label for="area_name" class="block text-xs font-bold text-ds-ink mb-1.5">
                                 {{ __('listing.fields.area_name') }}
                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                <span class="sr-only">(wajib diisi)</span>
+                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                             </label>
                             <input type="text" id="area_name" name="area_name" wire:model="area_name" required
                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -516,7 +516,7 @@
                         <label for="inspection_place" class="block text-xs font-bold text-ds-ink mb-1.5">
                             {{ __('listing.fields.inspection_place') }}
                             <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                            <span class="sr-only">(wajib diisi)</span>
+                            <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                         </label>
                         <input type="text" id="inspection_place" name="inspection_place" wire:model="inspection_place" required
                             class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -550,7 +550,7 @@
                                 <div class="p-4 rounded-2xl border border-ds-line/80 bg-ds-canvas/60 space-y-3">
                                     <div class="flex items-center justify-between">
                                         <span class="text-xs font-extrabold text-ds-blue uppercase tracking-wide">
-                                            Opsi Waktu #{{ $index + 1 }}
+                                            {{ __('listing.fields.slot_number', ['n' =>  + 1]) }}
                                         </span>
 
                                         @if (count($inspection_slots) > 1)
@@ -570,7 +570,7 @@
                                             <label for="slot_{{ $index }}_start" class="block text-xs font-bold text-ds-ink mb-1.5">
                                                 {{ __('listing.fields.slot_time') }}
                                                 <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                                                <span class="sr-only">(wajib diisi)</span>
+                                                <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                                             </label>
                                             <input type="datetime-local" id="slot_{{ $index }}_start" name="inspection_slots.{{ $index }}.slot_start" wire:model="inspection_slots.{{ $index }}.slot_start" required
                                                 class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">

@@ -83,7 +83,7 @@
     @else
         {{-- Desktop Table --}}
         <div class="hidden md:block">
-            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-hidden">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-x-auto">
                 <table class="min-w-full divide-y divide-ds-line/60 text-left text-sm">
                     <thead class="bg-ds-canvas/80 text-ds-muted">
                         <tr>
@@ -126,7 +126,7 @@
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap text-right">
                                     <a href="{{ $item['url'] }}"
-                                        class="inline-flex items-center justify-center px-4 py-1.5 min-h-[36px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                                        class="inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                         @if ($item['type'] === 'listing')
                                             {{ __('admin.unified_queue.action_review_listing') }}
                                         @elseif ($item['type'] === 'inspector')
@@ -179,7 +179,7 @@
 
                     <div class="pt-2">
                         <a href="{{ $item['url'] }}"
-                            class="w-full inline-flex items-center justify-center px-4 py-2.5 text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                            class="w-full inline-flex items-center justify-center px-4 py-2.5 min-h-[44px] text-xs font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                             @if ($item['type'] === 'listing')
                                 {{ __('admin.unified_queue.action_review_listing') }}
                             @elseif ($item['type'] === 'inspector')

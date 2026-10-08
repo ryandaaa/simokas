@@ -20,7 +20,7 @@
                     <label for="email" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.login.email') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="email" id="email" name="email" wire:model="email" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -33,7 +33,7 @@
                     <label for="password" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.login.password') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="password" id="password" name="password" wire:model="password" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                    <label for="remember" class="inline-flex items-center gap-2 text-sm text-ds-muted cursor-pointer">
+                    <label for="remember" class="inline-flex items-center gap-2 text-sm text-ds-muted cursor-pointer min-h-[44px]">
                         <input type="checkbox" id="remember" name="remember" wire:model="remember"
                             class="w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30">
                         {{ __('identity.login.remember') }}

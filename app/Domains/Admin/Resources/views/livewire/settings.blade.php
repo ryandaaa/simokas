@@ -48,7 +48,7 @@
                     <label for="inspection_fee_car" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('setting.keys.inspection_fee_car') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="number" id="inspection_fee_car" name="form.inspection_fee_car" wire:model="form.inspection_fee_car" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -62,7 +62,7 @@
                     <label for="inspection_fee_motorcycle" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('setting.keys.inspection_fee_motorcycle') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="number" id="inspection_fee_motorcycle" name="form.inspection_fee_motorcycle" wire:model="form.inspection_fee_motorcycle" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -82,7 +82,7 @@
                     <label for="platform_fee_pct" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('setting.keys.platform_fee_pct') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="number" id="platform_fee_pct" name="form.platform_fee_pct" wire:model="form.platform_fee_pct" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -96,7 +96,7 @@
                     <label for="sale_commission_pct" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('setting.keys.sale_commission_pct') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="number" id="sale_commission_pct" name="form.sale_commission_pct" wire:model="form.sale_commission_pct" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -116,7 +116,7 @@
                     <label for="auto_accept_days" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('setting.keys.auto_accept_days') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="number" id="auto_accept_days" name="form.auto_accept_days" wire:model="form.auto_accept_days" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
@@ -130,7 +130,7 @@
                     <label for="paid_job_timeout_days" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('setting.keys.paid_job_timeout_days') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
-                        <span class="sr-only">(wajib diisi)</span>
+                        <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
                     <input type="number" id="paid_job_timeout_days" name="form.paid_job_timeout_days" wire:model="form.paid_job_timeout_days" required
                         class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">

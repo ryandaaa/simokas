@@ -96,7 +96,7 @@
                                 @if ($job->status === \App\Domains\Inspection\Enums\JobStatus::Requested)
                                     @if (isset($paymentMap[$job->id]))
                                         <a href="{{ route('payments.show', ['payment' => $paymentMap[$job->id]]) }}"
-                                            class="inline-flex items-center justify-center px-3.5 py-1 min-h-[36px] text-xs font-bold bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink rounded-xl transition-all shadow-md">
+                                            class="inline-flex items-center justify-center px-3.5 py-1 min-h-[44px] text-xs font-bold bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink rounded-xl transition-all shadow-md">
                                             {{ __('inspection.mine.pay') }}
                                         </a>
                                     @else
@@ -124,7 +124,7 @@
                                         type="button"
                                         wire:click="confirmCancel('{{ $job->id }}')"
                                         wire:loading.attr="disabled"
-                                        class="text-xs font-bold text-ds-danger hover:underline disabled:opacity-60"
+                                        class="min-h-[44px] inline-flex items-center px-2 text-xs font-bold text-ds-danger hover:underline disabled:opacity-60"
                                     >
                                         {{ __('inspection.mine.cancel_button') }}
                                     </button>

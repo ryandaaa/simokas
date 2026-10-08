@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 return [
     'title' => 'Rating Inspektor',
+    'inspector_label' => 'Inspektor:',
     'rating' => 'Rating',
     'score' => 'Skor Rating',
     'comment' => 'Komentar / Ulasan',
@@ -40,6 +41,7 @@ return [
         'filter_all' => 'Semua',
         'filter_visible' => 'Aktif',
         'filter_hidden' => 'Disembunyikan',
+        'timezone' => 'WIB',
     ],
 
     'errors' => [

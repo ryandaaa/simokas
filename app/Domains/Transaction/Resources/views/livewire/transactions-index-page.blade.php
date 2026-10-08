@@ -65,7 +65,7 @@
                                 </div>
                             </div>
                             <a href="{{ route('transactions.show', ['transaction' => $transaction->id]) }}"
-                                class="shrink-0 inline-flex items-center justify-center px-4 py-1.5 min-h-[36px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                                class="shrink-0 inline-flex items-center justify-center px-4 py-1.5 min-h-[44px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                 {{ __('transaction.index.view_detail') }}
                             </a>
                         </div>

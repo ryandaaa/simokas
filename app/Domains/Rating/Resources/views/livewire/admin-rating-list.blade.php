@@ -15,21 +15,24 @@
             <button
                 type="button"
                 wire:click="setFilter('all')"
-                class="px-4 py-1.5 text-sm font-bold rounded-full transition {{ $filter === 'all' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
+                aria-pressed="{{ $filter === 'all' ? 'true' : 'false' }}"
+                class="px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition {{ $filter === 'all' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
             >
                 {{ __('rating.admin.filter_all') }}
             </button>
             <button
                 type="button"
                 wire:click="setFilter('visible')"
-                class="px-4 py-1.5 text-sm font-bold rounded-full transition {{ $filter === 'visible' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
+                aria-pressed="{{ $filter === 'visible' ? 'true' : 'false' }}"
+                class="px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition {{ $filter === 'visible' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
             >
                 {{ __('rating.admin.filter_visible') }}
             </button>
             <button
                 type="button"
                 wire:click="setFilter('hidden')"
-                class="px-4 py-1.5 text-sm font-bold rounded-full transition {{ $filter === 'hidden' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
+                aria-pressed="{{ $filter === 'hidden' ? 'true' : 'false' }}"
+                class="px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition {{ $filter === 'hidden' ? 'bg-ds-ink text-white shadow-md' : 'text-ds-muted hover:text-ds-ink' }}"
             >
                 {{ __('rating.admin.filter_hidden') }}
             </button>
@@ -80,7 +83,7 @@
                                 @endif
 
                                 <span class="text-xs text-ds-muted">
-                                    {{ $rating->created_at?->translatedFormat('d M Y, H:i') }} WIB
+                                    {{ $rating->created_at?->translatedFormat('d M Y, H:i') }} {{ __('rating.admin.timezone') }}
                                 </span>
                             </div>
 
@@ -107,14 +110,12 @@
                                     wire:click="unhide('{{ $rating->id }}')"
                                     wire:loading.attr="disabled"
                                     wire:target="unhide('{{ $rating->id }}')"
-                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                                 >
                                     <span wire:loading.remove wire:target="unhide('{{ $rating->id }}')">
                                         {{ __('rating.admin.unhide') }}
                                     </span>
-                                    <span wire:loading wire:target="unhide('{{ $rating->id }}')">
-                                        ...
-                                    </span>
+                                    <span wire:loading wire:target="unhide('{{ $rating->id }}')">...<span class="sr-only">{{ __("ui.actions.loading") }}</span></span>
                                 </button>
                             @else
                                 <button
@@ -122,14 +123,12 @@
                                     wire:click="hide('{{ $rating->id }}')"
                                     wire:loading.attr="disabled"
                                     wire:target="hide('{{ $rating->id }}')"
-                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
+                                    class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                                 >
                                     <span wire:loading.remove wire:target="hide('{{ $rating->id }}')">
                                         {{ __('rating.admin.hide') }}
                                     </span>
-                                    <span wire:loading wire:target="hide('{{ $rating->id }}')">
-                                        ...
-                                    </span>
+                                    <span wire:loading wire:target="hide('{{ $rating->id }}')">...<span class="sr-only">{{ __("ui.actions.loading") }}</span></span>
                                 </button>
                             @endif
                         </div>

@@ -84,7 +84,7 @@
     @else
         {{-- Desktop Table --}}
         <div class="hidden md:block">
-            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-hidden">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-x-auto">
                 <table class="min-w-full divide-y divide-ds-line/60 text-left text-sm">
                     <thead class="bg-ds-canvas/80 text-ds-muted">
                         <tr>
@@ -107,7 +107,7 @@
                                         <div class="font-bold text-ds-ink">{{ $log->actor->name }}</div>
                                         <div class="text-xs text-ds-muted">{{ $log->actor->email }}</div>
                                     @else
-                                        <span class="text-xs text-ds-muted italic">Sistem</span>
+                                        <span class="text-xs text-ds-muted italic">{{ __('admin.audit_logs.system_actor') }}</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap">
@@ -124,7 +124,7 @@
                                 <td class="px-4 py-3 text-xs text-ds-ink max-w-sm break-words">
                                     @if (!empty($log->meta))
                                         @if (isset($log->meta['reason']))
-                                            <span class="font-bold">Alasan:</span> {{ $log->meta['reason'] }}
+                                            <span class="font-bold">{{ __('admin.audit_logs.reason_prefix') }}</span> {{ $log->meta['reason'] }}
                                         @else
                                             <code class="text-xs text-ds-muted">{{ json_encode($log->meta) }}</code>
                                         @endif
@@ -150,13 +150,13 @@
                         </span>
                     </div>
                     <div>
-                        <div class="text-xs text-ds-muted">Aktor:</div>
+                        <div class="text-xs text-ds-muted">{{ __('admin.audit_logs.actor_label') }}</div>
                         <div class="text-sm font-bold text-ds-ink">
-                            {{ $log->actor ? $log->actor->name . ' (' . $log->actor->email . ')' : 'Sistem' }}
+                            {{ $log->actor ? $log->actor->name . ' (' . $log->actor->email . ')' : __('admin.audit_logs.system_actor') }}
                         </div>
                     </div>
                     <div class="text-xs">
-                        <span class="text-ds-muted">Target:</span>
+                        <span class="text-ds-muted">{{ __('admin.audit_logs.target_label') }}</span>
                         <span class="font-bold text-ds-ink">{{ __('admin.audit_logs.entities.' . $log->entity) ?? $log->entity }}</span>
                         @if ($log->entity_id)
                             <span class="font-mono text-ds-muted block truncate mt-0.5">{{ $log->entity_id }}</span>
@@ -165,7 +165,7 @@
                     @if (!empty($log->meta))
                         <div class="text-xs rounded-2xl bg-ds-canvas/60 border border-ds-line/60 p-2 text-ds-ink">
                             @if (isset($log->meta['reason']))
-                                <span class="font-bold text-ds-muted">Alasan:</span> {{ $log->meta['reason'] }}
+                                <span class="font-bold text-ds-muted">{{ __('admin.audit_logs.reason_prefix') }}</span> {{ $log->meta['reason'] }}
                             @else
                                 <code class="text-xs text-ds-muted">{{ json_encode($log->meta) }}</code>
                             @endif

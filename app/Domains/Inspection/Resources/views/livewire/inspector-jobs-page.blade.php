@@ -22,7 +22,7 @@
         </div>
     @endif
 
-    <div wire:loading class="w-full text-center py-4 text-sm text-ds-muted">
+    <div wire:loading role="status" class="w-full text-center py-4 text-sm text-ds-muted">
         <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin mr-2"></i>
         {{ __('ui.actions.loading') }}
     </div>
@@ -85,17 +85,17 @@
                     <div class="px-5 py-3 bg-ds-canvas/80 border-t border-ds-line/60 space-y-2">
                         @if ($job->status === \App\Domains\Inspection\Enums\JobStatus::InProgress)
                             <a href="{{ route('result.fill', ['job' => $job->id]) }}"
-                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md">
+                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md">
                                 {{ __('inspection.inspector_jobs.fill_result') }}
                             </a>
                         @elseif (in_array($job->status, [\App\Domains\Inspection\Enums\JobStatus::ResultSubmitted, \App\Domains\Inspection\Enums\JobStatus::Completed], true) && \Illuminate\Support\Facades\Route::has('results.show'))
                             <a href="{{ route('results.show', ['listing' => $job->listing_id]) }}"
-                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md">
+                                class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-xs rounded-xl transition-all shadow-md">
                                 {{ __('inspection.inspector_jobs.view_result') }}
                             </a>
                         @endif
                         <a href="{{ route('jobs.show', ['job' => $job->id]) }}"
-                            class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                            class="w-full inline-flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
                             {{ __('inspection.inspector_jobs.view_detail') }}
                         </a>
                     </div>
