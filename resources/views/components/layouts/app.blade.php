@@ -132,8 +132,10 @@
                                         aria-haspopup="true"
                                         :aria-expanded="accountMenuOpen.toString()"
                                         aria-label="{{ __('ui.layout.account_menu') }}">
+                                    <span class="w-7 h-7 rounded-full bg-ds-blue-soft text-ds-blue-ink flex items-center justify-center text-xs font-extrabold uppercase shrink-0" aria-hidden="true">
+                                        {{ mb_substr(auth()->user()->name, 0, 1) }}
+                                    </span>
                                     <span class="max-w-28 truncate">{{ auth()->user()->name }}</span>
-                                    <x-ui.icon name="chevron-down" class="w-4 h-4" />
                                 </button>
                                 <div x-show="accountMenuOpen"
                                      x-cloak
