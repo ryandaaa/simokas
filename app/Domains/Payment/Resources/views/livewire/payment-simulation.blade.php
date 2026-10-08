@@ -20,7 +20,7 @@
                     default => 'bg-ds-soft text-ds-muted',
                 };
             @endphp
-            <span class="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider {{ $statusPill }}">
+            <span class="inline-block whitespace-nowrap text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider {{ $statusPill }}">
                 {{ $payment->status->label() }}
             </span>
         </div>
