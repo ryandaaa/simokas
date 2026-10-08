@@ -58,50 +58,6 @@ final class InspectorDashboard extends Component
         $rating = $profile !== null ? (float) $profile->rating_avg : 0.0;
         $ratingCount = $profile !== null ? (int) $profile->rating_count : 0;
 
-        // Recent jobs: latest jobs handled by this inspector
-        $recentJobs = InspectionJob::query()
-            ->where('inspector_id', $this->user->id)
-            ->with(['listing', 'requester'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // Monthly trend: completed inspections per month for the last 6 months (single grouped query)
-        $monthlyCounts = InspectionJob::query()
-            ->where('inspector_id', $this->user->id)
-            ->where('status', JobStatus::Completed)
-            ->where('completed_at', '>=', now()->subMonthsNoOverflow(5)->startOfMonth())
-            ->selectRaw("DATE_FORMAT(completed_at, '%Y-%m') as ym, COUNT(*) as total")
-            ->groupBy('ym')
-            ->pluck('total', 'ym');
-
-        $monthlySeries = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonthsNoOverflow($i);
-            $monthlySeries[] = [
-                'label' => $month->locale('id')->shortMonthName,
-                'value' => (int) ($monthlyCounts[$month->format('Y-m')] ?? 0),
-            ];
-        }
-
-        // Current month summary
-        $monthStart = now()->startOfMonth();
-        $completedThisMonth = InspectionJob::query()
-            ->where('inspector_id', $this->user->id)
-            ->where('status', JobStatus::Completed)
-            ->where('completed_at', '>=', $monthStart)
-            ->count();
-
-        $earningsThisMonth = LedgerEntry::query()
-            ->where('account_user_id', $this->user->id)
-            ->where(function ($q) {
-                $q->where('entry_type', LedgerEntryType::InspectionFee)
-                    ->orWhere('entry_type', LedgerEntryType::AccessFee)
-                    ->orWhere('entry_type', LedgerEntryType::SaleCommission);
-            })
-            ->where('created_at', '>=', $monthStart)
-            ->sum('amount');
-
         return view('dashboard::livewire.inspector-dashboard', [
             'availableJobs' => $availableJobs,
             'activeJobs' => $activeJobs,
@@ -109,10 +65,6 @@ final class InspectorDashboard extends Component
             'totalInspections' => $totalInspections,
             'rating' => $rating,
             'ratingCount' => $ratingCount,
-            'recentJobs' => $recentJobs,
-            'monthlySeries' => $monthlySeries,
-            'completedThisMonth' => $completedThisMonth,
-            'earningsThisMonth' => $earningsThisMonth,
             'user' => $this->user,
         ]);
     }
