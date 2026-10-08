@@ -36,13 +36,13 @@ it('NTF-T05 shows only the user own notifications', function (): void {
 
 it('NTF-T04 opening a notification marks it as read and redirects to its link', function (): void {
     $user = User::factory()->user()->create();
-    $notification = Notification::factory()->forUser($user)->create(['link' => route('dashboard.user')]);
+    $notification = Notification::factory()->forUser($user)->create(['link' => route('dashboard')]);
 
     actingAs($user);
 
     Livewire::test(NotificationIndex::class)
         ->call('openNotification', $notification->getKey())
-        ->assertRedirect(route('dashboard.user'));
+        ->assertRedirect(route('dashboard'));
 
     expect($notification->refresh()->isRead())->toBeTrue();
 });

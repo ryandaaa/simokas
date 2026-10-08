@@ -6,14 +6,11 @@ use App\Domains\Identity\Http\Controllers\LogoutController;
 use App\Domains\Identity\Http\Controllers\PrivacyPolicyController;
 use App\Domains\Identity\Http\Controllers\TermsController;
 use App\Domains\Identity\Livewire\AccountSettings;
-use App\Domains\Identity\Livewire\AdminDashboard;
 use App\Domains\Identity\Livewire\Blocked;
 use App\Domains\Identity\Livewire\ForgotPassword;
-use App\Domains\Identity\Livewire\InspectorDashboard;
 use App\Domains\Identity\Livewire\Login;
 use App\Domains\Identity\Livewire\Register;
 use App\Domains\Identity\Livewire\ResetPassword;
-use App\Domains\Identity\Livewire\UserDashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('web')->group(function () {
@@ -30,18 +27,6 @@ Route::middleware('web')->group(function () {
 
     Route::middleware(['auth', 'not_blocked'])->group(function () {
         Route::redirect('/identity/dashboard', '/dashboard')->name('identity.dashboard');
-
-        Route::get('/dashboard/user', UserDashboard::class)
-            ->middleware('role:user')
-            ->name('dashboard.user');
-
-        Route::get('/dashboard/inspector', InspectorDashboard::class)
-            ->middleware('role:inspector')
-            ->name('dashboard.inspector');
-
-        Route::get('/dashboard/admin', AdminDashboard::class)
-            ->middleware('role:admin')
-            ->name('dashboard.admin');
 
         Route::get('/account', AccountSettings::class)
             ->middleware('role:user,inspector,admin')

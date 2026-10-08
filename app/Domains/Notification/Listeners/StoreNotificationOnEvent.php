@@ -236,7 +236,7 @@ final class StoreNotificationOnEvent implements ShouldQueue
             type: NotificationType::JobCompleted,
             title: __('notification.job_completed.title'),
             body: __('notification.job_completed.body'),
-            link: route('dashboard.user'),
+            link: route('dashboard'),
             dedupeKey: "job_completed:{$job->getKey()}:{$requesterId}",
         );
 
