@@ -1,122 +1,146 @@
-<div class="mx-auto max-w-2xl px-4 py-6 sm:py-8">
-    <x-ui.button :href="route('transactions.index')" variant="ghost" icon="chevron-left">
+<div class="ds-sans mx-auto max-w-2xl px-4 py-6 sm:py-8 space-y-6 pb-12">
+    <a href="{{ route('transactions.index') }}" class="inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink">
+        <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
         {{ __('transaction.detail.back') }}
-    </x-ui.button>
+    </a>
 
-    <div class="mt-4 flex items-center justify-between gap-3">
-        <h1 class="text-xl font-bold text-text sm:text-2xl">{{ __('transaction.detail.title') }}</h1>
-        <x-ui.status-chip
-            :label="$transaction->status->label()"
-            :variant="$transaction->status->color()"
-            :icon="$transaction->status->icon()"
-        />
+    <div class="flex items-center justify-between gap-3">
+        <div class="space-y-1">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('transaction.detail.title') }}</span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('transaction.detail.title') }}</h1>
+        </div>
+        @php
+            $statusPill = match ($transaction->status->color()) {
+                'success' => 'bg-ds-green-soft text-ds-green-ink',
+                'warning' => 'bg-ds-amber-soft text-ds-amber-ink',
+                'danger' => 'bg-ds-red-soft text-ds-red-ink',
+                'primary' => 'bg-ds-blue-soft text-ds-blue-ink',
+                default => 'bg-ds-soft text-ds-muted',
+            };
+        @endphp
+        <span class="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider {{ $statusPill }}">
+            {{ $transaction->status->label() }}
+        </span>
     </div>
 
-    <div wire:loading class="mt-4">
-        <x-ui.skeleton variant="card" />
+    <div wire:loading>
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6 flex items-center justify-center gap-3 py-10 text-ds-muted">
+            <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
+            <span class="text-sm font-medium">{{ __('ui.actions.loading') }}</span>
+        </div>
     </div>
 
-    <div wire:loading.remove class="mt-4 space-y-4">
+    <div wire:loading.remove class="space-y-4">
         @if ($errorMessage)
-            <x-ui.alert variant="danger" :message="$errorMessage" />
+            <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+                {{ $errorMessage }}
+            </div>
         @endif
 
         @if ($actionSuccess)
-            <x-ui.alert variant="success" :message="$actionSuccess" />
+            <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+                {{ $actionSuccess }}
+            </div>
         @endif
 
-        <x-ui.card :title="$transaction->listing->title">
-            <div class="space-y-3 text-sm">
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+            <h2 class="text-lg font-extrabold text-ds-ink">{{ $transaction->listing->title }}</h2>
+            <div class="space-y-3 text-sm mt-3">
                 <div class="flex items-center justify-between gap-2">
-                    <span class="text-muted">{{ $transaction->listing->vehicle_type->label() }} • {{ $transaction->listing->year }} • {{ $transaction->listing->area_name }}</span>
+                    <span class="text-ds-muted">{{ $transaction->listing->vehicle_type->label() }} • {{ $transaction->listing->year }} • {{ $transaction->listing->area_name }}</span>
                 </div>
-                <div class="flex items-baseline justify-between border-t border-muted/15 pt-3">
-                    <span class="text-muted">{{ __('transaction.detail.price_label') }}</span>
-                    <span class="text-2xl font-bold text-primary"><x-ui.money :amount="$transaction->price_amount" /></span>
+                <div class="flex items-baseline justify-between border-t border-ds-line/60 pt-3">
+                    <span class="text-ds-muted">{{ __('transaction.detail.price_label') }}</span>
+                    <span class="text-2xl font-extrabold text-ds-ink">{{ \App\Support\Money::format($transaction->price_amount) }}</span>
                 </div>
                 @if ($transaction->notes)
-                    <div class="border-t border-muted/15 pt-3">
-                        <p class="text-muted">{{ __('transaction.detail.notes_label') }}</p>
-                        <p class="mt-1 text-text">{{ $transaction->notes }}</p>
+                    <div class="border-t border-ds-line/60 pt-3">
+                        <p class="text-ds-muted">{{ __('transaction.detail.notes_label') }}</p>
+                        <p class="mt-1 text-ds-ink">{{ $transaction->notes }}</p>
                     </div>
                 @endif
-                <div class="flex items-baseline justify-between border-t border-muted/15 pt-3">
-                    <span class="text-muted">{{ __('transaction.detail.expires_label') }}</span>
-                    <x-ui.datetime :value="$transaction->expires_at" />
+                <div class="flex items-baseline justify-between border-t border-ds-line/60 pt-3">
+                    <span class="text-ds-muted">{{ __('transaction.detail.expires_label') }}</span>
+                    <span class="text-xs font-bold text-ds-ink">{{ $transaction->expires_at?->translatedFormat('d M Y H:i') }}</span>
                 </div>
             </div>
-        </x-ui.card>
+        </div>
 
         @if ($isSeller && $transaction->status->value === 'offered')
-            <x-ui.card :title="__('transaction.detail.breakdown_title')">
-                <div class="space-y-3 text-sm">
-                    <p class="text-muted">{{ __('transaction.detail.seller_offered_notice') }}</p>
-                    <div class="flex items-baseline justify-between border-t border-muted/15 pt-3">
-                        <span class="text-muted">{{ __('transaction.detail.price_label') }}</span>
-                        <x-ui.money :amount="$breakdown['price']" />
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+                <h2 class="text-sm font-extrabold text-ds-ink">{{ __('transaction.detail.breakdown_title') }}</h2>
+                <div class="space-y-3 text-sm mt-3">
+                    <p class="text-ds-muted">{{ __('transaction.detail.seller_offered_notice') }}</p>
+                    <div class="flex items-baseline justify-between border-t border-ds-line/60 pt-3">
+                        <span class="text-ds-muted">{{ __('transaction.detail.price_label') }}</span>
+                        <span class="font-extrabold text-ds-ink">{{ \App\Support\Money::format($breakdown['price']) }}</span>
                     </div>
                     @if ($breakdown['commissionPct'] !== null)
                         <div class="flex items-baseline justify-between">
-                            <span class="text-muted">{{ __('transaction.detail.commission_label', ['pct' => $breakdown['commissionPct']]) }}</span>
-                            <x-ui.money :amount="$breakdown['commission']" />
+                            <span class="text-ds-muted">{{ __('transaction.detail.commission_label', ['pct' => $breakdown['commissionPct']]) }}</span>
+                            <span class="font-extrabold text-ds-ink">{{ \App\Support\Money::format($breakdown['commission']) }}</span>
                         </div>
                     @else
-                        <x-ui.alert variant="info" :message="__('transaction.detail.no_commission')" />
+                        <div class="p-4 rounded-2xl border border-ds-blue-soft bg-ds-blue-soft/40 text-xs font-semibold text-ds-ink">
+                            {{ __('transaction.detail.no_commission') }}
+                        </div>
                     @endif
-                    <div class="flex items-baseline justify-between border-t border-muted/15 pt-3">
-                        <span class="font-medium text-text">{{ __('transaction.detail.seller_receives_label') }}</span>
-                        <span class="text-xl font-bold text-primary"><x-ui.money :amount="$breakdown['sellerNet']" /></span>
+                    <div class="flex items-baseline justify-between border-t border-ds-line/60 pt-3">
+                        <span class="font-bold text-ds-ink">{{ __('transaction.detail.seller_receives_label') }}</span>
+                        <span class="text-xl font-extrabold text-ds-ink">{{ \App\Support\Money::format($breakdown['sellerNet']) }}</span>
                     </div>
                 </div>
 
                 <div class="mt-5 flex flex-col gap-3 sm:flex-row">
-                    <x-ui.button
+                    <button
                         type="button"
-                        variant="primary"
-                        class="w-full sm:w-auto"
                         @click="$dispatch('open-modal', 'accept-offer-modal')"
                         wire:loading.attr="disabled"
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60"
                     >
                         {{ __('transaction.detail.accept') }}
-                    </x-ui.button>
-                    <x-ui.button
+                    </button>
+                    <button
                         type="button"
-                        variant="secondary"
-                        class="w-full sm:w-auto"
                         @click="$dispatch('open-modal', 'reject-offer-modal')"
                         wire:loading.attr="disabled"
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs disabled:opacity-60"
                     >
                         {{ __('transaction.detail.reject') }}
-                    </x-ui.button>
+                    </button>
                 </div>
-            </x-ui.card>
+            </div>
         @endif
 
         @if ($isBuyer && $transaction->status->value === 'offered')
-            <x-ui.alert variant="info" :message="__('transaction.detail.buyer_offered_notice')" />
+            <div class="p-4 rounded-2xl border border-ds-blue-soft bg-ds-blue-soft/40 text-xs font-semibold text-ds-ink">
+                {{ __('transaction.detail.buyer_offered_notice') }}
+            </div>
 
             @if ($canCancel)
-                <x-ui.button
+                <button
                     type="button"
-                    variant="secondary"
                     @click="$dispatch('open-modal', 'cancel-modal')"
                     wire:loading.attr="disabled"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                 >
                     {{ __('transaction.detail.cancel') }}
-                </x-ui.button>
+                </button>
             @endif
         @endif
 
         @if ($isBuyer && $transaction->status->value === 'accepted')
             @if ($payBlockedByJob)
-                <x-ui.alert variant="info" :message="__('transaction.detail.pay_waiting_job')" />
+                <div class="p-4 rounded-2xl border border-ds-blue-soft bg-ds-blue-soft/40 text-xs font-semibold text-ds-ink">
+                    {{ __('transaction.detail.pay_waiting_job') }}
+                </div>
             @elseif ($canPay)
-                <x-ui.button
+                <button
                     type="button"
-                    variant="primary"
                     wire:click="pay"
                     wire:loading.attr="disabled"
                     wire:target="pay"
+                    class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60"
                 >
                     <span wire:loading.remove wire:target="pay">
                         {{ __('transaction.detail.pay') }}
@@ -124,106 +148,118 @@
                     <span wire:loading wire:target="pay">
                         {{ __('transaction.detail.paying') }}
                     </span>
-                </x-ui.button>
+                </button>
             @endif
 
             @if ($canCancel)
-                <x-ui.button
+                <button
                     type="button"
-                    variant="secondary"
                     @click="$dispatch('open-modal', 'cancel-modal')"
                     wire:loading.attr="disabled"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                 >
                     {{ __('transaction.detail.cancel') }}
-                </x-ui.button>
+                </button>
             @endif
         @endif
 
         @if ($isSeller && $transaction->status->value === 'accepted' && $canCancel)
-            <x-ui.button
+            <button
                 type="button"
-                variant="secondary"
                 @click="$dispatch('open-modal', 'cancel-modal')"
                 wire:loading.attr="disabled"
+                class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
             >
                 {{ __('transaction.detail.cancel') }}
-            </x-ui.button>
+            </button>
         @endif
 
         @if ($canConfirmHandover)
-            <x-ui.button
+            <button
                 type="button"
-                variant="primary"
                 @click="$dispatch('open-modal', 'handover-modal')"
+                class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md"
             >
                 {{ __('transaction.detail.confirm_handover') }}
-            </x-ui.button>
+            </button>
         @endif
 
         @if ($transaction->status->value === 'paid_held')
-            <x-ui.alert variant="info" :message="__('transaction.detail.paid_held_notice')" />
+            <div class="p-4 rounded-2xl border border-ds-blue-soft bg-ds-blue-soft/40 text-xs font-semibold text-ds-ink">
+                {{ __('transaction.detail.paid_held_notice') }}
+            </div>
 
             @if ($showNeedsAttention)
-                <x-ui.alert variant="warning" :message="__('transaction.detail.needs_attention_notice')" />
+                <div class="p-4 rounded-2xl border border-ds-amber-soft bg-ds-amber-soft/40 text-xs font-semibold text-ds-ink">
+                    {{ __('transaction.detail.needs_attention_notice') }}
+                </div>
             @endif
 
             <div class="flex flex-col gap-3 sm:flex-row">
                 @if ($canRequestCancellation)
-                    <x-ui.button
+                    <button
                         type="button"
-                        variant="secondary"
                         @click="$dispatch('open-modal', 'request-cancellation-modal')"
                         wire:loading.attr="disabled"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                     >
                         {{ __('transaction.detail.request_cancellation') }}
-                    </x-ui.button>
+                    </button>
                 @elseif ($isBuyer && $hasCancelRequest)
-                    <x-ui.alert variant="info" :message="__('transaction.detail.cancel_request_waiting')" />
+                    <div class="p-4 rounded-2xl border border-ds-blue-soft bg-ds-blue-soft/40 text-xs font-semibold text-ds-ink">
+                        {{ __('transaction.detail.cancel_request_waiting') }}
+                    </div>
                 @endif
 
                 @if ($canApproveCancellation)
-                    <x-ui.button
+                    <button
                         type="button"
-                        variant="primary"
                         @click="$dispatch('open-modal', 'approve-cancellation-modal')"
                         wire:loading.attr="disabled"
+                        class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60"
                     >
                         {{ __('transaction.detail.approve_cancellation') }}
-                    </x-ui.button>
+                    </button>
                 @endif
 
                 @if ($canCancel && $isSeller)
-                    <x-ui.button
+                    <button
                         type="button"
-                        variant="danger"
                         @click="$dispatch('open-modal', 'cancel-refund-modal')"
                         wire:loading.attr="disabled"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                     >
                         {{ __('transaction.detail.cancel_refund') }}
-                    </x-ui.button>
+                    </button>
                 @elseif ($canCancel && $isAdmin)
-                    <x-ui.button
+                    <button
                         type="button"
-                        variant="danger"
                         @click="$dispatch('open-modal', 'cancel-refund-modal')"
                         wire:loading.attr="disabled"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-red-soft text-ds-danger hover:bg-ds-red-soft/30 font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60"
                     >
                         {{ __('transaction.detail.cancel_admin') }}
-                    </x-ui.button>
+                    </button>
                 @endif
             </div>
         @endif
 
         @if ($transaction->status->value === 'cancelled')
-            <x-ui.alert variant="muted" :message="__('transaction.detail.cancelled_notice')" />
+            <div class="p-4 rounded-2xl border border-ds-line/80 bg-ds-canvas/60 text-xs font-semibold text-ds-muted">
+                {{ __('transaction.detail.cancelled_notice') }}
+            </div>
         @endif
 
         @if ($transaction->status->value === 'expired')
-            <x-ui.alert variant="muted" :message="__('transaction.detail.expired_notice')" />
+            <div class="p-4 rounded-2xl border border-ds-line/80 bg-ds-canvas/60 text-xs font-semibold text-ds-muted">
+                {{ __('transaction.detail.expired_notice') }}
+            </div>
         @endif
 
         @if ($transaction->status->value === 'completed')
-            <x-ui.alert variant="success" :message="__('transaction.detail.completed_notice')" />
+            <div class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+                {{ __('transaction.detail.completed_notice') }}
+            </div>
 
             @if ($isBuyer && $transaction->inspector_id)
                 <div class="pt-4">
@@ -334,12 +370,13 @@
         :title="__('transaction.detail.cancel_confirm_title')"
         :description="__('transaction.detail.cancel_confirm_description')"
     >
-        <x-ui.textarea
-            name="cancelReason"
-            :label="__('transaction.detail.cancel_reason_label')"
-            wire:model="cancelReason"
-            rows="3"
-        />
+        <div class="w-full">
+            <label for="cancelReason" class="block text-xs font-bold text-ds-ink mb-1.5">
+                {{ __('transaction.detail.cancel_reason_label') }}
+            </label>
+            <textarea id="cancelReason" name="cancelReason" wire:model="cancelReason" rows="3"
+                class="w-full px-4 py-3 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"></textarea>
+        </div>
 
         <x-slot:footer>
             <x-ui.button
@@ -373,13 +410,13 @@
         :title="__('transaction.detail.cancel_refund_confirm_title')"
         :description="__('transaction.detail.cancel_refund_confirm_description')"
     >
-        <x-ui.textarea
-            name="cancelReason"
-            :label="__('transaction.detail.cancel_reason_required_label')"
-            wire:model="cancelReason"
-            rows="3"
-            required
-        />
+        <div class="w-full">
+            <label for="cancelReasonRefund" class="block text-xs font-bold text-ds-ink mb-1.5">
+                {{ __('transaction.detail.cancel_reason_required_label') }}
+            </label>
+            <textarea id="cancelReasonRefund" name="cancelReason" wire:model="cancelReason" rows="3" required
+                class="w-full px-4 py-3 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"></textarea>
+        </div>
 
         <x-slot:footer>
             <x-ui.button
@@ -445,13 +482,13 @@
         :title="__('transaction.detail.approve_cancellation_confirm_title')"
         :description="__('transaction.detail.approve_cancellation_confirm_description')"
     >
-        <x-ui.textarea
-            name="cancelReason"
-            :label="__('transaction.detail.cancel_reason_required_label')"
-            wire:model="cancelReason"
-            rows="3"
-            required
-        />
+        <div class="w-full">
+            <label for="cancelReasonApprove" class="block text-xs font-bold text-ds-ink mb-1.5">
+                {{ __('transaction.detail.cancel_reason_required_label') }}
+            </label>
+            <textarea id="cancelReasonApprove" name="cancelReason" wire:model="cancelReason" rows="3" required
+                class="w-full px-4 py-3 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"></textarea>
+        </div>
 
         <x-slot:footer>
             <x-ui.button
