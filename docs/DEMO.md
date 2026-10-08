@@ -36,6 +36,13 @@ Perintah di atas akan:
 2. Menjalankan `ReferenceSeeder` (template inspeksi mobil/motor, pengaturan default, akun sistem).
 3. Menjalankan `DemoSeeder` (7 akun demo, 17 listing kendaraan di Pekanbaru, 5 hasil inspeksi lengkap beserta kalkulasi skor & foto ber-watermark, 3 job inspeksi aktif/berjalan, 3 transaksi, dan rating transaksi selesai).
 
+> **Realtime (opsional untuk demo chat/notifikasi):** jalankan tiga proses
+> ini — `php artisan serve`, `npm run dev`, dan `php artisan queue:work`.
+> Broadcast chat dan notifikasi dikirim lewat antrean (`QUEUE_CONNECTION`
+> berisi `database`), sehingga tanpa worker yang jalan, pesan tetap
+> tersimpan tetapi lonceng real-time tidak berbunyi (UI otomatis memakai
+> polling sebagai cadangan).
+
 ---
 
 ## 3. Skrip Demo 5 Menit (Step-by-Step)

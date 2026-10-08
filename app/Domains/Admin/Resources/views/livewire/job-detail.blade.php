@@ -22,7 +22,7 @@
                 </span>
                 @if ($job->needs_attention_at && !$job->isFinal())
                     <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-extrabold bg-ds-red-soft text-ds-red-ink">
-                        Perlu Tindakan
+                        {{ __('admin.jobs.needs_action') }}
                     </span>
                 @endif
             </h1>
@@ -90,7 +90,7 @@
                     {{-- Data Privat Persis (Hanya untuk Admin) --}}
                     <div class="p-4 rounded-2xl bg-ds-canvas/60 border border-ds-line/80 space-y-3">
                         <div class="text-xs font-extrabold text-ds-blue uppercase tracking-wider">
-                            Data Sensitif &amp; Lokasi Persis
+                            {{ __('admin.jobs.sensitive_title') }}
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                             <div>
@@ -154,7 +154,7 @@
                         @if ($result->total_score !== null)
                             <div class="flex items-center gap-4 p-4 rounded-2xl bg-ds-canvas/60 border border-ds-line/60">
                                 <div>
-                                    <span class="text-xs text-ds-muted block">Skor Total:</span>
+                                    <span class="text-xs text-ds-muted block">{{ __('admin.jobs.score_total') }}</span>
                                     <span class="text-2xl font-extrabold text-ds-ink">{{ $result->total_score }} / 100</span>
                                 </div>
                             </div>
@@ -162,15 +162,15 @@
 
                         @if ($result->summary_note)
                             <div>
-                                <span class="text-xs text-ds-muted block">Catatan Ringkasan:</span>
+                                <span class="text-xs text-ds-muted block">{{ __('admin.jobs.summary_notes') }}</span>
                                 <p class="text-sm text-ds-ink mt-1">{{ $result->summary_note }}</p>
                             </div>
                         @endif
 
                         @if ($result->reopen_reason)
                             <div class="p-3 rounded-2xl bg-ds-amber-soft/40 border border-ds-amber-soft text-xs space-y-1">
-                                <span class="font-extrabold text-ds-amber-ink">Pernah Dibuka Kembali:</span>
-                                <p class="text-ds-ink">Alasan: {{ $result->reopen_reason }}</p>
+                                <span class="font-extrabold text-ds-amber-ink">{{ __('admin.jobs.reopened_title') }}</span>
+                                <p class="text-ds-ink">{{ __('admin.jobs.reopen_reason_prefix') }} {{ $result->reopen_reason }}</p>
                                 @if ($result->reopened_at)
                                     <p class="text-ds-muted">{{ $result->reopened_at?->translatedFormat('d M Y H:i') }}</p>
                                 @endif
@@ -196,7 +196,7 @@
                         <dd class="text-ds-ink font-bold">{{ $job->platform_fee_pct }}%</dd>
                     </div>
                     <div>
-                        <dt class="text-xs text-ds-muted">Waktu Dibuat</dt>
+                        <dt class="text-xs text-ds-muted">{{ __('admin.jobs.created_label') }}</dt>
                         <dd class="text-ds-ink text-xs font-bold">{{ $job->created_at?->translatedFormat('d M Y H:i') }}</dd>
                     </div>
                     @if ($job->scheduled_at)
@@ -207,13 +207,13 @@
                     @endif
                     @if ($job->completed_at)
                         <div>
-                            <dt class="text-xs text-ds-muted">Selesai Pada</dt>
+                            <dt class="text-xs text-ds-muted">{{ __('admin.jobs.completed_label') }}</dt>
                             <dd class="text-ds-ink text-xs font-bold">{{ $job->completed_at?->translatedFormat('d M Y H:i') }}</dd>
                         </div>
                     @endif
                     @if ($job->cancel_reason)
                         <div class="pt-2 border-t border-ds-line/60">
-                            <dt class="text-xs text-ds-danger font-bold">Alasan Pembatalan</dt>
+                            <dt class="text-xs text-ds-danger font-bold">{{ __('admin.jobs.cancel_reason_title') }}</dt>
                             <dd class="text-ds-ink text-xs mt-1">{{ $job->cancel_reason }}</dd>
                         </div>
                     @endif

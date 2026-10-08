@@ -333,7 +333,7 @@
                         <div>
                             <label for="photo-input" class="cursor-pointer inline-flex items-center gap-2 px-5 py-2.5 bg-ds-blue hover:bg-ds-blue-ink text-white text-sm font-bold rounded-xl transition-all shadow-md">
                                 <i aria-hidden="true" class="fa-solid fa-upload text-xs"></i>
-                                <span>Pilih Foto dari Galeri / Kamera</span>
+                                <span>{{ __('listing.fields.photo_choose') }}</span>
                             </label>
                             <input
                                 id="photo-input"
@@ -345,21 +345,21 @@
                             />
                         </div>
                         <p class="text-xs text-ds-muted">
-                            Pilih minimal 3 dan maksimal 10 foto (JPG, PNG, WebP). Kompresi otomatis berjalan di browser.
+                            {{ __('listing.fields.photo_requirements') }}
                         </p>
 
                         {{-- Compression & Upload Loading Indicator --}}
                         <div x-show="compressing" x-cloak class="pt-2">
                             <div class="inline-flex items-center gap-2 text-sm text-ds-blue font-semibold">
                                 <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
-                                <span>Mengompresi dan mengunggah foto...</span>
+                                <span>{{ __('listing.fields.photo_compressing') }}</span>
                             </div>
                         </div>
 
                         <div wire:loading wire:target="photos" class="pt-2">
                             <div class="inline-flex items-center gap-2 text-sm text-ds-blue font-semibold">
                                 <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
-                                <span>Memproses foto ke server...</span>
+                                <span>{{ __('listing.fields.photo_processing') }}</span>
                             </div>
                         </div>
                     </div>
@@ -369,10 +369,10 @@
                         <div class="space-y-3">
                             <div class="flex items-center justify-between">
                                 <span class="text-sm font-bold text-ds-ink">
-                                    Foto Terpilih ({{ count($photos) }} dari maks 10):
+                                    {{ __('listing.fields.photo_selected', ['count' => count($photos)]) }}
                                 </span>
                                 <span class="text-xs text-ds-muted">
-                                    Klik tombol "Sampul" untuk menetapkan foto utama.
+                                    {{ __('listing.fields.photo_cover_hint') }}
                                 </span>
                             </div>
 
@@ -388,7 +388,7 @@
                                         {{-- Cover Badge --}}
                                         @if ($cover_index === $index)
                                             <div class="absolute top-2 left-2 px-2 py-0.5 bg-ds-yellow text-ds-ink text-[10px] font-bold rounded-full shadow uppercase tracking-wider">
-                                                Sampul
+                                                {{ __('listing.fields.cover_photo') }}
                                             </div>
                                         @endif
 
@@ -399,7 +399,7 @@
                                                 wire:click="setCover({{ $index }})"
                                                 class="text-xs px-2 py-1 rounded-lg {{ $cover_index === $index ? 'bg-ds-yellow-soft text-ds-ink font-bold' : 'text-ds-muted hover:text-ds-ink' }}"
                                             >
-                                                {{ $cover_index === $index ? 'Foto Sampul' : 'Jadikan Sampul' }}
+                                                {{ $cover_index === $index ? __('listing.fields.cover_photo') : __('listing.fields.set_as_cover') }}
                                             </button>
                                             <button
                                                 type="button"

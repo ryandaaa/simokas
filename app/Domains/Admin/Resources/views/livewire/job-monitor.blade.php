@@ -135,7 +135,7 @@
                                             {{ $job->status->label() }}
                                         </span>
                                         @if ($job->needs_attention_at && !$job->isFinal())
-                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-ds-red-soft text-ds-red-ink" title="Perlu Tindakan">
+                                            <span class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-extrabold bg-ds-red-soft text-ds-red-ink" title="{{ __('admin.jobs.needs_action') }}">
                                                 !
                                             </span>
                                         @endif
@@ -167,7 +167,7 @@
                         </span>
                         @if ($job->needs_attention_at && !$job->isFinal())
                             <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-bold bg-ds-red-soft text-ds-red-ink">
-                                Perlu Tindakan
+                                {{ __('admin.jobs.needs_action') }}
                             </span>
                         @endif
                     </div>
@@ -179,11 +179,11 @@
 
                     <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-ds-line/60">
                         <div>
-                            <span class="text-ds-muted block">Pemohon:</span>
+                            <span class="text-ds-muted block">{{ __('admin.jobs.mobile_requester') }}</span>
                             <span class="text-ds-ink font-bold">{{ $job->requester?->name ?? '-' }}</span>
                         </div>
                         <div>
-                            <span class="text-ds-muted block">Inspektor:</span>
+                            <span class="text-ds-muted block">{{ __('admin.jobs.mobile_inspector') }}</span>
                             <span class="text-ds-ink font-bold">{{ $job->inspector?->name ?? __('admin.jobs.no_inspector') }}</span>
                         </div>
                     </div>

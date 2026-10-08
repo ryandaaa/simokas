@@ -173,7 +173,7 @@
                     </div>
 
                     <div class="flex items-center justify-between text-xs text-ds-muted pt-2 border-t border-ds-line/60">
-                        <span>Menunggu sejak:</span>
+                        <span>{{ __('admin.jobs.waiting_since_label') }}</span>
                         <span>{{ $item['time']?->translatedFormat('d M Y H:i') }}</span>
                     </div>
 

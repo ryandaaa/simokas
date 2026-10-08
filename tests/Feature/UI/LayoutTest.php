@@ -279,5 +279,5 @@ it('marks active role navigation link with active styling and aria-current page'
 
     $content = $response->getContent();
     expect($content)->toContain('aria-current="page"')
-        ->and($content)->toContain('bg-linen text-forest font-bold');
+        ->and($content)->toContain('bg-ds-blue-soft text-ds-blue-ink font-bold');
 });

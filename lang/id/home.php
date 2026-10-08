@@ -25,15 +25,10 @@ return [
     'cat_inspected' => 'Terinspeksi',
 
     'featured_eyebrow' => 'Pilihan Terverifikasi',
-    'sidebar_quick_nav' => 'Navigasi Cepat',
     'browse_title' => 'Jelajahi',
     'browse_car_budget' => 'Mobil di bawah Rp 100 jt',
     'browse_motor_budget' => 'Motor di bawah Rp 20 jt',
     'browse_inspected' => 'Sudah Diinspeksi',
-    'sidebar_catalog' => 'Katalog',
-    'sidebar_how' => 'Cara Kerja',
-    'sidebar_help' => 'Bantuan',
-    'sidebar_dashboard' => 'Dashboard',
 
     'steps_eyebrow' => 'Proses Mudah',
 
