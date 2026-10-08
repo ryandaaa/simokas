@@ -1,15 +1,18 @@
 <x-layouts.app :title="__('home.help.title')" :navItems="$navItems">
-    <div class="space-y-8">
-        <div>
-            <h1 class="text-xl font-bold text-text sm:text-2xl">{{ __('home.help.heading') }}</h1>
-            <p class="mt-1 text-sm text-muted sm:text-base">{{ __('home.help.intro') }}</p>
+    <div class="ds-sans space-y-12 pb-12">
+        <div class="text-center max-w-2xl mx-auto space-y-3">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">Bantuan</span>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-ds-ink tracking-tight">{{ __('home.help.heading') }}</h1>
+            <p class="text-sm sm:text-base text-ds-muted leading-relaxed">{{ __('home.help.intro') }}</p>
         </div>
 
         <section aria-labelledby="help-faq-heading">
-            <h2 id="help-faq-heading" class="text-lg font-bold text-text">
-                {{ __('home.help.faq_title') }}
-            </h2>
-            <div class="mt-4 space-y-3">
+            <div class="text-center max-w-2xl mx-auto mb-8 space-y-2">
+                <h2 id="help-faq-heading" class="text-2xl font-extrabold text-ds-ink tracking-tight">
+                    {{ __('home.help.faq_title') }}
+                </h2>
+            </div>
+            <div class="max-w-3xl mx-auto space-y-4" x-data="{ open: 1 }">
                 @foreach ([
                     ['q' => __('home.help.faq_q1'), 'a' => __('home.help.faq_a1')],
                     ['q' => __('home.help.faq_q2'), 'a' => __('home.help.faq_a2')],
@@ -17,37 +20,39 @@
                     ['q' => __('home.help.faq_q4'), 'a' => __('home.help.faq_a4')],
                     ['q' => __('home.help.faq_q5'), 'a' => __('home.help.faq_a5')],
                     ['q' => __('home.help.faq_q6'), 'a' => __('home.help.faq_a6')],
-                ] as $faq)
-                    <details class="rounded-xl border border-muted/20 bg-surface px-4 py-3">
-                        <summary class="flex min-h-[44px] cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-accent">
+                ] as $i => $faq)
+                    <div class="border border-ds-line/80 rounded-2xl overflow-hidden bg-white transition-all shadow-xs">
+                        <button @click="open = (open === {{ $i + 1 }} ? 0 : {{ $i + 1 }})" class="w-full px-6 py-4 text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors focus:outline-none">
                             <span>{{ $faq['q'] }}</span>
-                            <x-ui.icon name="chevron-down" class="h-4 w-4 shrink-0" />
-                        </summary>
-                        <p class="mt-2 border-t border-muted/15 pt-3 text-sm text-muted">
+                            <i aria-hidden="true" class="fa-solid text-xs text-ds-faint transition-transform" :class="open === {{ $i + 1 }} ? 'fa-minus rotate-180' : 'fa-plus'"></i>
+                        </button>
+                        <div x-show="open === {{ $i + 1 }}" x-cloak class="px-6 pb-4 text-xs text-ds-muted leading-relaxed border-t border-ds-line/60 pt-3">
                             {{ $faq['a'] }}
-                        </p>
-                    </details>
+                        </div>
+                    </div>
                 @endforeach
             </div>
         </section>
 
         <section aria-labelledby="help-cta-heading">
-            <x-ui.card>
-                <h2 id="help-cta-heading" class="text-lg font-bold text-text">
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6 sm:p-8 max-w-3xl mx-auto text-center">
+                <h2 id="help-cta-heading" class="text-xl font-extrabold text-ds-ink">
                     {{ __('home.help.cta_title') }}
                 </h2>
-                <p class="mt-1 text-sm text-muted">
+                <p class="mt-2 text-sm text-ds-muted">
                     {{ __('home.help.cta_message') }}
                 </p>
-                <div class="mt-4 flex flex-col gap-2 sm:flex-row">
-                    <x-ui.button :href="route('catalog.how-it-works')" variant="primary" icon="document-text">
+                <div class="mt-6 flex flex-col gap-3 sm:flex-row justify-center">
+                    <a href="{{ route('catalog.how-it-works') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                        <i aria-hidden="true" class="fa-solid fa-file-lines text-xs"></i>
                         {{ __('home.help.cta_how') }}
-                    </x-ui.button>
-                    <x-ui.button :href="route('catalog.index')" variant="secondary" icon="search">
+                    </a>
+                    <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs">
+                        <i aria-hidden="true" class="fa-solid fa-magnifying-glass text-xs"></i>
                         {{ __('home.help.cta_browse') }}
-                    </x-ui.button>
+                    </a>
                 </div>
-            </x-ui.card>
+            </div>
         </section>
     </div>
 </x-layouts.app>
