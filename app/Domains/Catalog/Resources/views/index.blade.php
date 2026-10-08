@@ -142,7 +142,7 @@
                         </div>
                     </div>
                 @else
-                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                         @foreach ($cards as $card)
                             <article class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between relative">
                                 <a href="{{ route('catalog.show', ['listing' => $card->id]) }}" class="absolute inset-0 z-10" aria-label="{{ $card->title }}">
