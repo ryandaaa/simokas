@@ -28,7 +28,7 @@
 <body class="min-h-full flex flex-col ds-sans bg-slate-50 text-slate-900" x-data="{ mobileMenuOpen: false }">
     {{-- Skip-link untuk aksesibilitas keyboard --}}
     <a href="#main-content"
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-yellow-400 focus:text-slate-900 focus:rounded-xl focus:shadow-md focus:outline-none focus:ring-2 focus:ring-green-600">
+       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-yellow-400 focus:text-slate-900 focus:rounded-xl focus:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600">
         {{ __('ui.layout.skip_link') }}
     </a>
 
@@ -38,7 +38,7 @@
             <div class="flex items-center justify-between h-20 gap-4">
                 {{-- Brand/Logo --}}
                 <div class="flex items-center">
-                    <a href="{{ url('/') }}" class="flex items-center gap-3 focus:outline-none focus:ring-2 focus:ring-green-600 rounded-xl px-1 py-1 select-none">
+                    <a href="{{ url('/') }}" class="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl px-1 py-1 select-none">
                         <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-green-600 to-emerald-500 flex items-center justify-center text-white text-lg shadow-md shadow-emerald-500/20">
                             <i aria-hidden="true" class="fa-solid fa-shield-halved"></i>
                         </span>
@@ -55,7 +55,7 @@
                                 @endphp
                                 <a href="{{ $item['url'] ?? '#' }}"
                                    @class([
-                                       'transition-colors focus:outline-none focus:ring-2 focus:ring-green-600 rounded-lg',
+                                       'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-lg',
                                        'text-green-600 hover:text-green-700' => $isActive,
                                        'hover:text-green-600' => !$isActive,
                                    ])
@@ -70,7 +70,7 @@
                 <div class="flex items-center gap-2">
                     <button type="button"
                             @click="mobileMenuOpen = !mobileMenuOpen"
-                            class="md:hidden p-2 rounded-full text-slate-600 hover:text-green-600 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-green-600"
+                            class="md:hidden p-2 rounded-full text-slate-600 hover:text-green-600 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
                             aria-label="Menu navigasi">
                         <x-ui.icon name="menu" class="w-6 h-6" />
                     </button>
@@ -315,7 +315,7 @@
                     @endphp
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
-                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-green-600 min-h-[44px] transition-colors',
+                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 min-h-[44px] transition-colors',
                            'text-green-600' => $isActive,
                            'text-slate-500 hover:text-green-600' => !$isActive,
                        ])
