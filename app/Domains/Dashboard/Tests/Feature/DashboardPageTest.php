@@ -129,6 +129,26 @@ it('DSH-T03 inspector earnings match ledger sum', function () {
     // Verified via Livewire component - dashboard aggregates ledger entries correctly
 });
 
+it('DSH-T10 inspector dashboard shows trend, composition, activity, and recent jobs', function () {
+    $inspector = createVerifiedInspector();
+    $listing = Listing::factory()->active()->create(['title' => 'Honda Brio DSH']);
+
+    InspectionJob::factory()->create([
+        'listing_id' => $listing->id,
+        'inspector_id' => $inspector->id,
+        'status' => JobStatus::Completed,
+        'completed_at' => now(),
+    ]);
+
+    actingAs($inspector)->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee(__('dashboard.inspector.trend_title'))
+        ->assertSee(__('dashboard.inspector.composition_title'))
+        ->assertSee(__('dashboard.inspector.recent_activity_title'))
+        ->assertSee(__('dashboard.inspector.recent_jobs_title'))
+        ->assertSee('Honda Brio DSH');
+});
+
 it('DSH-T04 admin numbers match job status and queues', function () {
     $admin = User::factory()->admin()->create();
 
