@@ -13,6 +13,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ? $title . ' — ' . config('app.name', 'SIMOKAS') : config('app.name', 'SIMOKAS') }}</title>
 
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon-180.png') }}">
+
     <link rel="preload" href="{{ Vite::asset('resources/fonts/satoshi/Satoshi-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="{{ Vite::asset('resources/fonts/satoshi/Satoshi-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
 
@@ -38,11 +41,8 @@
             <div class="flex items-center justify-between h-20 gap-4">
                 {{-- Brand/Logo --}}
                 <div class="flex items-center">
-                    <a href="{{ url('/') }}" class="flex items-center gap-3 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl px-1 py-1 select-none">
-                        <span class="w-10 h-10 rounded-xl bg-gradient-to-tr from-green-600 to-emerald-500 flex items-center justify-center text-white text-lg shadow-md shadow-emerald-500/20">
-                            <i aria-hidden="true" class="fa-solid fa-shield-halved"></i>
-                        </span>
-                        <span class="text-2xl font-extrabold tracking-tight text-slate-900">SIMO<span class="text-green-600">KAS</span></span>
+                    <a href="{{ url('/') }}" class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl px-1 py-1 select-none">
+                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" class="h-10 w-auto">
                     </a>
                 </div>
 
