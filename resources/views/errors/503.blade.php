@@ -1,18 +1,19 @@
 <x-layouts.app :title="__('ui.errors.503_title')">
-    <div class="min-h-[60vh] flex items-center justify-center py-12">
+    <div class="ds-sans min-h-[60vh] flex items-center justify-center py-12">
         <div class="max-w-md w-full text-center px-4">
-            <div class="w-16 h-16 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
-                <x-ui.icon name="jam" class="w-8 h-8" />
+            <div class="w-16 h-16 rounded-2xl bg-ds-blue-soft text-ds-blue-ink flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i aria-hidden="true" class="fa-regular fa-clock"></i>
             </div>
 
-            <p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">Galat 503</p>
-            <h1 class="text-2xl font-bold text-text mb-2">{{ __('ui.errors.503_title') }}</h1>
-            <p class="text-sm text-muted mb-6">{{ __('ui.errors.503_message') }}</p>
+            <p class="text-xs font-extrabold text-ds-blue uppercase tracking-wider mb-1">Galat 503</p>
+            <h1 class="text-2xl font-extrabold text-ds-ink mb-2">{{ __('ui.errors.503_title') }}</h1>
+            <p class="text-sm text-ds-muted mb-6">{{ __('ui.errors.503_message') }}</p>
 
             <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <x-ui.button :href="url('/')" variant="primary" icon="panah-putar">
+                <a href="{{ url('/') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                    <i aria-hidden="true" class="fa-solid fa-rotate-right text-xs"></i>
                     {{ __('ui.actions.retry') }}
-                </x-ui.button>
+                </a>
             </div>
         </div>
     </div>
