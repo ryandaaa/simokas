@@ -20,6 +20,14 @@ return [
         'job_completed' => 'Inspeksi selesai',
         'fee_released' => 'Fee cair',
         'message_received' => 'Pesan baru',
+        'inspector_submitted' => 'Inspektor baru menunggu',
+        'transaction_offered' => 'Pengajuan pembelian',
+        'transaction_accepted' => 'Pengajuan disetujui',
+        'transaction_rejected' => 'Pengajuan ditolak',
+        'transaction_paid' => 'Pembayaran ditahan',
+        'transaction_completed' => 'Transaksi selesai',
+        'transaction_cancelled' => 'Transaksi dibatalkan',
+        'transaction_expired' => 'Transaksi kedaluwarsa',
     ],
 
     'index' => [
@@ -107,5 +115,46 @@ return [
         'title' => 'Pesan baru',
         'body_single' => ':nama mengirim pesan baru.',
         'body_grouped' => ':count pesan baru dari :nama.',
+    ],
+
+    'inspector_submitted' => [
+        'title' => 'Inspektor baru menunggu verifikasi',
+        'body' => ':nama mengajukan verifikasi sebagai inspektor.',
+    ],
+
+    'transaction_offered' => [
+        'title' => 'Pengajuan pembelian baru',
+        'body' => ':nama mengajukan pembelian untuk ":judul".',
+    ],
+
+    'transaction_accepted' => [
+        'title' => 'Pengajuan pembelian disetujui',
+        'body' => 'Penjual menyetujui pengajuanmu untuk ":judul". Silakan lanjutkan ke pembayaran.',
+    ],
+
+    'transaction_rejected' => [
+        'title' => 'Pengajuan pembelian ditolak',
+        'body' => 'Penjual menolak pengajuanmu untuk ":judul".',
+    ],
+
+    'transaction_paid' => [
+        'title' => 'Pembeli sudah membayar',
+        'body' => 'Pembayaran untuk ":judul" sudah masuk dan dananya ditahan platform.',
+    ],
+
+    'transaction_completed' => [
+        'title' => 'Transaksi selesai',
+        'body_seller' => 'Serah terima ":judul" selesai. Dana diteruskan setelah komisi.',
+        'body_buyer' => 'Serah terima ":judul" selesai. Silakan beri rating untuk inspektor.',
+    ],
+
+    'transaction_cancelled' => [
+        'title' => 'Transaksi dibatalkan',
+        'body' => 'Transaksi untuk ":judul" dibatalkan.',
+    ],
+
+    'transaction_expired' => [
+        'title' => 'Transaksi kedaluwarsa',
+        'body' => 'Transaksi untuk ":judul" kedaluwarsa tanpa tindak lanjut.',
     ],
 ];

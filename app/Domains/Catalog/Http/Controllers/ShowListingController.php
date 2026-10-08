@@ -30,8 +30,11 @@ use Illuminate\View\View;
  *   their RES-4 routes exist. Expected RES-4 routes: `results.show` and
  *   `results.access`. "Ajukan Pembelian" (TRX-1) appears for logged-in
  *   role `user` non-owners on `active` or `in_inspection` listings;
- *   inspectors never see it (D-06), admins and owners neither. Chat Penjual
- *   is P1: never shown.
+ *   inspectors never see it (D-06), admins and owners neither.
+ * - "Chat Penjual" (CHT-1) appears for guests (linking to login) and
+ *   logged-in role `user` non-owners on non-sold listings; submitting it
+ *   POSTs to `conversations.start`, which creates or reuses the listing
+ *   conversation. Owners cannot chat with themselves (CHT-E8).
  * - "Edit" appears when ListingPolicy::update passes and the existing
  *   `listings.edit` route is present.
  * - `sold` listings show no action buttons at all (CAT-E5).
@@ -66,6 +69,8 @@ final class ShowListingController
             'actions' => $this->buildActions($detail, $hasActiveJob),
             'hasActiveJob' => $hasActiveJob,
             'canRequestInspection' => $canRequestInspection,
+            'canChatWithSeller' => $this->canChatWithSeller($detail),
+            'showChatLogin' => $detail->viewerRole === null && ! $detail->isSold,
         ]);
     }
 
@@ -168,6 +173,18 @@ final class ShowListingController
         // TRX-R1/TRX-R10: only logged-in role `user` non-owners.
         // Inspectors cannot buy (D-06), admins and owners neither.
         if ($detail->isOwner) {
+            return false;
+        }
+
+        return $detail->viewerRole === 'user';
+    }
+
+    private function canChatWithSeller(ListingDetail $detail): bool
+    {
+        // CHT-1: guests go through login (see $showChatLogin); logged-in
+        // role `user` non-owners on non-sold listings can start a chat.
+        // Owners chat with themselves is rejected by StartConversation.
+        if ($detail->isSold || $detail->isOwner) {
             return false;
         }
 

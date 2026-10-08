@@ -15,19 +15,31 @@ use App\Domains\Inspection\Events\JobTaken;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Events\InspectorApproved;
 use App\Domains\Inspector\Events\InspectorRejected;
+use App\Domains\Inspector\Events\InspectorSubmitted;
 use App\Domains\Inspector\Models\InspectorProfile;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\Events\ListingApproved;
 use App\Domains\Listing\Events\ListingRejected;
 use App\Domains\Listing\Events\ListingSubmitted;
 use App\Domains\Listing\Models\Listing;
+use App\Domains\Notification\Actions\StoreNotification;
 use App\Domains\Notification\Enums\NotificationType;
+use App\Domains\Notification\Events\NotificationCreated;
 use App\Domains\Notification\Models\Notification;
 use App\Domains\Payment\Enums\PaymentPurpose;
 use App\Domains\Payment\Events\PaymentSucceeded;
 use App\Domains\Result\Events\ResultSubmitted;
+use App\Domains\Transaction\Events\TransactionAccepted;
+use App\Domains\Transaction\Events\TransactionCancelled;
+use App\Domains\Transaction\Events\TransactionCompleted;
+use App\Domains\Transaction\Events\TransactionExpired;
+use App\Domains\Transaction\Events\TransactionOffered;
+use App\Domains\Transaction\Events\TransactionPaid;
+use App\Domains\Transaction\Events\TransactionRejected;
+use App\Domains\Transaction\Models\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 
 uses(RefreshDatabase::class);
 
@@ -339,4 +351,150 @@ it('NTF-T10 consecutive chat messages are grouped into one notification', functi
 
     expect($notification->body)->toContain('2')
         ->and($notification->data['count'])->toBe(2);
+});
+
+function makeTransactionWithParties(): array
+{
+    $seller = User::factory()->user()->create();
+    $buyer = User::factory()->user()->create();
+    $listing = Listing::factory()->active()->create(['seller_id' => $seller->id]);
+    $transaction = Transaction::factory()->create([
+        'listing_id' => $listing->getKey(),
+        'buyer_id' => $buyer->getKey(),
+    ]);
+
+    return [$transaction, $seller, $buyer, $listing];
+}
+
+it('NTF-T01 notifies the seller when a purchase offer is submitted', function (): void {
+    [$transaction, $seller, $buyer] = makeTransactionWithParties();
+
+    TransactionOffered::dispatch(
+        transactionId: $transaction->getKey(),
+        listingId: $transaction->listing_id,
+        buyerId: $buyer->getKey(),
+        sellerId: $seller->getKey(),
+    );
+
+    $notification = Notification::query()->firstOrFail();
+
+    expect($notification->user_id)->toBe($seller->getKey())
+        ->and($notification->type)->toBe(NotificationType::TransactionOffered)
+        ->and($notification->link)->toContain($transaction->getKey());
+});
+
+it('NTF-T01 notifies the buyer when an offer is accepted or rejected', function (): void {
+    [$transaction, $seller, $buyer] = makeTransactionWithParties();
+
+    TransactionAccepted::dispatch(
+        transactionId: $transaction->getKey(),
+        listingId: $transaction->listing_id,
+        buyerId: $buyer->getKey(),
+        sellerId: $seller->getKey(),
+    );
+
+    TransactionRejected::dispatch(
+        transactionId: $transaction->getKey(),
+        listingId: $transaction->listing_id,
+        buyerId: $buyer->getKey(),
+        sellerId: $seller->getKey(),
+    );
+
+    $types = Notification::query()->pluck('type')->all();
+
+    expect($types)->toContain(NotificationType::TransactionAccepted, NotificationType::TransactionRejected)
+        ->and(Notification::query()->where('user_id', $buyer->getKey())->count())->toBe(2);
+});
+
+it('NTF-T01 notifies the seller when the buyer pays and both parties on completion', function (): void {
+    [$transaction, $seller, $buyer] = makeTransactionWithParties();
+
+    TransactionPaid::dispatch(
+        transactionId: $transaction->getKey(),
+        listingId: $transaction->listing_id,
+        buyerId: $buyer->getKey(),
+        sellerId: $seller->getKey(),
+        paymentId: 'pay-trx-1',
+    );
+
+    expect(Notification::query()->where('type', NotificationType::TransactionPaid)->count())->toBe(1)
+        ->and(Notification::query()->firstOrFail()->user_id)->toBe($seller->getKey());
+
+    TransactionCompleted::dispatch(
+        transactionId: $transaction->getKey(),
+        listingId: $transaction->listing_id,
+        buyerId: $buyer->getKey(),
+        sellerId: $seller->getKey(),
+    );
+
+    $recipients = Notification::query()->where('type', NotificationType::TransactionCompleted)
+        ->pluck('user_id')->all();
+
+    sort($recipients);
+    $expected = [$seller->getKey(), $buyer->getKey()];
+    sort($expected);
+
+    expect($recipients)->toBe($expected);
+});
+
+it('NTF-T01 notifies the other party on cancellation and both on expiry', function (): void {
+    [$transaction, $seller, $buyer] = makeTransactionWithParties();
+
+    TransactionCancelled::dispatch(
+        transactionId: $transaction->getKey(),
+        listingId: $transaction->listing_id,
+        buyerId: $buyer->getKey(),
+        sellerId: $seller->getKey(),
+        cancelledBy: $buyer->getKey(),
+    );
+
+    expect(Notification::query()->where('type', NotificationType::TransactionCancelled)->count())->toBe(1)
+        ->and(Notification::query()->firstOrFail()->user_id)->toBe($seller->getKey());
+
+    TransactionExpired::dispatch(
+        transactionId: $transaction->getKey(),
+        listingId: $transaction->listing_id,
+        buyerId: $buyer->getKey(),
+        sellerId: $seller->getKey(),
+    );
+
+    expect(Notification::query()->where('type', NotificationType::TransactionExpired)->count())->toBe(2);
+});
+
+it('NTF-T01 notifies admins when a new inspector submits documents', function (): void {
+    $admin = User::factory()->admin()->create();
+    $inspector = User::factory()->inspector()->create();
+    $profile = InspectorProfile::factory()->pending()->for($inspector, 'user')->create();
+
+    InspectorSubmitted::dispatch(
+        inspectorProfileId: $profile->getKey(),
+        userId: $inspector->getKey(),
+    );
+
+    $notification = Notification::query()->firstOrFail();
+
+    expect($notification->user_id)->toBe($admin->getKey())
+        ->and($notification->type)->toBe(NotificationType::InspectorSubmitted);
+});
+
+it('NTF-T06 broadcasts notification creation on the owner private user channel', function (): void {
+    Event::fake([NotificationCreated::class]);
+
+    $user = User::factory()->user()->create();
+
+    app(StoreNotification::class)->handle(
+        userId: $user->getKey(),
+        type: NotificationType::PaymentSucceeded,
+        title: 'Pembayaran berhasil',
+        body: 'Pembayaran sebesar Rp50.000 berhasil.',
+        link: null,
+        dedupeKey: 'ntf-t06-test',
+    );
+
+    Event::assertDispatched(NotificationCreated::class, function (NotificationCreated $event) use ($user): bool {
+        $channels = $event->broadcastOn();
+
+        return $channels[0]->name === 'private-user.'.$user->getKey()
+            && $event->broadcastAs() === 'notification.created';
+    });
 });

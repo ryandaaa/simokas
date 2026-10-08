@@ -19,6 +19,8 @@ return [
     'participant' => 'Peserta',
     'you' => 'Anda',
     'connecting' => 'Menyambung ulang...',
+    'realtime_on' => 'Real-time aktif',
+    'polling_fallback' => 'Mode polling (tiap 3 detik)',
     'search_conversations' => 'Cari percakapan...',
     'unread_badge' => ':count belum dibaca',
     'char_count' => ':count/1000',

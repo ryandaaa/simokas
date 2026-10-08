@@ -10,13 +10,13 @@ use Tests\TestCase;
 it('NTF-T01 defines a snake_case value for every notification type', function (): void {
     $values = array_map(fn (NotificationType $type): string => $type->value, NotificationType::cases());
 
-    expect($values)->toHaveCount(14);
+    expect($values)->toHaveCount(22);
 
     foreach ($values as $value) {
         expect($value)->toMatch('/^[a-z]+(_[a-z]+)*$/');
     }
 
-    expect($values)->toContain('job_taken', 'message_received', 'payment_succeeded');
+    expect($values)->toContain('job_taken', 'message_received', 'payment_succeeded', 'transaction_offered', 'transaction_completed', 'inspector_submitted');
 });
 
 it('NTF-T01 every notification type has a non-empty Indonesian label', function (): void {

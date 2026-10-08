@@ -9,9 +9,7 @@ use App\Domains\Chat\Livewire\ConversationDetail;
 use App\Domains\Chat\Livewire\ConversationList;
 use App\Domains\Chat\Models\Conversation;
 use App\Domains\Chat\Policies\ConversationPolicy;
-use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Events\JobTaken;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -31,10 +29,6 @@ final class ChatServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/migrations');
 
         Gate::policy(Conversation::class, ConversationPolicy::class);
-        Broadcast::channel('conversation.{conversationId}', function (mixed $user, string $conversationId): bool {
-            return $user instanceof User
-                && app(ConversationPolicy::class)->viewChannel($user, $conversationId);
-        });
 
         Event::listen(JobTaken::class, CreateJobConversation::class);
 

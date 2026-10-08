@@ -6,6 +6,7 @@ namespace App\Domains\Notification\Actions;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Notification\Enums\NotificationType;
+use App\Domains\Notification\Events\NotificationCreated;
 use App\Domains\Notification\Models\Notification;
 
 /**
@@ -33,7 +34,7 @@ final class StoreNotification
             return null;
         }
 
-        return Notification::query()->firstOrCreate(
+        $notification = Notification::query()->firstOrCreate(
             ['dedupe_key' => $dedupeKey],
             [
                 'user_id' => $userId,
@@ -44,6 +45,12 @@ final class StoreNotification
                 'data' => $data,
             ],
         );
+
+        if ($notification->wasRecentlyCreated) {
+            NotificationCreated::dispatch($notification);
+        }
+
+        return $notification;
     }
 
     /**
@@ -83,7 +90,10 @@ final class StoreNotification
                 'link' => $link,
             ]);
 
-            return $existing->refresh();
+            $fresh = $existing->refresh();
+            NotificationCreated::dispatch($fresh);
+
+            return $fresh;
         }
 
         if ($existing instanceof Notification) {
@@ -95,10 +105,13 @@ final class StoreNotification
                 'read_at' => null,
             ]);
 
-            return $existing->refresh();
+            $fresh = $existing->refresh();
+            NotificationCreated::dispatch($fresh);
+
+            return $fresh;
         }
 
-        return Notification::query()->create([
+        $created = Notification::query()->create([
             'user_id' => $userId,
             'type' => NotificationType::MessageReceived,
             'title' => __('notification.chat.title'),
@@ -107,5 +120,9 @@ final class StoreNotification
             'dedupe_key' => $dedupeKey,
             'data' => ['count' => 1],
         ]);
+
+        NotificationCreated::dispatch($created);
+
+        return $created;
     }
 }
