@@ -29,7 +29,7 @@
     </div>
 @else
     <article {{ $attributes->merge(['class' => 'bg-surface border border-fog rounded-[10px] overflow-hidden hover:border-pebble transition-all duration-150 flex flex-col']) }}>
-        <a href="{{ $href ?? '#' }}" class="group block focus:outline-none focus:ring-2 focus:ring-forest rounded-[10px]">
+        <a href="{{ $href ?? '#' }}" class="group block rounded-[10px]">
             {{-- Foto Utama --}}
             <div class="relative aspect-[16/10] w-full bg-fog overflow-hidden">
                 @if ($imageUrl)

@@ -8,7 +8,7 @@
     }">
     @auth
     <a href="{{ route('notifications.index') }}"
-       class="relative inline-flex items-center justify-center w-11 h-11 rounded-full text-ds-muted hover:text-ds-blue hover:bg-ds-canvas focus:outline-none focus:ring-2 focus:ring-ds-blue transition-colors"
+       class="relative inline-flex items-center justify-center w-11 h-11 rounded-full text-ds-muted hover:text-ds-blue hover:bg-ds-canvas transition-colors"
        aria-label="{{ __('notification.bell.label') }}{{ $unreadCount > 0 ? ': '.__('notification.bell.unread', ['count' => $unreadCount]) : '' }}">
         <i aria-hidden="true" class="fa-regular fa-bell text-lg"></i>
         @if ($unreadCount > 0)

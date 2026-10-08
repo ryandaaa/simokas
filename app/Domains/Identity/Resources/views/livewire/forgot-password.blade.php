@@ -41,7 +41,7 @@
 
         <div class="px-6 sm:px-8 py-4 bg-ds-canvas/80 border-t border-ds-line/60">
             <p class="text-sm text-center text-ds-muted">
-                <a href="{{ route('login') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">
+                <a href="{{ route('login') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink rounded">
                     {{ __('identity.forgot_password.back_to_login') }}
                 </a>
             </p>

@@ -64,25 +64,25 @@
         <section aria-label="Kategori Kendaraan" class="py-8 bg-white border-y border-ds-line/60 shadow-xs">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center [justify-content:safe_center] gap-4 sm:gap-6 lg:gap-8 overflow-x-auto pb-2 pt-1">
-                    <a href="{{ route('catalog.index') }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group focus:outline-none">
+                    <a href="{{ route('catalog.index') }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group">
                         <span class="w-14 h-14 rounded-2xl bg-ds-soft group-hover:bg-ds-blue group-hover:text-white text-ds-ink flex items-center justify-center text-xl transition-all shadow-xs group-hover:-translate-y-1">
                             <i aria-hidden="true" class="fa-solid fa-border-all"></i>
                         </span>
                         <span class="text-xs font-bold text-ds-ink group-hover:text-ds-blue transition-colors">{{ __('home.cat_all') }}</span>
                     </a>
-                    <a href="{{ route('catalog.index', ['type' => 'car']) }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group focus:outline-none">
+                    <a href="{{ route('catalog.index', ['type' => 'car']) }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group">
                         <span class="w-14 h-14 rounded-2xl bg-ds-soft group-hover:bg-ds-blue group-hover:text-white text-ds-ink flex items-center justify-center text-xl transition-all shadow-xs group-hover:-translate-y-1">
                             <i aria-hidden="true" class="fa-solid fa-car"></i>
                         </span>
                         <span class="text-xs font-bold text-ds-ink group-hover:text-ds-blue transition-colors">{{ __('home.cat_car') }}</span>
                     </a>
-                    <a href="{{ route('catalog.index', ['type' => 'motorcycle']) }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group focus:outline-none">
+                    <a href="{{ route('catalog.index', ['type' => 'motorcycle']) }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group">
                         <span class="w-14 h-14 rounded-2xl bg-ds-soft group-hover:bg-ds-blue group-hover:text-white text-ds-ink flex items-center justify-center text-xl transition-all shadow-xs group-hover:-translate-y-1">
                             <i aria-hidden="true" class="fa-solid fa-motorcycle"></i>
                         </span>
                         <span class="text-xs font-bold text-ds-ink group-hover:text-ds-blue transition-colors">{{ __('home.cat_motorcycle') }}</span>
                     </a>
-                    <a href="{{ route('catalog.index', ['inspected' => 'inspected']) }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group focus:outline-none">
+                    <a href="{{ route('catalog.index', ['inspected' => 'inspected']) }}" class="flex flex-col items-center gap-2.5 min-w-[85px] group">
                         <span class="w-14 h-14 rounded-2xl bg-ds-soft group-hover:bg-ds-blue group-hover:text-white text-ds-ink flex items-center justify-center text-xl transition-all shadow-xs group-hover:-translate-y-1">
                             <i aria-hidden="true" class="fa-solid fa-shield-halved"></i>
                         </span>
@@ -287,7 +287,7 @@
                 <div class="max-w-3xl mx-auto space-y-4" x-data="{ open: 1 }">
                     @foreach ([1, 2, 3] as $i)
                         <div class="border border-ds-line/80 rounded-2xl overflow-hidden bg-white transition-all shadow-xs">
-                            <button @click="open = (open === {{ $i }} ? 0 : {{ $i }})" :aria-expanded="(open === {{ $i }}).toString()" aria-controls="home-faq-{{ $i }}" class="w-full px-6 py-4 min-h-[44px] text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ds-blue">
+                            <button @click="open = (open === {{ $i }} ? 0 : {{ $i }})" :aria-expanded="(open === {{ $i }}).toString()" aria-controls="home-faq-{{ $i }}" class="w-full px-6 py-4 min-h-[44px] text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors">
                                 <span>{{ __('home.help.faq_q'.$i) }}</span>
                                 <i aria-hidden="true" class="fa-solid text-xs text-ds-faint transition-transform" :class="open === {{ $i }} ? 'fa-minus rotate-180' : 'fa-plus'"></i>
                             </button>

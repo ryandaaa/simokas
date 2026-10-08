@@ -13,10 +13,10 @@
                 <div role="alert" class="mb-4 p-4 rounded-2xl border border-ds-amber-soft bg-ds-amber-soft/40">
                     <p class="text-xs font-extrabold text-ds-ink">{{ __('identity.register.duplicate_email') }}</p>
                     <div class="mt-2 flex gap-4">
-                        <a href="{{ route('login') }}" class="text-sm font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">
+                        <a href="{{ route('login') }}" class="text-sm font-bold text-ds-blue hover:text-ds-blue-ink rounded">
                             {{ __('identity.register.duplicate_email_login') }}
                         </a>
-                        <a href="{{ route('identity.forgot-password') }}" class="text-sm font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">
+                        <a href="{{ route('identity.forgot-password') }}" class="text-sm font-bold text-ds-blue hover:text-ds-blue-ink rounded">
                             {{ __('identity.register.duplicate_email_reset') }}
                         </a>
                     </div>
@@ -114,9 +114,9 @@
                             class="mt-0.5 w-4 h-4 rounded border-ds-line text-ds-blue focus:ring-ds-blue/30">
                         <span>
                             {{ __('identity.register.terms_prefix') }}
-                            <a href="{{ route('legal.terms') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">{{ __('legal.footer_terms') }}</a>
+                            <a href="{{ route('legal.terms') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink rounded">{{ __('legal.footer_terms') }}</a>
                             {{ __('identity.register.terms_and') }}
-                            <a href="{{ route('legal.privacy') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">{{ __('legal.footer_privacy') }}</a>
+                            <a href="{{ route('legal.privacy') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink rounded">{{ __('legal.footer_privacy') }}</a>
                             <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
                             <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                         </span>
@@ -139,7 +139,7 @@
         <div class="px-6 sm:px-8 py-4 bg-ds-canvas/80 border-t border-ds-line/60">
             <p class="text-sm text-center text-ds-muted">
                 {{ __('identity.register.already_registered') }}
-                <a href="{{ route('login') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">
+                <a href="{{ route('login') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink rounded">
                     {{ __('identity.register.login_here') }}
                 </a>
             </p>

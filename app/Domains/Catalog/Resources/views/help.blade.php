@@ -22,7 +22,7 @@
                     ['q' => __('home.help.faq_q6'), 'a' => __('home.help.faq_a6')],
                 ] as $i => $faq)
                     <div class="border border-ds-line/80 rounded-2xl overflow-hidden bg-white transition-all shadow-xs">
-                        <button @click="open = (open === {{ $i + 1 }} ? 0 : {{ $i + 1 }})" :aria-expanded="(open === {{ $i + 1 }}).toString()" aria-controls="help-faq-{{ $i + 1 }}" class="w-full px-6 py-4 min-h-[44px] text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ds-blue">
+                        <button @click="open = (open === {{ $i + 1 }} ? 0 : {{ $i + 1 }})" :aria-expanded="(open === {{ $i + 1 }}).toString()" aria-controls="help-faq-{{ $i + 1 }}" class="w-full px-6 py-4 min-h-[44px] text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors">
                             <span>{{ $faq['q'] }}</span>
                             <i aria-hidden="true" class="fa-solid text-xs text-ds-faint transition-transform" :class="open === {{ $i + 1 }} ? 'fa-minus rotate-180' : 'fa-plus'"></i>
                         </button>

@@ -49,7 +49,7 @@
                         {{ __('identity.login.remember') }}
                     </label>
 
-                    <a href="{{ route('identity.forgot-password') }}" class="text-sm font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">
+                    <a href="{{ route('identity.forgot-password') }}" class="text-sm font-bold text-ds-blue hover:text-ds-blue-ink rounded">
                         {{ __('identity.login.forgot_password') }}
                     </a>
                 </div>
@@ -67,7 +67,7 @@
         <div class="px-6 sm:px-8 py-4 bg-ds-canvas/80 border-t border-ds-line/60">
             <p class="text-sm text-center text-ds-muted">
                 {{ __('identity.login.no_account') }}
-                <a href="{{ route('identity.register') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink focus:outline-none focus:ring-2 focus:ring-ds-blue rounded">
+                <a href="{{ route('identity.register') }}" class="font-bold text-ds-blue hover:text-ds-blue-ink rounded">
                     {{ __('identity.login.register_here') }}
                 </a>
             </p>

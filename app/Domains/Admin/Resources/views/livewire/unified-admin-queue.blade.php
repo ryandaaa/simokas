@@ -21,7 +21,7 @@
             <button
                 type="button"
                 wire:click="$set('filterType', '{{ $key }}')"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue min-h-[44px] {{ $filterType === $key ? 'bg-ds-ink text-white shadow-md' : 'bg-white border border-ds-line text-ds-muted hover:border-ds-blue hover:text-ds-blue shadow-xs' }}"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-colors min-h-[44px] {{ $filterType === $key ? 'bg-ds-ink text-white shadow-md' : 'bg-white border border-ds-line text-ds-muted hover:border-ds-blue hover:text-ds-blue shadow-xs' }}"
             >
                 <span>{{ $tab['label'] }}</span>
                 <span class="px-2 py-0.5 rounded-full text-[11px] font-extrabold {{ $filterType === $key ? 'bg-white/20 text-white' : 'bg-ds-canvas text-ds-muted' }}">

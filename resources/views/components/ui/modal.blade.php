@@ -72,7 +72,7 @@
             {{-- Tombol Tutup --}}
             <button type="button"
                     @click="open = false"
-                    class="absolute top-5 right-5 w-9 h-9 rounded-full bg-ds-soft text-ds-muted hover:text-ds-ink flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-ds-blue"
+                    class="absolute top-5 right-5 w-9 h-9 rounded-full bg-ds-soft text-ds-muted hover:text-ds-ink flex items-center justify-center"
                     aria-label="{{ __('ui.actions.close') }}">
                 <x-ui.icon name="silang" class="w-5 h-5" />
             </button>

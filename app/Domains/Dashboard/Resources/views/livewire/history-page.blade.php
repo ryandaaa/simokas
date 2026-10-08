@@ -43,7 +43,7 @@
                 wire:click="setTab('{{ $key }}')"
                 role="tab"
                 aria-selected="{{ $tab === $key ? 'true' : 'false' }}"
-                class="shrink-0 px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === $key ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
+                class="shrink-0 px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition-colors {{ $tab === $key ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
                 {{ $label }}
             </button>
         @endforeach
@@ -53,7 +53,7 @@
                 wire:click="setTab('jobs')"
                 role="tab"
                 aria-selected="{{ $tab === 'jobs' ? 'true' : 'false' }}"
-                class="shrink-0 px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === 'jobs' ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
+                class="shrink-0 px-4 py-1.5 min-h-[44px] inline-flex items-center text-sm font-bold rounded-full transition-colors {{ $tab === 'jobs' ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
                 {{ __('dashboard.history.tabs.jobs') }}
             </button>
         @endif

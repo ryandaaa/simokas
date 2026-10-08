@@ -31,7 +31,7 @@
 <body class="min-h-full flex flex-col ds-sans bg-slate-50 text-slate-900">
     {{-- Skip-link untuk aksesibilitas keyboard --}}
     <a href="#main-content"
-       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-yellow-400 focus:text-slate-900 focus:rounded-xl focus:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600">
+       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-yellow-400 focus:text-slate-900 focus:rounded-xl focus:shadow-md">
         {{ __('ui.layout.skip_link') }}
     </a>
 
@@ -41,7 +41,7 @@
             <div class="flex items-center justify-between h-20 gap-2 sm:gap-4">
                 {{-- Brand/Logo --}}
                 <div class="flex items-center">
-                    <a href="{{ url('/') }}" class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl px-1 py-1 select-none">
+                    <a href="{{ url('/') }}" class="flex items-center rounded-xl px-1 py-1 select-none">
                         <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" class="h-9 sm:h-12 w-auto">
                     </a>
                 </div>
@@ -55,7 +55,7 @@
                                 @endphp
                                 <a href="{{ $item['url'] ?? '#' }}"
                                    @class([
-                                       'transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-lg',
+                                       'transition-colors rounded-lg',
                                        'text-green-600 hover:text-green-700' => $isActive,
                                        'hover:text-green-600' => !$isActive,
                                    ])
@@ -128,7 +128,7 @@
                             <div class="relative" x-data="{ accountMenuOpen: false }" @click.outside="accountMenuOpen = false" @keydown.escape.window="accountMenuOpen = false">
                                 <button type="button"
                                         @click="accountMenuOpen = !accountMenuOpen"
-                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold text-ds-ink hover:bg-ds-canvas transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue"
+                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold text-ds-ink hover:bg-ds-canvas transition-colors"
                                         aria-haspopup="true"
                                         :aria-expanded="accountMenuOpen.toString()"
                                         aria-label="{{ __('ui.layout.account_menu') }}">
@@ -276,7 +276,7 @@
                     @endphp
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
-                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 min-h-[44px] transition-colors',
+                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
                            'text-green-600' => $isActive,
                            'text-slate-500 hover:text-green-600' => !$isActive,
                        ])
@@ -286,7 +286,7 @@
                     </a>
                 @endforeach
                 <a href="{{ \Illuminate\Support\Facades\Route::has('listings.create') ? route('listings.create') : url('/') }}"
-                   class="flex flex-col items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl"
+                   class="flex flex-col items-center justify-center rounded-xl"
                    aria-label="Pasang Iklan">
                     <span class="w-12 h-12 -mt-6 rounded-full bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink flex items-center justify-center shadow-xl transition-colors">
                         <i aria-hidden="true" class="fa-solid fa-plus text-lg"></i>
@@ -306,7 +306,7 @@
                     @endphp
                     <a href="{{ $item['url'] ?? '#' }}"
                        @class([
-                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 min-h-[44px] transition-colors',
+                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
                            'text-green-600' => $isActive,
                            'text-slate-500 hover:text-green-600' => !$isActive,
                        ])
@@ -363,7 +363,7 @@
         </div>
 
         <button type="button" @click="open = !open"
-            class="w-12 h-12 rounded-full bg-ds-ink hover:bg-ds-blue text-white flex items-center justify-center shadow-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ds-yellow"
+            class="w-12 h-12 rounded-full bg-ds-ink hover:bg-ds-blue text-white flex items-center justify-center shadow-xl transition-colors"
             aria-label="{{ __('ui.layout.a11y_button') }}" :aria-expanded="open.toString()">
             <i aria-hidden="true" class="fa-solid fa-universal-access text-xl"></i>
         </button>

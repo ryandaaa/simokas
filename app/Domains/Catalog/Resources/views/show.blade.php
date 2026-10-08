@@ -107,7 +107,7 @@
                                     @click="active = {{ $index }}"
                                     :aria-current="active === {{ $index }} ? 'true' : 'false'"
                                     :class="active === {{ $index }} ? 'ring-2 ring-ds-blue' : 'opacity-70 hover:opacity-100'"
-                                    class="min-h-[44px] overflow-hidden rounded-xl border border-ds-line/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-ds-blue"
+                                    class="min-h-[44px] overflow-hidden rounded-xl border border-ds-line/80"
                                     aria-label="{{ $photo->alt }}"
                                 >
                                     <img

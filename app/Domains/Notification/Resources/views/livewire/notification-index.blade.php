@@ -27,7 +27,7 @@
                     <button type="button"
                             wire:click="openNotification('{{ $notification->id }}')"
                             wire:loading.attr="disabled"
-                            class="w-full text-left bg-white border rounded-2xl p-4 flex items-start gap-3 transition-all shadow-xs hover:shadow-md focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $notification->isRead() ? 'border-ds-line/80' : 'border-ds-blue/40' }}">
+                            class="w-full text-left bg-white border rounded-2xl p-4 flex items-start gap-3 transition-all shadow-xs hover:shadow-md {{ $notification->isRead() ? 'border-ds-line/80' : 'border-ds-blue/40' }}">
                         <span class="mt-0.5 shrink-0">
                             @if ($notification->isRead())
                                 <i aria-hidden="true" class="fa-regular fa-bell text-ds-faint text-lg"></i>
