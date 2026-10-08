@@ -42,7 +42,7 @@
                 {{-- Brand/Logo --}}
                 <div class="flex items-center">
                     <a href="{{ url('/') }}" class="flex items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl px-1 py-1 select-none">
-                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" class="h-14 w-auto">
+                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" class="h-12 w-auto">
                     </a>
                 </div>
 
