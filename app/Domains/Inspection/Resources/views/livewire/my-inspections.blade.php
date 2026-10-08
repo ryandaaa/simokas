@@ -1,58 +1,86 @@
-<div class="mx-auto max-w-2xl px-4 py-6 sm:py-8">
-    <h1 class="text-xl font-bold text-text sm:text-2xl">{{ __('inspection.mine.title') }}</h1>
-    <p class="mt-1 text-sm text-muted">{{ __('inspection.mine.subtitle') }}</p>
+<div class="ds-sans mx-auto max-w-2xl px-4 py-6 sm:py-8 space-y-6 pb-12">
+    <div class="space-y-2">
+        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('inspection.mine.title') }}</span>
+        <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('inspection.mine.title') }}</h1>
+        <p class="text-sm text-ds-muted">{{ __('inspection.mine.subtitle') }}</p>
+    </div>
 
     @if ($actionSuccess)
-        <div class="mt-4">
-            <x-ui.alert variant="success" :message="$actionSuccess" dismissible />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $actionSuccess }}
         </div>
     @endif
 
     @if ($actionError)
-        <div class="mt-4">
-            <x-ui.alert variant="danger" :message="$actionError" dismissible />
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+            {{ $actionError }}
         </div>
     @endif
 
-    <div wire:loading.delay class="mt-4 space-y-3">
-        <x-ui.skeleton variant="card" />
-        <x-ui.skeleton variant="card" />
+    <div wire:loading.delay class="space-y-3">
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6 flex items-center justify-center gap-3 py-10 text-ds-muted">
+            <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
+            <span class="text-sm font-medium">{{ __('ui.actions.loading') }}</span>
+        </div>
     </div>
 
-    <div wire:loading.remove.delay class="mt-4">
+    @php
+        $chip = function (?string $variant): string {
+            return match ($variant) {
+                'success' => 'bg-ds-green-soft text-ds-green-ink',
+                'warning' => 'bg-ds-amber-soft text-ds-amber-ink',
+                'danger' => 'bg-ds-red-soft text-ds-red-ink',
+                'primary' => 'bg-ds-blue-soft text-ds-blue-ink',
+                default => 'bg-ds-soft text-ds-muted',
+            };
+        };
+    @endphp
+
+    <div wire:loading.remove.delay>
         @if ($errorMessage)
-            <x-ui.alert variant="danger" :message="$errorMessage" />
+            <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+                {{ $errorMessage }}
+            </div>
             <div class="mt-3">
-                <x-ui.button type="button" variant="secondary" wire:click="retry" wire:loading.attr="disabled">
+                <button type="button" wire:click="retry" wire:loading.attr="disabled"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60">
                     {{ __('inspection.mine.retry') }}
-                </x-ui.button>
+                </button>
             </div>
         @elseif ($jobs === null)
-            <x-ui.alert variant="danger" :message="__('inspection.mine.load_failed')" />
+            <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+                {{ __('inspection.mine.load_failed') }}
+            </div>
             <div class="mt-3">
-                <x-ui.button type="button" variant="secondary" wire:click="retry" wire:loading.attr="disabled">
+                <button type="button" wire:click="retry" wire:loading.attr="disabled"
+                    class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs disabled:opacity-60">
                     {{ __('inspection.mine.retry') }}
-                </x-ui.button>
+                </button>
             </div>
         @elseif ($jobs->isEmpty())
-            <x-ui.empty-state
-                icon="dokumen"
-                :title="__('inspection.mine.empty_title')"
-                :description="__('inspection.mine.empty_desc')"
-                :actionLabel="__('inspection.mine.browse')"
-                :actionUrl="route('catalog.index')"
-            />
+            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                    <i aria-hidden="true" class="fa-solid fa-file-lines"></i>
+                </div>
+                <h3 class="text-lg font-extrabold text-ds-ink">{{ __('inspection.mine.empty_title') }}</h3>
+                <p class="text-xs text-ds-muted mt-2">{{ __('inspection.mine.empty_desc') }}</p>
+                <div class="flex justify-center mt-6">
+                    <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                        {{ __('inspection.mine.browse') }}
+                    </a>
+                </div>
+            </div>
         @else
             <div class="space-y-3">
                 @foreach ($jobs as $job)
-                    <x-ui.card>
+                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-md transition-all p-4 sm:p-5">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div class="min-w-0">
-                                <p class="truncate text-sm font-bold text-text">{{ $job->listing?->title ?? $job->listing_id }}</p>
-                                <p class="mt-0.5 text-xs text-muted">
-                                    <x-ui.money :amount="$job->fee_amount" />
+                                <p class="truncate text-sm font-extrabold text-ds-ink">{{ $job->listing?->title ?? $job->listing_id }}</p>
+                                <p class="mt-0.5 text-xs text-ds-muted">
+                                    <span class="font-extrabold text-ds-ink">{{ \App\Support\Money::format($job->fee_amount) }}</span>
                                     •
-                                    <x-ui.datetime :value="$job->created_at" format="date" />
+                                    {{ $job->created_at?->translatedFormat('d M Y') }}
                                     @if ($job->scheduled_at)
                                         •
                                         <span>{{ __('inspection.detail.scheduled_at_label') }}: {{ \App\Support\Clock::formatWib($job->scheduled_at) }}</span>
@@ -61,24 +89,23 @@
                             </div>
 
                             <div class="flex items-center gap-2 self-start sm:self-auto">
-                                <x-ui.status-chip :label="$job->status->label()" :variant="$job->status->color()" :icon="$job->status->icon()" />
+                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($job->status->color()) }}">
+                                    {{ $job->status->label() }}
+                                </span>
 
                                 @if ($job->status === \App\Domains\Inspection\Enums\JobStatus::Requested)
                                     @if (isset($paymentMap[$job->id]))
-                                        <x-ui.button
-                                            :href="route('payments.show', ['payment' => $paymentMap[$job->id]])"
-                                            variant="primary"
-                                            class="!min-h-[36px] !px-3.5 !py-1 text-xs"
-                                        >
+                                        <a href="{{ route('payments.show', ['payment' => $paymentMap[$job->id]]) }}"
+                                            class="inline-flex items-center justify-center px-3.5 py-1 min-h-[36px] text-xs font-bold bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink rounded-xl transition-all shadow-md">
                                             {{ __('inspection.mine.pay') }}
-                                        </x-ui.button>
+                                        </a>
                                     @else
-                                        <div class="flex flex-col items-start text-xs text-muted">
+                                        <div class="flex flex-col items-start text-xs text-ds-muted">
                                             <span>{{ __('inspection.mine.bill_expired') }}</span>
                                             @if (\Illuminate\Support\Facades\Route::has('jobs.request') && $job->listing_id)
                                                 <a
                                                     href="{{ route('jobs.request', ['listing' => $job->listing_id]) }}"
-                                                    class="text-xs font-semibold text-primary hover:underline"
+                                                    class="text-xs font-bold text-ds-blue hover:text-ds-blue-ink"
                                                 >
                                                     {{ __('inspection.mine.reapply') }}
                                                 </a>
@@ -93,23 +120,22 @@
                                     \App\Domains\Inspection\Enums\JobStatus::Taken,
                                     \App\Domains\Inspection\Enums\JobStatus::Scheduled,
                                 ], true))
-                                    <x-ui.button
+                                    <button
                                         type="button"
-                                        variant="ghost"
                                         wire:click="confirmCancel('{{ $job->id }}')"
                                         wire:loading.attr="disabled"
-                                        class="text-xs text-danger hover:bg-danger/10"
+                                        class="text-xs font-bold text-ds-danger hover:underline disabled:opacity-60"
                                     >
                                         {{ __('inspection.mine.cancel_button') }}
-                                    </x-ui.button>
+                                    </button>
                                 @elseif ($job->status === \App\Domains\Inspection\Enums\JobStatus::InProgress)
-                                    <span class="text-xs text-muted italic ml-1">
+                                    <span class="text-xs text-ds-muted italic ml-1">
                                         {{ __('inspection.mine.in_progress_notice') }}
                                     </span>
                                 @endif
                             </div>
                         </div>
-                    </x-ui.card>
+                    </div>
                 @endforeach
             </div>
 
@@ -144,15 +170,12 @@
                 </p>
             </div>
 
-            <div>
-                <x-ui.textarea
-                    id="requester_cancel_reason"
-                    name="cancel_reason"
-                    :label="__('inspection.mine.cancel_reason_label')"
-                    :placeholder="__('inspection.mine.cancel_reason_placeholder')"
-                    wire:model="cancel_reason"
-                    rows="2"
-                />
+            <div class="w-full">
+                <label for="requester_cancel_reason" class="block text-xs font-bold text-ds-ink mb-1.5">
+                    {{ __('inspection.mine.cancel_reason_label') }}
+                </label>
+                <textarea id="requester_cancel_reason" name="cancel_reason" wire:model="cancel_reason" rows="2" placeholder="{{ __('inspection.mine.cancel_reason_placeholder') }}"
+                    class="w-full px-4 py-3 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors"></textarea>
             </div>
         </div>
 
