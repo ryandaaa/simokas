@@ -58,6 +58,32 @@ final class InspectorDashboard extends Component
         $rating = $profile !== null ? (float) $profile->rating_avg : 0.0;
         $ratingCount = $profile !== null ? (int) $profile->rating_count : 0;
 
+        // Recent jobs: latest jobs handled by this inspector
+        $recentJobs = InspectionJob::query()
+            ->where('inspector_id', $this->user->id)
+            ->with(['listing', 'requester'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Monthly trend: completed inspections per month for the last 6 months (single grouped query)
+        $monthlyCounts = InspectionJob::query()
+            ->where('inspector_id', $this->user->id)
+            ->where('status', JobStatus::Completed)
+            ->where('completed_at', '>=', now()->subMonthsNoOverflow(5)->startOfMonth())
+            ->selectRaw("DATE_FORMAT(completed_at, '%Y-%m') as ym, COUNT(*) as total")
+            ->groupBy('ym')
+            ->pluck('total', 'ym');
+
+        $monthlySeries = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonthsNoOverflow($i);
+            $monthlySeries[] = [
+                'label' => $month->locale('id')->shortMonthName,
+                'value' => (int) ($monthlyCounts[$month->format('Y-m')] ?? 0),
+            ];
+        }
+
         return view('dashboard::livewire.inspector-dashboard', [
             'availableJobs' => $availableJobs,
             'activeJobs' => $activeJobs,
@@ -65,6 +91,8 @@ final class InspectorDashboard extends Component
             'totalInspections' => $totalInspections,
             'rating' => $rating,
             'ratingCount' => $ratingCount,
+            'recentJobs' => $recentJobs,
+            'monthlySeries' => $monthlySeries,
             'user' => $this->user,
         ]);
     }
