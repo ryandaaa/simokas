@@ -62,6 +62,30 @@ final class AdminDashboard extends Component
         // Items needing action: combination of pending listings and inspectors
         $itemsNeedingAction = $listingQueue + $inspectorQueue;
 
+        // Recent jobs across the platform
+        $recentJobs = InspectionJob::query()
+            ->with(['listing', 'requester'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Monthly trend: platform completed inspections (single grouped query)
+        $monthlyCounts = InspectionJob::query()
+            ->where('status', JobStatus::Completed)
+            ->where('completed_at', '>=', now()->subMonthsNoOverflow(5)->startOfMonth())
+            ->selectRaw("DATE_FORMAT(completed_at, '%Y-%m') as ym, COUNT(*) as total")
+            ->groupBy('ym')
+            ->pluck('total', 'ym');
+
+        $monthlySeries = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonthsNoOverflow($i);
+            $monthlySeries[] = [
+                'label' => $month->locale('id')->shortMonthName,
+                'value' => (int) ($monthlyCounts[$month->format('Y-m')] ?? 0),
+            ];
+        }
+
         return view('dashboard::livewire.admin-dashboard', [
             'totalUsers' => $totalUsers,
             'totalInspectors' => $totalInspectors,
@@ -70,6 +94,8 @@ final class AdminDashboard extends Component
             'listingQueue' => $listingQueue,
             'inspectorQueue' => $inspectorQueue,
             'itemsNeedingAction' => $itemsNeedingAction,
+            'recentJobs' => $recentJobs,
+            'monthlySeries' => $monthlySeries,
             'user' => $this->user,
         ]);
     }

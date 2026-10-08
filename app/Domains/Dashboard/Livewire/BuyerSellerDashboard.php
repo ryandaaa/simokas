@@ -56,12 +56,51 @@ final class BuyerSellerDashboard extends Component
             ->whereHas('listing', fn ($query) => $query->where('seller_id', $this->user->id))
             ->count();
 
+        // Recent inspections requested by this user
+        $recentInspections = InspectionJob::query()
+            ->where('requester_id', $this->user->id)
+            ->with('listing')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Recent transactions (as buyer or as seller via listing)
+        $recentTransactions = Transaction::query()
+            ->where(fn ($query) => $query
+                ->where('buyer_id', $this->user->id)
+                ->orWhereHas('listing', fn ($q) => $q->where('seller_id', $this->user->id)))
+            ->with('listing')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Monthly trend: completed inspections requested by this user (single grouped query)
+        $monthlyCounts = InspectionJob::query()
+            ->where('requester_id', $this->user->id)
+            ->where('status', JobStatus::Completed)
+            ->where('completed_at', '>=', now()->subMonthsNoOverflow(5)->startOfMonth())
+            ->selectRaw("DATE_FORMAT(completed_at, '%Y-%m') as ym, COUNT(*) as total")
+            ->groupBy('ym')
+            ->pluck('total', 'ym');
+
+        $monthlySeries = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonthsNoOverflow($i);
+            $monthlySeries[] = [
+                'label' => $month->locale('id')->shortMonthName,
+                'value' => (int) ($monthlyCounts[$month->format('Y-m')] ?? 0),
+            ];
+        }
+
         return view('dashboard::livewire.buyer-seller-dashboard', [
             'runningInspections' => $runningInspections,
             'accessibleResults' => $accessibleResults,
             'activeListings' => $activeListings,
             'activeTransactions' => $activeTransactions,
             'buyOffers' => $buyOffers,
+            'recentInspections' => $recentInspections,
+            'recentTransactions' => $recentTransactions,
+            'monthlySeries' => $monthlySeries,
             'user' => $this->user,
         ]);
     }

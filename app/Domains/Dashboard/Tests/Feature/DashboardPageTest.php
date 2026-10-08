@@ -149,6 +149,44 @@ it('DSH-T10 inspector dashboard shows trend, composition, activity, and recent j
         ->assertSee('Honda Brio DSH');
 });
 
+it('DSH-T11 buyer dashboard shows trend, composition, activity, and transactions', function () {
+    $buyer = User::factory()->user()->create();
+    $seller = User::factory()->user()->create();
+    $listing = Listing::factory()->active()->create(['seller_id' => $seller->id, 'title' => 'Toyota Avanza DSH']);
+
+    Transaction::factory()->offered()->create([
+        'listing_id' => $listing->id,
+        'buyer_id' => $buyer->id,
+    ]);
+
+    actingAs($buyer)->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee(__('dashboard.buyer.trend_title'))
+        ->assertSee(__('dashboard.buyer.composition_title'))
+        ->assertSee(__('dashboard.buyer.recent_activity_title'))
+        ->assertSee(__('dashboard.buyer.recent_transactions_title'))
+        ->assertSee('Toyota Avanza DSH');
+});
+
+it('DSH-T12 admin dashboard shows trend, composition, activity, and jobs', function () {
+    $admin = User::factory()->admin()->create();
+    $listing = Listing::factory()->active()->create(['title' => 'Daihatsu Xenia DSH']);
+
+    InspectionJob::factory()->create([
+        'listing_id' => $listing->id,
+        'status' => JobStatus::Completed,
+        'completed_at' => now(),
+    ]);
+
+    actingAs($admin)->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee(__('dashboard.admin.trend_title'))
+        ->assertSee(__('dashboard.admin.composition_title'))
+        ->assertSee(__('dashboard.admin.recent_activity_title'))
+        ->assertSee(__('dashboard.admin.recent_jobs_title'))
+        ->assertSee('Daihatsu Xenia DSH');
+});
+
 it('DSH-T04 admin numbers match job status and queues', function () {
     $admin = User::factory()->admin()->create();
 
