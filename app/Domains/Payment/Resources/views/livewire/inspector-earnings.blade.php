@@ -1,6 +1,5 @@
 <div class="ds-sans max-w-2xl mx-auto py-6 sm:py-8 px-4 sm:px-0 space-y-8 pb-12">
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('payment.earnings.title') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('payment.earnings.title') }}</h1>
         <p class="text-xs sm:text-sm text-ds-muted">{{ __('payment.earnings.subtitle') }}</p>
     </div>

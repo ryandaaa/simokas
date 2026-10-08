@@ -1,7 +1,6 @@
 <div class="ds-sans space-y-8 pb-12">
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div class="space-y-2">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('inspection.inspector_jobs.title') }}</span>
             <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('inspection.inspector_jobs.title') }}</h1>
             <p class="text-sm text-ds-muted">{{ __('inspection.inspector_jobs.subtitle') }}</p>
         </div>

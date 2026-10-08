@@ -6,6 +6,7 @@ use App\Domains\Catalog\Contracts\InspectionJobAccess;
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -327,6 +328,7 @@ it('CAT-T09 shows Chat Penjual button for eligible buyers and login for guests',
         ->and($buyerContent)->toContain(route('conversations.start', absolute: false));
 
     // Tamu melihat tombol chat yang mengarah ke login
+    Auth::logout();
     $guestContent = get(detailUrl($listing))->assertOk()->getContent();
 
     expect($guestContent)->toContain('Chat Penjual')

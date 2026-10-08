@@ -5,7 +5,6 @@
     </a>
 
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('transaction.offer.title') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('transaction.offer.title') }}</h1>
         <p class="text-sm text-ds-muted">{{ __('transaction.offer.subtitle') }}</p>
     </div>

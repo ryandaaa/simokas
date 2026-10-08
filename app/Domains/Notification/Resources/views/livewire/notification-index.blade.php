@@ -1,7 +1,6 @@
 <div class="ds-sans max-w-3xl mx-auto space-y-6 pb-12">
     <div class="flex items-center justify-between">
         <div class="space-y-2">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('notification.index.heading') }}</span>
             <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('notification.index.heading') }}</h1>
         </div>
         @if ($unreadCount > 0)

@@ -6,7 +6,6 @@
 
     <div class="flex items-center justify-between gap-3">
         <div class="space-y-1">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('transaction.detail.title') }}</span>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('transaction.detail.title') }}</h1>
         </div>
         @php

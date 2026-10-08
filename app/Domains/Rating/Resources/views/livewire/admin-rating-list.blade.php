@@ -1,7 +1,6 @@
 <div class="ds-sans max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 pb-12">
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div class="space-y-2">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('rating.admin.heading') }}</span>
             <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
                 {{ __('rating.admin.heading') }}
             </h1>

@@ -1,7 +1,6 @@
 <div class="ds-sans max-w-6xl mx-auto py-6 space-y-8 pb-12">
     {{-- Page Header --}}
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('admin.inspector_queue.title') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
             {{ __('admin.inspector_queue.title') }}
         </h1>

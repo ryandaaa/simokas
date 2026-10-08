@@ -1,6 +1,5 @@
 <div class="ds-sans max-w-4xl mx-auto py-6 space-y-8 pb-12">
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('inspector.onboarding.profile_section') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('inspector.onboarding.profile_section') }}</h1>
         <p class="text-sm text-ds-muted">{{ __('inspector.onboarding.subtitle') }}</p>
     </div>

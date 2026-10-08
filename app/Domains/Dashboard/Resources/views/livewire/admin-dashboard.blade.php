@@ -1,7 +1,6 @@
 <div class="space-y-10">
     <section>
         <div class="mb-6 space-y-1">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.admin.title') }}</span>
             <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.admin.title') }}</h2>
         </div>
 
@@ -39,7 +38,6 @@
     {{-- Job Status Breakdown --}}
     <section class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
         <div class="mb-6 space-y-1">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.admin.jobs_by_status') }}</span>
             <h3 class="text-xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.admin.jobs_by_status') }}</h3>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">

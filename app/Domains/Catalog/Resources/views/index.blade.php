@@ -10,7 +10,6 @@
     <div class="ds-sans space-y-0 pb-12">
         {{-- Centered Section Title + Sort --}}
         <div class="text-center max-w-2xl mx-auto mb-10 space-y-3">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('catalog.heading') }}</span>
             <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('catalog.heading') }}</h1>
             <p class="text-sm text-ds-muted">{{ __('catalog.subheading') }}</p>
 

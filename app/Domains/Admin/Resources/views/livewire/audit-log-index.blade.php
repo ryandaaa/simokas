@@ -1,7 +1,6 @@
 <div class="ds-sans max-w-7xl mx-auto py-6 space-y-8 pb-12">
     {{-- Header --}}
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('admin.audit_logs.title') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
             {{ __('admin.audit_logs.title') }}
         </h1>

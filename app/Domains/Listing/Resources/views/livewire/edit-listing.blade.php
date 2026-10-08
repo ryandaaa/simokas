@@ -1,6 +1,5 @@
 <div class="ds-sans max-w-3xl mx-auto px-4 py-6 space-y-8 pb-12">
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('listing.edit.title') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
             {{ __('listing.edit.title') }}
         </h1>

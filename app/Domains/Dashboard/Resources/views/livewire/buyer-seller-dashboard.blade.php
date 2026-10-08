@@ -2,7 +2,6 @@
     {{-- Buyer Section (kartu disembunyikan bila tidak ada aktivitas pembeli) --}}
     <section>
         <div class="mb-6 space-y-1">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.buyer.title') }}</span>
             <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.buyer.title') }}</h2>
         </div>
         @if ($runningInspections > 0 || $accessibleResults > 0 || $activeTransactions > 0)
@@ -64,7 +63,6 @@
     {{-- Seller Section (kartu disembunyikan bila tidak ada aktivitas penjual) --}}
     <section>
         <div class="mb-6 space-y-1">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.seller.title') }}</span>
             <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.seller.title') }}</h2>
         </div>
         @if ($activeListings > 0 || $buyOffers > 0)

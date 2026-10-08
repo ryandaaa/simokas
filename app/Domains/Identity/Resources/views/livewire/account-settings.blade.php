@@ -8,7 +8,6 @@
     </div>
 
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('identity.account.title') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('identity.account.title') }}</h1>
         <p class="text-sm text-ds-muted">{{ __('identity.account.subtitle') }}</p>
     </div>

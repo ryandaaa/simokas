@@ -2,7 +2,6 @@
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div class="space-y-2">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('listing.mine.title') }}</span>
             <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
                 {{ __('listing.mine.title') }}
             </h1>

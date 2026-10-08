@@ -5,7 +5,6 @@
     </a>
 
     <div class="space-y-2">
-        <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('inspection.request.title') }}</span>
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">{{ __('inspection.request.title') }}</h1>
         <p class="text-sm text-ds-muted">{{ __('inspection.request.subtitle') }}</p>
     </div>

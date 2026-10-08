@@ -6,7 +6,6 @@
     <div class="max-w-6xl mx-auto space-y-8 pb-12">
         <!-- Header -->
         <div class="space-y-2">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('admin.templates.title') }}</span>
             <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
                 {{ __('admin.templates.title') }}
             </h1>

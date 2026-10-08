@@ -1,7 +1,6 @@
 <div class="space-y-10">
     <section>
         <div class="mb-6 space-y-1">
-            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.inspector.title') }}</span>
             <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.inspector.title') }}</h2>
         </div>
 

@@ -11,7 +11,6 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                 <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
                     <div class="flex items-start justify-between gap-4 mb-4">
                         <div class="space-y-1">
-                            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('result.inspection_results') }}</span>
                             <h1 class="text-2xl font-extrabold text-ds-ink tracking-tight">
                                 {{ __('result.inspection_results') }}
                             </h1>
@@ -142,7 +141,6 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                 <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
                     <div class="flex items-start justify-between gap-4 mb-4">
                         <div class="space-y-1">
-                            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('result.inspection_results') }}</span>
                             <h1 class="text-2xl font-extrabold text-ds-ink tracking-tight">
                                 {{ __('result.inspection_results') }}
                             </h1>
