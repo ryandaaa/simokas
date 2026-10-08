@@ -1,153 +1,144 @@
-<div class="space-y-8">
+<div class="ds-sans space-y-8 pb-12">
     {{-- Header --}}
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-bold text-obs tracking-tight">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div class="space-y-2">
+            <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.history.title') }}</span>
+            <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
                 {{ __('dashboard.history.title') }}
             </h1>
-            <p class="text-sm text-slate mt-1">
+            <p class="text-sm text-ds-muted">
                 {{ __('dashboard.history.subtitle') }}
             </p>
         </div>
 
-        {{-- Kembali ke dashboard --}}
         <div>
-            <x-ui.button :href="route('dashboard')" variant="secondary" icon="chevron-left">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-xs rounded-xl transition-all shadow-xs">
+                <i aria-hidden="true" class="fa-solid fa-chevron-left"></i>
                 {{ __('dashboard.title') }}
-            </x-ui.button>
+            </a>
         </div>
     </div>
 
     {{-- Pesan Galat --}}
     @if (session('error'))
-        <x-ui.alert variant="danger" :message="session('error')" />
+        <div role="alert" class="p-4 rounded-2xl border border-ds-red-soft bg-ds-red-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('error') }}
+        </div>
     @endif
     @if (session('success'))
-        <x-ui.alert variant="success" :message="session('success')" />
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('success') }}
+        </div>
     @endif
 
     {{-- Filter Nav Tabs --}}
-    <div class="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-fog" role="tablist">
-        <x-ui.button
-            wire:click="setTab('all')"
-            :variant="$tab === 'all' ? 'primary' : 'ghost'"
-            class="!text-sm !py-1.5 !px-4 shrink-0"
-            role="tab"
-            :aria-selected="$tab === 'all' ? 'true' : 'false'">
-            {{ __('dashboard.history.tabs.all') }}
-        </x-ui.button>
-
-        <x-ui.button
-            wire:click="setTab('buying')"
-            :variant="$tab === 'buying' ? 'primary' : 'ghost'"
-            class="!text-sm !py-1.5 !px-4 shrink-0"
-            role="tab"
-            :aria-selected="$tab === 'buying' ? 'true' : 'false'">
-            {{ __('dashboard.history.tabs.buying') }}
-        </x-ui.button>
-
-        <x-ui.button
-            wire:click="setTab('selling')"
-            :variant="$tab === 'selling' ? 'primary' : 'ghost'"
-            class="!text-sm !py-1.5 !px-4 shrink-0"
-            role="tab"
-            :aria-selected="$tab === 'selling' ? 'true' : 'false'">
-            {{ __('dashboard.history.tabs.selling') }}
-        </x-ui.button>
-
-        <x-ui.button
-            wire:click="setTab('results')"
-            :variant="$tab === 'results' ? 'primary' : 'ghost'"
-            class="!text-sm !py-1.5 !px-4 shrink-0"
-            role="tab"
-            :aria-selected="$tab === 'results' ? 'true' : 'false'">
-            {{ __('dashboard.history.tabs.results') }}
-        </x-ui.button>
+    <div class="flex items-center gap-2 overflow-x-auto pb-2" role="tablist">
+        @foreach ([
+            'all' => __('dashboard.history.tabs.all'),
+            'buying' => __('dashboard.history.tabs.buying'),
+            'selling' => __('dashboard.history.tabs.selling'),
+            'results' => __('dashboard.history.tabs.results'),
+        ] as $key => $label)
+            <button
+                wire:click="setTab('{{ $key }}')"
+                role="tab"
+                aria-selected="{{ $tab === $key ? 'true' : 'false' }}"
+                class="shrink-0 px-4 py-1.5 text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === $key ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
+                {{ $label }}
+            </button>
+        @endforeach
 
         @if ($isApprovedInspector)
-            <x-ui.button
+            <button
                 wire:click="setTab('jobs')"
-                :variant="$tab === 'jobs' ? 'primary' : 'ghost'"
-                class="!text-sm !py-1.5 !px-4 shrink-0"
                 role="tab"
-                :aria-selected="$tab === 'jobs' ? 'true' : 'false'">
+                aria-selected="{{ $tab === 'jobs' ? 'true' : 'false' }}"
+                class="shrink-0 px-4 py-1.5 text-sm font-bold rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-ds-blue {{ $tab === 'jobs' ? 'bg-ds-ink text-white' : 'bg-white text-ds-muted border border-ds-line hover:border-ds-blue hover:text-ds-blue' }}">
                 {{ __('dashboard.history.tabs.jobs') }}
-            </x-ui.button>
+            </button>
         @endif
     </div>
 
     {{-- Indikator memuat saat pergantian tab --}}
     <div wire:loading class="w-full">
-        <x-ui.card class="p-6">
-            <div class="flex items-center justify-center gap-3 py-6 text-slate">
-                <x-ui.icon name="jam" class="w-5 h-5 animate-spin" />
+        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
+            <div class="flex items-center justify-center gap-3 py-6 text-ds-muted">
+                <i aria-hidden="true" class="fa-solid fa-circle-notch fa-spin"></i>
                 <span class="text-sm font-medium">{{ __('ui.actions.loading') }}</span>
             </div>
-        </x-ui.card>
+        </div>
     </div>
+
+    @php
+        $chip = function (?string $variant): string {
+            return match ($variant) {
+                'success' => 'bg-ds-green-soft text-ds-green-ink',
+                'warning' => 'bg-ds-amber-soft text-ds-amber-ink',
+                'danger' => 'bg-ds-red-soft text-ds-red-ink',
+                'primary' => 'bg-ds-blue-soft text-ds-blue-ink',
+                default => 'bg-ds-soft text-ds-muted',
+            };
+        };
+    @endphp
 
     <div wire:loading.remove class="space-y-10">
         {{-- (1) Bagian Transaksi Pembelian --}}
         @if ($tab === 'all' || $tab === 'buying')
             <section aria-labelledby="heading-buying-transactions" class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 id="heading-buying-transactions" class="text-lg font-bold text-obs">
-                            {{ __('dashboard.history.buying_transactions') }}
-                        </h2>
-                        <p class="text-xs text-slate">
-                            {{ __('dashboard.history.buying_transactions_desc') }}
-                        </p>
-                    </div>
+                <div>
+                    <h2 id="heading-buying-transactions" class="text-xl font-extrabold text-ds-ink tracking-tight">
+                        {{ __('dashboard.history.buying_transactions') }}
+                    </h2>
+                    <p class="text-xs text-ds-muted mt-1">
+                        {{ __('dashboard.history.buying_transactions_desc') }}
+                    </p>
                 </div>
 
                 @if ($buyingTransactions->isEmpty())
-                    <x-ui.empty-state
-                        icon="dokumen"
-                        :title="__('dashboard.history.empty_buying_title')"
-                        :description="__('dashboard.history.empty_buying_desc')"
-                        :actionLabel="__('dashboard.history.action_browse')"
-                        :actionUrl="route('catalog.index')"
-                        actionIcon="kaca-pembesar"
-                    />
+                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                            <i aria-hidden="true" class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-ds-ink">{{ __('dashboard.history.empty_buying_title') }}</h3>
+                        <p class="text-xs text-ds-muted mt-2">{{ __('dashboard.history.empty_buying_desc') }}</p>
+                        <div class="flex justify-center mt-6">
+                            <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                                {{ __('dashboard.history.action_browse') }}
+                            </a>
+                        </div>
+                    </div>
                 @else
                     <div class="space-y-3">
                         @foreach ($buyingTransactions as $tx)
-                            <x-ui.card class="p-4 sm:p-5 hover:border-pebble transition-colors">
+                            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-md transition-all p-4 sm:p-5">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     <div class="space-y-1.5">
-                                        <div class="flex items-center gap-2">
-                                            <h3 class="text-base font-bold text-obs">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="text-base font-extrabold text-ds-ink">
                                                 {{ $tx->listing?->title ?? __('dashboard.history.vehicle') }}
                                             </h3>
-                                            <x-ui.status-chip
-                                                :label="$tx->status->label()"
-                                                :variant="$tx->status->color()"
-                                                :icon="$tx->status->icon()"
-                                            />
+                                            <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($tx->status->color()) }}">
+                                                {{ $tx->status->label() }}
+                                            </span>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate">
-                                            <span>
-                                                <x-ui.money :amount="$tx->price_amount" />
+                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ds-muted">
+                                            <span class="font-extrabold text-ds-ink">
+                                                {{ \App\Support\Money::format($tx->price_amount) }}
                                             </span>
                                             @if ($tx->listing?->area_name)
                                                 <span>{{ __('dashboard.history.area', ['area' => $tx->listing->area_name]) }}</span>
                                             @endif
-                                            <span>
-                                                <x-ui.datetime :value="$tx->created_at" />
-                                            </span>
+                                            <span>{{ $tx->created_at?->translatedFormat('d M Y') }}</span>
                                         </div>
                                     </div>
                                     <div class="shrink-0">
-                                        <x-ui.button
-                                            :href="route('transactions.show', $tx)"
-                                            variant="secondary"
-                                            class="!min-h-[38px] !px-4 !py-1.5 !text-sm">
+                                        <a href="{{ route('transactions.show', $tx) }}"
+                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                             {{ __('dashboard.history.view_detail') }}
-                                        </x-ui.button>
+                                        </a>
                                     </div>
                                 </div>
-                            </x-ui.card>
+                            </div>
                         @endforeach
 
                         <x-ui.pagination :paginator="$buyingTransactions" />
@@ -159,64 +150,60 @@
         {{-- (2) Bagian Transaksi Penjualan --}}
         @if ($tab === 'all' || $tab === 'selling')
             <section aria-labelledby="heading-selling-transactions" class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 id="heading-selling-transactions" class="text-lg font-bold text-obs">
-                            {{ __('dashboard.history.selling_transactions') }}
-                        </h2>
-                        <p class="text-xs text-slate">
-                            {{ __('dashboard.history.selling_transactions_desc') }}
-                        </p>
-                    </div>
+                <div>
+                    <h2 id="heading-selling-transactions" class="text-xl font-extrabold text-ds-ink tracking-tight">
+                        {{ __('dashboard.history.selling_transactions') }}
+                    </h2>
+                    <p class="text-xs text-ds-muted mt-1">
+                        {{ __('dashboard.history.selling_transactions_desc') }}
+                    </p>
                 </div>
 
                 @if ($sellingTransactions->isEmpty())
-                    <x-ui.empty-state
-                        icon="dokumen"
-                        :title="__('dashboard.history.empty_selling_title')"
-                        :description="__('dashboard.history.empty_selling_desc')"
-                        :actionLabel="__('dashboard.history.action_create_listing')"
-                        :actionUrl="route('listings.create')"
-                        actionIcon="centang"
-                    />
+                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                            <i aria-hidden="true" class="fa-solid fa-file-lines"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-ds-ink">{{ __('dashboard.history.empty_selling_title') }}</h3>
+                        <p class="text-xs text-ds-muted mt-2">{{ __('dashboard.history.empty_selling_desc') }}</p>
+                        <div class="flex justify-center mt-6">
+                            <a href="{{ route('listings.create') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                                {{ __('dashboard.history.action_create_listing') }}
+                            </a>
+                        </div>
+                    </div>
                 @else
                     <div class="space-y-3">
                         @foreach ($sellingTransactions as $tx)
-                            <x-ui.card class="p-4 sm:p-5 hover:border-pebble transition-colors">
+                            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-md transition-all p-4 sm:p-5">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     <div class="space-y-1.5">
-                                        <div class="flex items-center gap-2">
-                                            <h3 class="text-base font-bold text-obs">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="text-base font-extrabold text-ds-ink">
                                                 {{ $tx->listing?->title ?? __('dashboard.history.vehicle') }}
                                             </h3>
-                                            <x-ui.status-chip
-                                                :label="$tx->status->label()"
-                                                :variant="$tx->status->color()"
-                                                :icon="$tx->status->icon()"
-                                            />
+                                            <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($tx->status->color()) }}">
+                                                {{ $tx->status->label() }}
+                                            </span>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate">
-                                            <span>
-                                                <x-ui.money :amount="$tx->price_amount" />
+                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ds-muted">
+                                            <span class="font-extrabold text-ds-ink">
+                                                {{ \App\Support\Money::format($tx->price_amount) }}
                                             </span>
                                             @if ($tx->buyer)
                                                 <span>{{ __('dashboard.history.buyer', ['name' => $tx->buyer->name]) }}</span>
                                             @endif
-                                            <span>
-                                                <x-ui.datetime :value="$tx->created_at" />
-                                            </span>
+                                            <span>{{ $tx->created_at?->translatedFormat('d M Y') }}</span>
                                         </div>
                                     </div>
                                     <div class="shrink-0">
-                                        <x-ui.button
-                                            :href="route('transactions.show', $tx)"
-                                            variant="secondary"
-                                            class="!min-h-[38px] !px-4 !py-1.5 !text-sm">
+                                        <a href="{{ route('transactions.show', $tx) }}"
+                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                             {{ __('dashboard.history.view_detail') }}
-                                        </x-ui.button>
+                                        </a>
                                     </div>
                                 </div>
-                            </x-ui.card>
+                            </div>
                         @endforeach
 
                         <x-ui.pagination :paginator="$sellingTransactions" />
@@ -228,78 +215,72 @@
         {{-- (3) Bagian Hasil Inspeksi (Tetap tampil walau listing terjual) --}}
         @if ($tab === 'all' || $tab === 'results')
             <section aria-labelledby="heading-inspection-results" class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 id="heading-inspection-results" class="text-lg font-bold text-obs">
-                            {{ __('dashboard.history.inspection_results') }}
-                        </h2>
-                        <p class="text-xs text-slate">
-                            {{ __('dashboard.history.inspection_results_desc') }}
-                        </p>
-                    </div>
+                <div>
+                    <h2 id="heading-inspection-results" class="text-xl font-extrabold text-ds-ink tracking-tight">
+                        {{ __('dashboard.history.inspection_results') }}
+                    </h2>
+                    <p class="text-xs text-ds-muted mt-1">
+                        {{ __('dashboard.history.inspection_results_desc') }}
+                    </p>
                 </div>
 
                 @if ($inspectionResults->isEmpty())
-                    <x-ui.empty-state
-                        icon="kaca-pembesar"
-                        :title="__('dashboard.history.empty_results_title')"
-                        :description="__('dashboard.history.empty_results_desc')"
-                        :actionLabel="__('dashboard.history.action_browse')"
-                        :actionUrl="route('catalog.index')"
-                        actionIcon="kaca-pembesar"
-                    />
+                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                            <i aria-hidden="true" class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-ds-ink">{{ __('dashboard.history.empty_results_title') }}</h3>
+                        <p class="text-xs text-ds-muted mt-2">{{ __('dashboard.history.empty_results_desc') }}</p>
+                        <div class="flex justify-center mt-6">
+                            <a href="{{ route('catalog.index') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                                {{ __('dashboard.history.action_browse') }}
+                            </a>
+                        </div>
+                    </div>
                 @else
                     <div class="space-y-3">
                         @foreach ($inspectionResults as $result)
-                            <x-ui.card class="p-4 sm:p-5 hover:border-pebble transition-colors">
+                            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-md transition-all p-4 sm:p-5">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     <div class="space-y-1.5">
                                         <div class="flex flex-wrap items-center gap-2">
-                                            <h3 class="text-base font-bold text-obs">
+                                            <h3 class="text-base font-extrabold text-ds-ink">
                                                 {{ $result->listing?->title ?? __('dashboard.history.vehicle') }}
                                             </h3>
                                             @if ($result->recommendation)
-                                                <x-ui.status-chip
-                                                    :label="$result->recommendation->label()"
-                                                    :variant="$result->recommendation->color()"
-                                                    :icon="$result->recommendation->icon()"
-                                                />
+                                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($result->recommendation->color()) }}">
+                                                    {{ $result->recommendation->label() }}
+                                                </span>
                                             @endif
                                             @if ($result->listing && $result->listing->status->value === 'sold')
-                                                <x-ui.status-chip
-                                                    :label="$result->listing->status->label()"
-                                                    :variant="$result->listing->status->color()"
-                                                    :icon="$result->listing->status->icon()"
-                                                />
+                                                <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($result->listing->status->color()) }}">
+                                                    {{ $result->listing->status->label() }}
+                                                </span>
                                             @endif
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate">
+                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ds-muted">
                                             @if ($result->total_score !== null)
-                                                <span class="font-semibold text-obs">
+                                                <span class="font-bold text-ds-ink">
                                                     {{ __('dashboard.history.score', ['score' => $result->total_score]) }}
                                                 </span>
                                             @endif
                                             @if ($result->inspector)
                                                 <span>{{ $result->inspector->name }}</span>
                                             @endif
-                                            <span>
-                                                <x-ui.datetime :value="$result->submitted_at ?? $result->created_at" />
-                                            </span>
+                                            <span>{{ ($result->submitted_at ?? $result->created_at)?->translatedFormat('d M Y') }}</span>
                                         </div>
                                     </div>
                                     <div class="shrink-0">
                                         @if ($result->listing)
-                                            <x-ui.button
-                                                :href="route('results.show', $result->listing)"
-                                                variant="secondary"
-                                                icon="dokumen"
-                                                class="!min-h-[38px] !px-4 !py-1.5 !text-sm">
+                                            <a href="{{ route('results.show', $result->listing) }}"
+                                                class="inline-flex items-center justify-center gap-2 px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
+                                                <i aria-hidden="true" class="fa-solid fa-file-lines text-xs"></i>
                                                 {{ __('dashboard.history.view_result') }}
-                                            </x-ui.button>
+                                            </a>
                                         @endif
                                     </div>
                                 </div>
-                            </x-ui.card>
+                            </div>
                         @endforeach
 
                         <x-ui.pagination :paginator="$inspectionResults" />
@@ -311,61 +292,57 @@
         {{-- (4) Bagian Pekerjaan Inspeksi (Khusus Inspektor Terverifikasi) --}}
         @if ($isApprovedInspector && ($tab === 'all' || $tab === 'jobs'))
             <section aria-labelledby="heading-inspector-jobs" class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 id="heading-inspector-jobs" class="text-lg font-bold text-obs">
-                            {{ __('dashboard.history.inspector_jobs') }}
-                        </h2>
-                        <p class="text-xs text-slate">
-                            {{ __('dashboard.history.inspector_jobs_desc') }}
-                        </p>
-                    </div>
+                <div>
+                    <h2 id="heading-inspector-jobs" class="text-xl font-extrabold text-ds-ink tracking-tight">
+                        {{ __('dashboard.history.inspector_jobs') }}
+                    </h2>
+                    <p class="text-xs text-ds-muted mt-1">
+                        {{ __('dashboard.history.inspector_jobs_desc') }}
+                    </p>
                 </div>
 
                 @if ($inspectorJobs === null || $inspectorJobs->isEmpty())
-                    <x-ui.empty-state
-                        icon="jam"
-                        :title="__('dashboard.history.empty_jobs_title')"
-                        :description="__('dashboard.history.empty_jobs_desc')"
-                        :actionLabel="__('dashboard.history.action_open_jobs')"
-                        :actionUrl="route('jobs.open')"
-                        actionIcon="kaca-pembesar"
-                    />
+                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
+                        <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
+                            <i aria-hidden="true" class="fa-solid fa-briefcase"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-ds-ink">{{ __('dashboard.history.empty_jobs_title') }}</h3>
+                        <p class="text-xs text-ds-muted mt-2">{{ __('dashboard.history.empty_jobs_desc') }}</p>
+                        <div class="flex justify-center mt-6">
+                            <a href="{{ route('jobs.open') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md">
+                                {{ __('dashboard.history.action_open_jobs') }}
+                            </a>
+                        </div>
+                    </div>
                 @else
                     <div class="space-y-3">
                         @foreach ($inspectorJobs as $job)
-                            <x-ui.card class="p-4 sm:p-5 hover:border-pebble transition-colors">
+                            <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-md transition-all p-4 sm:p-5">
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                                     <div class="space-y-1.5">
-                                        <div class="flex items-center gap-2">
-                                            <h3 class="text-base font-bold text-obs">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            <h3 class="text-base font-extrabold text-ds-ink">
                                                 {{ $job->listing?->title ?? __('dashboard.history.vehicle') }}
                                             </h3>
-                                            <x-ui.status-chip
-                                                :label="$job->status->label()"
-                                                :variant="$job->status->color()"
-                                                :icon="$job->status->icon()"
-                                            />
+                                            <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $chip($job->status->color()) }}">
+                                                {{ $job->status->label() }}
+                                            </span>
                                         </div>
-                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate">
-                                            <span>
-                                                <x-ui.money :amount="$job->fee_amount" />
+                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-ds-muted">
+                                            <span class="font-extrabold text-ds-ink">
+                                                {{ \App\Support\Money::format($job->fee_amount) }}
                                             </span>
-                                            <span>
-                                                <x-ui.datetime :value="$job->completed_at ?? $job->updated_at" />
-                                            </span>
+                                            <span>{{ ($job->completed_at ?? $job->updated_at)?->translatedFormat('d M Y') }}</span>
                                         </div>
                                     </div>
                                     <div class="shrink-0">
-                                        <x-ui.button
-                                            :href="route('jobs.show', $job)"
-                                            variant="secondary"
-                                            class="!min-h-[38px] !px-4 !py-1.5 !text-sm">
+                                        <a href="{{ route('jobs.show', $job) }}"
+                                            class="inline-flex items-center justify-center px-4 py-1.5 min-h-[38px] text-sm font-bold bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink rounded-xl transition-all shadow-xs">
                                             {{ __('dashboard.history.view_detail') }}
-                                        </x-ui.button>
+                                        </a>
                                     </div>
                                 </div>
-                            </x-ui.card>
+                            </div>
                         @endforeach
 
                         <x-ui.pagination :paginator="$inspectorJobs" />
