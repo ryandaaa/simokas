@@ -132,6 +132,11 @@ html.a11y-contrast {
     --color-ds-line: #94A3B8;
 }
 
+html.a11y-invert,
+html.a11y-invert body {
+    background-color: #0F172A;
+}
+
 html.a11y-invert header,
 html.a11y-invert main,
 html.a11y-invert footer {
