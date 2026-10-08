@@ -6,37 +6,37 @@ use App\Support\Clock;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 it('renders x-ui.button with all variants, loading, disabled, and link states', function () {
-    // Primary variant (Wise theme: lime with forest text, pill rounded-full)
+    // Primary variant (DS: ds-blue solid with white text, pill rounded-full)
     $view = $this->blade('<x-ui.button variant="primary">Kirim</x-ui.button>');
     $view->assertSee('Kirim');
-    $view->assertSee('bg-lime');
-    $view->assertSee('text-forest');
+    $view->assertSee('bg-ds-blue');
+    $view->assertSee('text-white');
     $view->assertSee('rounded-full');
     $view->assertSee('min-h-[44px]');
     $view->assertSee('wire:loading.attr="disabled"', false);
 
-    // Secondary variant (Wise theme: white surface with forest border)
+    // Secondary variant (DS: white with ds-line border and ds-ink text)
     $view = $this->blade('<x-ui.button variant="secondary">Batal</x-ui.button>');
     $view->assertSee('Batal');
-    $view->assertSee('bg-surface');
-    $view->assertSee('border-forest');
-    $view->assertSee('text-forest');
+    $view->assertSee('bg-white');
+    $view->assertSee('border-ds-line');
+    $view->assertSee('text-ds-ink');
 
-    // Danger variant (Wise theme: alarm)
+    // Danger variant (DS: ds-danger solid)
     $view = $this->blade('<x-ui.button variant="danger">Hapus</x-ui.button>');
     $view->assertSee('Hapus');
-    $view->assertSee('bg-alarm');
+    $view->assertSee('bg-ds-danger');
 
     // Ghost variant
     $view = $this->blade('<x-ui.button variant="ghost">Bantuan</x-ui.button>');
     $view->assertSee('Bantuan');
     $view->assertSee('bg-transparent');
 
-    // Disabled state (Wise theme: fog with pebble text)
+    // Disabled state (DS: ds-soft with ds-faint text)
     $view = $this->blade('<x-ui.button :disabled="true">Terkunci</x-ui.button>');
     $view->assertSee('disabled');
-    $view->assertSee('bg-fog');
-    $view->assertSee('text-pebble');
+    $view->assertSee('bg-ds-soft');
+    $view->assertSee('text-ds-faint');
 
     // Loading state
     $view = $this->blade('<x-ui.button :loading="true">Menyimpan</x-ui.button>');
@@ -415,23 +415,23 @@ it('renders x-ui.icon with outline and solid variants for all required status an
     }
 });
 
-it('renders x-ui.button with Wise theme color rules and pill shape', function () {
-    // Primary action button is lime with forest text and hover lime-hover
+it('renders x-ui.button with DS color rules and pill shape', function () {
+    // Primary action button is ds-blue solid with white text
     $viewPri = $this->blade('<x-ui.button variant="primary">Aksi Utama</x-ui.button>');
-    $viewPri->assertSee('bg-lime');
-    $viewPri->assertSee('text-forest');
+    $viewPri->assertSee('bg-ds-blue');
+    $viewPri->assertSee('text-white');
     $viewPri->assertSee('rounded-full');
 
-    // Secondary button is white surface with forest border and linen hover
+    // Secondary button is white with ds-line border
     $viewSec = $this->blade('<x-ui.button variant="secondary">Aksi Kedua</x-ui.button>');
-    $viewSec->assertSee('bg-surface');
-    $viewSec->assertSee('border-forest');
-    $viewSec->assertSee('hover:bg-linen');
+    $viewSec->assertSee('bg-white');
+    $viewSec->assertSee('border-ds-line');
+    $viewSec->assertSee('hover:text-ds-blue');
 
-    // Disabled button is fog with pebble text
+    // Disabled button is ds-soft with ds-faint text
     $viewDis = $this->blade('<x-ui.button variant="primary" :disabled="true">Nonaktif</x-ui.button>');
-    $viewDis->assertSee('bg-fog');
-    $viewDis->assertSee('text-pebble');
+    $viewDis->assertSee('bg-ds-soft');
+    $viewDis->assertSee('text-ds-faint');
 });
 
 it('renders x-ui.status-chip with Wise theme active lime and primary linen', function () {

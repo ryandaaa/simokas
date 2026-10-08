@@ -15,17 +15,17 @@
 
     $variantClasses = match ($variant) {
         'secondary' => $isDisabled
-            ? 'bg-fog text-pebble border border-transparent'
-            : 'bg-surface text-forest border border-forest hover:bg-linen active:bg-linen/80',
+            ? 'bg-ds-soft text-ds-faint border border-transparent'
+            : 'bg-white text-ds-ink border border-ds-line hover:border-ds-blue hover:text-ds-blue',
         'danger' => $isDisabled
-            ? 'bg-fog text-pebble border border-transparent'
-            : 'bg-alarm text-paper hover:bg-alarm/90 active:bg-alarm/80',
+            ? 'bg-ds-soft text-ds-faint border border-transparent'
+            : 'bg-ds-danger text-white hover:bg-ds-red-ink active:bg-ds-red-ink',
         'ghost' => $isDisabled
-            ? 'bg-transparent text-pebble'
-            : 'bg-transparent text-forest hover:bg-linen active:bg-linen/80',
+            ? 'bg-transparent text-ds-faint'
+            : 'bg-transparent text-ds-ink hover:bg-ds-soft',
         default => $isDisabled
-            ? 'bg-fog text-pebble border border-transparent'
-            : 'bg-lime text-forest hover:bg-lime-hover active:bg-lime-hover/90',
+            ? 'bg-ds-soft text-ds-faint border border-transparent'
+            : 'bg-ds-blue text-white hover:bg-ds-blue-ink active:bg-ds-blue-ink',
     };
 
     $stateClasses = $isDisabled ? 'cursor-not-allowed pointer-events-none' : '';
