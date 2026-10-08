@@ -302,14 +302,38 @@
         </div>
     </footer>
 
-    {{-- Menu bawah di HP (maksimal 5 item) --}}
+    {{-- Menu bawah di HP: Center FAB (tengah = Pasang Iklan) --}}
     @if (!empty($navItems))
         @php
-            $bottomNavItems = array_slice($navItems, 0, 5);
+            $bottomNavItems = array_slice($navItems, 0, 4);
+            $bottomNavLeft = array_slice($bottomNavItems, 0, 2);
+            $bottomNavRight = array_slice($bottomNavItems, 2, 2);
         @endphp
         <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-100 pb-safe" aria-label="Navigasi Seluler">
-            <div class="grid grid-flow-col auto-cols-fr items-center h-16 px-2">
-                @foreach ($bottomNavItems as $item)
+            <div class="grid grid-cols-5 items-center h-16 px-2">
+                @foreach ($bottomNavLeft as $item)
+                    @php
+                        $isActive = !empty($item['active']);
+                    @endphp
+                    <a href="{{ $item['url'] ?? '#' }}"
+                       @class([
+                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 min-h-[44px] transition-colors',
+                           'text-green-600' => $isActive,
+                           'text-slate-500 hover:text-green-600' => !$isActive,
+                       ])
+                       @if ($isActive) aria-current="page" @endif>
+                        <span class="truncate max-w-[64px]">{{ $item['label'] }}</span>
+                    </a>
+                @endforeach
+                <a href="{{ \Illuminate\Support\Facades\Route::has('listings.create') ? route('listings.create') : url('/') }}"
+                   class="flex flex-col items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 rounded-xl"
+                   aria-label="Pasang Iklan">
+                    <span class="w-12 h-12 -mt-8 rounded-full bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink flex items-center justify-center shadow-xl transition-colors">
+                        <i aria-hidden="true" class="fa-solid fa-plus text-lg"></i>
+                    </span>
+                    <span class="text-[10px] font-bold text-ds-ink mt-0.5">Jual</span>
+                </a>
+                @foreach ($bottomNavRight as $item)
                     @php
                         $isActive = !empty($item['active']);
                     @endphp
