@@ -315,6 +315,12 @@ final class InspectionFormPage extends Component
 
     public function showSubmitConfirmation(): void
     {
+        // [DIAGNOSTIK SEMENTARA] Jejak pembukaan modal konfirmasi.
+        Log::info('Inspection submit modal opened.', [
+            'job_id' => $this->job->getKey(),
+            'inspector_id' => Auth::id(),
+        ]);
+
         $this->showSubmitConfirmation = true;
         // Naikkan kunci agar DOM modal selalu dibuat ulang. Tanpa ini, bila modal
         // pernah ditutup sepihak di sisi Alpine (backdrop/X/Escape), Alpine
@@ -324,6 +330,12 @@ final class InspectionFormPage extends Component
 
     public function cancelSubmit(): void
     {
+        // [DIAGNOSTIK SEMENTARA] Jejak penutupan modal konfirmasi.
+        Log::info('Inspection submit modal closed.', [
+            'job_id' => $this->job->getKey(),
+            'inspector_id' => Auth::id(),
+        ]);
+
         $this->showSubmitConfirmation = false;
     }
 
