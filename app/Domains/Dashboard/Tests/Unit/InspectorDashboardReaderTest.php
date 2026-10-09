@@ -339,10 +339,12 @@ it('DSH-T09 tasks preserves data privacy and does not expose exact coordinates o
 
     // Verify InspectorTask class structure has no private properties
     $task = $tasks[0];
-    expect(property_exists($task, 'lat'))->toBeFalse()
-        ->and(property_exists($task, 'lng'))->toBeFalse()
-        ->and(property_exists($task, 'address_full'))->toBeFalse()
-        ->and(property_exists($task, 'chassis_number'))->toBeFalse();
+    $taskReflection = new ReflectionClass($task);
+
+    expect($taskReflection->hasProperty('lat'))->toBeFalse()
+        ->and($taskReflection->hasProperty('lng'))->toBeFalse()
+        ->and($taskReflection->hasProperty('address_full'))->toBeFalse()
+        ->and($taskReflection->hasProperty('chassis_number'))->toBeFalse();
 });
 
 it('DSH-T01 tasks respects limit parameter', function () {
