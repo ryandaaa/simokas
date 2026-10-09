@@ -40,21 +40,23 @@
         <div class="mb-6 space-y-1">
             <h3 class="text-xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.admin.jobs_by_status') }}</h3>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            @foreach ($jobsByStatus as $status => $count)
-                @php
-                    $pill = match ($status) {
-                        'completed' => 'bg-ds-green-soft text-ds-green-ink',
-                        'cancelled' => 'bg-ds-red-soft text-ds-red-ink',
-                        'requested' => 'bg-ds-amber-soft text-ds-amber-ink',
-                        default => 'bg-ds-blue-soft text-ds-blue-ink',
-                    };
-                @endphp
-                <div class="bg-ds-canvas rounded-2xl p-5 border border-ds-line hover:bg-white hover:shadow-xl transition-all duration-300">
-                    <span class="text-[10px] px-2 py-0.5 rounded-md font-bold {{ $pill }}">{{ str_replace('_', ' ', $status) }}</span>
-                    <p class="text-3xl font-extrabold text-ds-ink mt-3">{{ $count }}</p>
-                </div>
-            @endforeach
+        <div class="overflow-x-auto -mx-6 px-6">
+            <table class="w-full text-sm min-w-[320px]">
+                <thead>
+                    <tr class="text-left text-[10px] font-bold uppercase tracking-wider text-ds-faint border-b border-ds-line/60">
+                        <th scope="col" class="py-2 pr-4">{{ __('dashboard.admin.table_status') }}</th>
+                        <th scope="col" class="py-2 text-right">{{ __('dashboard.admin.table_count') }}</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-ds-line/60">
+                    @foreach ($jobsByStatus as $status => $count)
+                        <tr class="transition-colors hover:bg-ds-canvas/60">
+                            <td class="py-3 pr-4 text-xs font-bold uppercase tracking-wider text-ds-ink">{{ str_replace('_', ' ', $status) }}</td>
+                            <td class="py-3 text-right text-xl font-extrabold text-ds-ink">{{ $count }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </section>
 

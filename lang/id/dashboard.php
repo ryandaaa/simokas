@@ -109,6 +109,7 @@ return [
         'table_requester' => 'Pemohon',
         'table_updated' => 'Diperbarui',
         'table_status' => 'Status',
+        'table_count' => 'Jumlah',
         'no_activity' => 'Belum ada job di platform.',
         'view_all_jobs' => 'Lihat Semua Job',
         'showing_recent' => 'Menampilkan :count job terakhir',
