@@ -329,11 +329,20 @@ final class InspectionFormPage extends Component
 
     public function submitResult(SubmitInspectionResult $submitAction): void
     {
+        // [DIAGNOSTIK SEMENTARA] Jejak tiap penekanan tombol Kirim Hasil.
+        Log::info('Inspection submit pressed.', [
+            'job_id' => $this->job->getKey(),
+            'result_id' => $this->result?->getKey(),
+            'inspector_id' => Auth::id(),
+        ]);
+
         Gate::authorize('updateDraft', $this->result);
 
         try {
             $this->validate();
         } catch (ValidationException $e) {
+            // [DIAGNOSTIK SEMENTARA] Catat bidang yang gagal validasi.
+            Log::info('Inspection submit validation failed.', $e->errors());
             // Tutup modal agar ringkasan galat terlihat, lalu teruskan agar
             // galat per-bidang tetap menempel di input masing-masing.
             $this->showSubmitConfirmation = false;
