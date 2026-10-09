@@ -458,3 +458,48 @@ it('renders x-ui.status-chip with Wise theme active lime and primary linen', fun
     $viewMuted->assertSee('bg-fog');
     $viewMuted->assertSee('text-pebble');
 });
+
+it('renders x-ui.custom-select with options, trigger button, and hidden input', function () {
+    $options = [
+        'newest' => 'Terbaru',
+        'cheapest' => 'Harga Terendah',
+    ];
+
+    $view = $this->blade(
+        '<x-ui.custom-select id="sort-sel" name="sort" label="Urutkan" :options="$options" selected="newest" />',
+        ['options' => $options]
+    );
+
+    $view->assertSee('Urutkan');
+    $view->assertSee('id="sort-sel"', false);
+    $view->assertSee('name="sort"', false);
+    $view->assertSee('value="newest"', false);
+    $view->assertSee('Terbaru');
+    $view->assertSee('Harga Terendah');
+    $view->assertSee('aria-haspopup="listbox"', false);
+    $view->assertSee('role="listbox"', false);
+});
+
+it('renders x-ui.custom-select with dropup positioning class', function () {
+    $options = ['a' => 'Pilihan A'];
+
+    $view = $this->blade(
+        '<x-ui.custom-select id="dropup-sel" name="status" :options="$options" :dropup="true" />',
+        ['options' => $options]
+    );
+
+    $view->assertSee('bottom-full mb-1.5', false);
+});
+
+it('renders x-ui.money-input with formatted display and raw hidden input', function () {
+    $view = $this->blade(
+        '<x-ui.money-input id="price-min" name="price_min" label="Harga Minimum (Rp)" value="50000000" placeholder="0" />'
+    );
+
+    $view->assertSee('Harga Minimum (Rp)');
+    $view->assertSee('id="price-min"', false);
+    $view->assertSee('name="price_min"', false);
+    $view->assertSee('value="50000000"', false);
+    $view->assertSee('value="50.000.000"', false);
+    $view->assertSee('inputmode="numeric"', false);
+});

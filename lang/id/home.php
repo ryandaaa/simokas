@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 return [
-    'title' => 'SIMOKAS — Beli Mobil dan Motor Bekas dengan Tenang',
+    'title' => 'SIMOKAS — Beli Bekas Tanpa Was-was',
     'nav_home' => 'Beranda',
     'nav_search' => 'Cari',
     'nav_how' => 'Cara Kerja',
     'nav_help' => 'Bantuan',
 
-    'hero_title' => 'Beli Mobil dan Motor Bekas dengan Tenang',
+    'hero_title' => "Beli Bekas Tanpa\u{a0}Was\u{2011}was",
     'hero_subtitle' => 'Setiap kendaraan melewati inspeksi independen oleh inspektor terverifikasi. Anda tahu kondisi sebenarnya sebelum memutuskan.',
     'hero_search_car' => 'Cari Mobil',
     'hero_search_motorcycle' => 'Cari Motor',
@@ -45,7 +45,7 @@ return [
     'hero_login' => 'Masuk',
     'hero_register' => 'Daftar',
 
-    'steps_title' => 'Cara kerja singkat',
+    'steps_title' => 'Cara Kerja',
     'steps_subtitle' => 'Empat langkah mudah dari mencari sampai memutuskan.',
     'step_1_title' => 'Cari kendaraan',
     'step_1_description' => 'Telusuri mobil dan motor bekas, saring berdasarkan harga, tahun, dan area.',

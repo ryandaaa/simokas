@@ -178,7 +178,15 @@ final readonly class CatalogFilter
 
     private static function toNonNegativeInt(mixed $value): ?int
     {
-        if (is_array($value) || ! is_numeric($value)) {
+        if (is_array($value)) {
+            return null;
+        }
+
+        if (is_string($value)) {
+            $value = str_replace(['.', ',', ' '], '', trim($value));
+        }
+
+        if (! is_numeric($value)) {
             return null;
         }
 

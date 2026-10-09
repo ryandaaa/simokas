@@ -121,7 +121,7 @@ it('CAT-T14 renders how-it-works and help pages with a single h1', function (str
 
     $helpContent = ($viewer === null ? get(route('catalog.help')) : actingAs($viewer)->get(route('catalog.help')))->getContent();
     expect($helpContent)->toContain(__('home.help.heading'))
-        ->and($helpContent)->toContain(__('home.help.faq_q2'));
+        ->and($helpContent)->toContain(__('home.help.faq_q1'));
 })->with(['guest', 'user', 'inspector', 'admin']);
 
 it('CAT-T14 renders the home page for guests and every role with a single h1', function (string $role) {
@@ -221,4 +221,11 @@ it('CAT-T15 every translation key used by home view exists in lang files', funct
     foreach (array_unique($matches[1]) as $key) {
         expect(__($key))->not->toBe($key, "Missing translation for key: {$key}");
     }
+});
+
+it('CAT-T15 renders category bar without horizontal scroll on mobile', function () {
+    $blade = (string) file_get_contents(app_path('Domains/Catalog/Resources/views/home.blade.php'));
+
+    expect($blade)->not->toContain('overflow-x-auto')
+        ->and($blade)->toContain('grid grid-cols-4');
 });

@@ -15,8 +15,6 @@
             <div class="max-w-3xl mx-auto space-y-4" x-data="{ open: 1 }">
                 @foreach ([
                     ['q' => __('home.help.faq_q1'), 'a' => __('home.help.faq_a1')],
-                    ['q' => __('home.help.faq_q2'), 'a' => __('home.help.faq_a2')],
-                    ['q' => __('home.help.faq_q3'), 'a' => __('home.help.faq_a3')],
                     ['q' => __('home.help.faq_q4'), 'a' => __('home.help.faq_a4')],
                     ['q' => __('home.help.faq_q5'), 'a' => __('home.help.faq_a5')],
                     ['q' => __('home.help.faq_q6'), 'a' => __('home.help.faq_a6')],
@@ -24,9 +22,16 @@
                     <div class="border border-ds-line/80 rounded-2xl overflow-hidden bg-white transition-all shadow-xs">
                         <button @click="open = (open === {{ $i + 1 }} ? 0 : {{ $i + 1 }})" :aria-expanded="(open === {{ $i + 1 }}).toString()" aria-controls="help-faq-{{ $i + 1 }}" class="w-full px-6 py-4 min-h-[44px] text-left flex items-center justify-between font-bold text-sm text-ds-ink hover:text-ds-blue transition-colors">
                             <span>{{ $faq['q'] }}</span>
-                            <i aria-hidden="true" class="fa-solid text-xs text-ds-faint transition-transform" :class="open === {{ $i + 1 }} ? 'fa-minus rotate-180' : 'fa-plus'"></i>
+                            <i aria-hidden="true" class="fa-solid text-xs text-ds-faint transition-transform duration-200" :class="open === {{ $i + 1 }} ? 'fa-minus rotate-180' : 'fa-plus'"></i>
                         </button>
-                        <div id="help-faq-{{ $i + 1 }}" role="region" x-show="open === {{ $i + 1 }}" x-cloak class="px-6 pb-4 text-xs text-ds-muted leading-relaxed border-t border-ds-line/60 pt-3">
+                        <div id="help-faq-{{ $i + 1 }}" role="region" x-show="open === {{ $i + 1 }}" x-cloak
+                             x-transition:enter="transition-all ease-out duration-200"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition-all ease-in duration-150"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-1"
+                             class="px-6 pb-4 text-xs text-ds-muted leading-relaxed border-t border-ds-line/60 pt-3">
                             {{ $faq['a'] }}
                         </div>
                     </div>

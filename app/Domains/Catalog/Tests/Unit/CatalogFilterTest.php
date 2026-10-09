@@ -97,6 +97,16 @@ it('CAT-T05 trims, truncates, and keeps valid filter values', function () {
         ->and($filter->page)->toBe(3);
 });
 
+it('CAT-T05 parses price strings with thousand separators safely', function () {
+    $filter = CatalogFilter::fromQuery([
+        'price_min' => '50.000.000',
+        'price_max' => '150.000.000',
+    ]);
+
+    expect($filter->priceMin)->toBe(50_000_000)
+        ->and($filter->priceMax)->toBe(150_000_000);
+});
+
 it('CAT-T05 truncates overlong keywords instead of failing', function () {
     $filter = CatalogFilter::fromQuery(['q' => str_repeat('a', 500)]);
 

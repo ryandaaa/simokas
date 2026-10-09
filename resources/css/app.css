@@ -151,3 +151,56 @@ html.a11y-invert img {
 [x-cloak] {
     display: none !important;
 }
+
+:root {
+    --livewire-progress-bar-color: #16A34A;
+}
+
+/* Indikator Loading Bar Global (YouTube / GitHub style) */
+#simokas-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 99999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+#simokas-progress-bar.active {
+    opacity: 1;
+}
+
+#simokas-progress-bar .bar {
+    height: 100%;
+    background-color: var(--color-ds-blue);
+    box-shadow: 0 0 10px var(--color-ds-blue), 0 0 5px var(--color-ds-blue);
+    width: 0%;
+    transition: width 0.2s ease-out;
+}
+
+/* Transisi perpindahan halaman halus agar tidak terasa patah */
+#main-content {
+    transition: opacity 0.15s ease-out;
+}
+
+#main-content.page-navigating {
+    opacity: 0.65;
+}
+
+@keyframes simokasPageEnter {
+    from {
+        opacity: 0.85;
+        transform: translateY(3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-page-enter {
+    animation: simokasPageEnter 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}

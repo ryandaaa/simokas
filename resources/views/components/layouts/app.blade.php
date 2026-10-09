@@ -29,21 +29,26 @@
     @livewireStyles
 </head>
 <body class="min-h-full flex flex-col ds-sans bg-slate-50 text-slate-900">
+    {{-- Indikator Navigasi / Loading Progress Bar (YouTube/GitHub style) --}}
+    <div id="simokas-progress-bar" aria-hidden="true">
+        <div class="bar"></div>
+    </div>
+
     {{-- Skip-link untuk aksesibilitas keyboard --}}
     <a href="#main-content"
        class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-2.5 focus:bg-ds-yellow focus:text-ds-ink focus:rounded-xl focus:shadow-md">
         {{ __('ui.layout.skip_link') }}
     </a>
 
-    {{-- Bilah atas --}}
-    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-100">
+    {{-- Bilah atas (Full Fixed Sticky Top Glassmorphism) --}}
+    <header class="sticky top-0 z-40 w-full bg-white/80 backdrop-blur-xl shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-20 gap-2 sm:gap-4">
+            <div class="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
                 {{-- Brand/Logo --}}
                 <div class="flex items-center">
-                    <a href="{{ url('/') }}" class="flex items-center rounded-xl px-1 py-1 select-none">
-                        <img src="{{ asset('images/logo-simokas-mobile.png') }}" alt="SIMOKAS" width="444" height="477" class="h-9 w-auto sm:hidden">
-                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" width="1767" height="477" class="hidden sm:block h-12 w-auto">
+                    <a wire:navigate.hover href="{{ url('/') }}" class="flex items-center rounded-xl p-1 select-none">
+                        <img src="{{ asset('images/logo-simokas-mobile.png') }}" alt="SIMOKAS" width="444" height="477" class="h-8 w-auto sm:hidden">
+                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" width="1767" height="477" class="hidden sm:block h-10 w-auto">
                     </a>
                 </div>
 
@@ -54,7 +59,7 @@
                                 @php
                                     $isActive = !empty($item['active']);
                                 @endphp
-                                <a href="{{ $item['url'] ?? '#' }}"
+                                <a wire:navigate.hover href="{{ $item['url'] ?? '#' }}"
                                    @class([
                                        'transition-colors rounded-lg',
                                        'text-ds-blue hover:text-ds-blue-ink' => $isActive,
@@ -174,8 +179,7 @@
                             <a href="{{ route('login') }}" class="px-2 sm:px-4 py-2 text-sm font-semibold text-ds-ink hover:text-ds-blue transition-colors">
                                 {{ __('Masuk') }}
                             </a>
-                            <a href="{{ route('identity.register') }}" class="inline-flex items-center gap-2 bg-ds-blue hover:bg-ds-blue-ink text-white px-4 sm:px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all">
-                                <i aria-hidden="true" class="fa-solid fa-circle-plus text-ds-yellow"></i>
+                            <a href="{{ route('identity.register') }}" class="inline-flex items-center justify-center bg-ds-blue hover:bg-ds-blue-ink text-white px-4 sm:px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all">
                                 <span>{{ __('Daftar') }}</span>
                             </a>
                         @endauth
@@ -199,13 +203,13 @@
     @endif
 
     {{-- Slot Konten Utama --}}
-    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 md:pb-8 focus:outline-none" tabindex="-1">
+    <main id="main-content" class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-24 md:pb-8 focus:outline-none animate-page-enter" tabindex="-1">
         {{ $slot }}
     </main>
 
     {{-- Footer --}}
     @if (auth()->guest() || request()->routeIs('home'))
-    <footer class="mt-auto bg-white text-ds-muted text-xs border-t border-ds-line">
+    <footer class="hidden md:block mt-auto bg-white text-ds-muted text-xs border-t border-ds-line">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="space-y-3 col-span-2 md:col-span-1">
@@ -258,7 +262,7 @@
         </div>
     </footer>
     @else
-    <footer class="mt-auto bg-white text-ds-muted text-xs border-t border-ds-line">
+    <footer class="hidden md:block mt-auto bg-white text-ds-muted text-xs border-t border-ds-line">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
             <span>&copy; {{ date('Y') }} {{ config('app.name', 'SIMOKAS') }} — {{ __('legal.footer_rights') }}</span>
             <nav class="flex items-center gap-4" aria-label="Tautan Hukum">
@@ -293,7 +297,7 @@
                             default => 'fa-circle',
                         };
                     @endphp
-                    <a href="{{ $item['url'] ?? '#' }}"
+                    <a wire:navigate.hover href="{{ $item['url'] ?? '#' }}"
                        @class([
                            'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
                            'text-ds-blue' => $isActive,
@@ -304,7 +308,7 @@
                         <span class="truncate max-w-[64px]">{{ $item['label'] }}</span>
                     </a>
                 @endforeach
-                <a href="{{ \Illuminate\Support\Facades\Route::has('listings.create') ? route('listings.create') : url('/') }}"
+                <a wire:navigate.hover href="{{ \Illuminate\Support\Facades\Route::has('listings.create') ? route('listings.create') : url('/') }}"
                    class="flex flex-col items-center justify-center rounded-xl"
                    aria-label="Pasang Iklan">
                     <span class="w-12 h-12 -mt-6 rounded-full bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink flex items-center justify-center shadow-xl transition-colors">
@@ -323,7 +327,7 @@
                             default => 'fa-circle',
                         };
                     @endphp
-                    <a href="{{ $item['url'] ?? '#' }}"
+                    <a wire:navigate.hover href="{{ $item['url'] ?? '#' }}"
                        @class([
                            'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
                            'text-ds-blue' => $isActive,
@@ -339,7 +343,7 @@
     @endif
 
     {{-- Widget aksesibilitas (disabilitas): menempel di semua halaman --}}
-    <div x-data="a11yWidget()" x-init="init()" class="fixed bottom-20 md:bottom-6 right-4 z-50 flex flex-col items-end gap-2">
+    <div x-data="a11yWidget()" x-init="init()" class="fixed bottom-20 md:bottom-6 right-4 z-30 flex flex-col items-end gap-2">
         <div x-show="open" x-cloak x-transition
             class="w-64 bg-white rounded-2xl border border-ds-line/80 shadow-xl p-4 space-y-4"
             role="dialog" aria-label="{{ __('ui.layout.a11y_title') }}">
