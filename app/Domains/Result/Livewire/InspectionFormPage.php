@@ -25,6 +25,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -329,7 +331,15 @@ final class InspectionFormPage extends Component
     {
         Gate::authorize('updateDraft', $this->result);
 
-        $this->validate();
+        try {
+            $this->validate();
+        } catch (ValidationException $e) {
+            // Tutup modal agar ringkasan galat terlihat, lalu teruskan agar
+            // galat per-bidang tetap menempel di input masing-masing.
+            $this->showSubmitConfirmation = false;
+            $this->actionError = __('inspection.form.error_validation');
+            throw $e;
+        }
         $this->isSubmitting = true;
         $this->actionError = null;
         $this->actionSuccess = null;
@@ -371,6 +381,17 @@ final class InspectionFormPage extends Component
             // Tutup modal agar pesan galat terlihat (jangan tertutup backdrop modal).
             $this->showSubmitConfirmation = false;
             $this->actionError = $e->getMessage();
+        } catch (\Throwable $e) {
+            // Jaring pengaman: galat tak terduga (bukan DomainException) tidak boleh
+            // membuat tombol tampak mati. Catat ke log, tutup modal, tampilkan pesan.
+            Log::error('Inspection submit failed unexpectedly.', [
+                'job_id' => $this->job->getKey(),
+                'result_id' => $this->result?->getKey(),
+                'inspector_id' => Auth::id(),
+                'exception' => $e::class.': '.$e->getMessage(),
+            ]);
+            $this->showSubmitConfirmation = false;
+            $this->actionError = __('inspection.form.error_unexpected');
         } finally {
             $this->isSubmitting = false;
         }

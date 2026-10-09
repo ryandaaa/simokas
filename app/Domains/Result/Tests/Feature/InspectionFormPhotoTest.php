@@ -10,7 +10,9 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Enums\VerificationStatus;
 use App\Domains\Inspector\Models\InspectorProfile;
+use App\Domains\Result\Enums\ItemRating;
 use App\Domains\Result\Enums\ResultStatus;
+use App\Domains\Result\Events\ResultSubmitted;
 use App\Domains\Result\Livewire\InspectionFormPage;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
@@ -19,6 +21,7 @@ use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Models\TemplateItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -203,6 +206,64 @@ final class InspectionFormPhotoTest extends TestCase
             ->assertSee('Blok Mesin');
 
         // Status stays draft on failed submit.
+        $this->assertDatabaseHas('inspection_results', [
+            'job_id' => $job->id,
+            'status' => ResultStatus::Draft,
+        ]);
+    }
+
+    public function test_submit_validation_failure_closes_modal_and_shows_summary_error(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        $templateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Mesin',
+            'label' => 'Blok Mesin',
+            'requires_photo' => false,
+        ]);
+
+        $this->actingAs($inspector);
+
+        Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->set("items.{$templateItem->id}.note", str_repeat('a', 1001))
+            ->call('showSubmitConfirmation')
+            ->assertSet('showSubmitConfirmation', true)
+            ->call('submitResult')
+            ->assertSet('showSubmitConfirmation', false)
+            ->assertHasErrors(["items.{$templateItem->id}.note"])
+            ->assertSee(__('inspection.form.error_validation'));
+    }
+
+    public function test_submit_unexpected_error_closes_modal_and_shows_generic_message(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        $templateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Mesin',
+            'label' => 'Blok Mesin',
+            'requires_photo' => false,
+        ]);
+
+        // Simulasi listener event yang meledak di dalam transaksi submit.
+        Event::listen(ResultSubmitted::class, function (): void {
+            throw new \RuntimeException('boom');
+        });
+
+        $this->actingAs($inspector);
+
+        Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->set("items.{$templateItem->id}.rating", ItemRating::Good->value)
+            ->call('showSubmitConfirmation')
+            ->call('submitResult')
+            ->assertSet('showSubmitConfirmation', false)
+            ->assertSee(__('inspection.form.error_unexpected'));
+
         $this->assertDatabaseHas('inspection_results', [
             'job_id' => $job->id,
             'status' => ResultStatus::Draft,

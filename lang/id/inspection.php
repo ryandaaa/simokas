@@ -191,6 +191,8 @@ return [
         'submit_warning' => 'Perhatian: Aksi ini tidak dapat dibatalkan. Periksa kembali semua data sebelum mengirim.',
         'error_required_items_missing' => 'Item wajib yang belum diisi: :items',
         'error_min_photos_not_met' => 'Item berikut masih memerlukan foto: :items',
+        'error_validation' => 'Ada isian yang belum valid. Periksa kembali penilaian dan catatan.',
+        'error_unexpected' => 'Terjadi galat tak terduga saat mengirim hasil. Silakan coba lagi.',
         'result_submitted_success' => 'Hasil inspeksi berhasil dikirim dan terkunci.',
         'submitting' => 'Mengirim hasil...',
     ],
