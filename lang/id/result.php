@@ -22,6 +22,7 @@ return [
         'capture' => 'Ambil Gambar',
         'processing' => 'Memproses foto…',
         'uploading' => 'Mengunggah…',
+        'camera_not_ready' => 'Kamera belum siap. Tunggu sebentar lalu coba lagi.',
         'no_new_photo' => 'Belum ada foto baru. Silakan ambil foto terlebih dahulu.',
         'required_notice' => 'Item ini wajib menyertakan foto hasil pemeriksaan.',
     ],

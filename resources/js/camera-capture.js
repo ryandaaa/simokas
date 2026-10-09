@@ -81,7 +81,9 @@ export function cameraCapture(config = {}) {
         capturedFile: null,
         stampedAt: null,
         itemId: config.itemId || null,
+        hasSavedPhoto: Boolean(config.hasSavedPhoto),
         noPhotoMessage: config.noPhotoMessage || '',
+        cameraNotReadyMessage: config.cameraNotReadyMessage || '',
 
         init() {
             if (!this.formattedTime) {
@@ -94,8 +96,12 @@ export function cameraCapture(config = {}) {
         },
 
         async startCamera() {
+            // Cegah stream ganda: Android mengunci kamera bila track lama tidak dilepas.
+            if (this.isStreaming) return;
+
             this.error = null;
             this.permissionDenied = false;
+            this.stopCamera();
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
                 // Fallback to native input if getUserMedia is not supported
@@ -141,6 +147,12 @@ export function cameraCapture(config = {}) {
             if (!this.$refs.video) return;
 
             const video = this.$refs.video;
+
+            // Jangan hasilkan foto hitam bila stream belum mengalirkan frame.
+            if (!video.videoWidth || video.readyState < 2) {
+                this.error = this.cameraNotReadyMessage || 'Kamera belum siap.';
+                return;
+            }
             const canvas = document.createElement('canvas');
             canvas.width = video.videoWidth || 1280;
             canvas.height = video.videoHeight || 720;
@@ -267,12 +279,17 @@ export function cameraCapture(config = {}) {
             this.capturedFile = null;
             this.error = null;
 
-            // Notify Livewire if registered
-            if (this.itemId && this.$wire && typeof this.$wire.retakePhoto === 'function') {
+            // Hanya hubungi server bila foto tersimpan benar-benar ada. Panggilan
+            // yang tidak perlu me-render ulang Livewire dan merusak instance Alpine
+            // yang masih hidup (tombol kamera ikut mati).
+            if (this.hasSavedPhoto && this.itemId && this.$wire && typeof this.$wire.retakePhoto === 'function') {
                 this.$wire.retakePhoto(this.itemId);
+                this.stopCamera();
+                return;
             }
 
-            this.stopCamera();
+            // Pratinjau baru (belum tersimpan): langsung kembali memotret.
+            this.startCamera();
         },
 
         usePhoto() {

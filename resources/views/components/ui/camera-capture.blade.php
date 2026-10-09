@@ -37,10 +37,12 @@
     <div {{ $attributes->merge(['class' => 'space-y-3']) }}
          x-data="cameraCapture({
              jobId: '{{ $jobId }}',
-             initialPhotoUrl: '{{ $photoUrl }}',
-             formattedTime: '{{ $formattedTime }}',
-             hasInitialPermissionDenied: false,
-             itemId: '{{ $itemId }}'
+              initialPhotoUrl: '{{ $photoUrl }}',
+              formattedTime: '{{ $formattedTime }}',
+              hasInitialPermissionDenied: false,
+              itemId: '{{ $itemId }}',
+              hasSavedPhoto: true,
+              cameraNotReadyMessage: '{{ __('result.photos.camera_not_ready') }}'
          })">
         @if ($displayLabel)
             <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
@@ -161,7 +163,9 @@
              formattedTime: '{{ $formattedTime }}',
              hasInitialPermissionDenied: false,
              itemId: '{{ $itemId }}',
-             noPhotoMessage: '{{ __('result.photos.no_new_photo') }}'
+             hasSavedPhoto: false,
+             noPhotoMessage: '{{ __('result.photos.no_new_photo') }}',
+             cameraNotReadyMessage: '{{ __('result.photos.camera_not_ready') }}'
          })">
         @if ($displayLabel)
             <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
