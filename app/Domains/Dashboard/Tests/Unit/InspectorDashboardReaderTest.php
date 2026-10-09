@@ -21,8 +21,9 @@ use App\Domains\Payment\Models\LedgerEntry;
 use App\Domains\Payment\Models\Payment;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 function createTestInspector(string $name = 'Test Inspector', float $ratingAvg = 4.8, int $ratingCount = 12): User
 {
@@ -46,24 +47,23 @@ it('DSH-T03 summary calculates current vs previous month earnings and change per
     $reader = new InspectorDashboardReader;
     $inspector = createTestInspector();
     $payer = User::factory()->user()->create();
-    $payment = Payment::factory()->for($payer, 'payer')->create();
 
     $currentMonth = CarbonImmutable::parse('2026-10-15');
 
     // Current month entries (total: 150_000)
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 100_000,
         'created_at' => CarbonImmutable::parse('2026-10-05 10:00:00'),
     ]);
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::AccessFee,
         'amount' => 50_000,
         'created_at' => CarbonImmutable::parse('2026-10-20 12:00:00'),
     ]);
 
     // Previous month entries (total: 100_000)
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 100_000,
         'created_at' => CarbonImmutable::parse('2026-09-15 14:00:00'),
@@ -81,11 +81,10 @@ it('DSH-T03 summary returns null changePercent when previous month earnings is z
     $reader = new InspectorDashboardReader;
     $inspector = createTestInspector();
     $payer = User::factory()->user()->create();
-    $payment = Payment::factory()->for($payer, 'payer')->create();
 
     $currentMonth = CarbonImmutable::parse('2026-10-15');
 
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 75_000,
         'created_at' => CarbonImmutable::parse('2026-10-10 10:00:00'),
@@ -104,18 +103,17 @@ it('DSH-T02 summary isolates inspector data and excludes other inspectors', func
     $inspectorB = createTestInspector('Inspector B', 3.2, 4);
 
     $payer = User::factory()->user()->create();
-    $payment = Payment::factory()->for($payer, 'payer')->create();
     $month = CarbonImmutable::parse('2026-10-15');
 
     // Inspector A ledger entry
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspectorA, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspectorA, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 50_000,
         'created_at' => CarbonImmutable::parse('2026-10-10'),
     ]);
 
     // Inspector B ledger entry
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspectorB, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspectorB, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 120_000,
         'created_at' => CarbonImmutable::parse('2026-10-10'),
@@ -150,33 +148,32 @@ it('DSH-T03 summary correctly respects month boundaries at start and end', funct
     $reader = new InspectorDashboardReader;
     $inspector = createTestInspector();
     $payer = User::factory()->user()->create();
-    $payment = Payment::factory()->for($payer, 'payer')->create();
 
     $month = CarbonImmutable::parse('2026-10-15');
 
     // Exact start of month: 2026-10-01 00:00:00 -> INCLUDED
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 10_000,
         'created_at' => CarbonImmutable::parse('2026-10-01 00:00:00'),
     ]);
 
     // Exact end of month: 2026-10-31 23:59:59 -> INCLUDED
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 20_000,
         'created_at' => CarbonImmutable::parse('2026-10-31 23:59:59'),
     ]);
 
     // One second before start of month: 2026-09-30 23:59:59 -> PREVIOUS MONTH
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 40_000,
         'created_at' => CarbonImmutable::parse('2026-09-30 23:59:59'),
     ]);
 
     // One second after end of month: 2026-11-01 00:00:00 -> FUTURE MONTH (NOT INCLUDED)
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 80_000,
         'created_at' => CarbonImmutable::parse('2026-11-01 00:00:00'),
@@ -378,16 +375,15 @@ it('DSH-T03 earningsBreakdown calculates slice percentages correctly', function 
     $reader = new InspectorDashboardReader;
     $inspector = createTestInspector();
     $payer = User::factory()->user()->create();
-    $payment = Payment::factory()->for($payer, 'payer')->create();
     $month = CarbonImmutable::parse('2026-10-15');
 
     // 80,000 InspectionFee (80%) and 20,000 AccessFee (20%) -> Total 100,000
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 80_000,
         'created_at' => CarbonImmutable::parse('2026-10-05'),
     ]);
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::AccessFee,
         'amount' => 20_000,
         'created_at' => CarbonImmutable::parse('2026-10-12'),
@@ -409,7 +405,6 @@ it('DSH-T10 monthlySeries returns exactly 6 elements with zero-filled empty mont
     $reader = new InspectorDashboardReader;
     $inspector = createTestInspector();
     $payer = User::factory()->user()->create();
-    $payment = Payment::factory()->for($payer, 'payer')->create();
     $seller = User::factory()->user()->create();
 
     $endMonth = CarbonImmutable::parse('2026-10-15');
@@ -422,7 +417,7 @@ it('DSH-T10 monthlySeries returns exactly 6 elements with zero-filled empty mont
     ]);
 
     // Create ledger entry in 2026-10 (45_000)
-    LedgerEntry::factory()->for($payment, 'payment')->for($inspector, 'account')->create([
+    LedgerEntry::factory()->for(Payment::factory()->for($payer, 'payer')->create(), 'payment')->for($inspector, 'account')->create([
         'entry_type' => LedgerEntryType::InspectionFee,
         'amount' => 45_000,
         'created_at' => CarbonImmutable::parse('2026-10-08 10:00:00'),

@@ -145,10 +145,10 @@ it('DSH-T07 query count is bounded and free of N+1 problems regardless of job vo
     $inspector = createLivewireInspector();
     $seller = User::factory()->user()->create();
     $payer = User::factory()->user()->create();
-    $payment = Payment::factory()->for($payer, 'payer')->create();
-
-    // Create 20 active jobs and 20 ledger entries
+    // Create 20 active jobs and 20 ledger entries (one payment each: unique per payment and entry type)
     for ($i = 1; $i <= 20; $i++) {
+        $payment = Payment::factory()->for($payer, 'payer')->create();
+
         $listing = Listing::factory()->active()->for($seller, 'seller')->create([
             'title' => "Vehicle {$i}",
             'area_name' => "District {$i}",
