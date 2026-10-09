@@ -339,7 +339,7 @@ it('DSH-T09 tasks preserves data privacy and does not expose exact coordinates o
 
     // Verify InspectorTask class structure has no private properties
     $task = $tasks[0];
-    $taskReflection = new ReflectionClass($task);
+    $taskReflection = new \ReflectionClass($task);
 
     expect($taskReflection->hasProperty('lat'))->toBeFalse()
         ->and($taskReflection->hasProperty('lng'))->toBeFalse()
