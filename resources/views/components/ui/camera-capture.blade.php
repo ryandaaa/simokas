@@ -124,15 +124,17 @@
         </div>
 
         {{-- Live Stream Video --}}
-        <div x-show="isStreaming" x-cloak class="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-text flex flex-col justify-between">
-            <video x-ref="video" playsinline autoplay muted class="w-full h-full object-cover"></video>
+        <div x-show="isStreaming" x-cloak class="space-y-3">
+            <div class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden bg-text">
+                <video x-ref="video" playsinline autoplay muted wire:ignore class="absolute inset-0 w-full h-full object-cover"></video>
+            </div>
 
-            <div class="absolute bottom-0 inset-x-0 bg-text/80 p-3 flex items-center justify-between gap-3">
-                <x-ui.button type="button" variant="ghost" class="text-surface hover:bg-surface/20 min-h-[44px]" @click="stopCamera()">
+            <div class="flex items-center gap-3">
+                <x-ui.button type="button" variant="secondary" class="flex-1 min-h-[44px]" @click="stopCamera()">
                     {{ __('ui.actions.cancel') }}
                 </x-ui.button>
 
-                <x-ui.button type="button" variant="primary" icon="kamera" class="min-h-[44px]" @click="captureFromVideo()">
+                <x-ui.button type="button" variant="primary" icon="kamera" class="flex-1 min-h-[44px]" @click="captureFromVideo()">
                     {{ __('result.photos.capture') }}
                 </x-ui.button>
             </div>
@@ -212,15 +214,17 @@
         </div>
 
         {{-- Live Stream Video dari Browser Camera --}}
-        <div x-show="isStreaming" x-cloak class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden bg-forest flex flex-col justify-between">
-            <video x-ref="video" playsinline autoplay muted class="w-full h-full object-cover"></video>
+        <div x-show="isStreaming" x-cloak class="space-y-3">
+            <div class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden bg-forest">
+                <video x-ref="video" playsinline autoplay muted wire:ignore class="absolute inset-0 w-full h-full object-cover"></video>
+            </div>
 
-            <div class="absolute bottom-0 inset-x-0 bg-forest/80 p-3 flex items-center justify-between gap-3">
-                <x-ui.button type="button" variant="ghost" class="text-paper hover:bg-paper/20 min-h-[44px]" @click="stopCamera()">
+            <div class="flex items-center gap-3">
+                <x-ui.button type="button" variant="secondary" class="flex-1 min-h-[44px]" @click="stopCamera()">
                     {{ __('ui.actions.cancel') }}
                 </x-ui.button>
 
-                <x-ui.button type="button" variant="primary" icon="kamera" class="min-h-[44px]" @click="captureFromVideo()">
+                <x-ui.button type="button" variant="primary" icon="kamera" class="flex-1 min-h-[44px]" @click="captureFromVideo()">
                     {{ __('result.photos.capture') }}
                 </x-ui.button>
             </div>
