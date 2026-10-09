@@ -179,3 +179,106 @@ it('DSH-T07 query count is bounded and free of N+1 problems regardless of job vo
     // Fixed aggregated/eager-loaded queries must remain below 20.
     expect($queryCount)->toBeLessThan(20);
 });
+
+it('DSH-T13 renders dashboard UI with inspector greeting, formatted earnings, change chip, and month picker', function () {
+    Carbon::setTestNow('2026-10-15 12:00:00');
+    $inspector = createLivewireInspector('Budi Santoso');
+    $payer = User::factory()->user()->create();
+
+    // Previous month (2026-09) ledger entry with its own payment
+    $paymentPrev = Payment::factory()->for($payer, 'payer')->create();
+    LedgerEntry::factory()->for($paymentPrev, 'payment')->for($inspector, 'account')->create([
+        'entry_type' => LedgerEntryType::InspectionFee,
+        'amount' => 100_000,
+        'created_at' => CarbonImmutable::parse('2026-09-10 12:00:00'),
+    ]);
+
+    // Current month (2026-10) ledger entry with its own payment
+    $paymentCurr = Payment::factory()->for($payer, 'payer')->create();
+    LedgerEntry::factory()->for($paymentCurr, 'payment')->for($inspector, 'account')->create([
+        'entry_type' => LedgerEntryType::InspectionFee,
+        'amount' => 150_000,
+        'created_at' => CarbonImmutable::parse('2026-10-10 12:00:00'),
+    ]);
+
+    Livewire::test(InspectorDashboard::class, ['user' => $inspector])
+        ->assertOk()
+        ->assertSee('Halo, Budi Santoso')
+        ->assertSee('Rp150.000')
+        ->assertSee('+50%')
+        ->assertSee('Okt 2026')
+        ->assertSeeHtml('disabled');
+});
+
+it('DSH-T14 renders action buttons: Isi Hasil Inspeksi for in_progress and Lihat Pekerjaan for taken', function () {
+    Carbon::setTestNow('2026-10-15 12:00:00');
+    $inspector = createLivewireInspector();
+    $seller = User::factory()->user()->create();
+
+    $listing1 = Listing::factory()->active()->for($seller, 'seller')->create(['title' => 'Toyota Avanza In Progress']);
+    $listing2 = Listing::factory()->active()->for($seller, 'seller')->create(['title' => 'Honda Civic Taken']);
+
+    InspectionJob::factory()->for($listing1, 'listing')->for($inspector, 'inspector')->create([
+        'status' => JobStatus::InProgress,
+        'scheduled_at' => CarbonImmutable::parse('2026-10-16 10:00:00'),
+    ]);
+
+    InspectionJob::factory()->for($listing2, 'listing')->for($inspector, 'inspector')->create([
+        'status' => JobStatus::Taken,
+        'scheduled_at' => null,
+    ]);
+
+    Livewire::test(InspectorDashboard::class, ['user' => $inspector])
+        ->assertOk()
+        ->assertSee('Toyota Avanza In Progress')
+        ->assertSee('Honda Civic Taken')
+        ->assertSee('Isi Hasil Inspeksi')
+        ->assertSee('Lihat Pekerjaan')
+        ->assertSee('Belum dijadwalkan');
+});
+
+it('DSH-T15 renders friendly empty state when no tasks are pending', function () {
+    Carbon::setTestNow('2026-10-15 12:00:00');
+    $inspector = createLivewireInspector();
+
+    Livewire::test(InspectorDashboard::class, ['user' => $inspector])
+        ->assertOk()
+        ->assertSee(__('dashboard.inspector.tasks_empty_title'))
+        ->assertSee(route('jobs.open'));
+});
+
+it('DSH-T16 renders empty earnings text when month earnings are zero', function () {
+    Carbon::setTestNow('2026-10-15 12:00:00');
+    $inspector = createLivewireInspector();
+
+    Livewire::test(InspectorDashboard::class, ['user' => $inspector])
+        ->assertOk()
+        ->assertSee('Belum ada penghasilan bulan ini');
+});
+
+it('DSH-T17 does not leak private coordinates, full address, or chassis number in rendered HTML', function () {
+    Carbon::setTestNow('2026-10-15 12:00:00');
+    $inspector = createLivewireInspector();
+    $seller = User::factory()->user()->create();
+
+    $listing = Listing::factory()->active()->for($seller, 'seller')->create([
+        'title' => 'Mitsubishi Xpander Private Test',
+        'lat' => -6.2088000,
+        'lng' => 106.8456000,
+        'address_full' => 'Jl. Rahasia Boulevard No. 99, RT 01 RW 02',
+        'chassis_number' => 'MHFXPANDERSECRET999',
+    ]);
+
+    InspectionJob::factory()->for($listing, 'listing')->for($inspector, 'inspector')->create([
+        'status' => JobStatus::InProgress,
+    ]);
+
+    $response = Livewire::test(InspectorDashboard::class, ['user' => $inspector]);
+
+    $response->assertOk()
+        ->assertSee('Mitsubishi Xpander Private Test')
+        ->assertDontSee('-6.2088')
+        ->assertDontSee('106.8456')
+        ->assertDontSee('Jl. Rahasia Boulevard No. 99')
+        ->assertDontSee('MHFXPANDERSECRET999');
+});
