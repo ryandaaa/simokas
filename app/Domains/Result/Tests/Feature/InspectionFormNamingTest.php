@@ -24,5 +24,5 @@ it('RES-T41 the submit button calls a method that exists on the component', func
     $view = (string) file_get_contents(app_path('Domains/Result/Resources/views/livewire/inspection-form-page.blade.php'));
 
     expect($view)->toContain('wire:click="openSubmitConfirmation"')
-        ->and(method_exists(InspectionFormPage::class, 'openSubmitConfirmation'))->toBeTrue();
+        ->and((new ReflectionClass(InspectionFormPage::class))->hasMethod('openSubmitConfirmation'))->toBeTrue();
 });

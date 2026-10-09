@@ -4,61 +4,67 @@ declare(strict_types=1);
 
 namespace App\Domains\Dashboard\Livewire;
 
+use App\Domains\Dashboard\ReadModels\InspectorDashboardReader;
 use App\Domains\Identity\Models\User;
-use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Inspection\Models\InspectionJob;
-use App\Domains\Inspector\Models\InspectorProfile;
-use App\Domains\Payment\Enums\LedgerEntryType;
-use App\Domains\Payment\Models\LedgerEntry;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 final class InspectorDashboard extends Component
 {
     public User $user;
 
-    public function render(): View
+    #[Url(as: 'bulan')]
+    public string $month = '';
+
+    public function previousMonth(): void
     {
-        // Available jobs: jobs that are paid and not taken
-        $availableJobs = InspectionJob::query()
-            ->where('status', JobStatus::Paid)
-            ->whereNull('inspector_id')
-            ->count();
+        $selected = $this->resolveSelectedMonth();
+        $this->month = $selected->subMonthNoOverflow()->format('Y-m');
+    }
 
-        // Active jobs: jobs assigned to this inspector that are not completed
-        $activeJobs = InspectionJob::query()
-            ->where('inspector_id', $this->user->id)
-            ->whereIn('status', [
-                JobStatus::Taken,
-                JobStatus::Scheduled,
-                JobStatus::InProgress,
-                JobStatus::ResultSubmitted,
-            ])
-            ->count();
+    public function nextMonth(): void
+    {
+        $selected = $this->resolveSelectedMonth();
+        $currentMonth = CarbonImmutable::now()->startOfMonth();
 
-        // Net earnings: sum of all credit ledger entries for this inspector
-        $netEarnings = LedgerEntry::query()
-            ->where('account_user_id', $this->user->id)
-            ->where(function ($q) {
-                $q->where('entry_type', LedgerEntryType::InspectionFee)
-                    ->orWhere('entry_type', LedgerEntryType::AccessFee)
-                    ->orWhere('entry_type', LedgerEntryType::SaleCommission);
-            })
-            ->sum('amount');
+        if ($selected->greaterThanOrEqualTo($currentMonth)) {
+            return;
+        }
 
-        // Total inspections completed
-        $totalInspections = InspectionJob::query()
-            ->where('inspector_id', $this->user->id)
-            ->where('status', JobStatus::Completed)
-            ->count();
+        $next = $selected->addMonthNoOverflow()->startOfMonth();
+        if ($next->greaterThanOrEqualTo($currentMonth)) {
+            $this->month = '';
+        } else {
+            $this->month = $next->format('Y-m');
+        }
+    }
 
-        // Rating: read from inspector_profiles
-        /** @var InspectorProfile|null $profile */
-        $profile = InspectorProfile::query()->where('user_id', $this->user->id)->first();
-        $rating = $profile !== null ? (float) $profile->rating_avg : 0.0;
-        $ratingCount = $profile !== null ? (int) $profile->rating_count : 0;
+    public function render(?InspectorDashboardReader $reader = null): View
+    {
+        $reader ??= app(InspectorDashboardReader::class);
 
-        // Recent jobs: latest jobs handled by this inspector
+        $selectedMonth = $this->resolveSelectedMonth();
+        $currentMonth = CarbonImmutable::now()->startOfMonth();
+        $canGoNext = $selectedMonth->lessThan($currentMonth);
+
+        $summary = $reader->summary($this->user, $selectedMonth);
+        $tasks = $reader->tasks($this->user);
+        $earningsBreakdown = $reader->earningsBreakdown($this->user, $selectedMonth);
+        $trendSeries = $reader->monthlySeries($this->user, $selectedMonth);
+
+        // Legacy format for current Blade view (supports both 'value' and 'completed')
+        $legacyMonthlySeries = array_map(static fn (array $item): array => [
+            'label' => $item['label'],
+            'value' => $item['completed'],
+            'ym' => $item['ym'],
+            'completed' => $item['completed'],
+            'earnings' => $item['earnings'],
+        ], $trendSeries);
+
+        // Preserved for existing Blade view
         $recentJobs = InspectionJob::query()
             ->where('inspector_id', $this->user->id)
             ->with(['listing', 'requester'])
@@ -66,34 +72,56 @@ final class InspectorDashboard extends Component
             ->take(5)
             ->get();
 
-        // Monthly trend: completed inspections per month for the last 6 months (single grouped query)
-        $monthlyCounts = InspectionJob::query()
-            ->where('inspector_id', $this->user->id)
-            ->where('status', JobStatus::Completed)
-            ->where('completed_at', '>=', now()->subMonthsNoOverflow(5)->startOfMonth())
-            ->selectRaw("DATE_FORMAT(completed_at, '%Y-%m') as ym, COUNT(*) as total")
-            ->groupBy('ym')
-            ->pluck('total', 'ym');
-
-        $monthlySeries = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonthsNoOverflow($i);
-            $monthlySeries[] = [
-                'label' => $month->locale('id')->shortMonthName,
-                'value' => (int) ($monthlyCounts[$month->format('Y-m')] ?? 0),
-            ];
-        }
-
         return view('dashboard::livewire.inspector-dashboard', [
-            'availableJobs' => $availableJobs,
-            'activeJobs' => $activeJobs,
-            'netEarnings' => $netEarnings,
-            'totalInspections' => $totalInspections,
-            'rating' => $rating,
-            'ratingCount' => $ratingCount,
+            // New reader variables
+            'summary' => $summary,
+            'tasks' => $tasks,
+            'earningsBreakdown' => $earningsBreakdown,
+            'trendSeries' => $trendSeries,
+            'selectedMonth' => $selectedMonth,
+            'canGoNext' => $canGoNext,
+
+            // Preserved legacy variables for current view & existing tests
+            'availableJobs' => $summary->availableJobs,
+            'activeJobs' => $summary->activeJobs,
+            'netEarnings' => $summary->netEarnings,
+            'totalInspections' => $summary->totalCompleted,
+            'rating' => $summary->ratingAvg,
+            'ratingCount' => $summary->ratingCount,
             'recentJobs' => $recentJobs,
-            'monthlySeries' => $monthlySeries,
+            'monthlySeries' => $legacyMonthlySeries,
             'user' => $this->user,
         ]);
+    }
+
+    private function resolveSelectedMonth(): CarbonImmutable
+    {
+        $currentMonth = CarbonImmutable::now()->startOfMonth();
+
+        if ($this->month === '') {
+            return $currentMonth;
+        }
+
+        if (! preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $this->month)) {
+            $this->month = '';
+
+            return $currentMonth;
+        }
+
+        try {
+            $parsed = CarbonImmutable::createFromFormat('!Y-m', $this->month)->startOfMonth();
+        } catch (\Throwable) {
+            $this->month = '';
+
+            return $currentMonth;
+        }
+
+        if ($parsed->greaterThan($currentMonth)) {
+            $this->month = '';
+
+            return $currentMonth;
+        }
+
+        return $parsed;
     }
 }

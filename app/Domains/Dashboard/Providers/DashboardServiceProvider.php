@@ -9,6 +9,7 @@ use App\Domains\Dashboard\Livewire\BuyerSellerDashboard;
 use App\Domains\Dashboard\Livewire\DashboardPage;
 use App\Domains\Dashboard\Livewire\HistoryPage;
 use App\Domains\Dashboard\Livewire\InspectorDashboard;
+use App\Domains\Dashboard\ReadModels\InspectorDashboardReader;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -16,7 +17,7 @@ final class DashboardServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(InspectorDashboardReader::class);
     }
 
     public function boot(): void
