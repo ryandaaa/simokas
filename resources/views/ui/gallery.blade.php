@@ -471,5 +471,27 @@
                 </div>
             </x-ui.card>
         </section>
+
+        {{-- 12. Kartu Dashboard (Dash-Card & Stat-Card) --}}
+        <section id="dashboard-cards" class="space-y-4">
+            <div>
+                <h2 class="text-xl font-bold text-text">12. Kartu Dashboard (&lt;x-ui.dash-card&gt; & &lt;x-ui.stat-card&gt;)</h2>
+                <p class="text-sm text-muted">Komponen penyusun kartu dashboard: pembungkus dengan header/aksi dan kartu metrik horizontal.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <x-ui.dash-card title="Contoh Dash-Card" subtitle="Subjudul opsional">
+                    <x-slot:action>
+                        <span class="text-xs font-bold text-forest">Aksi Kanan</span>
+                    </x-slot:action>
+                    <p class="text-sm text-slate">Konten di dalam dash-card dengan sudut rounded-2xl dan padding standar.</p>
+                </x-ui.dash-card>
+
+                <div class="flex gap-3">
+                    <x-ui.stat-card value="12" label="Tersedia" href="#tokens" class="flex-1" />
+                    <x-ui.stat-card value="4" label="Aktif" class="flex-1" />
+                </div>
+            </div>
+        </section>
     </div>
 </x-layouts.app>

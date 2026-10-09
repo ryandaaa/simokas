@@ -65,6 +65,8 @@ Dibuat sebagai Blade component di `resources/views/components/ui/` dan dipakai s
 | `<x-ui.button>` | Varian `primary`, `secondary`, `danger`, `ghost`. Tinggi minimal 44 px. Status `loading` menonaktifkan klik ganda |
 | `<x-ui.input>`, `select`, `textarea`, `checkbox` | Selalu dengan label terlihat, teks bantu, dan pesan galat |
 | `<x-ui.card>` | Pembungkus konten |
+| `<x-ui.dash-card>` | Pembungkus kartu dashboard dengan judul, subjudul, dan aksi |
+| `<x-ui.stat-card>` | Kartu angka metrik kecil dengan angka besar dan label |
 | `<x-ui.listing-card>` | Foto utama, judul, harga, tahun, kilometer, area, lencana |
 | `<x-ui.badge-inspected>` | Lencana "Sudah Diinspeksi" dengan tanggal |
 | `<x-ui.status-chip>` | Penanda status (lihat bagian 4) |

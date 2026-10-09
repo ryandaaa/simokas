@@ -1,257 +1,424 @@
-<div class="space-y-10">
-    <section>
-        <div class="mb-6 space-y-1">
-            <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.inspector.title') }}</h2>
+<div class="space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {{-- Kolom Kiri: Kartu 1, 2, 3 --}}
+        <div class="space-y-6">
+            {{-- Kartu 1: Kartu Utama --}}
+            <div class="bg-forest text-paper rounded-2xl p-5 sm:p-6 space-y-6">
+                {{-- Baris atas: Avatar + Halo, {nama} + Pemilih Bulan --}}
+                <div class="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+                    <div class="flex items-center gap-3 min-w-0">
+                        <div class="w-11 h-11 rounded-full bg-paper/15 text-paper border border-paper/20 flex items-center justify-center font-bold text-base shrink-0 select-none">
+                            {{ strtoupper(mb_substr($user->name, 0, 1)) }}
+                        </div>
+                        <div class="min-w-0">
+                            <h2 class="text-lg font-bold text-paper truncate">
+                                {{ __('dashboard.inspector.greeting', ['name' => $user->name]) }}
+                            </h2>
+                        </div>
+                    </div>
+
+                    {{-- Pemilih Bulan --}}
+                    <div class="flex items-center gap-1 bg-paper/10 rounded-full p-1 border border-paper/15">
+                        <button
+                            type="button"
+                            wire:click="previousMonth"
+                            class="w-11 h-11 flex items-center justify-center rounded-full text-paper hover:bg-paper/20 transition-colors cursor-pointer"
+                            aria-label="{{ __('dashboard.inspector.prev_month') }}"
+                        >
+                            <x-ui.icon name="chevron-left" class="w-4 h-4" />
+                        </button>
+                        <span class="px-2 text-xs font-bold text-paper whitespace-nowrap min-w-[72px] text-center">
+                            {{ $selectedMonth->locale('id')->shortMonthName }} {{ $selectedMonth->year }}
+                        </span>
+                        <button
+                            type="button"
+                            wire:click="nextMonth"
+                            @disabled(! $canGoNext)
+                            class="w-11 h-11 flex items-center justify-center rounded-full text-paper transition-colors {{ $canGoNext ? 'hover:bg-paper/20 cursor-pointer' : 'opacity-30 cursor-not-allowed pointer-events-none' }}"
+                            aria-label="{{ __('dashboard.inspector.next_month') }}"
+                        >
+                            <x-ui.icon name="chevron-right" class="w-4 h-4" />
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Angka Besar Penghasilan + Label + Chip Perubahan --}}
+                <div class="space-y-1">
+                    <div class="flex items-baseline gap-2 flex-wrap">
+                        <p class="text-xs font-medium text-paper/80 uppercase tracking-wider">
+                            {{ __('dashboard.inspector.month_earnings') }}
+                        </p>
+                        @if ($summary->changePercent !== null)
+                            @php
+                                $isUp = $summary->changePercent >= 0;
+                            @endphp
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold {{ $isUp ? 'bg-lime/20 text-lime border border-lime/30' : 'bg-alarm/20 text-alarm border border-alarm/30' }}">
+                                <span>{{ ($isUp ? '+' : '') . $summary->changePercent }}%</span>
+                            </span>
+                        @endif
+                    </div>
+                    <div class="pt-1">
+                        <x-ui.money :amount="$summary->netEarnings" class="!text-paper text-3xl sm:text-4xl font-extrabold tracking-tight" />
+                    </div>
+                </div>
+
+                {{-- Baris Rating --}}
+                <div class="pt-3 border-t border-paper/15 flex items-center gap-2 text-xs">
+                    @if ($summary->ratingCount > 0)
+                        <div class="flex items-center gap-1.5 text-lime">
+                            <svg class="w-4 h-4 fill-lime" viewBox="0 0 20 20" aria-hidden="true">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <span class="font-extrabold text-paper">{{ number_format($summary->ratingAvg, 2) }}</span>
+                        </div>
+                        <span class="text-paper/60">·</span>
+                        <span class="text-paper/80 font-medium">
+                            {{ __('dashboard.inspector.review_count', ['count' => $summary->ratingCount]) }}
+                        </span>
+                    @else
+                        <span class="text-paper/70 font-medium">
+                            {{ __('dashboard.inspector.no_reviews') }}
+                        </span>
+                    @endif
+                </div>
+            </div>
+
+            {{-- Kartu 2: Kartu Angka (Scroll horizontal di mobile) --}}
+            <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none snap-x snap-mandatory -mx-4 px-4 sm:mx-0 sm:px-0">
+                <x-ui.stat-card
+                    :value="$summary->availableJobs"
+                    :label="__('dashboard.inspector.stats_available')"
+                    :href="route('jobs.open')"
+                    class="snap-start shrink-0 flex-1 min-w-[130px]"
+                />
+                <x-ui.stat-card
+                    :value="$summary->activeJobs"
+                    :label="__('dashboard.inspector.stats_active')"
+                    :href="route('jobs.inspector')"
+                    class="snap-start shrink-0 flex-1 min-w-[130px]"
+                />
+                <x-ui.stat-card
+                    :value="$summary->completedInMonth"
+                    :label="__('dashboard.inspector.stats_completed_month')"
+                    class="snap-start shrink-0 flex-1 min-w-[130px]"
+                />
+                <x-ui.stat-card
+                    :value="$summary->totalCompleted"
+                    :label="__('dashboard.inspector.stats_total_completed')"
+                    class="snap-start shrink-0 flex-1 min-w-[130px]"
+                />
+            </div>
+
+            {{-- Kartu 3: Perlu Kamu Kerjakan --}}
+            <x-ui.dash-card :title="__('dashboard.inspector.tasks_title')">
+                @if (empty($tasks))
+                    <x-ui.empty-state
+                        icon="dokumen"
+                        :title="__('dashboard.inspector.tasks_empty_title')"
+                        :description="__('dashboard.inspector.tasks_empty_desc')"
+                        :action-label="__('dashboard.inspector.tasks_empty_action')"
+                        :action-url="route('jobs.open')"
+                    />
+                @else
+                    <ul class="divide-y divide-fog -my-2">
+                        @foreach ($tasks as $task)
+                            @php
+                                $isFill = $task->actionRoute === 'result.fill';
+                                $actionLabel = $isFill
+                                    ? __('dashboard.inspector.action_fill_result')
+                                    : __('dashboard.inspector.action_view_job');
+                            @endphp
+                            <li class="py-4 first:pt-2 last:pb-2 space-y-3">
+                                <div class="flex items-start justify-between gap-3 flex-wrap sm:flex-nowrap">
+                                    <div class="space-y-1 min-w-0">
+                                        <h4 class="text-sm font-bold text-obs truncate">
+                                            {{ $task->listingTitle !== '' ? $task->listingTitle : '—' }}
+                                        </h4>
+                                        <div class="flex items-center gap-2 text-xs text-slate flex-wrap">
+                                            @if ($task->city)
+                                                <span>{{ $task->city }}</span>
+                                                <span>·</span>
+                                            @endif
+                                            <span>
+                                                {{ $task->scheduledAt !== null ? $task->scheduledAt->locale('id')->translatedFormat('j M Y, H.i') . ' WIB' : __('dashboard.inspector.not_scheduled') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="shrink-0">
+                                        <x-ui.status-chip
+                                            :label="$task->status->label()"
+                                            :variant="$task->status->color()"
+                                            :icon="$task->status->icon()"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <x-ui.button
+                                        :href="route($task->actionRoute, $task->actionParams)"
+                                        :variant="$isFill ? 'primary' : 'secondary'"
+                                        class="w-full"
+                                    >
+                                        {{ $actionLabel }}
+                                    </x-ui.button>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </x-ui.dash-card>
         </div>
 
-        {{-- Key Metrics Cards --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {{-- Available Jobs Card --}}
-            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
-                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
-                    <i aria-hidden="true" class="fa-solid fa-briefcase"></i>
-                </div>
-                <p class="text-3xl font-extrabold text-ds-ink">{{ $availableJobs }}</p>
-                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.available_jobs') }}</p>
-            </div>
+        {{-- Kolom Kanan: Kartu 4, 5 --}}
+        <div class="space-y-6">
+            {{-- Kartu 4: Tren Selesai --}}
+            @php
+                $maxTrend = max(1, max(array_column($trendSeries, 'completed')));
+                $padLeft = 24;
+                $usableW = 272; // 320 - 48
+                $chartTop = 22;
+                $chartH = 80;
+                $chartBottom = $chartTop + $chartH; // 102
 
-            {{-- Active Jobs Card --}}
-            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
-                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
-                    <i aria-hidden="true" class="fa-solid fa-bolt"></i>
-                </div>
-                <p class="text-3xl font-extrabold text-ds-ink">{{ $activeJobs }}</p>
-                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.active_jobs') }}</p>
-            </div>
+                $points = [];
+                $pointsStr = '';
 
-            {{-- Net Earnings Card --}}
-            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
-                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
-                    <i aria-hidden="true" class="fa-solid fa-wallet"></i>
-                </div>
-                <p class="text-2xl font-extrabold text-ds-ink">{{ \App\Support\Money::format($netEarnings) }}</p>
-                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.net_earnings') }}</p>
-            </div>
+                $count = count($trendSeries);
+                foreach ($trendSeries as $idx => $point) {
+                    $x = $count > 1 ? $padLeft + ($idx * ($usableW / ($count - 1))) : $padLeft;
+                    $ratio = $point['completed'] / $maxTrend;
+                    $y = round($chartBottom - ($ratio * $chartH), 1);
+                    $points[] = [
+                        'x' => $x,
+                        'y' => $y,
+                        'val' => $point['completed'],
+                        'label' => $point['label'],
+                        'ym' => $point['ym'],
+                        'isSelected' => ($point['ym'] === $selectedMonth->format('Y-m')),
+                    ];
+                    $pointsStr .= ($idx === 0 ? '' : ' ') . "{$x},{$y}";
+                }
 
-            {{-- Total Inspections Card --}}
-            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
-                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
-                    <i aria-hidden="true" class="fa-solid fa-clipboard-check"></i>
-                </div>
-                <p class="text-3xl font-extrabold text-ds-ink">{{ $totalInspections }}</p>
-                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.total_inspections') }}</p>
-            </div>
+                $firstX = $points[0]['x'] ?? $padLeft;
+                $lastX = $points[count($points) - 1]['x'] ?? ($padLeft + $usableW);
+                $areaPoints = "{$firstX},{$chartBottom} " . $pointsStr . " {$lastX},{$chartBottom}";
 
-            {{-- Rating Card --}}
-            <div class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 p-5">
-                <div class="w-14 h-14 rounded-2xl bg-ds-blue text-white flex items-center justify-center text-xl mb-4 shadow-lg shadow-ds-blue/20 group-hover:scale-110 transition-transform">
-                    <i aria-hidden="true" class="fa-solid fa-star"></i>
+                $ariaTrend = __('dashboard.inspector.trend_aria', [
+                    'start' => $trendSeries[0]['label'] ?? '',
+                    'end' => $trendSeries[count($trendSeries) - 1]['label'] ?? '',
+                ]);
+            @endphp
+
+            <x-ui.dash-card
+                :title="__('dashboard.inspector.trend_title')"
+                :subtitle="__('dashboard.inspector.trend_subtitle')"
+            >
+                <div class="h-44 sm:h-48 w-full flex items-center justify-center">
+                    <svg
+                        viewBox="0 0 320 130"
+                        class="w-full h-full overflow-visible"
+                        role="img"
+                        aria-label="{{ $ariaTrend }}"
+                    >
+                        {{-- Garis panduan horizontal --}}
+                        <line x1="20" y1="{{ $chartBottom }}" x2="300" y2="{{ $chartBottom }}" stroke="currentColor" class="text-fog" stroke-width="1" />
+                        <line x1="20" y1="{{ $chartTop + ($chartH / 2) }}" x2="300" y2="{{ $chartTop + ($chartH / 2) }}" stroke="currentColor" class="text-fog" stroke-dasharray="3 3" stroke-width="1" />
+                        <line x1="20" y1="{{ $chartTop }}" x2="300" y2="{{ $chartTop }}" stroke="currentColor" class="text-fog" stroke-dasharray="3 3" stroke-width="1" />
+
+                        {{-- Area di bawah kurva --}}
+                        <polygon points="{{ $areaPoints }}" class="fill-linen/50 text-linen" />
+
+                        {{-- Garis tren --}}
+                        <polyline
+                            fill="none"
+                            stroke="currentColor"
+                            class="text-forest"
+                            stroke-width="2.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            points="{{ $pointsStr }}"
+                        />
+
+                        {{-- Titik data & Label --}}
+                        @foreach ($points as $p)
+                            {{-- Angka di atas titik --}}
+                            <text x="{{ $p['x'] }}" y="{{ max(14, $p['y'] - 8) }}" text-anchor="middle" class="text-[10px] font-bold fill-forest">
+                                {{ $p['val'] }}
+                            </text>
+
+                            {{-- Titik --}}
+                            @if ($p['isSelected'])
+                                <circle cx="{{ $p['x'] }}" cy="{{ $p['y'] }}" r="6" class="fill-lime text-lime" />
+                                <circle cx="{{ $p['x'] }}" cy="{{ $p['y'] }}" r="3" class="fill-forest text-forest" />
+                            @else
+                                <circle cx="{{ $p['x'] }}" cy="{{ $p['y'] }}" r="3" class="fill-forest text-forest" />
+                            @endif
+
+                            {{-- Label bulan di bawah --}}
+                            <text x="{{ $p['x'] }}" y="122" text-anchor="middle" class="text-[11px] font-medium fill-slate">
+                                {{ $p['label'] }}
+                            </text>
+                        @endforeach
+                    </svg>
                 </div>
-                <p class="text-3xl font-extrabold text-ds-ink">
-                    {{ $ratingCount > 0 ? number_format($rating, 2) : '-' }}
-                </p>
-                <p class="text-xs text-ds-muted mt-1 font-medium">{{ __('dashboard.inspector.rating') }}</p>
-                <p class="text-[11px] text-ds-faint mt-1 font-semibold">
-                    {{ $ratingCount > 0 ? __('rating.display.rating_count', ['count' => $ratingCount]) : __('rating.display.no_ratings') }}
-                </p>
-            </div>
+            </x-ui.dash-card>
+
+            {{-- Kartu 5: Sumber Penghasilan --}}
+            @php
+                $donutCirc = 2 * pi() * 50;
+                $donutOffset = 0;
+                $totalBreakdownAmount = 0;
+                foreach ($earningsBreakdown as $slice) {
+                    $totalBreakdownAmount += $slice->amount;
+                }
+            @endphp
+
+            <x-ui.dash-card
+                :title="__('dashboard.inspector.earnings_sources_title')"
+                :subtitle="__('dashboard.inspector.earnings_sources_subtitle')"
+            >
+                @if (empty($earningsBreakdown) || $totalBreakdownAmount <= 0)
+                    <div class="py-8 text-center">
+                        <p class="text-sm font-medium text-slate">
+                            {{ __('dashboard.inspector.no_earnings_this_month') }}
+                        </p>
+                    </div>
+                @else
+                    {{-- Donat SVG --}}
+                    <div class="relative w-36 h-36 mx-auto flex items-center justify-center">
+                        <svg viewBox="0 0 140 140" class="w-full h-full -rotate-90" role="img" aria-label="{{ __('dashboard.inspector.earnings_sources_title') }}">
+                            <circle cx="70" cy="70" r="50" fill="none" class="text-fog" stroke="currentColor" stroke-width="14" />
+                            @foreach ($earningsBreakdown as $slice)
+                                @php
+                                    $frac = $slice->percent / 100;
+                                    $dash = round($frac * $donutCirc, 1) . ' ' . round($donutCirc - ($frac * $donutCirc), 1);
+                                    $off = round(-$donutOffset * $donutCirc, 1);
+                                    $donutOffset += $frac;
+
+                                    $sliceColor = match ($slice->type) {
+                                        \App\Domains\Payment\Enums\LedgerEntryType::InspectionFee => 'text-forest',
+                                        \App\Domains\Payment\Enums\LedgerEntryType::AccessFee => 'text-lime',
+                                        \App\Domains\Payment\Enums\LedgerEntryType::SaleCommission => 'text-signal',
+                                        default => 'text-pebble',
+                                    };
+                                @endphp
+                                @if ($slice->percent > 0)
+                                    <circle
+                                        cx="70"
+                                        cy="70"
+                                        r="50"
+                                        fill="none"
+                                        class="{{ $sliceColor }}"
+                                        stroke="currentColor"
+                                        stroke-width="14"
+                                        stroke-dasharray="{{ $dash }}"
+                                        stroke-dashoffset="{{ $off }}"
+                                        stroke-linecap="butt"
+                                    />
+                                @endif
+                            @endforeach
+                        </svg>
+                        {{-- Total di tengah --}}
+                        <div class="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none px-2">
+                            <span class="text-[10px] font-medium text-slate uppercase tracking-wider">Total</span>
+                            <x-ui.money :amount="$totalBreakdownAmount" class="text-xs sm:text-sm font-bold text-obs tracking-tight" />
+                        </div>
+                    </div>
+
+                    {{-- Daftar Berbar --}}
+                    <ul class="mt-6 space-y-4">
+                        @foreach ($earningsBreakdown as $slice)
+                            @php
+                                $sliceLabel = match ($slice->type) {
+                                    \App\Domains\Payment\Enums\LedgerEntryType::InspectionFee => __('dashboard.inspector.earnings_sources.inspection_fee'),
+                                    \App\Domains\Payment\Enums\LedgerEntryType::AccessFee => __('dashboard.inspector.earnings_sources.access_fee'),
+                                    \App\Domains\Payment\Enums\LedgerEntryType::SaleCommission => __('dashboard.inspector.earnings_sources.sale_commission'),
+                                    default => $slice->type->label(),
+                                };
+                                $sliceBarClass = match ($slice->type) {
+                                    \App\Domains\Payment\Enums\LedgerEntryType::InspectionFee => 'fill-forest text-forest',
+                                    \App\Domains\Payment\Enums\LedgerEntryType::AccessFee => 'fill-lime text-lime',
+                                    \App\Domains\Payment\Enums\LedgerEntryType::SaleCommission => 'fill-signal text-signal',
+                                    default => 'fill-pebble text-pebble',
+                                };
+                                $dotClass = match ($slice->type) {
+                                    \App\Domains\Payment\Enums\LedgerEntryType::InspectionFee => 'bg-forest',
+                                    \App\Domains\Payment\Enums\LedgerEntryType::AccessFee => 'bg-lime',
+                                    \App\Domains\Payment\Enums\LedgerEntryType::SaleCommission => 'bg-signal',
+                                    default => 'bg-pebble',
+                                };
+                            @endphp
+                            <li class="space-y-1.5">
+                                <div class="flex items-center justify-between text-xs">
+                                    <span class="flex items-center gap-2 font-medium text-obs">
+                                        <span class="w-2.5 h-2.5 rounded-full {{ $dotClass }} shrink-0"></span>
+                                        {{ $sliceLabel }}
+                                    </span>
+                                    <span class="font-bold text-obs whitespace-nowrap">
+                                        {{ round($slice->percent) }}% · <x-ui.money :amount="$slice->amount" class="text-xs font-bold text-obs" />
+                                    </span>
+                                </div>
+                                <div class="h-2 w-full bg-fog rounded-full overflow-hidden">
+                                    <svg class="w-full h-full" viewBox="0 0 100 8" preserveAspectRatio="none">
+                                        <rect x="0" y="0" width="{{ round($slice->percent) }}" height="8" rx="4" class="{{ $sliceBarClass }}" />
+                                    </svg>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                @endif
+            </x-ui.dash-card>
         </div>
-    </section>
-
-    {{-- Action Buttons --}}
-    <div class="flex flex-col sm:flex-row gap-3">
-        <a href="{{ route('jobs.inspector') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-ds-yellow/30">
-            <span>{{ __('dashboard.inspector.view_available_jobs') }}</span>
-            <i aria-hidden="true" class="fa-solid fa-arrow-right text-xs"></i>
-        </a>
-        <a href="{{ route('inspector.earnings') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-white border border-ds-line hover:border-ds-blue hover:text-ds-blue text-ds-ink font-bold text-sm rounded-xl transition-all shadow-xs hover:shadow-md">
-            {{ __('dashboard.inspector.view_earnings') }}
-        </a>
     </div>
 
-    @php
-        $maxTrend = max(1, max(array_column($monthlySeries, 'value')));
-        $barClass = function ($value, $max) {
-            if ($value <= 0) {
-                return 'h-1 opacity-40';
-            }
-            $pct = $value / max(1, $max) * 100;
+    {{-- Kartu 6: Pekerjaan Terbaru (Selebar penuh di bawah) --}}
+    <x-ui.dash-card
+        :title="__('dashboard.inspector.recent_jobs_title')"
+        :subtitle="__('dashboard.inspector.recent_jobs_subtitle')"
+    >
+        <x-slot:action>
+            <a
+                href="{{ route('jobs.inspector') }}"
+                class="text-xs font-bold text-forest hover:text-spruce transition-colors"
+            >
+                {{ __('dashboard.inspector.view_all_jobs') }}
+            </a>
+        </x-slot:action>
 
-            return match (true) {
-                $pct <= 15 => 'h-4',
-                $pct <= 30 => 'h-8',
-                $pct <= 45 => 'h-12',
-                $pct <= 60 => 'h-16',
-                $pct <= 75 => 'h-20',
-                $pct <= 87 => 'h-24',
-                default => 'h-28',
-            };
-        };
-        $statusPill = fn ($color) => match ($color) {
-            'success' => 'bg-ds-green-soft text-ds-green-ink',
-            'warning' => 'bg-ds-amber-soft text-ds-amber-ink',
-            'danger' => 'bg-ds-red-soft text-ds-red-ink',
-            'primary' => 'bg-ds-blue-soft text-ds-blue-ink',
-            default => 'bg-ds-soft text-ds-muted',
-        };
-        $statusDot = fn ($color) => match ($color) {
-            'success' => 'bg-ds-green',
-            'warning' => 'bg-ds-yellow-deep',
-            'danger' => 'bg-ds-danger',
-            'primary' => 'bg-ds-blue',
-            default => 'bg-ds-faint',
-        };
-        $donutTotal = max(1, $availableJobs + $activeJobs + $totalInspections);
-        $donutCirc = 2 * pi() * 54;
-        $donutSegs = [
-            ['label' => __('dashboard.inspector.available_jobs'), 'value' => $availableJobs, 'class' => 'text-ds-blue'],
-            ['label' => __('dashboard.inspector.active_jobs'), 'value' => $activeJobs, 'class' => 'text-ds-yellow-deep'],
-            ['label' => __('dashboard.inspector.total_inspections'), 'value' => $totalInspections, 'class' => 'text-ds-green'],
-        ];
-        $donutOffset = 0;
-    @endphp
-
-    {{-- Tren + Komposisi --}}
-    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
-            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('dashboard.inspector.trend_title') }}</h3>
-            <p class="text-xs text-ds-muted mt-1 mb-6">{{ __('dashboard.inspector.trend_subtitle') }}</p>
-
-            <div class="flex items-start justify-between gap-2 h-36" role="img" aria-label="{{ __('dashboard.inspector.trend_title') }}">
-                @foreach ($monthlySeries as $point)
-                    <div class="flex-1 flex flex-col items-center gap-2 h-full">
-                        <span class="text-xs font-extrabold text-ds-ink">{{ $point['value'] }}</span>
-                        <div class="flex-1 w-full max-w-10 flex items-end">
-                            <div class="w-full rounded-lg bg-ds-blue transition-all {{ $barClass($point['value'], $maxTrend) }}"></div>
-                        </div>
-                        <span class="text-[10px] font-bold text-ds-faint uppercase">{{ $point['label'] }}</span>
-                    </div>
-                @endforeach
+        @if ($recentJobs->isEmpty())
+            <div class="py-8 text-center">
+                <p class="text-sm font-medium text-slate">
+                    {{ __('dashboard.inspector.no_activity') }}
+                </p>
             </div>
-        </div>
-
-        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
-            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('dashboard.inspector.composition_title') }}</h3>
-            <p class="text-xs text-ds-muted mt-1 mb-4">{{ __('dashboard.inspector.composition_subtitle') }}</p>
-
-            <div class="flex justify-center">
-                <svg viewBox="0 0 140 140" class="w-32 h-32" role="img" aria-label="{{ __('dashboard.inspector.composition_title') }}">
-                    <circle cx="70" cy="70" r="54" fill="none" class="text-ds-soft" stroke="currentColor" stroke-width="18" />
-                    @foreach ($donutSegs as $seg)
-                        @php
-                            $frac = $seg['value'] / $donutTotal;
-                            $dash = round($frac * $donutCirc, 1).' '.round($donutCirc - $frac * $donutCirc, 1);
-                            $off = round(-$donutOffset * $donutCirc, 1);
-                            $donutOffset += $frac;
-                        @endphp
-                        @if ($seg['value'] > 0)
-                            <circle cx="70" cy="70" r="54" fill="none" class="{{ $seg['class'] }}" stroke="currentColor"
-                                    stroke-width="18" stroke-dasharray="{{ $dash }}" stroke-dashoffset="{{ $off }}"
-                                    transform="rotate(-90 70 70)" stroke-linecap="butt" />
-                        @endif
-                    @endforeach
-                </svg>
-            </div>
-
-            <ul class="mt-5 space-y-3">
-                @foreach ($donutSegs as $seg)
-                    <li class="flex items-center justify-between text-sm">
-                        <span class="flex items-center gap-2 font-semibold text-ds-muted">
-                            <span class="w-2.5 h-2.5 rounded-full {{ $seg['class'] }} bg-current"></span>
-                            {{ $seg['label'] }}
-                        </span>
-                        <span class="font-extrabold text-ds-ink">{{ round($seg['value'] / $donutTotal * 100) }}%</span>
+        @else
+            <ul class="divide-y divide-fog -my-2">
+                @foreach ($recentJobs as $job)
+                    <li class="py-3.5 first:pt-2 last:pb-2">
+                        <a
+                            href="{{ route('jobs.show', $job) }}"
+                            class="flex items-center justify-between gap-4 p-2 -m-2 rounded-[10px] hover:bg-fog/30 transition-colors group cursor-pointer"
+                        >
+                            <div class="min-w-0 space-y-1">
+                                <p class="text-sm font-bold text-obs truncate group-hover:text-forest transition-colors">
+                                    {{ $job->listing?->title ?? '—' }}
+                                </p>
+                                <p class="text-xs text-slate">
+                                    {{ $job->requester?->name ?? '—' }} · {{ $job->updated_at->locale('id')->diffForHumans() }}
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-3 shrink-0">
+                                <x-ui.status-chip
+                                    :label="$job->status->label()"
+                                    :variant="$job->status->color()"
+                                    :icon="$job->status->icon()"
+                                />
+                                <x-ui.icon name="chevron-right" class="w-4 h-4 text-pebble group-hover:text-forest transition-colors" />
+                            </div>
+                        </a>
                     </li>
                 @endforeach
             </ul>
-        </div>
-    </section>
-
-    {{-- Aktivitas + Pekerjaan Terbaru --}}
-    <section class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        <div class="lg:col-span-2 bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
-            <h3 class="text-lg font-extrabold text-ds-ink mb-5">{{ __('dashboard.inspector.recent_activity_title') }}</h3>
-
-            @if ($recentJobs->isEmpty())
-                <p class="text-xs text-ds-muted leading-relaxed">{{ __('dashboard.inspector.no_activity') }}</p>
-            @else
-                <ul class="space-y-5">
-                    @foreach ($recentJobs as $job)
-                        <li class="flex items-start gap-3">
-                            <span class="mt-1.5 w-2.5 h-2.5 rounded-full shrink-0 {{ $statusDot($job->status->color()) }}"></span>
-                            <div class="min-w-0">
-                                <p class="text-sm font-bold text-ds-ink truncate">{{ $job->listing?->title ?? '—' }}</p>
-                                <p class="text-[11px] text-ds-faint mt-0.5">
-                                    {{ $job->status->label() }} · {{ $job->updated_at->locale('id')->diffForHumans() }}
-                                </p>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
-            @endif
-        </div>
-
-        <div class="lg:col-span-3 bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
-            <div class="flex items-center justify-between mb-5">
-                <div>
-                    <h3 class="text-lg font-extrabold text-ds-ink">{{ __('dashboard.inspector.recent_jobs_title') }}</h3>
-                    <p class="text-xs text-ds-muted mt-1">{{ __('dashboard.inspector.recent_jobs_subtitle') }}</p>
-                </div>
-                <a href="{{ route('jobs.inspector') }}" class="text-xs font-bold text-ds-blue hover:text-ds-blue-ink shrink-0 ml-4">
-                    {{ __('dashboard.inspector.view_all_jobs') }}
-                </a>
-            </div>
-
-            @if ($recentJobs->isEmpty())
-                <p class="text-xs text-ds-muted leading-relaxed">{{ __('dashboard.inspector.no_activity') }}</p>
-            @else
-                <div class="overflow-x-auto -mx-6 px-6">
-                    <table class="w-full text-sm min-w-[520px]">
-                        <thead>
-                            <tr class="text-left text-[10px] font-bold uppercase tracking-wider text-ds-faint border-b border-ds-line/60">
-                                <th scope="col" class="py-2 pr-4">{{ __('dashboard.inspector.table_listing') }}</th>
-                                <th scope="col" class="py-2 pr-4">{{ __('dashboard.inspector.table_requester') }}</th>
-                                <th scope="col" class="py-2 pr-4">{{ __('dashboard.inspector.table_updated') }}</th>
-                                <th scope="col" class="py-2 text-right">{{ __('dashboard.inspector.table_status') }}</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-ds-line/60">
-                            @foreach ($recentJobs as $job)
-                                <tr class="transition-colors hover:bg-ds-canvas/60">
-                                    <td class="py-3 pr-4 font-bold text-ds-ink max-w-44 truncate">{{ $job->listing?->title ?? '—' }}</td>
-                                    <td class="py-3 pr-4 text-ds-muted text-xs">{{ $job->requester?->name ?? '—' }}</td>
-                                    <td class="py-3 pr-4 text-ds-faint text-xs whitespace-nowrap">{{ $job->updated_at->locale('id')->diffForHumans() }}</td>
-                                    <td class="py-3 text-right">
-                                        <span class="inline-block text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider whitespace-nowrap {{ $statusPill($job->status->color()) }}">
-                                            {{ $job->status->label() }}
-                                        </span>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-                <p class="mt-4 text-[11px] text-ds-faint">
-                    {{ __('dashboard.inspector.showing_recent', ['count' => $recentJobs->count()]) }}
-                </p>
-            @endif
-        </div>
-    </section>
-
-    {{-- Empty State --}}
-    @if ($availableJobs === 0 && $activeJobs === 0 && $totalInspections === 0)
-        <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center max-w-2xl mx-auto">
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-ds-soft text-ds-muted flex items-center justify-center text-xl mb-4">
-                <i aria-hidden="true" class="fa-solid fa-briefcase"></i>
-            </div>
-            <h3 class="text-lg font-extrabold text-ds-ink">{{ __('dashboard.inspector.empty_state.title') }}</h3>
-            <p class="text-xs text-ds-muted mt-2 leading-relaxed">{{ __('dashboard.inspector.empty_state.message') }}</p>
-            <div class="flex justify-center mt-6">
-                <a href="{{ route('jobs.inspector') }}" class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-yellow hover:bg-ds-yellow-deep text-ds-ink font-bold text-sm rounded-xl transition-all shadow-md hover:shadow-ds-yellow/30">
-                    <span>{{ __('dashboard.inspector.empty_state.browse_jobs') }}</span>
-                    <i aria-hidden="true" class="fa-solid fa-arrow-right text-xs"></i>
-                </a>
-            </div>
-        </div>
-    @endif
+        @endif
+    </x-ui.dash-card>
 </div>

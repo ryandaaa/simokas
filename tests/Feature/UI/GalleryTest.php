@@ -18,6 +18,7 @@ it('renders component gallery at /_ui when environment is local or testing', fun
     $response->assertSee('9. Peringatan');
     $response->assertSee('10. Kamera');
     $response->assertSee('11. Pagination');
+    $response->assertSee('12. Kartu Dashboard');
 });
 
 it('returns 404 for /_ui when environment is production', function () {
