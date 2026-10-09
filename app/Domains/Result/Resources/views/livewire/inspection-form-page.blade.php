@@ -259,6 +259,7 @@
 
         {{-- Submit Confirmation Modal --}}
         @if ($showSubmitConfirmation)
+            <div wire:key="submit-result-modal-{{ $submitModalKey }}">
             <x-ui.modal
                 :show="true"
                 name="submit-result-modal"
@@ -297,6 +298,7 @@
                     </x-slot:footer>
                 </div>
             </x-ui.modal>
+            </div>
         @endif
     @endif
 </div>

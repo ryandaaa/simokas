@@ -62,6 +62,8 @@ final class InspectionFormPage extends Component
 
     public bool $showSubmitConfirmation = false;
 
+    public int $submitModalKey = 0;
+
     public bool $isSubmitting = false;
 
     public function mount(InspectionJob $job, GetOrCreateDraftResult $getOrCreateDraft): void
@@ -312,6 +314,10 @@ final class InspectionFormPage extends Component
     public function showSubmitConfirmation(): void
     {
         $this->showSubmitConfirmation = true;
+        // Naikkan kunci agar DOM modal selalu dibuat ulang. Tanpa ini, bila modal
+        // pernah ditutup sepihak di sisi Alpine (backdrop/X/Escape), Alpine
+        // menyimpan open=false dan modal tak akan pernah terbuka lagi.
+        $this->submitModalKey++;
     }
 
     public function cancelSubmit(): void

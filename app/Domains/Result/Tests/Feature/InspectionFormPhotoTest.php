@@ -193,6 +193,11 @@ final class InspectionFormPhotoTest extends TestCase
         Livewire::test(InspectionFormPage::class, ['job' => $job])
             ->call('showSubmitConfirmation')
             ->assertSet('showSubmitConfirmation', true)
+            ->assertSet('submitModalKey', 1)
+            // Membuka ulang harus menaikkan kunci agar DOM modal dibuat ulang
+            // (modal yang pernah ditutup sepihak di Alpine tidak macet).
+            ->call('showSubmitConfirmation')
+            ->assertSet('submitModalKey', 2)
             ->call('submitResult')
             ->assertSet('showSubmitConfirmation', false)
             ->assertSee('Blok Mesin');
