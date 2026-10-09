@@ -10,6 +10,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Inspector\Enums\VerificationStatus;
 use App\Domains\Inspector\Models\InspectorProfile;
+use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Livewire\InspectionFormPage;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
@@ -171,6 +172,36 @@ final class InspectionFormPhotoTest extends TestCase
         Storage::disk('private')->assertMissing($path);
         $this->assertDatabaseMissing('result_photos', ['id' => $photo->id]);
         $this->assertArrayNotHasKey($templateItem->id, $component->get('photos'));
+    }
+
+    public function test_submit_failure_closes_confirmation_modal_so_error_is_visible(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        // Required item without rating: submit must fail validation.
+        TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Mesin',
+            'label' => 'Blok Mesin',
+            'requires_photo' => false,
+        ]);
+
+        $this->actingAs($inspector);
+
+        Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->call('showSubmitConfirmation')
+            ->assertSet('showSubmitConfirmation', true)
+            ->call('submitResult')
+            ->assertSet('showSubmitConfirmation', false)
+            ->assertSee('Blok Mesin');
+
+        // Status stays draft on failed submit.
+        $this->assertDatabaseHas('inspection_results', [
+            'job_id' => $job->id,
+            'status' => ResultStatus::Draft,
+        ]);
     }
 
     public function test_loading_existing_draft_loads_photos_with_signed_urls(): void

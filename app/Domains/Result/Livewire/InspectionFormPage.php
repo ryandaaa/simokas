@@ -350,14 +350,20 @@ final class InspectionFormPage extends Component
             // Redirect to job detail after successful submission
             $this->redirect(route('jobs.show', $this->job->id), navigate: true);
         } catch (RequiredItemsMissingException $e) {
+            // Tutup modal agar pesan galat terlihat (jangan tertutup backdrop modal).
+            $this->showSubmitConfirmation = false;
             $this->actionError = __('inspection.form.error_required_items_missing', [
                 'items' => implode(', ', array_map(fn ($item) => $item['label'], $e->getMissingItems())),
             ]);
         } catch (MinPhotosNotMetException $e) {
+            // Tutup modal agar pesan galat terlihat (jangan tertutup backdrop modal).
+            $this->showSubmitConfirmation = false;
             $this->actionError = __('inspection.form.error_min_photos_not_met', [
                 'items' => implode(', ', array_map(fn ($item) => $item['label'], $e->getMissingPhotoItems())),
             ]);
         } catch (DomainException $e) {
+            // Tutup modal agar pesan galat terlihat (jangan tertutup backdrop modal).
+            $this->showSubmitConfirmation = false;
             $this->actionError = $e->getMessage();
         } finally {
             $this->isSubmitting = false;
