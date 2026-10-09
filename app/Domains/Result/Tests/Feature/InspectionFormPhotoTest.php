@@ -194,12 +194,12 @@ final class InspectionFormPhotoTest extends TestCase
         $this->actingAs($inspector);
 
         Livewire::test(InspectionFormPage::class, ['job' => $job])
-            ->call('showSubmitConfirmation')
+            ->call('openSubmitConfirmation')
             ->assertSet('showSubmitConfirmation', true)
             ->assertSet('submitModalKey', 1)
             // Membuka ulang harus menaikkan kunci agar DOM modal dibuat ulang
             // (modal yang pernah ditutup sepihak di Alpine tidak macet).
-            ->call('showSubmitConfirmation')
+            ->call('openSubmitConfirmation')
             ->assertSet('submitModalKey', 2)
             ->call('submitResult')
             ->assertSet('showSubmitConfirmation', false)
@@ -229,7 +229,7 @@ final class InspectionFormPhotoTest extends TestCase
 
         Livewire::test(InspectionFormPage::class, ['job' => $job])
             ->set("items.{$templateItem->id}.note", str_repeat('a', 1001))
-            ->call('showSubmitConfirmation')
+            ->call('openSubmitConfirmation')
             ->assertSet('showSubmitConfirmation', true)
             ->call('submitResult')
             ->assertSet('showSubmitConfirmation', false)
@@ -259,7 +259,7 @@ final class InspectionFormPhotoTest extends TestCase
 
         Livewire::test(InspectionFormPage::class, ['job' => $job])
             ->set("items.{$templateItem->id}.rating", ItemRating::Good->value)
-            ->call('showSubmitConfirmation')
+            ->call('openSubmitConfirmation')
             ->call('submitResult')
             ->assertSet('showSubmitConfirmation', false)
             ->assertSee(__('inspection.form.error_unexpected'));

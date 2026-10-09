@@ -81,7 +81,7 @@ final class SubmitReproTest extends TestCase
         }
 
         $component
-            ->call('showSubmitConfirmation')
+            ->call('openSubmitConfirmation')
             ->call('submitResult')
             ->assertRedirect(route('jobs.show', $job->id));
 

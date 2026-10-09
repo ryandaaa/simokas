@@ -241,7 +241,7 @@
                         <i aria-hidden="true" class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
                 @else
-                    <button type="button" wire:click="showSubmitConfirmation" wire:loading.attr="disabled" wire:target="showSubmitConfirmation"
+                    <button type="button" wire:click="openSubmitConfirmation" wire:loading.attr="disabled" wire:target="openSubmitConfirmation"
                         class="inline-flex items-center justify-center gap-2 px-7 py-3 bg-ds-green hover:brightness-95 text-white font-bold text-sm rounded-xl transition-all shadow-md disabled:opacity-60">
                         <i aria-hidden="true" class="fa-solid fa-check text-xs"></i>
                         {{ __('inspection.form.submit_result') }}

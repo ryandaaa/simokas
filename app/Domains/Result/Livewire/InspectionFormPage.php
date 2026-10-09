@@ -313,7 +313,7 @@ final class InspectionFormPage extends Component
         return ItemRating::cases();
     }
 
-    public function showSubmitConfirmation(): void
+    public function openSubmitConfirmation(): void
     {
         // [DIAGNOSTIK SEMENTARA] Jejak pembukaan modal konfirmasi.
         Log::info('Inspection submit modal opened.', [
