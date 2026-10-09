@@ -42,7 +42,8 @@
                 {{-- Brand/Logo --}}
                 <div class="flex items-center">
                     <a href="{{ url('/') }}" class="flex items-center rounded-xl px-1 py-1 select-none">
-                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" class="h-9 sm:h-12 w-auto">
+                        <img src="{{ asset('images/logo-simokas-mobile.png') }}" alt="SIMOKAS" width="444" height="477" class="h-9 w-auto sm:hidden">
+                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" width="1767" height="477" class="hidden sm:block h-12 w-auto">
                     </a>
                 </div>
 
@@ -128,14 +129,14 @@
                             <div class="relative" x-data="{ accountMenuOpen: false }" @click.outside="accountMenuOpen = false" @keydown.escape.window="accountMenuOpen = false">
                                 <button type="button"
                                         @click="accountMenuOpen = !accountMenuOpen"
-                                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold text-ds-ink hover:bg-ds-canvas transition-colors"
+                                        class="flex items-center gap-1.5 p-1.5 sm:px-3 sm:py-1.5 rounded-full text-sm font-semibold text-ds-ink hover:bg-ds-canvas transition-colors"
                                         aria-haspopup="true"
                                         :aria-expanded="accountMenuOpen.toString()"
                                         aria-label="{{ __('ui.layout.account_menu') }}">
-                                    <span class="w-7 h-7 rounded-full bg-ds-blue-soft text-ds-blue-ink flex items-center justify-center text-xs font-extrabold uppercase shrink-0" aria-hidden="true">
+                                    <span class="w-8 h-8 rounded-full bg-ds-blue-soft text-ds-blue-ink flex items-center justify-center text-xs font-extrabold uppercase shrink-0" aria-hidden="true">
                                         {{ mb_substr(auth()->user()->name, 0, 1) }}
                                     </span>
-                                    <span class="max-w-28 truncate">{{ auth()->user()->name }}</span>
+                                    <span class="hidden sm:inline max-w-28 truncate">{{ auth()->user()->name }}</span>
                                 </button>
                                 <div x-show="accountMenuOpen"
                                      x-cloak

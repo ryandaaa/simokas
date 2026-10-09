@@ -119,6 +119,7 @@ it('shows account menu with Keluar for logged-in users', function () {
     $view = $this->actingAs($user)->blade('<x-layouts.app title="Uji Menu"><p>Konten</p></x-layouts.app>');
 
     $view->assertSee('Pengguna Menu Akun');
+    $view->assertSee('hidden sm:inline max-w-28 truncate', false);
     $view->assertSee(__('ui.layout.account_menu'));
     $view->assertSee(__('ui.layout.dashboard'));
     $view->assertSee(route('dashboard'), false);
@@ -314,4 +315,13 @@ it('renders floating accessibility widget on every page', function () {
     $view->assertSee(__('ui.layout.a11y_title'));
     $view->assertSee('simokas-a11y', false);
     $view->assertSee('fa-universal-access', false);
+});
+
+it('renders responsive navbar logo with mobile and desktop assets', function () {
+    $view = $this->blade('<x-layouts.app title="Uji Logo"><p>Konten</p></x-layouts.app>');
+
+    $view->assertSee(asset('images/logo-simokas-mobile.png'), false);
+    $view->assertSee(asset('images/logo-simokas.png'), false);
+    $view->assertSee('sm:hidden', false);
+    $view->assertSee('hidden sm:block', false);
 });
