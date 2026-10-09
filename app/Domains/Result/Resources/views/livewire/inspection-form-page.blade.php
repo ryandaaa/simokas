@@ -257,47 +257,55 @@
             </div>
         @endif
 
-        {{-- Submit Confirmation Modal --}}
+        {{-- Submit Confirmation Modal (tanpa Alpine: semua aksi lewat Livewire agar tidak ada state ganda) --}}
         @if ($showSubmitConfirmation)
-            <div wire:key="submit-result-modal-{{ $submitModalKey }}">
-            <x-ui.modal
-                :show="true"
-                name="submit-result-modal"
-            >
-                <div class="space-y-4">
-                    <div>
-                        <h3 class="text-lg font-extrabold text-ds-ink">{{ __('inspection.form.submit_confirmation_title') }}</h3>
-                        <p class="text-sm text-ds-muted mt-2">{{ __('inspection.form.submit_confirmation_message') }}</p>
-                    </div>
+            <div wire:key="submit-result-modal-{{ $submitModalKey }}"
+                 class="fixed inset-0 z-50 overflow-y-auto"
+                 role="dialog" aria-modal="true" aria-labelledby="submit-result-title">
+                <div class="fixed inset-0 bg-ds-ink/50" wire:click="cancelSubmit" aria-hidden="true"></div>
 
-                    <div class="bg-ds-amber-soft/40 border border-ds-amber-soft rounded-2xl p-3">
-                        <p class="text-xs font-bold text-ds-amber-ink">{{ __('inspection.form.submit_warning') }}</p>
-                    </div>
+                <div class="flex min-h-full items-center justify-center p-4 text-center">
+                    <div class="relative w-full max-w-md rounded-2xl bg-white text-left shadow-xl border border-ds-line/80 p-6">
+                        <button type="button"
+                                wire:click="cancelSubmit"
+                                class="absolute top-5 right-5 w-9 h-9 rounded-full bg-ds-soft text-ds-muted hover:text-ds-ink flex items-center justify-center"
+                                aria-label="{{ __('ui.actions.close') }}">
+                            <x-ui.icon name="silang" class="w-5 h-5" />
+                        </button>
 
-                    <x-slot:footer>
-                        <x-ui.button
-                            type="button"
-                            variant="secondary"
-                            wire:click="cancelSubmit"
-                            :disabled="$isSubmitting"
-                        >
-                            {{ __('ui.actions.cancel') }}
-                        </x-ui.button>
-                        <x-ui.button
-                            type="button"
-                            variant="success"
-                            wire:click="submitResult"
-                            wire:loading.attr="disabled"
-                            wire:target="submitResult"
-                            :loading="$isSubmitting"
-                            icon="check"
-                        >
-                            <span wire:loading.remove wire:target="submitResult">{{ __('inspection.form.submit_result') }}</span>
-                            <span wire:loading wire:target="submitResult">{{ __('inspection.form.submitting') }}</span>
-                        </x-ui.button>
-                    </x-slot:footer>
+                        <div class="mb-5 pr-10">
+                            <h3 id="submit-result-title" class="text-lg font-extrabold text-ds-ink">{{ __('inspection.form.submit_confirmation_title') }}</h3>
+                            <p class="mt-1.5 text-sm text-ds-muted">{{ __('inspection.form.submit_confirmation_message') }}</p>
+                        </div>
+
+                        <div class="bg-ds-amber-soft/40 border border-ds-amber-soft rounded-2xl p-3">
+                            <p class="text-xs font-bold text-ds-amber-ink">{{ __('inspection.form.submit_warning') }}</p>
+                        </div>
+
+                        <div class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-ds-line/60">
+                            <x-ui.button
+                                type="button"
+                                variant="secondary"
+                                wire:click="cancelSubmit"
+                                :disabled="$isSubmitting"
+                            >
+                                {{ __('ui.actions.cancel') }}
+                            </x-ui.button>
+                            <x-ui.button
+                                type="button"
+                                variant="success"
+                                wire:click="submitResult"
+                                wire:loading.attr="disabled"
+                                wire:target="submitResult"
+                                :loading="$isSubmitting"
+                                icon="check"
+                            >
+                                <span wire:loading.remove wire:target="submitResult">{{ __('inspection.form.submit_result') }}</span>
+                                <span wire:loading wire:target="submitResult">{{ __('inspection.form.submitting') }}</span>
+                            </x-ui.button>
+                        </div>
+                    </div>
                 </div>
-            </x-ui.modal>
             </div>
         @endif
     @endif
