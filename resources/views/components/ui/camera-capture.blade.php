@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            {{-- Tombol Aksi: Ulangi dan Pakai Foto Ini --}}
+            {{-- Tombol Aksi: Ulangi (foto sudah tersimpan, tidak ada aksi "pakai" di sini) --}}
             <div class="flex items-center gap-3">
                 <x-ui.button type="button"
                              variant="secondary"
@@ -74,16 +74,6 @@
                              @click="retake()"
                              {{ $attributes->whereStartsWith('wire:retake') }}>
                     {{ __('ui.camera.retake') }}
-                </x-ui.button>
-
-                <x-ui.button type="button"
-                             variant="primary"
-                             icon="centang"
-                             class="flex-1 min-h-[44px]"
-                             @click="usePhoto()"
-                             ::loading="isProcessing"
-                             {{ $attributes->whereStartsWith('wire:use') }}>
-                    {{ __('ui.camera.use_this') }}
                 </x-ui.button>
             </div>
         </div>
@@ -102,7 +92,13 @@
                 Hanya menerima tangkapan langsung dari kamera demi keabsahan inspeksi.
             </p>
 
-            <div class="flex flex-wrap items-center justify-center gap-3">
+            {{-- Indikator proses: terlihat saat foto HP sedang diolah (decode + stempel + kompres) --}}
+            <div x-show="isProcessing" x-cloak class="flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 text-base font-medium text-obs">
+                <x-ui.icon name="panah-putar" class="w-5 h-5 animate-spin" />
+                <span>{{ __('result.photos.processing') }}</span>
+            </div>
+
+            <div x-show="!isProcessing" class="flex flex-wrap items-center justify-center gap-3">
                 <x-ui.button type="button"
                              variant="secondary"
                              icon="kamera"
@@ -148,6 +144,11 @@
                         :title="__('ui.camera.permission_denied')"
                         :message="__('result.photos.permission_denied')" />
         </div>
+
+        {{-- Galat --}}
+        <div x-show="error" x-cloak>
+            <x-ui.alert variant="danger" x-text="error" />
+        </div>
     </div>
 @else
     {{-- Keadaan Siap Ambil Foto (Kerangka Kamera Siap Pakai) --}}
@@ -157,14 +158,15 @@
              initialPhotoUrl: null,
              formattedTime: '{{ $formattedTime }}',
              hasInitialPermissionDenied: false,
-             itemId: '{{ $itemId }}'
+             itemId: '{{ $itemId }}',
+             noPhotoMessage: '{{ __('result.photos.no_new_photo') }}'
          })">
         @if ($displayLabel)
             <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
         @endif
 
         {{-- Keadaan Siap Ambil / Tombol Pemicu Kamera --}}
-        <div x-show="!previewUrl && !isStreaming && !permissionDenied" class="relative aspect-[4/3] w-full rounded-[10px] border-2 border-dashed border-pebble/40 bg-fog/20 flex flex-col items-center justify-center p-6 text-center">
+        <div x-show="!previewUrl && !isStreaming && !permissionDenied" x-cloak class="relative aspect-[4/3] w-full rounded-[10px] border-2 border-dashed border-pebble/40 bg-fog/20 flex flex-col items-center justify-center p-6 text-center">
             <div class="w-16 h-16 rounded-full bg-fog text-forest flex items-center justify-center mb-3">
                 <x-ui.icon name="kamera" class="w-8 h-8" />
             </div>
@@ -177,7 +179,13 @@
                 Hanya menerima tangkapan langsung dari kamera demi keabsahan inspeksi.
             </p>
 
-            <div class="flex flex-wrap items-center justify-center gap-3">
+            {{-- Indikator proses: terlihat saat foto HP sedang diolah (decode + stempel + kompres) --}}
+            <div x-show="isProcessing" x-cloak class="flex items-center justify-center gap-2 min-h-[44px] px-6 py-2.5 text-base font-medium text-obs">
+                <x-ui.icon name="panah-putar" class="w-5 h-5 animate-spin" />
+                <span>{{ __('result.photos.processing') }}</span>
+            </div>
+
+            <div x-show="!isProcessing" class="flex flex-wrap items-center justify-center gap-3">
                 <x-ui.button type="button"
                              variant="secondary"
                              icon="kamera"
@@ -240,6 +248,7 @@
                              variant="secondary"
                              icon="panah-putar"
                              class="flex-1 min-h-[44px]"
+                             ::disabled="isProcessing"
                              @click="retake()"
                              {{ $attributes->whereStartsWith('wire:retake') }}>
                     {{ __('ui.camera.retake') }}
@@ -249,10 +258,13 @@
                              variant="primary"
                              icon="centang"
                              class="flex-1 min-h-[44px]"
-                             @click="usePhoto()"
-                             ::loading="isProcessing"
-                             {{ $attributes->whereStartsWith('wire:use') }}>
-                    {{ __('ui.camera.use_this') }}
+                             ::disabled="isProcessing"
+                             @click="usePhoto()">
+                    <span x-show="isProcessing" x-cloak class="inline-flex items-center gap-2">
+                        <x-ui.icon name="panah-putar" class="w-4 h-4 animate-spin" />
+                        <span>{{ __('result.photos.uploading') }}</span>
+                    </span>
+                    <span x-show="!isProcessing">{{ __('ui.camera.use_this') }}</span>
                 </x-ui.button>
             </div>
         </div>

@@ -345,15 +345,18 @@ it('renders x-ui.camera-capture with ready, preview, and permission denied state
     $view->assertSee('Foto Depan');
     $view->assertSee('Ambil Foto');
     $view->assertSee('capture="environment"', false);
+    $view->assertSee('Memproses foto');
+    $view->assertSee(':disabled="isProcessing"', false);
+    $view->assertSee('Mengunggah');
 
-    // Preview state
+    // Preview state (saved photo): only retake is offered, "use" button is gone (dead action)
     $view = $this->blade(
         '<x-ui.camera-capture label="Foto Depan" photoUrl="/photo.jpg" jobId="JOB-123" :timestamp="$now" />',
         ['now' => $now]
     );
     $view->assertSee('ID Job: JOB-123');
     $view->assertSee('Ulangi');
-    $view->assertSee('Pakai foto ini');
+    $view->assertDontSee('Pakai foto ini');
     $view->assertSee('/photo.jpg');
 
     // Permission denied state

@@ -183,8 +183,6 @@
                                     <x-ui.camera-capture
                                         :item-id="$templateItem->id"
                                         :job-id="$job->id"
-                                        wire:model="tempPhotos.{{ $templateItem->id }}"
-                                        wire:use="applyPhoto('{{ $templateItem->id }}')"
                                     />
                                 @endif
 

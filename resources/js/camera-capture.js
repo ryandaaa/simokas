@@ -81,6 +81,7 @@ export function cameraCapture(config = {}) {
         capturedFile: null,
         stampedAt: null,
         itemId: config.itemId || null,
+        noPhotoMessage: config.noPhotoMessage || '',
 
         init() {
             if (!this.formattedTime) {
@@ -275,7 +276,14 @@ export function cameraCapture(config = {}) {
         },
 
         usePhoto() {
-            if (!this.capturedFile) return;
+            // Cegah tap ganda selama upload berjalan.
+            if (this.isProcessing) return;
+
+            // Jangan pernah diam: beri tahu user bila tidak ada berkas foto baru.
+            if (!this.capturedFile) {
+                this.error = this.noPhotoMessage || 'Belum ada foto baru.';
+                return;
+            }
 
             // If inside Livewire component
             if (this.$wire) {

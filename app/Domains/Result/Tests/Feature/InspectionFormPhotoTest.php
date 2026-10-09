@@ -75,7 +75,14 @@ final class InspectionFormPhotoTest extends TestCase
             ->assertSee('Blok Mesin')
             ->assertSee('Minyak Rem')
             ->assertSee(__('result.photos.title'))
-            ->assertSee(__('result.photos.required_notice'));
+            ->assertSee(__('result.photos.required_notice'))
+            // Regression CAM-FIX: file input must NOT carry wire:model, otherwise
+            // Livewire auto-uploads the raw photo and its re-render wipes Alpine state.
+            ->assertDontSee('wire:model="tempPhotos.', false)
+            ->assertDontSee('wire:use=', false)
+            ->assertSee(':disabled="isProcessing"', false)
+            ->assertSee(__('result.photos.processing'))
+            ->assertSee(__('result.photos.uploading'));
     }
 
     public function test_inspector_can_capture_and_apply_photo_in_draft(): void
