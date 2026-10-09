@@ -3,7 +3,8 @@
 @endphp
 
 <div class="space-y-8 ds-sans">
-    {{-- Header ala ClassiAds: eyebrow + H2 + sub, aksi di kanan --}}
+    {{-- Header ala ClassiAds: eyebrow + H2 + sub, aksi di kanan (inspektor punya kepala ringkas sendiri) --}}
+    @if ($role !== UserRole::Inspector)
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div class="space-y-2">
             <span class="text-ds-blue text-xs font-extrabold uppercase tracking-wider">{{ __('dashboard.title') }}</span>
@@ -17,6 +18,7 @@
             </a>
         @endif
     </div>
+    @endif
 
     {{-- Role-based Dashboard --}}
     @switch($role)
