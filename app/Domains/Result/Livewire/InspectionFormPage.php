@@ -283,6 +283,14 @@ final class InspectionFormPage extends Component
 
             unset($this->tempPhotos[$templateItemId]);
             $this->actionSuccess = __('result.photos.upload_success');
+
+            Log::info('Inspection photo uploaded.', [
+                'job_id' => (string) $this->job->getKey(),
+                'result_id' => (string) $this->result->getKey(),
+                'template_item_id' => (string) $templateItemId,
+                'photo_id' => (string) $photo->getKey(),
+                'inspector_id' => (string) $inspector->getKey(),
+            ]);
         } catch (DomainException $e) {
             $this->actionError = $e->getMessage();
         }

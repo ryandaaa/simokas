@@ -219,6 +219,7 @@
                     <span x-show="isProcessing" x-cloak class="inline-flex items-center gap-2 whitespace-nowrap">
                         <x-ui.icon name="panah-putar" class="w-4 h-4 animate-spin" />
                         <span>{{ __('result.photos.uploading') }}</span>
+                        <span x-show="uploadProgress > 0" x-text="uploadProgress + '%'"></span>
                     </span>
                     <span x-show="!isProcessing">{{ __('ui.camera.use_this') }}</span>
                 </x-ui.button>

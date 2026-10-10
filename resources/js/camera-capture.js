@@ -44,7 +44,7 @@ export function stampCanvas(canvas, jobId, formattedTime) {
 export async function compressCanvasToBlob(canvas, maxBytes = 2 * 1024 * 1024, targetMime = 'image/jpeg') {
     return new Promise((resolve) => {
         let quality = 0.88;
-        const minQuality = 0.40;
+        const minQuality = 0.30;
 
         const attempt = (q) => {
             canvas.toBlob(
@@ -76,6 +76,8 @@ export function cameraCapture(config = {}) {
         permissionMessage: '',
         isStreaming: false,
         isProcessing: false,
+        uploadProgress: 0,
+        uploadGuard: null,
         error: null,
         stream: null,
         capturedBlob: null,
@@ -128,8 +130,8 @@ export function cameraCapture(config = {}) {
                 let width = img.width;
                 let height = img.height;
 
-                // Max dimension constraint (2560px)
-                const maxDim = 2560;
+                // Batas dimensi (1920px) agar berkas HP selalu kecil dan unggahan cepat via LAN.
+                const maxDim = 1920;
                 if (width > maxDim || height > maxDim) {
                     if (width > height) {
                         height = Math.round((height * maxDim) / width);
@@ -201,6 +203,23 @@ export function cameraCapture(config = {}) {
             // Pratinjau baru (belum tersimpan): kembali ke tombol Ambil Foto.
         },
 
+        // Cegah reload tidak sengaja (mis. pull-to-refresh) selama berkas diunggah:
+        // reload di tengah jalan membuat respons sukses jadi yatim dan UI basi selamanya.
+        startUploadGuard() {
+            this.stopUploadGuard();
+            this.uploadGuard = (e) => {
+                e.preventDefault();
+            };
+            window.addEventListener('beforeunload', this.uploadGuard);
+        },
+
+        stopUploadGuard() {
+            if (this.uploadGuard) {
+                window.removeEventListener('beforeunload', this.uploadGuard);
+                this.uploadGuard = null;
+            }
+        },
+
         usePhoto() {
             // Cegah tap ganda selama upload berjalan.
             if (this.isProcessing) return;
@@ -214,6 +233,8 @@ export function cameraCapture(config = {}) {
             // If inside Livewire component
             if (this.$wire) {
                 this.isProcessing = true;
+                this.uploadProgress = 0;
+                this.startUploadGuard();
                 if (typeof this.$wire.applyPhoto === 'function' && this.itemId) {
                     this.$wire.upload(
                         `tempPhotos.${this.itemId}`,
@@ -221,14 +242,27 @@ export function cameraCapture(config = {}) {
                         () => {
                             this.$wire.applyPhoto(this.itemId, this.stampedAt);
                             this.isProcessing = false;
+                            this.uploadProgress = 0;
+                            this.stopUploadGuard();
                         },
                         (err) => {
                             this.error = 'Gagal mengunggah foto. Silakan coba lagi.';
                             this.isProcessing = false;
+                            this.uploadProgress = 0;
+                            this.stopUploadGuard();
+                        },
+                        (event) => {
+                            const pct = event && event.detail && typeof event.detail.progress === 'number'
+                                ? Math.round(event.detail.progress)
+                                : 0;
+                            this.uploadProgress = Math.min(100, Math.max(0, pct));
                         }
                     );
                     return;
                 }
+                this.isProcessing = false;
+                this.uploadProgress = 0;
+                this.stopUploadGuard();
             }
 
             this.$dispatch('photo-ready', {

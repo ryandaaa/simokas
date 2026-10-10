@@ -127,6 +127,35 @@ final class InspectionFormPhotoTest extends TestCase
         $this->assertStringContainsString('results/', $component->get('photos')[$templateItem->id]['url']);
     }
 
+    public function test_res_t05_rejects_oversized_photo_on_apply_with_clear_message(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        $templateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Eksterior',
+            'label' => 'Bodi Samping',
+            'requires_photo' => true,
+        ]);
+
+        // 2,5 MB > batas 2 MB: applyPhoto harus menolak dengan pesan yang jelas (bukan diam).
+        $file = UploadedFile::fake()->image('oversize.jpg', 800, 600)->size(2500);
+
+        $this->actingAs($inspector);
+
+        $component = Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->set('tempPhotos.'.$templateItem->id, $file)
+            ->call('applyPhoto', $templateItem->id, now()->toISOString());
+
+        $component->assertSet('actionError', __('result.photos.file_too_large'));
+        $this->assertDatabaseMissing('result_photos', [
+            'result_id' => InspectionResult::query()->where('job_id', $job->id)->first()?->id,
+        ]);
+        $this->assertArrayNotHasKey($templateItem->id, $component->get('photos'));
+    }
+
     public function test_inspector_can_retake_and_remove_photo(): void
     {
         $inspector = $this->createVerifiedInspector();

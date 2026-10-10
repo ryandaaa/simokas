@@ -388,6 +388,8 @@ it('RES-T20 offers a single Ambil Foto trigger without gallery or live stream', 
     $view->assertDontSee('Buka Galeri');
     $view->assertDontSee('startCamera()');
     $view->assertDontSee('captureFromVideo()');
+    // Indikator persen + pengaman reload selama unggah
+    $view->assertSee('uploadProgress', false);
 });
 
 it('renders x-ui.pagination with page navigation and contract support', function () {
