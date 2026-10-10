@@ -138,7 +138,8 @@
              hasInitialPermissionDenied: false,
              itemId: '{{ $itemId }}',
              hasSavedPhoto: false,
-              noPhotoMessage: '{{ __('result.photos.no_new_photo') }}'
+              noPhotoMessage: '{{ __('result.photos.no_new_photo') }}',
+              notReadyMessage: '{{ __('result.photos.not_ready') }}'
          })">
         @if ($displayLabel)
             <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
@@ -221,7 +222,7 @@
                         <span>{{ __('result.photos.uploading') }}</span>
                         <span x-show="uploadProgress > 0" x-text="uploadProgress + '%'"></span>
                     </span>
-                    <span x-show="!isProcessing">{{ __('ui.camera.use_this') }}</span>
+                    <span x-show="!isProcessing && !justSaved">{{ __('ui.camera.use_this') }}</span>
                 </x-ui.button>
             </div>
         </div>

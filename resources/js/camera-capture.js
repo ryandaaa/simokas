@@ -86,6 +86,8 @@ export function cameraCapture(config = {}) {
         itemId: config.itemId || null,
         hasSavedPhoto: Boolean(config.hasSavedPhoto),
         noPhotoMessage: config.noPhotoMessage || '',
+        notReadyMessage: config.notReadyMessage || '',
+        justSaved: false,
         cameraNotReadyMessage: config.cameraNotReadyMessage || '',
 
         init() {
@@ -190,6 +192,7 @@ export function cameraCapture(config = {}) {
             this.capturedBlob = null;
             this.capturedFile = null;
             this.error = null;
+            this.justSaved = false;
 
             // Hanya hubungi server bila foto tersimpan benar-benar ada. Panggilan
             // yang tidak perlu me-render ulang Livewire dan merusak instance Alpine
@@ -240,10 +243,28 @@ export function cameraCapture(config = {}) {
                         `tempPhotos.${this.itemId}`,
                         this.capturedFile,
                         () => {
-                            this.$wire.applyPhoto(this.itemId, this.stampedAt);
-                            this.isProcessing = false;
-                            this.uploadProgress = 0;
-                            this.stopUploadGuard();
+                            // Await: tampilkan foto langsung dari kanal data (tak andalkan morph).
+                            (async () => {
+                                try {
+                                    const saved = await this.$wire.applyPhoto(this.itemId, this.stampedAt);
+                                    if (saved && saved.url) {
+                                        if (this.previewUrl && this.previewUrl.startsWith('blob:')) {
+                                            URL.revokeObjectURL(this.previewUrl);
+                                        }
+                                        this.previewUrl = saved.url;
+                                        this.capturedFile = null;
+                                        this.justSaved = true;
+                                    } else {
+                                        this.error = this.notReadyMessage || 'Foto belum siap. Silakan coba lagi.';
+                                    }
+                                } catch (err) {
+                                    this.error = 'Gagal menyimpan foto. Silakan coba lagi.';
+                                } finally {
+                                    this.isProcessing = false;
+                                    this.uploadProgress = 0;
+                                    this.stopUploadGuard();
+                                }
+                            })();
                             // Jaring pengaman: bila render sesudah-simpan tidak teraplikasi
                             // (respons hilang di jaringan lambat), sinkron paksa sekali.
                             // Kasus normal: cabang sudah berganti (root lepas) = no-op.

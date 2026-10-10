@@ -188,6 +188,29 @@ final class InspectionFormPhotoTest extends TestCase
         $component->assertSee(__('ui.camera.retake'));
     }
 
+    public function test_res_t22_apply_without_uploaded_file_shows_retry_message(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        $templateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Eksterior',
+            'label' => 'Bodi Depan',
+            'requires_photo' => true,
+        ]);
+
+        $this->actingAs($inspector);
+
+        // Tanpa berkas terunggah: tidak boleh diam — pesan terlihat + tanpa foto.
+        $component = Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->call('applyPhoto', $templateItem->id, now()->toISOString());
+
+        $component->assertSet('actionError', __('result.photos.not_ready'));
+        $this->assertArrayNotHasKey($templateItem->id, $component->get('photos'));
+    }
+
     public function test_inspector_can_retake_and_remove_photo(): void
     {
         $inspector = $this->createVerifiedInspector();

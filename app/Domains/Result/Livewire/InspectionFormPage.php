@@ -245,16 +245,26 @@ final class InspectionFormPage extends Component
             ->values();
     }
 
+    /**
+     * Menerapkan foto yang sudah diunggah ke item. Mengembalikan data foto
+     * (id + url) agar klien menampilkannya langsung dari kanal data —
+     * tidak bergantung pada morph yang bisa hilang di jaringan lambat.
+     *
+     * @return array{id: string, url: string}|null
+     */
     public function applyPhoto(
         string $templateItemId,
         UploadResultPhoto $uploadPhoto,
         ?string $stampedAt = null
-    ): void {
+    ): ?array {
         Gate::authorize('updateDraft', $this->result);
 
         $file = $this->tempPhotos[$templateItemId] ?? null;
         if ($file === null) {
-            return;
+            $this->actionError = __('result.photos.not_ready');
+            $this->actionSuccess = null;
+
+            return null;
         }
 
         $this->actionError = null;
@@ -291,8 +301,12 @@ final class InspectionFormPage extends Component
                 'photo_id' => (string) $photo->getKey(),
                 'inspector_id' => (string) $inspector->getKey(),
             ]);
+
+            return ['id' => (string) $photo->getKey(), 'url' => $photo->temporaryUrl(60)];
         } catch (DomainException $e) {
             $this->actionError = $e->getMessage();
+
+            return null;
         }
     }
 
