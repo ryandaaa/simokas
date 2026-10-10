@@ -88,38 +88,38 @@
                             @endif
 
                             {{-- Status Chip --}}
-                            <div class="absolute top-3 right-3">
-                                <span class="text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider {{ $chip($listing->status->color()) }}">
+                            <div class="absolute top-2 right-2 sm:top-3 sm:right-3">
+                                <span class="text-[9px] sm:text-[10px] px-2 sm:px-2.5 py-1 rounded-full font-bold uppercase tracking-wider {{ $chip($listing->status->color()) }}">
                                     {{ $listing->status->label() }}
                                 </span>
                             </div>
                         </div>
 
                         {{-- Card Details --}}
-                        <div class="p-4 space-y-2">
-                            <p class="text-[11px] uppercase font-bold tracking-wider text-ds-muted">
+                        <div class="p-3 sm:p-4 space-y-1.5 sm:space-y-2">
+                            <p class="text-[10px] sm:text-[11px] uppercase font-bold tracking-wider text-ds-muted truncate">
                                 {{ $listing->vehicle_type->label() }} &bull; {{ $listing->year }}
                             </p>
-                            <h2 class="text-base font-extrabold text-ds-ink line-clamp-1 group-hover:text-ds-blue transition-colors" title="{{ $listing->title }}">
+                            <h2 class="text-sm sm:text-base font-extrabold text-ds-ink truncate group-hover:text-ds-blue transition-colors" title="{{ $listing->title }}">
                                 {{ $listing->title }}
                             </h2>
-                            <p class="text-xl font-extrabold text-ds-ink">
+                            <p class="text-base sm:text-xl font-extrabold text-ds-ink truncate">
                                 {{ \App\Support\Money::format($listing->price) }}
                             </p>
-                            <div class="flex items-center gap-3 text-xs text-ds-muted pt-1">
-                                <span>{{ number_format($listing->odometer_km, 0, ',', '.') }} km</span>
-                                <span>&bull;</span>
-                                <span>{{ $listing->transmission->label() }}</span>
+                            <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] sm:text-xs text-ds-muted pt-0.5 sm:pt-1">
+                                <span class="whitespace-nowrap">{{ number_format($listing->odometer_km, 0, ',', '.') }} km</span>
+                                <span aria-hidden="true">&bull;</span>
+                                <span class="whitespace-nowrap">{{ $listing->transmission->label() }}</span>
                                 @if ($listing->area_name)
-                                    <span>&bull;</span>
-                                    <span>{{ $listing->area_name }}</span>
+                                    <span aria-hidden="true">&bull;</span>
+                                    <span class="truncate">{{ $listing->area_name }}</span>
                                 @endif
                             </div>
                         </div>
                     </div>
 
                     {{-- Card Footer --}}
-                    <div class="px-4 py-3 border-t border-ds-line/60 bg-ds-canvas/80 space-y-2">
+                    <div class="px-3 sm:px-4 py-2.5 sm:py-3 border-t border-ds-line/60 bg-ds-canvas/80 space-y-2">
                         @if ($listing->status->isRejected() && $listing->rejection_reason)
                             <div role="alert" class="p-3 rounded-xl border border-ds-red-soft bg-ds-red-soft/40">
                                 <p class="text-xs font-extrabold text-ds-ink">{{ __('listing.mine.rejection_reason') }}</p>
@@ -134,14 +134,14 @@
                                 {{ __('listing.mine.resubmit') }}
                             </button>
                         @endif
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs text-ds-muted">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] sm:text-xs text-ds-muted truncate">
                                 {{ $listing->created_at?->diffForHumans() }}
                             </span>
 
                             <a
                                 href="{{ route('listings.edit', $listing) }}"
-                                class="min-h-[44px] inline-flex items-center gap-1 text-xs font-bold text-ds-blue hover:text-ds-blue-ink"
+                                class="min-h-[44px] shrink-0 inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-ds-blue hover:text-ds-blue-ink"
                             >
                                 <span>{{ __('listing.mine.edit') }}</span>
                                 <i aria-hidden="true" class="fa-solid fa-arrow-right"></i>
