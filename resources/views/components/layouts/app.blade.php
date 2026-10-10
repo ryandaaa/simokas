@@ -213,8 +213,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
                 <div class="space-y-3 col-span-2 md:col-span-1">
-                    <a href="{{ url('/') }}" class="flex items-center gap-2 text-ds-ink font-extrabold text-lg">
-                        <i aria-hidden="true" class="fa-solid fa-shield-halved text-ds-blue"></i> SIMOKAS
+                    <a href="{{ url('/') }}" class="inline-block">
+                        <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" width="1767" height="477" class="h-8 w-auto">
                     </a>
                     <p class="text-ds-muted leading-relaxed">
                         Platform jual beli kendaraan bekas dengan inspeksi independen di Kota Pekanbaru. Netral 100% — kami tidak menjual kendaraan.
