@@ -131,6 +131,7 @@
                         {{ $headerActions }}
                     @else
                         @auth
+                            <livewire:notification.bell />
                             <div class="relative" x-data="{ accountMenuOpen: false }" @click.outside="accountMenuOpen = false" @keydown.escape.window="accountMenuOpen = false">
                                 <button type="button"
                                         @click="accountMenuOpen = !accountMenuOpen"
@@ -142,6 +143,7 @@
                                         {{ mb_substr(auth()->user()->name, 0, 1) }}
                                     </span>
                                     <span class="hidden sm:inline max-w-28 truncate">{{ auth()->user()->name }}</span>
+                                    <x-ui.icon name="chevron-down" class="w-4 h-4 shrink-0 text-ds-muted" />
                                 </button>
                                 <div x-show="accountMenuOpen"
                                      x-cloak
