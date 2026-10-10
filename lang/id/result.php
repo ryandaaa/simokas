@@ -21,6 +21,8 @@ return [
         'uploading' => 'Mengunggah…',
         'no_new_photo' => 'Belum ada foto baru. Silakan ambil foto terlebih dahulu.',
         'not_ready' => 'Foto belum siap tersimpan. Silakan tekan "Pakai foto ini" sekali lagi.',
+        'upload_failed' => 'Gagal mengunggah foto. Silakan coba lagi.',
+        'save_failed_retry' => 'Jaringan lambat atau gagal. Foto belum tersimpan — silakan tekan "Pakai foto ini" sekali lagi.',
         'required_notice' => 'Item ini wajib menyertakan foto hasil pemeriksaan.',
     ],
     'inspection_results' => 'Hasil Inspeksi',

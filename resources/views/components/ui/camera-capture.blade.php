@@ -139,7 +139,9 @@
              itemId: '{{ $itemId }}',
              hasSavedPhoto: false,
               noPhotoMessage: '{{ __('result.photos.no_new_photo') }}',
-              notReadyMessage: '{{ __('result.photos.not_ready') }}'
+              notReadyMessage: '{{ __('result.photos.not_ready') }}',
+              uploadFailedMessage: '{{ __('result.photos.upload_failed') }}',
+              saveRetryMessage: '{{ __('result.photos.save_failed_retry') }}'
          })">
         @if ($displayLabel)
             <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>

@@ -87,6 +87,8 @@ export function cameraCapture(config = {}) {
         hasSavedPhoto: Boolean(config.hasSavedPhoto),
         noPhotoMessage: config.noPhotoMessage || '',
         notReadyMessage: config.notReadyMessage || '',
+        uploadFailedMessage: config.uploadFailedMessage || '',
+        saveRetryMessage: config.saveRetryMessage || '',
         justSaved: false,
         cameraNotReadyMessage: config.cameraNotReadyMessage || '',
 
@@ -244,9 +246,19 @@ export function cameraCapture(config = {}) {
                         this.capturedFile,
                         () => {
                             // Await: tampilkan foto langsung dari kanal data (tak andalkan morph).
+                            // Batas 30 dtk: respons yang tidak kunjung tiba (jaringan stall)
+                            // tidak boleh menggantung selamanya — tampilkan pesan + bisa coba lagi.
+                            // Berkas tetap dipegang (capturedFile) sehingga percobaan ulang aman.
                             (async () => {
+                                const APPLY_TIMEOUT_MS = 30000;
                                 try {
-                                    const saved = await this.$wire.applyPhoto(this.itemId, this.stampedAt);
+                                    const applyPromise = this.$wire.applyPhoto(this.itemId, this.stampedAt);
+                                    const saved = await Promise.race([
+                                        applyPromise,
+                                        new Promise((_, reject) => setTimeout(
+                                            () => reject(new Error('apply-timeout')), APPLY_TIMEOUT_MS
+                                        )),
+                                    ]);
                                     if (saved && saved.url) {
                                         if (this.previewUrl && this.previewUrl.startsWith('blob:')) {
                                             URL.revokeObjectURL(this.previewUrl);
@@ -258,7 +270,7 @@ export function cameraCapture(config = {}) {
                                         this.error = this.notReadyMessage || 'Foto belum siap. Silakan coba lagi.';
                                     }
                                 } catch (err) {
-                                    this.error = 'Gagal menyimpan foto. Silakan coba lagi.';
+                                    this.error = this.saveRetryMessage || 'Gagal menyimpan foto. Silakan coba lagi.';
                                 } finally {
                                     this.isProcessing = false;
                                     this.uploadProgress = 0;
@@ -268,9 +280,11 @@ export function cameraCapture(config = {}) {
                             // Jaring pengaman: bila render sesudah-simpan tidak teraplikasi
                             // (respons hilang di jaringan lambat), sinkron paksa sekali.
                             // Kasus normal: cabang sudah berganti (root lepas) = no-op.
+                            // Selama masih memproses (await tertahan), jangan tambah antrean.
                             const pendingBlob = this.previewUrl;
                             const component = this;
                             setTimeout(() => {
+                                if (component.isProcessing) return;
                                 const root = component.$el;
                                 if (!root || !root.isConnected) return;
                                 if (!pendingBlob || !pendingBlob.startsWith('blob:')) return;
@@ -282,7 +296,7 @@ export function cameraCapture(config = {}) {
                             }, 5000);
                         },
                         (err) => {
-                            this.error = 'Gagal mengunggah foto. Silakan coba lagi.';
+                            this.error = this.uploadFailedMessage || 'Gagal mengunggah foto. Silakan coba lagi.';
                             this.isProcessing = false;
                             this.uploadProgress = 0;
                             this.stopUploadGuard();

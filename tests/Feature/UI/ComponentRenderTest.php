@@ -392,6 +392,8 @@ it('RES-T20 offers a single Ambil Foto trigger without gallery or live stream', 
     $view->assertSee('uploadProgress', false);
     // Klien menampilkan foto dari return-data applyPhoto + pesan siap terlihat
     $view->assertSee('notReadyMessage', false);
+    $view->assertSee('uploadFailedMessage', false);
+    $view->assertSee('saveRetryMessage', false);
     $view->assertSee('justSaved', false);
 });
 
