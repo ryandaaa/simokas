@@ -41,8 +41,7 @@
               formattedTime: '{{ $formattedTime }}',
               hasInitialPermissionDenied: false,
               itemId: '{{ $itemId }}',
-              hasSavedPhoto: true,
-              cameraNotReadyMessage: '{{ __('result.photos.camera_not_ready') }}'
+               hasSavedPhoto: true
          })">
         @if ($displayLabel)
             <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
@@ -100,15 +99,7 @@
                 <span>{{ __('result.photos.processing') }}</span>
             </div>
 
-            <div x-show="!isProcessing" class="flex flex-wrap items-center justify-center gap-3">
-                <x-ui.button type="button"
-                             variant="secondary"
-                             icon="kamera"
-                             class="min-h-[44px]"
-                             @click="startCamera()">
-                    {{ __('result.photos.open_camera') }}
-                </x-ui.button>
-
+            <div x-show="!isProcessing" class="flex items-center justify-center">
                 <label class="cursor-pointer">
                     <input type="file"
                            accept="image/*"
@@ -122,23 +113,6 @@
                         <span>{{ __('ui.actions.take_photo') }}</span>
                     </span>
                 </label>
-            </div>
-        </div>
-
-        {{-- Live Stream Video --}}
-        <div x-show="isStreaming" x-cloak class="space-y-3">
-            <div class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden bg-text">
-                <video x-ref="video" playsinline autoplay muted wire:ignore class="absolute inset-0 w-full h-full object-cover"></video>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <x-ui.button type="button" variant="secondary" class="flex-1 min-h-[44px]" @click="stopCamera()">
-                    {{ __('ui.actions.cancel') }}
-                </x-ui.button>
-
-                <x-ui.button type="button" variant="primary" icon="kamera" class="flex-1 min-h-[44px]" @click="captureFromVideo()">
-                    {{ __('result.photos.capture') }}
-                </x-ui.button>
             </div>
         </div>
 
@@ -164,8 +138,7 @@
              hasInitialPermissionDenied: false,
              itemId: '{{ $itemId }}',
              hasSavedPhoto: false,
-             noPhotoMessage: '{{ __('result.photos.no_new_photo') }}',
-             cameraNotReadyMessage: '{{ __('result.photos.camera_not_ready') }}'
+              noPhotoMessage: '{{ __('result.photos.no_new_photo') }}'
          })">
         @if ($displayLabel)
             <label class="block text-base font-bold text-obs">{{ $displayLabel }}</label>
@@ -191,15 +164,7 @@
                 <span>{{ __('result.photos.processing') }}</span>
             </div>
 
-            <div x-show="!isProcessing" class="flex flex-wrap items-center justify-center gap-3">
-                <x-ui.button type="button"
-                             variant="secondary"
-                             icon="kamera"
-                             class="min-h-[44px]"
-                             @click="startCamera()">
-                    {{ __('result.photos.open_camera') }}
-                </x-ui.button>
-
+            <div x-show="!isProcessing" class="flex items-center justify-center">
                 {{-- Input kamera tersembunyi dengan tombol pemicu bawaan HP --}}
                 <label class="cursor-pointer">
                     <input type="file"
@@ -214,23 +179,6 @@
                         <span>{{ __('ui.actions.take_photo') }}</span>
                     </span>
                 </label>
-            </div>
-        </div>
-
-        {{-- Live Stream Video dari Browser Camera --}}
-        <div x-show="isStreaming" x-cloak class="space-y-3">
-            <div class="relative aspect-[4/3] w-full rounded-[10px] overflow-hidden bg-forest">
-                <video x-ref="video" playsinline autoplay muted wire:ignore class="absolute inset-0 w-full h-full object-cover"></video>
-            </div>
-
-            <div class="flex items-center gap-3">
-                <x-ui.button type="button" variant="secondary" class="flex-1 min-h-[44px]" @click="stopCamera()">
-                    {{ __('ui.actions.cancel') }}
-                </x-ui.button>
-
-                <x-ui.button type="button" variant="primary" icon="kamera" class="flex-1 min-h-[44px]" @click="captureFromVideo()">
-                    {{ __('result.photos.capture') }}
-                </x-ui.button>
             </div>
         </div>
 

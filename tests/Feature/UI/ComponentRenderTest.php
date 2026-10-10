@@ -378,6 +378,18 @@ it('RES-T19 keeps camera-capture photo action buttons inside the card on narrow 
     $view->assertSee('Pakai foto ini');
 });
 
+it('RES-T20 offers a single Ambil Foto trigger without gallery or live stream', function () {
+    $view = $this->blade('<x-ui.camera-capture label="Foto Depan" />');
+
+    // Satu-satunya pemicu: input kamera bawaan HP (capture="environment")
+    $view->assertSee('Ambil Foto');
+    $view->assertSee('capture="environment"', false);
+    $view->assertDontSee('Buka Kamera');
+    $view->assertDontSee('Buka Galeri');
+    $view->assertDontSee('startCamera()');
+    $view->assertDontSee('captureFromVideo()');
+});
+
 it('renders x-ui.pagination with page navigation and contract support', function () {
     // Primitive props
     $view = $this->blade('<x-ui.pagination :currentPage="2" :totalPages="5" :total="60" previousUrl="/p/1" nextUrl="/p/3" />');

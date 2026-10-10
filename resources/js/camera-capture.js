@@ -1,7 +1,8 @@
 /**
  * SIMOKAS Camera Capture & Canvas Watermarking Utility
- * Handles browser camera access (getUserMedia), native mobile fallback,
- * canvas stamping (Job ID and Timestamp), and client-side compression <= 2 MB.
+ * Single native capture input (capture="environment"): opens the device camera
+ * app on mobile, file picker on desktop. Canvas stamping (Job ID and
+ * Timestamp), and client-side compression <= 2 MB.
  */
 
 export function stampCanvas(canvas, jobId, formattedTime) {
@@ -95,103 +96,12 @@ export function cameraCapture(config = {}) {
             }
         },
 
-        async startCamera() {
-            // Cegah stream ganda: Android mengunci kamera bila track lama tidak dilepas.
-            if (this.isStreaming) return;
-
-            this.error = null;
-            this.permissionDenied = false;
-            this.stopCamera();
-
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                // Fallback to native input if getUserMedia is not supported
-                if (this.$refs.fallbackInput) {
-                    this.$refs.fallbackInput.click();
-                }
-                return;
-            }
-
-            try {
-                this.stream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: { ideal: 'environment' },
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 },
-                    },
-                    audio: false,
-                });
-
-                this.isStreaming = true;
-                this.$nextTick(() => {
-                    if (this.$refs.video) {
-                        this.$refs.video.srcObject = this.stream;
-                        this.$refs.video.play().catch(() => {});
-                    }
-                });
-            } catch (err) {
-                this.isStreaming = false;
-                this.permissionDenied = true;
-                this.permissionMessage = 'Izin kamera ditolak. Harap izinkan akses kamera di pengaturan browser Anda.';
-            }
-        },
-
         stopCamera() {
             if (this.stream) {
                 this.stream.getTracks().forEach((track) => track.stop());
                 this.stream = null;
             }
             this.isStreaming = false;
-        },
-
-        async captureFromVideo() {
-            if (!this.$refs.video) return;
-
-            const video = this.$refs.video;
-
-            // Jangan hasilkan foto hitam bila stream belum mengalirkan frame.
-            if (!video.videoWidth || video.readyState < 2) {
-                this.error = this.cameraNotReadyMessage || 'Kamera belum siap.';
-                return;
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 1280;
-            canvas.height = video.videoHeight || 720;
-
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return;
-
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            const now = new Date();
-            const timeStr = now.toLocaleString('id-ID', {
-                dateStyle: 'medium',
-                timeStyle: 'short',
-            });
-            this.formattedTime = timeStr;
-            this.stampedAt = now.toISOString();
-
-            stampCanvas(canvas, this.jobId, timeStr);
-
-            this.isProcessing = true;
-            try {
-                const blob = await compressCanvasToBlob(canvas);
-                if (blob) {
-                    this.capturedBlob = blob;
-                    this.capturedFile = new File([blob], `capture-${Date.now()}.jpg`, {
-                        type: 'image/jpeg',
-                        lastModified: Date.now(),
-                    });
-                    this.capturedFile.isCameraCapture = true;
-
-                    if (this.previewUrl && this.previewUrl.startsWith('blob:')) {
-                        URL.revokeObjectURL(this.previewUrl);
-                    }
-                    this.previewUrl = URL.createObjectURL(blob);
-                }
-            } finally {
-                this.isProcessing = false;
-                this.stopCamera();
-            }
         },
 
         async handleFileInput(event) {
@@ -288,8 +198,7 @@ export function cameraCapture(config = {}) {
                 return;
             }
 
-            // Pratinjau baru (belum tersimpan): langsung kembali memotret.
-            this.startCamera();
+            // Pratinjau baru (belum tersimpan): kembali ke tombol Ambil Foto.
         },
 
         usePhoto() {
