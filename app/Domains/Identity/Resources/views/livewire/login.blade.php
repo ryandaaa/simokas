@@ -29,14 +29,23 @@
                     @enderror
                 </div>
 
-                <div class="w-full">
+                <div class="w-full" x-data="{ showPassword: false }">
                     <label for="password" class="block text-xs font-bold text-ds-ink mb-1.5">
                         {{ __('identity.login.password') }}
                         <span class="text-ds-danger ml-0.5" aria-hidden="true">*</span>
                         <span class="sr-only">{{ __("ui.actions.required_mark") }}</span>
                     </label>
-                    <input type="password" id="password" name="password" wire:model="password" required
-                        class="w-full h-11 px-4 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                    <div class="relative">
+                        <input :type="showPassword ? 'text' : 'password'" id="password" name="password" wire:model="password" required
+                            class="w-full h-11 pl-4 pr-12 rounded-xl text-sm bg-white text-ds-ink border border-ds-line placeholder:text-ds-faint focus:outline-none focus:ring-2 focus:ring-ds-blue/20 focus:border-ds-blue transition-colors">
+                        <button type="button"
+                                @click="showPassword = !showPassword"
+                                :aria-label="showPassword ? '{{ __('identity.login.hide_password') }}' : '{{ __('identity.login.show_password') }}'"
+                                :aria-pressed="showPassword.toString()"
+                                class="absolute inset-y-0 right-0 w-12 flex items-center justify-center rounded-r-xl text-ds-muted hover:text-ds-blue transition-colors">
+                            <i aria-hidden="true" class="fa-solid" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
                     @error('password')
                         <p class="text-xs text-ds-danger mt-1.5" role="alert">{{ $message }}</p>
                     @enderror

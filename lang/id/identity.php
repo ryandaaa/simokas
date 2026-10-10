@@ -47,6 +47,8 @@ return [
         'submit' => 'Masuk',
         'no_account' => 'Belum memiliki akun?',
         'register_here' => 'Daftar sekarang',
+        'show_password' => 'Tampilkan kata sandi',
+        'hide_password' => 'Sembunyikan kata sandi',
         'failed' => 'Email atau kata sandi yang Anda masukkan salah.',
         'blocked_message' => 'Akun Anda telah dinonaktifkan atau diblokir. Silakan hubungi admin.',
     ],
