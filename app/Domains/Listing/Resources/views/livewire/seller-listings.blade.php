@@ -66,7 +66,7 @@
             </div>
         </div>
     @else
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             @foreach ($listings as $listing)
                 <article class="group bg-white rounded-2xl border border-ds-line/80 shadow-xs hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col justify-between relative">
                     <div>
