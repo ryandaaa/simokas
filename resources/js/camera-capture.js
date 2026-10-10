@@ -244,6 +244,21 @@ export function cameraCapture(config = {}) {
                             this.isProcessing = false;
                             this.uploadProgress = 0;
                             this.stopUploadGuard();
+                            // Jaring pengaman: bila render sesudah-simpan tidak teraplikasi
+                            // (respons hilang di jaringan lambat), sinkron paksa sekali.
+                            // Kasus normal: cabang sudah berganti (root lepas) = no-op.
+                            const pendingBlob = this.previewUrl;
+                            const component = this;
+                            setTimeout(() => {
+                                const root = component.$el;
+                                if (!root || !root.isConnected) return;
+                                if (!pendingBlob || !pendingBlob.startsWith('blob:')) return;
+                                if (component.previewUrl !== pendingBlob) return;
+                                if (!root.querySelector('img[src^="blob:"]')) return;
+                                if (component.$wire && typeof component.$wire.$refresh === 'function') {
+                                    component.$wire.$refresh();
+                                }
+                            }, 5000);
                         },
                         (err) => {
                             this.error = 'Gagal mengunggah foto. Silakan coba lagi.';

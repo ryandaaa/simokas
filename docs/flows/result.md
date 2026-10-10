@@ -126,4 +126,5 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 - [x] `RES-T18` Pindah kategori (maju/mundur) mengirim event `inspection-category-changed` agar halaman kembali ke atas
 - [x] `RES-T19` Tombol aksi foto (Ulangi / Pakai foto ini) tetap di dalam kartu pada layar sempit
 - [x] `RES-T20` Form foto hanya menawarkan satu tombol Ambil Foto (input kamera bawaan HP, tanpa galeri/live-stream)
+- [x] `RES-T21` Foto tersimpan langsung ter-render sesudah apply (tanpa reload); klien memulihkan otomatis bila respons hilang
 

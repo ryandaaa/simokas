@@ -156,6 +156,38 @@ final class InspectionFormPhotoTest extends TestCase
         $this->assertArrayNotHasKey($templateItem->id, $component->get('photos'));
     }
 
+    public function test_res_t21_saved_photo_renders_in_same_response_without_reload(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        $templateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Eksterior',
+            'label' => 'Bodi Belakang',
+            'requires_photo' => true,
+        ]);
+
+        $file = UploadedFile::fake()->image('rear.jpg', 800, 600);
+
+        $this->actingAs($inspector);
+
+        // Kebenaran server harus langsung ada di render sesudah-simpan (tanpa reload):
+        // URL foto tersimpan + tombol Ulangi, bukan tombol Ambil Foto lagi.
+        $component = Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->set('tempPhotos.'.$templateItem->id, $file)
+            ->call('applyPhoto', $templateItem->id, now()->toISOString());
+
+        $photos = $component->get('photos');
+        $this->assertArrayHasKey($templateItem->id, $photos);
+        // URL bertanda tangan di-escape (&amp;) saat render: cocokkan jalurnya saja.
+        $photoPath = strtok($photos[$templateItem->id]['url'], '?');
+        $this->assertNotFalse($photoPath);
+        $component->assertSee($photoPath, false);
+        $component->assertSee(__('ui.camera.retake'));
+    }
+
     public function test_inspector_can_retake_and_remove_photo(): void
     {
         $inspector = $this->createVerifiedInspector();
