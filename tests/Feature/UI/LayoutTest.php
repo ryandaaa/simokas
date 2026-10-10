@@ -62,6 +62,19 @@ it('renders application layout with desktop navbar, mobile bottom bar, skip-link
     $view->assertSee(__('legal.footer_terms'));
 });
 
+it('exposes build hash meta for stale-asset auto reload', function () {
+    $view = $this->blade('<x-layouts.app title="Uji Build"><p>Konten</p></x-layouts.app>');
+
+    $view->assertSee('name="build-hash"', false);
+
+    $manifest = public_path('build/manifest.json');
+    if (is_file($manifest)) {
+        $hash = md5_file($manifest);
+        $this->assertNotFalse($hash);
+        $view->assertSee($hash, false);
+    }
+});
+
 it('shows role-based bottom nav for logged-in users without navItems', function () {
     $user = User::factory()->user()->make();
 

@@ -95,6 +95,27 @@ document.addEventListener('livewire:navigated', finishNavigationProgress);
 document.addEventListener('alpine:navigating', startNavigationProgress);
 document.addEventListener('alpine:navigated', finishNavigationProgress);
 
+// Penjaga build basi: wire:navigate tidak mengunduh ulang app.js, sehingga tab lama
+// selamanya menjalankan JS lama walau HTML-nya baru. Bila HTML tujuan berasal dari
+// build yang lebih baru, muat ulang penuh sekali agar kode selalu sinkron.
+function currentBuildHash() {
+    const meta = document.querySelector('meta[name="build-hash"]');
+    return meta ? meta.getAttribute('content') : null;
+}
+
+if (typeof window !== 'undefined' && window.__SIMOKAS_BUILD === undefined) {
+    window.__SIMOKAS_BUILD = currentBuildHash();
+}
+
+document.addEventListener('livewire:navigated', () => {
+    const latest = currentBuildHash();
+    if (latest && window.__SIMOKAS_BUILD && latest !== window.__SIMOKAS_BUILD) {
+        window.location.reload();
+    } else if (latest) {
+        window.__SIMOKAS_BUILD = latest;
+    }
+});
+
 // Kembali ke paling atas setiap ganti kategori inspeksi (di-dispatch dari InspectionFormPage).
 // Sengaja vanilla di window (bukan x-data di root Livewire): x-data di root menjadikan
 // komponen Alpine foto sebagai anak sehingga state pratinjau ikut tereset saat morph.

@@ -11,6 +11,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @php
+        $manifestPath = public_path('build/manifest.json');
+        $buildHash = is_file($manifestPath) ? md5_file($manifestPath) : app()->version();
+    @endphp
+    <meta name="build-hash" content="{{ $buildHash }}">
     <title>{{ $title ? $title . ' — ' . config('app.name', 'SIMOKAS') : config('app.name', 'SIMOKAS') }}</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon-32.png') }}">
