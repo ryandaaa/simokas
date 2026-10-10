@@ -64,6 +64,9 @@ return [
     'layout' => [
         'skip_link' => 'Lewati ke konten utama',
         'home' => 'Beranda',
+        'vehicles' => 'Kendaraan',
+        'help' => 'Bantuan',
+        'login' => 'Masuk',
         'search' => 'Cari',
         'jobs' => 'Pekerjaan',
         'transactions' => 'Transaksi',

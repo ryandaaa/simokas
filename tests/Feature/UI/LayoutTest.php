@@ -42,9 +42,13 @@ it('renders application layout with desktop navbar, mobile bottom bar, skip-link
     $view->assertSee('Beranda');
     $view->assertSee('Cari');
 
-    // Menu bawah di HP (hanya maks 5 item pertama)
+    // Menu bawah di HP: selalu tampil mengikuti role (tamu di sini, tanpa navItems pun tetap ada)
     $view->assertSee('aria-label="Navigasi Seluler"', false);
-    $view->assertSee('Profil');
+    $view->assertSee('Beranda');
+    $view->assertSee('Kendaraan');
+    $view->assertSee('Bantuan');
+    $view->assertSee('Masuk');
+    $view->assertSee('Jual');
 
     // aria-live region untuk notifikasi
     $view->assertSee('id="notifications-live-region"', false);
@@ -56,6 +60,21 @@ it('renders application layout with desktop navbar, mobile bottom bar, skip-link
     $view->assertSee(route('legal.terms'), false);
     $view->assertSee(__('legal.footer_privacy'));
     $view->assertSee(__('legal.footer_terms'));
+});
+
+it('shows role-based bottom nav for logged-in users without navItems', function () {
+    $user = User::factory()->user()->make();
+
+    $view = $this->actingAs($user)->blade('<x-layouts.app title="Uji Nav Bawah"><p>Konten</p></x-layouts.app>');
+
+    $view->assertSee('aria-label="Navigasi Seluler"', false);
+    $view->assertSee('Beranda');
+    $view->assertSee('Iklan Saya');
+    $view->assertSee('Transaksi');
+    $view->assertSee('Percakapan');
+    $view->assertSee('Jual');
+    $view->assertSee(route('listings.mine'), false);
+    $view->assertSee(route('transactions.index'), false);
 });
 
 it('shows slim footer to logged-in users and full footer to guests', function () {
@@ -209,7 +228,8 @@ it('renders role-based navigation links for approved inspectors and hides other 
     $view->assertDontSee(__('ui.layout.my_listings'));
     $view->assertDontSee(route('listings.mine'), false);
     $view->assertDontSee(__('ui.layout.create_listing'));
-    $view->assertDontSee(route('listings.create'), false);
+    // Pengecualian disengaja: FAB "Jual" di nav bawah HP tampil untuk semua role.
+    $view->assertSee('aria-label="Pasang Iklan"', false);
     $view->assertDontSee(__('ui.layout.my_inspections'));
     $view->assertDontSee(route('jobs.mine'), false);
     $view->assertDontSee(__('ui.layout.audit_logs'));
@@ -243,8 +263,7 @@ it('renders only Dashboard and Onboarding for unapproved inspectors without job 
     $view->assertDontSee(route('inspector.earnings'), false);
     $view->assertDontSee(__('ui.layout.conversations'));
     $view->assertDontSee(route('conversations.index'), false);
-    $view->assertDontSee(__('ui.layout.notifications'));
-    $view->assertDontSee(route('notifications.index'), false);
+    // Pengecualian disengaja: "Notifikasi" ada di nav bawah HP untuk semua role.
     $view->assertDontSee(__('ui.layout.queue'));
     $view->assertDontSee(route('admin.queue.index'), false);
     $view->assertDontSee(__('ui.layout.my_listings'));
@@ -291,7 +310,8 @@ it('renders role-based navigation links for admin and hides other role links', f
     $view->assertDontSee(__('ui.layout.my_listings'));
     $view->assertDontSee(route('listings.mine'), false);
     $view->assertDontSee(__('ui.layout.create_listing'));
-    $view->assertDontSee(route('listings.create'), false);
+    // Pengecualian disengaja: FAB "Jual" di nav bawah HP tampil untuk semua role.
+    $view->assertSee('aria-label="Pasang Iklan"', false);
 });
 
 it('marks active role navigation link with active styling and aria-current page', function () {

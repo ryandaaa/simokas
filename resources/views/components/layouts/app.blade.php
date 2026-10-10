@@ -77,6 +77,7 @@
 @php
     $currentUser = auth()->user();
     $roleNavLinks = [];
+    $bottomNavItems = [];
 
     if ($currentUser) {
         if ($currentUser->isAdmin()) {
@@ -92,6 +93,12 @@
                 ['label' => __('ui.layout.audit_logs'), 'route' => 'admin.audit-logs.index'],
                 ['label' => __('ui.layout.users'), 'route' => 'admin.users.index'],
             ];
+            $bottomNavItems = [
+                ['label' => __('ui.layout.dashboard'), 'url' => route('dashboard'), 'fa' => 'fa-chart-line', 'active' => request()->routeIs('dashboard')],
+                ['label' => __('ui.layout.queue'), 'url' => route('admin.queue.index'), 'fa' => 'fa-clock', 'active' => request()->routeIs('admin.queue.*')],
+                ['label' => __('ui.layout.admin_jobs'), 'url' => route('admin.jobs.index'), 'fa' => 'fa-briefcase', 'active' => request()->routeIs('admin.jobs.*')],
+                ['label' => __('ui.layout.users'), 'url' => route('admin.users.index'), 'fa' => 'fa-users', 'active' => request()->routeIs('admin.users.*')],
+            ];
         } elseif ($currentUser->isInspector()) {
             $isApprovedInspector = app(\App\Domains\Inspector\Contracts\InspectorEligibility::class)->canViewAndTakeJobs($currentUser);
 
@@ -105,11 +112,23 @@
                     ['label' => __('ui.layout.conversations'), 'route' => 'conversations.index'],
                     ['label' => __('ui.layout.notifications'), 'route' => 'notifications.index'],
                 ];
+                $bottomNavItems = [
+                    ['label' => __('ui.layout.dashboard'), 'url' => route('dashboard'), 'fa' => 'fa-chart-line', 'active' => request()->routeIs('dashboard')],
+                    ['label' => __('ui.layout.open_jobs'), 'url' => route('jobs.open'), 'fa' => 'fa-briefcase', 'active' => request()->routeIs('jobs.open')],
+                    ['label' => __('ui.layout.my_jobs'), 'url' => route('jobs.inspector'), 'fa' => 'fa-list-check', 'active' => request()->routeIs('jobs.inspector*')],
+                    ['label' => __('ui.layout.earnings'), 'url' => route('inspector.earnings'), 'fa' => 'fa-wallet', 'active' => request()->routeIs('inspector.earnings*')],
+                ];
             } else {
                 $roleNavLinks = [
                     ['label' => __('ui.layout.dashboard'), 'route' => 'dashboard'],
                     ['label' => __('ui.layout.history'), 'route' => 'history'],
                     ['label' => __('ui.layout.onboarding'), 'route' => 'inspector.onboarding'],
+                ];
+                $bottomNavItems = [
+                    ['label' => __('ui.layout.dashboard'), 'url' => route('dashboard'), 'fa' => 'fa-chart-line', 'active' => request()->routeIs('dashboard')],
+                    ['label' => __('ui.layout.history'), 'url' => route('history'), 'fa' => 'fa-clock-rotate-left', 'active' => request()->routeIs('history')],
+                    ['label' => __('ui.layout.onboarding'), 'url' => route('inspector.onboarding'), 'fa' => 'fa-clipboard-list', 'active' => request()->routeIs('inspector.onboarding')],
+                    ['label' => __('ui.layout.notifications'), 'url' => route('notifications.index'), 'fa' => 'fa-bell', 'active' => request()->routeIs('notifications.*')],
                 ];
             }
         } elseif ($currentUser->isUser()) {
@@ -123,7 +142,20 @@
                 ['label' => __('ui.layout.conversations'), 'route' => 'conversations.index'],
                 ['label' => __('ui.layout.notifications'), 'route' => 'notifications.index'],
             ];
+            $bottomNavItems = [
+                ['label' => __('ui.layout.home'), 'url' => url('/'), 'fa' => 'fa-house', 'active' => request()->routeIs('home')],
+                ['label' => __('ui.layout.my_listings'), 'url' => route('listings.mine'), 'fa' => 'fa-tag', 'active' => request()->routeIs('listings.mine*')],
+                ['label' => __('ui.layout.transactions'), 'url' => route('transactions.index'), 'fa' => 'fa-credit-card', 'active' => request()->routeIs('transactions.*')],
+                ['label' => __('ui.layout.conversations'), 'url' => route('conversations.index'), 'fa' => 'fa-comments', 'active' => request()->routeIs('conversations.*')],
+            ];
         }
+    } else {
+        $bottomNavItems = [
+            ['label' => __('ui.layout.home'), 'url' => url('/'), 'fa' => 'fa-house', 'active' => request()->routeIs('home')],
+            ['label' => __('ui.layout.vehicles'), 'url' => route('catalog.index'), 'fa' => 'fa-car', 'active' => request()->routeIs('catalog.index', 'catalog.show')],
+            ['label' => __('ui.layout.help'), 'url' => route('catalog.help'), 'fa' => 'fa-circle-info', 'active' => request()->routeIs('catalog.help')],
+            ['label' => __('ui.layout.login'), 'url' => route('login'), 'fa' => 'fa-right-to-bracket', 'active' => request()->routeIs('login')],
+        ];
     }
 @endphp
 
@@ -279,34 +311,23 @@
     </footer>
     @endif
 
-    {{-- Menu bawah di HP: Center FAB (tengah = Pasang Iklan) --}}
-    @if (!empty($navItems))
+    {{-- Menu bawah di HP: selalu tampil di semua halaman (item mengikuti role) --}}
+    @if (!empty($bottomNavItems))
         @php
-            $bottomNavItems = array_slice($navItems, 0, 4);
             $bottomNavLeft = array_slice($bottomNavItems, 0, 2);
             $bottomNavRight = array_slice($bottomNavItems, 2, 2);
         @endphp
         <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-100 pb-safe" aria-label="Navigasi Seluler">
             <div class="grid grid-cols-5 items-center h-16 px-2">
                 @foreach ($bottomNavLeft as $item)
-                    @php
-                        $isActive = !empty($item['active']);
-                        $itemIcon = match ($item['icon'] ?? null) {
-                            'home', 'rumah' => 'fa-house',
-                            'search', 'kaca-pembesar' => 'fa-magnifying-glass',
-                            'document-text', 'dokumen' => 'fa-file-lines',
-                            'information-circle', 'info' => 'fa-circle-info',
-                            default => 'fa-circle',
-                        };
-                    @endphp
                     <a wire:navigate.hover href="{{ $item['url'] ?? '#' }}"
                        @class([
-                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
-                           'text-ds-blue' => $isActive,
-                           'text-ds-muted hover:text-ds-blue' => !$isActive,
-                       ])
-                       @if ($isActive) aria-current="page" @endif>
-                        <i aria-hidden="true" class="fa-solid {{ $itemIcon }} text-lg mb-0.5"></i>
+                            'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
+                            'text-ds-blue' => !empty($item['active']),
+                            'text-ds-muted hover:text-ds-blue' => empty($item['active']),
+                        ])
+                        @if (!empty($item['active'])) aria-current="page" @endif>
+                        <i aria-hidden="true" class="fa-solid {{ $item['fa'] ?? 'fa-circle' }} text-lg mb-0.5"></i>
                         <span class="truncate max-w-[64px]">{{ $item['label'] }}</span>
                     </a>
                 @endforeach
@@ -319,24 +340,14 @@
                     <span class="text-[10px] font-bold text-ds-ink mt-0.5">Jual</span>
                 </a>
                 @foreach ($bottomNavRight as $item)
-                    @php
-                        $isActive = !empty($item['active']);
-                        $itemIcon = match ($item['icon'] ?? null) {
-                            'home', 'rumah' => 'fa-house',
-                            'search', 'kaca-pembesar' => 'fa-magnifying-glass',
-                            'document-text', 'dokumen' => 'fa-file-lines',
-                            'information-circle', 'info' => 'fa-circle-info',
-                            default => 'fa-circle',
-                        };
-                    @endphp
                     <a wire:navigate.hover href="{{ $item['url'] ?? '#' }}"
                        @class([
-                           'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
-                           'text-ds-blue' => $isActive,
-                           'text-ds-muted hover:text-ds-blue' => !$isActive,
-                       ])
-                       @if ($isActive) aria-current="page" @endif>
-                        <i aria-hidden="true" class="fa-solid {{ $itemIcon }} text-lg mb-0.5"></i>
+                            'flex flex-col items-center justify-center py-1 rounded-xl text-xs font-semibold min-h-[44px] transition-colors',
+                            'text-ds-blue' => !empty($item['active']),
+                            'text-ds-muted hover:text-ds-blue' => empty($item['active']),
+                        ])
+                        @if (!empty($item['active'])) aria-current="page" @endif>
+                        <i aria-hidden="true" class="fa-solid {{ $item['fa'] ?? 'fa-circle' }} text-lg mb-0.5"></i>
                         <span class="truncate max-w-[64px]">{{ $item['label'] }}</span>
                     </a>
                 @endforeach
