@@ -1,4 +1,6 @@
-<div class="ds-sans space-y-8 pb-12">
+<div class="ds-sans space-y-8 pb-12"
+     x-data
+     x-on:inspection-category-changed.window="window.scrollTo({ top: 0, behavior: 'smooth' })">
     {{-- Header --}}
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div class="space-y-2">

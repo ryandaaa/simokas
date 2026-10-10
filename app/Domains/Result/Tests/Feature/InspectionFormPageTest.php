@@ -254,6 +254,39 @@ it('auto-saves draft when navigating to next category', function () {
     expect($savedItem->rating)->toBe(ItemRating::Fair);
 });
 
+it('RES-T18 dispatches scroll event when changing inspection categories', function () {
+    /** @var User $inspector */
+    [$inspector, $job, $template] = createInspectionSetup();
+
+    TemplateItem::factory()->create([
+        'template_id' => $template->id,
+        'category' => 'Mesin',
+        'label' => 'Kondisi Mesin',
+        'sort_order' => 1,
+    ]);
+    TemplateItem::factory()->create([
+        'template_id' => $template->id,
+        'category' => 'Bodi',
+        'label' => 'Kondisi Bodi',
+        'sort_order' => 10,
+    ]);
+
+    actingAs($inspector);
+
+    // Pindah ke kategori berikutnya: indeks bertambah + event scroll dikirim agar HP kembali ke atas
+    Livewire::test(InspectionFormPage::class, ['job' => $job])
+        ->call('nextCategory')
+        ->assertSet('currentCategoryIndex', 1)
+        ->assertDispatched('inspection-category-changed');
+
+    // Kembali ke kategori sebelumnya: event yang sama dikirim
+    Livewire::test(InspectionFormPage::class, ['job' => $job->refresh()])
+        ->set('currentCategoryIndex', 1)
+        ->call('previousCategory')
+        ->assertSet('currentCategoryIndex', 0)
+        ->assertDispatched('inspection-category-changed');
+});
+
 it('shows job_not_in_progress error when job status is not in_progress', function () {
     $inspector = createVerifiedInspector();
     $listing = Listing::factory()->active()->create(['vehicle_type' => 'car']);

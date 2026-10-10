@@ -152,6 +152,19 @@ html.a11y-invert img {
     display: none !important;
 }
 
+/* Tombol aksi pratinjau kamera (Ulangi / Pakai foto ini): boleh menyusut dan
+   memotong label panjang (mis. "Mengunggah...") agar tidak luber keluar kartu di HP. */
+.cam-actions > button {
+    min-width: 0;
+}
+
+.cam-actions > button > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 :root {
     --livewire-progress-bar-color: #16A34A;
 }

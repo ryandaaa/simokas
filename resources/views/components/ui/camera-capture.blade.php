@@ -250,12 +250,12 @@
                 </div>
             </div>
 
-            {{-- Tombol Aksi: Ulangi dan Pakai Foto Ini --}}
-            <div class="flex items-center gap-3">
+            {{-- Tombol Aksi: Ulangi dan Pakai Foto Ini (anti-luber di layar sempit) --}}
+            <div class="cam-actions flex items-center gap-2 sm:gap-3">
                 <x-ui.button type="button"
                              variant="secondary"
                              icon="panah-putar"
-                             class="flex-1 min-h-[44px]"
+                             class="flex-1 min-h-[44px] px-4 sm:px-6 text-sm sm:text-base"
                              ::disabled="isProcessing"
                              @click="retake()"
                              {{ $attributes->whereStartsWith('wire:retake') }}>
@@ -265,10 +265,10 @@
                 <x-ui.button type="button"
                              variant="primary"
                              icon="centang"
-                             class="flex-1 min-h-[44px]"
+                             class="flex-1 min-h-[44px] px-4 sm:px-6 text-sm sm:text-base"
                              ::disabled="isProcessing"
                              @click="usePhoto()">
-                    <span x-show="isProcessing" x-cloak class="inline-flex items-center gap-2">
+                    <span x-show="isProcessing" x-cloak class="inline-flex items-center gap-2 whitespace-nowrap">
                         <x-ui.icon name="panah-putar" class="w-4 h-4 animate-spin" />
                         <span>{{ __('result.photos.uploading') }}</span>
                     </span>

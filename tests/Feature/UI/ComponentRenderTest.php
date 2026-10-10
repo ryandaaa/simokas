@@ -368,6 +368,16 @@ it('renders x-ui.camera-capture with ready, preview, and permission denied state
     $view->assertSee('animate-pulse');
 });
 
+it('RES-T19 keeps camera-capture photo action buttons inside the card on narrow screens', function () {
+    $view = $this->blade('<x-ui.camera-capture label="Foto Depan" />');
+
+    // Tombol Ulangi + Pakai foto ini boleh menyusut (min-w-0) dan memotong teks (truncate),
+    // bukan meluber keluar kartu saat label panjang seperti "Mengunggah..."
+    $view->assertSee('cam-actions', false);
+    $view->assertSee('Mengunggah');
+    $view->assertSee('Pakai foto ini');
+});
+
 it('renders x-ui.pagination with page navigation and contract support', function () {
     // Primitive props
     $view = $this->blade('<x-ui.pagination :currentPage="2" :totalPages="5" :total="60" previousUrl="/p/1" nextUrl="/p/3" />');

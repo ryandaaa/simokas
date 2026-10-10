@@ -197,6 +197,7 @@ final class InspectionFormPage extends Component
 
         if ($this->currentCategoryIndex < count($this->categories) - 1) {
             $this->currentCategoryIndex++;
+            $this->dispatch('inspection-category-changed');
         }
     }
 
@@ -204,6 +205,7 @@ final class InspectionFormPage extends Component
     {
         if ($this->currentCategoryIndex > 0) {
             $this->currentCategoryIndex--;
+            $this->dispatch('inspection-category-changed');
         }
     }
 

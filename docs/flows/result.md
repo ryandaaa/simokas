@@ -123,4 +123,6 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 - [x] `RES-T15` Draf tetap memakai versi template yang tercatat (RES-E10)
 - [x] `RES-T16` Tautan foto bertanda tangan kedaluwarsa dan tidak dapat dipakai pihak lain
 - [x] `RES-T17` Tidak ada rute unduh atau cetak (RES-R12)
+- [x] `RES-T18` Pindah kategori (maju/mundur) mengirim event `inspection-category-changed` agar halaman kembali ke atas
+- [x] `RES-T19` Tombol aksi foto (Ulangi / Pakai foto ini) tetap di dalam kartu pada layar sempit
 
