@@ -94,3 +94,24 @@ document.addEventListener('livewire:navigating', startNavigationProgress);
 document.addEventListener('livewire:navigated', finishNavigationProgress);
 document.addEventListener('alpine:navigating', startNavigationProgress);
 document.addEventListener('alpine:navigated', finishNavigationProgress);
+
+// Kembali ke paling atas setiap ganti kategori inspeksi (di-dispatch dari InspectionFormPage).
+// Sengaja vanilla di window (bukan x-data di root Livewire): x-data di root menjadikan
+// komponen Alpine foto sebagai anak sehingga state pratinjau ikut tereset saat morph.
+function scrollInspectionToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('inspection-category-changed', scrollInspectionToTop);
+
+function registerInspectionScrollListener() {
+    if (window.Livewire && typeof window.Livewire.on === 'function') {
+        window.Livewire.on('inspection-category-changed', scrollInspectionToTop);
+    }
+}
+
+if (window.Livewire) {
+    registerInspectionScrollListener();
+} else {
+    document.addEventListener('livewire:init', registerInspectionScrollListener);
+}

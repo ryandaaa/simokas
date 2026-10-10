@@ -277,7 +277,9 @@ it('RES-T18 dispatches scroll event when changing inspection categories', functi
     Livewire::test(InspectionFormPage::class, ['job' => $job])
         ->call('nextCategory')
         ->assertSet('currentCategoryIndex', 1)
-        ->assertDispatched('inspection-category-changed');
+        ->assertDispatched('inspection-category-changed')
+        // Listener scroll tinggal di JS global (bukan x-data di root) agar state Alpine foto tidak tereset saat morph
+        ->assertDontSee('x-on:inspection-category-changed', false);
 
     // Kembali ke kategori sebelumnya: event yang sama dikirim
     Livewire::test(InspectionFormPage::class, ['job' => $job->refresh()])
