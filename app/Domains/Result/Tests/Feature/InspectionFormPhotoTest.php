@@ -188,6 +188,38 @@ final class InspectionFormPhotoTest extends TestCase
         $component->assertSee(__('ui.camera.retake'));
     }
 
+    public function test_res_t24_camera_key_changes_when_photo_applied_forcing_fresh_init(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        $templateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Eksterior',
+            'label' => 'Bodi Depan',
+            'requires_photo' => true,
+        ]);
+
+        $file = UploadedFile::fake()->image('front.jpg', 800, 600);
+
+        $this->actingAs($inspector);
+
+        // Sebelum ada foto: komponen kamera memakai kunci "-empty".
+        $component = Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->assertSee('camera-'.$templateItem->id.'-empty', false);
+
+        // Sesudah pakai foto: kunci berubah memuat id foto → Livewire mengganti elemen
+        // (bukan morph), Alpine init ulang, preview langsung tampil tanpa muat ulang.
+        $component->set('tempPhotos.'.$templateItem->id, $file)
+            ->call('applyPhoto', $templateItem->id, now()->toISOString());
+
+        /** @var ResultPhoto $photo */
+        $photo = ResultPhoto::query()->first();
+        $component->assertSee('camera-'.$templateItem->id.'-'.$photo->id, false)
+            ->assertDontSee('camera-'.$templateItem->id.'-empty', false);
+    }
+
     public function test_res_t23_success_banner_does_not_leak_into_next_render(): void
     {
         $inspector = $this->createVerifiedInspector();

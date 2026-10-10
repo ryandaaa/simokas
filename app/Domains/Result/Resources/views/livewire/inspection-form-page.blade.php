@@ -172,7 +172,11 @@
                                 </div>
 
                                 @if (isset($photos[$templateItem->id]))
+                                    {{-- wire:key berubah saat foto muncul → Livewire mengganti elemen
+                                         (fresh Alpine init, sama seperti muat ulang) alih-alih morph
+                                         yang menahan instance lama sehingga preview tak tampil. --}}
                                     <x-ui.camera-capture
+                                        wire:key="camera-{{ $templateItem->id }}-{{ $photos[$templateItem->id]['id'] }}"
                                         :item-id="$templateItem->id"
                                         :job-id="$job->id"
                                         :photo-url="$photos[$templateItem->id]['url']"
@@ -181,6 +185,7 @@
                                     />
                                 @else
                                     <x-ui.camera-capture
+                                        wire:key="camera-{{ $templateItem->id }}-empty"
                                         :item-id="$templateItem->id"
                                         :job-id="$job->id"
                                     />
