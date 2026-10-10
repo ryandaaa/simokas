@@ -3,7 +3,22 @@
      part of the global layout, per UI_GUIDELINES section 10. --}}
 @vite('resources/js/listing-map.js')
 
-<div class="space-y-2">
+<div class="space-y-2" data-location-picker>
+    <div class="flex flex-wrap items-center gap-2">
+        <button type="button"
+                data-locate-me
+                data-msg-locating="{{ __('listing.fields.locating') }}"
+                data-msg-unsupported="{{ __('listing.fields.location_unsupported') }}"
+                data-msg-denied="{{ __('listing.fields.location_denied') }}"
+                data-msg-unavailable="{{ __('listing.fields.location_unavailable') }}"
+                data-msg-timeout="{{ __('listing.fields.location_timeout') }}"
+                class="inline-flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full text-sm font-bold bg-white text-ds-ink border border-ds-line hover:border-ds-blue hover:text-ds-blue transition-colors">
+            <i aria-hidden="true" class="fa-solid fa-location-crosshairs"></i>
+            <span>{{ __('listing.fields.use_my_location') }}</span>
+        </button>
+        <p data-location-status hidden class="text-xs text-ds-muted" role="status"></p>
+    </div>
+
     <div wire:ignore>
         <div id="listing-map"
              data-listing-map

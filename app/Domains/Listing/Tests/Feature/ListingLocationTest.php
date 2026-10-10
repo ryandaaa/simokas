@@ -242,6 +242,8 @@ it('renders the map picker only on the location step with OSM attribution and ma
         ->assertSee('data-listing-map', false)
         ->assertSee('assets/listing-map', false)
         ->assertSee('openstreetmap.org/copyright', false)
+        ->assertSee('data-locate-me', false)
+        ->assertSee(__('listing.fields.use_my_location'))
         ->assertSee('name="lat"', false)
         ->assertSee('name="lng"', false)
         ->assertSee('name="address_full"', false);

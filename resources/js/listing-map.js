@@ -90,6 +90,15 @@ function initMap(el) {
         }
     };
 
+    // Public handle for the "use my location" button (stored on the element
+    // so the button works even if it is wired before/after map init).
+    el._listingMap = {
+        setLocation(lat, lng) {
+            moveMarker(lat, lng);
+            writeInputs(latInput, lngInput, lat, lng);
+        },
+    };
+
     map.on('click', (event) => {
         moveMarker(event.latlng.lat, event.latlng.lng, true);
         writeInputs(latInput, lngInput, event.latlng.lat, event.latlng.lng);
@@ -102,8 +111,7 @@ function initMap(el) {
 
     // Follow server-rendered values (e.g. after a Livewire validation round
     // trip) back onto the pin.
-    if (latInput && lngInput && typeof MutationObserver !== 'undefined') {
-        const syncFromInputs = () => {
+    if (latInput && lngInput && typeof MutationObserver !== 'undefined') {        const syncFromInputs = () => {
             if (window.__listingMapSyncing) {
                 return;
             }
@@ -128,6 +136,76 @@ function initMap(el) {
 
 function initAll() {
     document.querySelectorAll('[data-listing-map]').forEach(initMap);
+    document.querySelectorAll('[data-locate-me]').forEach(initLocateButton);
+}
+
+function initLocateButton(button) {
+    if (button.dataset.locateReady === 'true') {
+        return;
+    }
+    button.dataset.locateReady = 'true';
+    button.addEventListener('click', () => locateMe(button));
+}
+
+function locateStatusElement(button) {
+    const root = button.closest('[data-location-picker]') ?? document;
+    return root.querySelector('[data-location-status]');
+}
+
+function showLocateStatus(button, message) {
+    const status = locateStatusElement(button);
+    if (!status) {
+        return;
+    }
+    status.textContent = message;
+    status.hidden = false;
+}
+
+function hideLocateStatus(button) {
+    const status = locateStatusElement(button);
+    if (status) {
+        status.hidden = true;
+    }
+}
+
+function locateMe(button) {
+    if (!('geolocation' in navigator)) {
+        showLocateStatus(button, button.dataset.msgUnsupported || 'Lokasi otomatis tidak didukung.');
+        return;
+    }
+
+    showLocateStatus(button, button.dataset.msgLocating || 'Mencari lokasi…');
+    button.disabled = true;
+
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            button.disabled = false;
+            const root = button.closest('[data-location-picker]') ?? document;
+            const mapEl = root.querySelector('[data-listing-map]');
+            if (mapEl) {
+                if (!mapEl._listingMap) {
+                    initMap(mapEl);
+                }
+                if (mapEl._listingMap) {
+                    mapEl._listingMap.setLocation(position.coords.latitude, position.coords.longitude);
+                    hideLocateStatus(button);
+                    return;
+                }
+            }
+            showLocateStatus(button, button.dataset.msgUnavailable || 'Peta belum siap.');
+        },
+        (error) => {
+            button.disabled = false;
+            const code = error && error.code;
+            const message = code === 1
+                ? button.dataset.msgDenied
+                : code === 3
+                    ? button.dataset.msgTimeout
+                    : button.dataset.msgUnavailable;
+            showLocateStatus(button, message || 'Lokasi tidak tersedia.');
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 },
+    );
 }
 
 if (document.readyState === 'loading') {
