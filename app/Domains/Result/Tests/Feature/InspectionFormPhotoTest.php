@@ -188,6 +188,34 @@ final class InspectionFormPhotoTest extends TestCase
         $component->assertSee(__('ui.camera.retake'));
     }
 
+    public function test_res_t23_success_banner_does_not_leak_into_next_render(): void
+    {
+        $inspector = $this->createVerifiedInspector();
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $template = InspectionTemplate::factory()->car()->create();
+
+        $templateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'category' => 'Eksterior',
+            'label' => 'Bodi Samping',
+            'requires_photo' => true,
+        ]);
+
+        $file = UploadedFile::fake()->image('side.jpg', 800, 600);
+
+        $this->actingAs($inspector);
+
+        // Banner sukses tampil pada respons aksinya sendiri...
+        $component = Livewire::test(InspectionFormPage::class, ['job' => $job])
+            ->set('tempPhotos.'.$templateItem->id, $file)
+            ->call('applyPhoto', $templateItem->id, now()->toISOString())
+            ->assertSee(__('result.photos.upload_success'));
+
+        // ...tapi tidak boleh ikut tampil pada render berikutnya (mis. di atas item lain).
+        $component->set('summaryNote', 'catatan')
+            ->assertDontSee(__('result.photos.upload_success'));
+    }
+
     public function test_res_t22_apply_without_uploaded_file_shows_retry_message(): void
     {
         $inspector = $this->createVerifiedInspector();

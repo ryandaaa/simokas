@@ -68,6 +68,17 @@ final class InspectionFormPage extends Component
 
     public bool $isSubmitting = false;
 
+    /**
+     * Pesan sukses/gagal hanya milik respons aksi yang menetapkannya.
+     * Tanpa ini, banner basi (mis. "Foto berhasil diunggah" dari item lain)
+     * ikut tampil pada render berikutnya dan menipu pengguna.
+     */
+    public function hydrate(): void
+    {
+        $this->actionError = null;
+        $this->actionSuccess = null;
+    }
+
     public function mount(InspectionJob $job, GetOrCreateDraftResult $getOrCreateDraft): void
     {
         // Authorization: only the assigned inspector on an in_progress job (RES-R2)

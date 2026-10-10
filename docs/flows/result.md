@@ -128,4 +128,5 @@ Contoh: 4 item bobot 1 (maks 8). Nilai Baik, Baik, Cukup, Buruk = 2 + 2 + 1 + 0 
 - [x] `RES-T20` Form foto hanya menawarkan satu tombol Ambil Foto (input kamera bawaan HP, tanpa galeri/live-stream)
 - [x] `RES-T21` Foto tersimpan langsung ter-render sesudah apply (tanpa reload); klien memulihkan otomatis bila respons hilang
 - [x] `RES-T22` Terapkan tanpa berkas terunggah tidak diam: pesan terlihat; sukses mengembalikan id+url untuk tampil langsung
+- [x] `RES-T23` Banner sukses/gagal tidak bocor ke render berikutnya (tidak menipu di item lain)
 
