@@ -50,7 +50,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-14 sm:h-16 gap-2 sm:gap-4">
                 {{-- Brand/Logo --}}
-                <div class="flex items-center">
+                <div class="flex flex-1 items-center">
                     <a wire:navigate.hover href="{{ url('/') }}" class="flex items-center rounded-xl p-1 select-none">
                         <img src="{{ asset('images/logo-simokas-mobile.png') }}" alt="SIMOKAS" width="444" height="477" class="h-8 w-auto sm:hidden">
                         <img src="{{ asset('images/logo-simokas.png') }}" alt="SIMOKAS" width="1767" height="477" class="hidden sm:block h-10 w-auto">
@@ -78,7 +78,7 @@
                     @endif
 
                 {{-- Header Actions / User Slot --}}
-                <div class="flex items-center gap-2">
+                <div class="flex flex-1 items-center justify-end gap-2">
 @php
     $currentUser = auth()->user();
     $roleNavLinks = [];

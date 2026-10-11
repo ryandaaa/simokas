@@ -358,3 +358,20 @@ it('renders responsive navbar logo with mobile and desktop assets', function () 
     $view->assertSee('sm:hidden', false);
     $view->assertSee('hidden sm:block', false);
 });
+
+it('centers desktop navbar between two equal side blocks', function () {
+    $navItems = [
+        ['label' => 'Beranda', 'url' => '/', 'icon' => 'rumah', 'active' => true],
+        ['label' => 'Cari', 'url' => '/cari', 'icon' => 'kaca-pembesar', 'active' => false],
+    ];
+
+    $view = $this->blade(
+        '<x-layouts.app title="Uji Tengah" :navItems="$navItems"><p>Konten</p></x-layouts.app>',
+        ['navItems' => $navItems]
+    );
+
+    $view->assertSee('aria-label="Navigasi Utama"', false);
+    $view->assertSee('justify-center', false);
+    $view->assertSee('flex flex-1 items-center', false);
+    $view->assertSee('flex flex-1 items-center justify-end', false);
+});
