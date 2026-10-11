@@ -187,6 +187,15 @@ it('DSH-T12 admin dashboard shows trend, composition, activity, and jobs', funct
         ->assertSee('Daihatsu Xenia DSH');
 });
 
+it('DSH-T12 admin dashboard shows flashed success message', function () {
+    $admin = User::factory()->admin()->create();
+
+    actingAs($admin)->withSession(['success' => __('admin.settings.success')])
+        ->get(route('dashboard'))
+        ->assertOk()
+        ->assertSee(__('admin.settings.success'));
+});
+
 it('DSH-T04 admin numbers match job status and queues', function () {
     $admin = User::factory()->admin()->create();
 

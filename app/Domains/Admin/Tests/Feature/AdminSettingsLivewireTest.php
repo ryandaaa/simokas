@@ -55,9 +55,10 @@ it('ADM-T05 opens confirmation modal on valid inputs and saves settings atomical
     $component->call('save')
         ->assertHasNoErrors()
         ->assertSet('showConfirmModal', false)
-        ->assertSet('successMessage', __('admin.settings.success'))
-        ->assertSet('updatedByName', 'Siti Administrator')
+        ->assertRedirect(route('dashboard'))
         ->assertDispatched('close-modal', 'confirm-save-settings');
+
+    expect(session('success'))->toBe(__('admin.settings.success'));
 
     /** @var SettingsReader $reader */
     $reader = app(SettingsReader::class);

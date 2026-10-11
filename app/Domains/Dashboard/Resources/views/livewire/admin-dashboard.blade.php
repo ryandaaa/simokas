@@ -1,4 +1,10 @@
 <div class="space-y-10">
+    @if (session('success'))
+        <div role="status" class="p-4 rounded-2xl border border-ds-green-soft bg-ds-green-soft/40 text-xs font-semibold text-ds-ink">
+            {{ session('success') }}
+        </div>
+    @endif
+
     <section>
         <div class="mb-6 space-y-1">
             <h2 class="text-2xl font-extrabold text-ds-ink tracking-tight">{{ __('dashboard.admin.title') }}</h2>

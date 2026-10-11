@@ -93,7 +93,7 @@ final class Settings extends Component
         $this->dispatch('close-modal', 'confirm-save-settings');
     }
 
-    public function save(UpdatesSettings $updatesSettings, SettingsReader $reader, RecordAuditLog $recordAuditLog): void
+    public function save(UpdatesSettings $updatesSettings, RecordAuditLog $recordAuditLog): mixed
     {
         $this->authorize('update', AppSetting::class);
         $this->resetAlerts();
@@ -113,11 +113,14 @@ final class Settings extends Component
             );
 
             $this->closeConfirmModal();
-            $this->loadSettingsData($reader);
-            $this->successMessage = __('admin.settings.success');
+            session()->flash('success', __('admin.settings.success'));
+
+            return $this->redirect(route('dashboard'), navigate: true);
         } catch (InvalidSettingValueException $e) {
             $this->closeConfirmModal();
             $this->errorMessage = $e->getMessage();
+
+            return null;
         }
     }
 
