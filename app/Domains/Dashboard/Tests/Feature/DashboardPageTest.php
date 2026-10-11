@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domains\Dashboard\Tests\Feature;
 
+use App\Domains\Dashboard\Livewire\AdminDashboard;
 use App\Domains\Dashboard\Livewire\BuyerSellerDashboard;
 use App\Domains\Identity\Enums\UserRole;
 use App\Domains\Identity\Enums\UserStatus;
@@ -194,6 +195,24 @@ it('DSH-T12 admin dashboard shows flashed success message', function () {
         ->get(route('dashboard'))
         ->assertOk()
         ->assertSee(__('admin.settings.success'));
+});
+
+it('DSH-T13 counts submitted inspection results in the admin action queue', function () {
+    $admin = User::factory()->admin()->create();
+    $inspector = User::factory()->inspector()->create();
+    $listing = Listing::factory()->active()->create();
+
+    InspectionJob::factory()->create([
+        'listing_id' => $listing->id,
+        'inspector_id' => $inspector->id,
+        'status' => JobStatus::ResultSubmitted,
+        'submitted_at' => now(),
+        'needs_attention_at' => null,
+    ]);
+
+    Livewire::actingAs($admin)
+        ->test(AdminDashboard::class, ['user' => $admin])
+        ->assertViewHas('itemsNeedingAction', 1);
 });
 
 it('DSH-T04 admin numbers match job status and queues', function () {

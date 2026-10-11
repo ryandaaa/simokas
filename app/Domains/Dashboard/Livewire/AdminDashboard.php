@@ -59,8 +59,9 @@ final class AdminDashboard extends Component
             ->where('verification_status', VerificationStatus::Pending)
             ->count();
 
-        // Items needing action: combination of pending listings and inspectors
-        $itemsNeedingAction = $listingQueue + $inspectorQueue;
+        // Include submitted inspection results alongside listings and inspector verification.
+        $jobsNeedingAction = InspectionJob::query()->requiresAdminAction()->count();
+        $itemsNeedingAction = $listingQueue + $inspectorQueue + $jobsNeedingAction;
 
         // Recent jobs across the platform
         $recentJobs = InspectionJob::query()
