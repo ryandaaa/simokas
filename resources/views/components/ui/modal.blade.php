@@ -32,8 +32,8 @@
             });
         }
      }"
-     x-on:open-modal.window="if ($event.detail === '{{ $modalId }}') open = true"
-     x-on:close-modal.window="if ($event.detail === '{{ $modalId }}') open = false"
+     x-on:open-modal.window="if ($event.detail === '{{ $modalId }}' || $event.detail?.[0] === '{{ $modalId }}') open = true"
+     x-on:close-modal.window="if ($event.detail === '{{ $modalId }}' || $event.detail?.[0] === '{{ $modalId }}') open = false"
      x-on:keydown.escape.window="open = false"
      x-show="open"
      x-trap="open"

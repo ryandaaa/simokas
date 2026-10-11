@@ -277,9 +277,11 @@ it('renders x-ui.modal initially closed with focus trap, alpine listeners, and c
     $view->assertSee('x-show="open"', false);
     $view->assertSee('x-trap="open"', false);
 
-    // Alpine event listeners and focus handling
-    $view->assertSee("x-on:open-modal.window=\"if (\$event.detail === 'test-modal') open = true\"", false);
-    $view->assertSee("x-on:close-modal.window=\"if (\$event.detail === 'test-modal') open = false\"", false);
+    // Alpine event listeners and focus handling.
+    // Livewire membungkus parameter string dispatch menjadi array (detail = ['nama']),
+    // sedangkan $dispatch Alpine mengirim string langsung. Keduanya harus cocok.
+    $view->assertSee("x-on:open-modal.window=\"if (\$event.detail === 'test-modal' || \$event.detail?.[0] === 'test-modal') open = true\"", false);
+    $view->assertSee("x-on:close-modal.window=\"if (\$event.detail === 'test-modal' || \$event.detail?.[0] === 'test-modal') open = false\"", false);
     $view->assertSee('x-on:keydown.escape.window="open = false"', false);
     $view->assertSee('this.triggerEl = document.activeElement;', false);
     $view->assertSee('this.triggerEl.focus()', false);
