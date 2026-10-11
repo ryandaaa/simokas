@@ -110,3 +110,10 @@ flowchart TD
 - [x] `LST-T15` Event `UserBlocked` menonaktifkan listing aktif pengguna (LST-R9) (ADM-4)
 - [x] `LST-T16` Aksi admin ganda hanya berlaku sekali (LST-E8)
 - [x] `LST-T17` Foto status photo-public (`active`, `in_inspection`, `in_transaction`, `sold` [USULAN]) dapat dibuka semua penonton (tamu, pemilik aktif/pending, admin, pengguna lain aktif, inspektor pending/approved, blocked, non-aktif) dengan header cache publik; non-publik hanya pemilik aktif/admin aktif dengan cache privat (LST-R11; dataset semua status × peran). `ListingPolicy::view` tidak diubah: halaman detail publik non-`active` tetap ditangani aturan visibilitas milik domain Catalog
+- [x] `LST-T18` Pratinjau foto baru di form buat iklan memakai URL lokal browser, bukan endpoint preview bertanda tangan
+- [x] `LST-T19` Entry peta tersedia sebelum langkah lokasi dimasukkan Livewire; picker tetap menampilkan atribusi OSM dan fallback koordinat manual
+- [x] `LST-T20` Pratinjau foto baru saat edit iklan tidak meminta URL preview bertanda tangan
+- [x] `LST-T21` Inisialisasi peta pada event browser tidak memperlakukan objek event sebagai root DOM
+- [x] `LST-T22` Asset Vite peta tidak menggantikan root komponen Livewire pada render komponen
+- [x] `LST-T23` Root Livewire pada respons halaman buat iklan tetap elemen `<div>`
+- [x] `LST-T24` Root Livewire pada respons halaman edit iklan tetap elemen `<div>`

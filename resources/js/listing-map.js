@@ -2,8 +2,8 @@
  * Listing location picker (Leaflet + OpenStreetMap).
  *
  * Bundled locally by Vite as a separate entry (resources/js/listing-map.js)
- * and loaded ONLY on pages that include the listing location picker partial,
- * never in the global layout (UI_GUIDELINES section 10).
+ * and loaded through the create/edit component's @assets block, never in the
+ * global layout (UI_GUIDELINES section 10).
  *
  * Works together with plain lat/lng text inputs: clicking the map (or
  * dragging the pin) writes to those inputs so the form still submits without
@@ -111,7 +111,8 @@ function initMap(el) {
 
     // Follow server-rendered values (e.g. after a Livewire validation round
     // trip) back onto the pin.
-    if (latInput && lngInput && typeof MutationObserver !== 'undefined') {        const syncFromInputs = () => {
+    if (latInput && lngInput && typeof MutationObserver !== 'undefined') {
+        const syncFromInputs = () => {
             if (window.__listingMapSyncing) {
                 return;
             }
@@ -134,9 +135,28 @@ function initMap(el) {
     window.setTimeout(() => map.invalidateSize(), 100);
 }
 
-function initAll() {
-    document.querySelectorAll('[data-listing-map]').forEach(initMap);
-    document.querySelectorAll('[data-locate-me]').forEach(initLocateButton);
+function initAll(root = document) {
+    const maps = Array.from(root.querySelectorAll('[data-listing-map]'));
+    const buttons = Array.from(root.querySelectorAll('[data-locate-me]'));
+
+    if (root.matches?.('[data-listing-map]')) {
+        maps.unshift(root);
+    }
+    if (root.matches?.('[data-locate-me]')) {
+        buttons.unshift(root);
+    }
+
+    maps.forEach(initMap);
+    buttons.forEach(initLocateButton);
+}
+
+function registerLivewireHooks() {
+    if (window.Livewire?.hook) {
+        window.Livewire.hook('morphed', ({ el }) => initAll(el));
+        return;
+    }
+
+    document.addEventListener('livewire:init', registerLivewireHooks, { once: true });
 }
 
 function initLocateButton(button) {
@@ -169,6 +189,11 @@ function hideLocateStatus(button) {
 }
 
 function locateMe(button) {
+    if (!window.isSecureContext) {
+        showLocateStatus(button, button.dataset.msgUnsupported || 'Lokasi otomatis memerlukan koneksi aman (HTTPS).');
+        return;
+    }
+
     if (!('geolocation' in navigator)) {
         showLocateStatus(button, button.dataset.msgUnsupported || 'Lokasi otomatis tidak didukung.');
         return;
@@ -209,9 +234,10 @@ function locateMe(button) {
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAll);
+    document.addEventListener('DOMContentLoaded', () => initAll());
 } else {
     initAll();
 }
 
-document.addEventListener('livewire:navigated', initAll);
+registerLivewireHooks();
+document.addEventListener('livewire:navigated', () => initAll());

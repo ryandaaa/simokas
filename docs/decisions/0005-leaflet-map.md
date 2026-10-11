@@ -7,7 +7,7 @@
 
 1. **Leaflet sebagai satu-satunya dependensi npm baru** (`leaflet@^1.9.4`, lisensi **BSD-2-Clause**). Tidak ada API key, tidak ada biaya, sesuai PRD bagian 10 ("Leaflet + OpenStreetMap: gratis, tanpa kartu kredit atau API key").
 2. **Aset dihosting lokal lewat bundel Vite, bukan CDN.** Entri `resources/js/listing-map.js` (+ CSS Leaflet dan ikon marker yang diimpor ulang agar tidak pecah di bundel Vite) dibangun menjadi `public/build/assets/listing-map-*`. Alasan: privasi (tidak memanggil CDN pihak ketiga saat halaman dibuka), keandalan versi, dan kepatuhan font/self-hosting yang sudah dipakai proyek (Satoshi).
-3. **Dimuat hanya di halaman yang memakai peta.** Layout global (`x-layouts.app`) tidak menyentuh Leaflet; partial domain `listing::partials.location-picker` memanggil `@vite('resources/js/listing-map.js')`. Dijaga oleh feature test (halaman langkah 1 tidak memuat `listing-map`, langkah 3 memuatnya, layout tidak menyebut `leaflet`).
+3. **Dimuat hanya di halaman yang memakai peta.** Layout global (`x-layouts.app`) tidak menyentuh Leaflet; komponen Livewire buat/edit iklan memuat `@vite('resources/js/listing-map.js')` di dalam `@assets`, yang Livewire injeksikan ke `<head>` tanpa menggeser root komponen. Feature test menjaga root tetap `<div>` dan layout tetap tidak menyebut `leaflet`.
 4. **Tile dari server OpenStreetMap untuk skala demo**, `https://tile.openstreetmap.org/{z}/{x}/{y}.png`, maks zoom 19.
 5. **Atribusi OSM wajib dan terlihat**: kontrol atribusi Leaflet aktif plus keterangan di bawah peta ("Data peta © kontributor OpenStreetMap" + tautan copyright).
 

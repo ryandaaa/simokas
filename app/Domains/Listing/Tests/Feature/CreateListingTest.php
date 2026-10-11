@@ -142,6 +142,18 @@ it('LST-T02 validates listing fields according to PRD 13.3 (dataset)', function 
     'inspection place empty' => ['inspection_place', '', 'inspection_place'],
 ]);
 
+it('LST-T18 renders uploaded photo previews without signed Livewire preview URLs', function () {
+    $seller = User::factory()->user()->create();
+    actingAs($seller);
+
+    $component = Livewire::test(CreateListing::class)
+        ->set('step', 2)
+        ->set('photos', [fakeImage('preview.jpg')]);
+
+    expect($component->html())->toContain('x-bind:src="photoPreviewUrls[0]"');
+    expect(str_contains($component->html(), '/preview-file/'))->toBeFalse();
+});
+
 it('forbids guests and inspectors from accessing create listing form', function () {
     // Guest
     get(route('listings.create'))

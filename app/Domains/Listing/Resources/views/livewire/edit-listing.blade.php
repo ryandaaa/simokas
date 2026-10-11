@@ -1,4 +1,8 @@
-<div class="ds-sans max-w-3xl mx-auto px-4 py-6 space-y-8 pb-12">
+@assets
+    @vite('resources/js/listing-map.js')
+@endassets
+
+<div class="ds-sans max-w-3xl mx-auto px-4 py-6 space-y-8 pb-12" x-data="{ newPhotoPreviewUrls: [], captureNewPhotoPreviews(event) { this.clearNewPhotoPreviews(); this.newPhotoPreviewUrls = Array.from(event.target.files || []).map((file) => URL.createObjectURL(file)); }, clearNewPhotoPreviews() { this.newPhotoPreviewUrls.forEach((url) => URL.revokeObjectURL(url)); this.newPhotoPreviewUrls = []; }, removeNewPhotoPreview(index) { const [url] = this.newPhotoPreviewUrls.splice(index, 1); if (url) URL.revokeObjectURL(url); }, destroy() { this.clearNewPhotoPreviews(); } }">
     <div class="space-y-2">
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
             {{ __('listing.edit.title') }}
@@ -373,6 +377,7 @@
                             multiple
                             accept="image/jpeg,image/png,image/webp"
                             wire:model="newPhotos"
+                            @change="captureNewPhotoPreviews($event)"
                             class="w-full min-h-[44px] px-3 py-2.5 rounded-xl text-sm bg-white text-ds-ink border border-ds-line file:mr-3 file:px-4 file:py-2 file:rounded-xl file:border-0 file:bg-ds-blue file:text-white file:text-xs file:font-bold"
                         />
                     </div>
@@ -382,7 +387,7 @@
                             @foreach ($newPhotos as $index => $upload)
                                 <div class="relative rounded-2xl overflow-hidden border border-ds-line/80 bg-white shadow-xs p-1">
                                     @if (is_object($upload) && method_exists($upload, 'temporaryUrl'))
-                                        <img src="{{ $upload->temporaryUrl() }}" alt="" class="w-full h-24 object-cover rounded-xl" />
+                                        <img x-bind:src="newPhotoPreviewUrls[{{ $index }}]" alt="" class="w-full h-24 object-cover rounded-xl" />
                                     @endif
                                     @if ($coverNewPhotoIndex === $index)
                                         <span class="absolute top-1 left-1 inline-flex items-center rounded-full bg-ds-yellow text-ds-ink px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">{{ __('listing.edit.is_cover') }}</span>
@@ -399,6 +404,7 @@
                                         <button
                                             type="button"
                                             wire:click="removeNewPhoto({{ $index }})"
+                                            @click="removeNewPhotoPreview({{ $index }})"
                                             wire:loading.attr="disabled"
                                             class="text-xs font-bold text-ds-danger hover:underline px-2 py-1"
                                         >

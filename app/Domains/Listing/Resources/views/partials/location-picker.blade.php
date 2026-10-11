@@ -1,8 +1,6 @@
-{{-- Location picker: Leaflet map (loaded only on this page) + manual coordinate fallback.
-     The map bundle is built by Vite from resources/js/listing-map.js and is NOT
-     part of the global layout, per UI_GUIDELINES section 10. --}}
-@vite('resources/js/listing-map.js')
-
+{{-- Location picker: Leaflet map + manual coordinate fallback.
+     Its parent Livewire component provides the Vite bundle through @assets;
+     the global layout intentionally does not load the map bundle. --}}
 <div class="space-y-2" data-location-picker>
     <div class="flex flex-wrap items-center gap-2">
         <button type="button"

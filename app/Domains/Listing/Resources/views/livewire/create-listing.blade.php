@@ -1,4 +1,54 @@
-<div class="ds-sans max-w-3xl mx-auto px-4 py-6 space-y-8 pb-12">
+@assets
+    @vite('resources/js/listing-map.js')
+@endassets
+
+<div class="ds-sans max-w-3xl mx-auto px-4 py-6 space-y-8 pb-12"
+     x-data="{
+        photoPreviewUrls: [],
+        compressing: false,
+        async handleFiles(event) {
+            const input = event.target;
+            if (this.compressing || !input.files || input.files.length === 0) return;
+
+            this.compressing = true;
+            const previewStart = this.photoPreviewUrls.length;
+            try {
+                const compressedList = [];
+                for (const file of input.files) {
+                    const compressed = window.compressImageFile
+                        ? await window.compressImageFile(file, 2 * 1024 * 1024)
+                        : file;
+                    compressedList.push(compressed);
+                    this.photoPreviewUrls.push(URL.createObjectURL(compressed));
+                }
+
+                @this.uploadMultiple('photos', compressedList, () => {
+                    this.compressing = false;
+                    input.value = '';
+                }, () => {
+                    this.releasePhotoPreviewsFrom(previewStart);
+                    this.compressing = false;
+                    input.value = '';
+                });
+            } catch (err) {
+                this.releasePhotoPreviewsFrom(previewStart);
+                this.compressing = false;
+                input.value = '';
+                alert('Gagal memproses kompresi gambar: ' + err.message);
+            }
+        },
+        releasePhotoPreviewsFrom(index) {
+            this.photoPreviewUrls.splice(index).forEach((url) => URL.revokeObjectURL(url));
+        },
+        removePhotoPreview(index) {
+            const [url] = this.photoPreviewUrls.splice(index, 1);
+            if (url) URL.revokeObjectURL(url);
+            @this.removePhoto(index);
+        },
+        destroy() {
+            this.photoPreviewUrls.forEach((url) => URL.revokeObjectURL(url));
+        }
+     }">
     {{-- Header --}}
     <div class="space-y-2">
         <h1 class="text-3xl font-extrabold text-ds-ink tracking-tight">
@@ -293,37 +343,7 @@
             <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
                 <h2 class="text-lg font-extrabold text-ds-ink">{{ __('listing.steps.photos') }}</h2>
                 <p class="text-xs text-ds-muted mt-1 mb-5">{{ __('listing.fields.photos_hint') }}</p>
-                <div class="space-y-6" x-data="{
-                    compressing: false,
-                    async handleFiles(event) {
-                        const input = event.target;
-                        if (!input.files || input.files.length === 0) return;
-
-                        this.compressing = true;
-                        try {
-                            const compressedList = [];
-                            for (let i = 0; i < input.files.length; i++) {
-                                const file = input.files[i];
-                                if (window.compressImageFile) {
-                                    const compressed = await window.compressImageFile(file, 2 * 1024 * 1024);
-                                    compressedList.push(compressed);
-                                } else {
-                                    compressedList.push(file);
-                                }
-                            }
-
-                            // Upload through Livewire upload multiple
-                            @this.uploadMultiple('photos', compressedList, () => {
-                                this.compressing = false;
-                            }, () => {
-                                this.compressing = false;
-                            });
-                        } catch (err) {
-                            this.compressing = false;
-                            alert('Gagal memproses kompresi gambar: ' + err.message);
-                        }
-                    }
-                }">
+                <div class="space-y-6">
                     {{-- Upload Area --}}
                     <div class="border-2 border-dashed border-ds-line rounded-2xl p-6 text-center space-y-3 bg-ds-canvas/60">
                         <div class="flex justify-center text-ds-faint">
@@ -380,7 +400,7 @@
                                     <div class="relative group rounded-2xl overflow-hidden border {{ $cover_index === $index ? 'border-ds-yellow ring-2 ring-ds-yellow' : 'border-ds-line/80' }} bg-white shadow-xs">
                                         <div class="aspect-4/3 overflow-hidden bg-ds-soft">
                                             @if (is_object($photo) && method_exists($photo, 'temporaryUrl'))
-                                                <img src="{{ $photo->temporaryUrl() }}" alt="Pratinjau foto {{ $index + 1 }}" class="w-full h-full object-cover" />
+                                                <img x-bind:src="photoPreviewUrls[{{ $index }}]" alt="Pratinjau foto {{ $index + 1 }}" class="w-full h-full object-cover" />
                                             @endif
                                         </div>
 
@@ -402,7 +422,7 @@
                                             </button>
                                             <button
                                                 type="button"
-                                                wire:click="removePhoto({{ $index }})"
+                                                @click="removePhotoPreview({{ $index }})"
                                                 class="min-h-[44px] inline-flex items-center gap-1 text-xs text-ds-danger hover:underline p-1"
                                                 title="Hapus foto"
                                             >

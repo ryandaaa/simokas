@@ -220,12 +220,12 @@ it('LST-T11 never leaks exact location values in public JSON or public HTML', fu
     expect($html)->toContain('Sukajadi');
 });
 
-it('renders the map picker only on the location step with OSM attribution and manual fallback', function () {
+it('LST-T19 preloads the map entry before the location step and renders the picker with OSM attribution', function () {
     $seller = User::factory()->user()->create();
     actingAs($seller);
 
-    // Step 1 is the initial render: the map bundle must not be there yet.
-    get(route('listings.create'))->assertOk()->assertDontSee('listing-map', false);
+    // The map module must be ready before Livewire morphs the location step into the page.
+    get(route('listings.create'))->assertOk()->assertSee('assets/listing-map', false);
 
     $payload = validLocationPayload();
 
@@ -240,7 +240,6 @@ it('renders the map picker only on the location step with OSM attribution and ma
         ->set('cover_index', 0)
         ->call('nextStep')->assertSet('step', 3)
         ->assertSee('data-listing-map', false)
-        ->assertSee('assets/listing-map', false)
         ->assertSee('openstreetmap.org/copyright', false)
         ->assertSee('data-locate-me', false)
         ->assertSee(__('listing.fields.use_my_location'))
@@ -252,11 +251,24 @@ it('renders the map picker only on the location step with OSM attribution and ma
 
     expect($html)->not->toContain('style="');
 
-    // The global layout must never pull the map bundle; only map pages load it.
+    // The global layout must never pull the map bundle; the component owns this page-specific asset.
     $layout = (string) file_get_contents(resource_path('views/components/layouts/app.blade.php'));
 
     expect($layout)->not->toContain('leaflet')
         ->and($layout)->not->toContain('listing-map');
+});
+
+it('LST-T23 keeps Vite assets outside the Livewire component root in the create page response', function () {
+    $seller = User::factory()->user()->create();
+    actingAs($seller);
+
+    $response = get(route('listings.create'))->assertOk();
+    $html = (string) $response->getContent();
+
+    preg_match('/<([a-z][a-z0-9:-]*)\\b[^>]*\\bwire:id="[^"]+"[^>]*>/i', $html, $matches);
+
+    expect($matches[1] ?? null)->toBe('div')
+        ->and($html)->toContain('assets/listing-map');
 });
 
 it('LST-T03 keeps listings out of the database when location validation fails', function () {
@@ -276,4 +288,23 @@ it('LST-T03 keeps listings out of the database when location validation fails', 
     $component->call('submit')->assertHasErrors(['lat']);
 
     expect(Listing::query()->where('status', ListingStatus::PendingReview)->count())->toBe(0);
+});
+
+it('LST-T21 initializes the map without passing browser events as DOM roots', function () {
+    $source = (string) file_get_contents(resource_path('js/listing-map.js'));
+
+    expect(str_contains($source, "document.addEventListener('DOMContentLoaded', () => initAll());"))->toBeTrue()
+        ->and(str_contains($source, "document.addEventListener('livewire:navigated', () => initAll());"))->toBeTrue()
+        ->and(str_contains($source, "document.addEventListener('DOMContentLoaded', initAll);"))->toBeFalse()
+        ->and(str_contains($source, "document.addEventListener('livewire:navigated', initAll);"))->toBeFalse();
+});
+
+it('LST-T22 keeps Vite asset tags inside the Livewire component root', function () {
+    $seller = User::factory()->user()->create();
+    actingAs($seller);
+
+    $html = Livewire::test(CreateListing::class)->html();
+    preg_match('/^\s*<([a-zA-Z0-9-]+)\b[^>]*wire:id=/', $html, $matches);
+
+    expect($matches[1] ?? null)->toBe('div');
 });

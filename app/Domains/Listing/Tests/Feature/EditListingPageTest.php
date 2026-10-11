@@ -7,10 +7,12 @@ use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Livewire\EditListing;
 use App\Domains\Listing\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 
@@ -32,6 +34,32 @@ it('renders the full edit form with core markers and a revalidation warning', fu
         ->assertSee(__('listing.edit.section_photos'))
         ->assertSee(__('listing.edit.deactivate'))
         ->assertSee('wire:loading.attr="disabled"', false);
+});
+
+it('LST-T20 renders new edit photo previews without signed Livewire preview URLs', function () {
+    $owner = User::factory()->user()->create();
+    $listing = Listing::factory()->active()->withPhotos(3)->withInspectionSlots()->create(['seller_id' => $owner->id]);
+    actingAs($owner);
+
+    $component = Livewire::test(EditListing::class, ['listing' => $listing])
+        ->set('newPhotos', [UploadedFile::fake()->image('new-preview.jpg')->size(50)]);
+
+    expect($component->html())->toContain('x-bind:src="newPhotoPreviewUrls[0]"');
+    expect(str_contains($component->html(), '/preview-file/'))->toBeFalse();
+});
+
+it('LST-T24 keeps Vite assets outside the Livewire edit component root', function () {
+    $owner = User::factory()->user()->create();
+    $listing = Listing::factory()->active()->withPhotos(3)->withInspectionSlots()->create(['seller_id' => $owner->id]);
+    actingAs($owner);
+
+    $response = get(route('listings.edit', $listing))->assertOk();
+    $html = (string) $response->getContent();
+
+    preg_match('/<([a-z][a-z0-9:-]*)\\b[^>]*\\bwire:id="[^"]+"[^>]*>/i', $html, $matches);
+
+    expect($matches[1] ?? null)->toBe('div')
+        ->and($html)->toContain('assets/listing-map');
 });
 
 it('disables locked fields and blocks saving while in_transaction', function () {
