@@ -104,6 +104,27 @@ final class InspectionJob extends Model
         return $query->whereNotIn('status', ['completed', 'cancelled', 'expired']);
     }
 
+    /**
+     * Include jobs awaiting result confirmation and overdue jobs requiring intervention.
+     *
+     * @param  Builder<$this>  $query
+     * @return Builder<$this>
+     */
+    public function scopeRequiresAdminAction(Builder $query): Builder
+    {
+        return $query->where(function (Builder $query): void {
+            $query->where('status', JobStatus::ResultSubmitted->value)
+                ->orWhere(function (Builder $query): void {
+                    $query->whereNotNull('needs_attention_at')
+                        ->whereNotIn('status', [
+                            JobStatus::Completed->value,
+                            JobStatus::Cancelled->value,
+                            JobStatus::Expired->value,
+                        ]);
+                });
+        });
+    }
+
     public function isActive(): bool
     {
         return $this->status->isActive();
