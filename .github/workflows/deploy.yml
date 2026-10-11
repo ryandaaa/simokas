@@ -1,0 +1,56 @@
+name: Deploy to Hostinger (staging demo)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: hostinger-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_KEY }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          script: |
+            set -e
+            APP_DIR=/home/u784310550/domains/lavenderblush-squirrel-844025.hostingersite.com/simokas
+            DOCROOT=/home/u784310550/domains/lavenderblush-squirrel-844025.hostingersite.com/public_html
+            PHP_BIN=/opt/alt/php83/usr/bin/php
+            cd "$APP_DIR"
+
+            # 1. Lepas symlink public sementara agar git bisa menulis folder public/
+            rm -f public
+
+            # 2. Tarik kode terbaru (untracked: .env, vendor, storage uploads, bootstrap cache — tidak tersentuh)
+            git fetch origin
+            git reset --hard origin/main
+
+            # 3. Sinkronkan docroot (hapus build lama, salin public/ baru, kembalikan symlink)
+            rm -rf "$DOCROOT/build"
+            cp -r public/. "$DOCROOT/"
+            rm -rf public
+            ln -sfn ../public_html public
+
+            # 4. Patch index.php docroot (../ -> ../simokas/, idempoten karena file selalu fresh dari repo)
+            sed -i "s#__DIR__.'/../#__DIR__.'/../simokas/#g" "$DOCROOT/index.php"
+            grep -c "simokas/vendor/autoload" "$DOCROOT/index.php"
+
+            # 5. Dependensi + migrasi + cache (data aman: migrate biasa, bukan fresh)
+            composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+            $PHP_BIN artisan migrate --force
+            $PHP_BIN artisan config:cache
+            $PHP_BIN artisan route:cache
+            $PHP_BIN artisan view:cache
+
+            # 6. Cek kesehatan
+            curl -s -o /dev/null -w "homepage:%{http_code}\n" https://lavenderblush-squirrel-844025.hostingersite.com/
