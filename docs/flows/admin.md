@@ -91,3 +91,4 @@ flowchart TD
 - [x] `ADM-T11` Admin tidak dapat memblokir atau mengubah role dirinya sendiri (ADM-R9)
 - [x] `ADM-T12` Template: ubah menaikkan versi, hasil lama tidak berubah (ADM-E7)
 - [x] `ADM-T13` Aksi sensitif tercatat
+- [x] `ADM-T14` Hasil inspeksi `result_submitted` langsung masuk antrean konfirmasi admin tanpa `needs_attention_at`

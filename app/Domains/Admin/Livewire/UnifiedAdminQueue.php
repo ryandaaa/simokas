@@ -59,8 +59,7 @@ final class UnifiedAdminQueue extends Component
             ->count();
 
         $this->jobCount = InspectionJob::query()
-            ->whereNotNull('needs_attention_at')
-            ->whereNotIn('status', [JobStatus::Completed->value, JobStatus::Cancelled->value, JobStatus::Expired->value])
+            ->requiresAdminAction()
             ->count();
 
         $this->totalCount = $this->listingCount + $this->inspectorCount + $this->jobCount;
@@ -129,21 +128,20 @@ final class UnifiedAdminQueue extends Component
 
         if ($this->filterType === 'job') {
             $paginator = InspectionJob::query()
-                ->whereNotNull('needs_attention_at')
-                ->whereNotIn('status', [JobStatus::Completed->value, JobStatus::Cancelled->value, JobStatus::Expired->value])
+                ->requiresAdminAction()
                 ->with(['listing', 'inspector', 'requester'])
-                ->orderBy('needs_attention_at', 'asc')
+                ->orderByRaw('COALESCE(submitted_at, needs_attention_at, created_at) asc')
                 ->paginate($perPage);
 
             $transformed = $paginator->getCollection()->map(fn (InspectionJob $j): array => [
                 'type' => 'job',
                 'id' => (string) $j->id,
-                'title' => 'Job Perlu Tindakan: '.$j->listing->title,
+                'title' => ($j->status === JobStatus::ResultSubmitted ? 'Konfirmasi hasil inspeksi: ' : 'Job Perlu Tindakan: ').$j->listing->title,
                 'subtitle' => 'Status: '.$j->status->label().' • Pemohon: '.$j->requester->name,
-                'time' => $j->needs_attention_at ?? $j->created_at,
-                'status_label' => 'Perlu Tindakan',
-                'status_variant' => 'danger',
-                'status_icon' => 'segitiga-peringatan',
+                'time' => $j->submitted_at ?? $j->needs_attention_at ?? $j->created_at,
+                'status_label' => $j->status === JobStatus::ResultSubmitted ? $j->status->label() : 'Perlu Tindakan',
+                'status_variant' => $j->status === JobStatus::ResultSubmitted ? 'warning' : 'danger',
+                'status_icon' => $j->status === JobStatus::ResultSubmitted ? 'jam' : 'segitiga-peringatan',
                 'url' => route('admin.jobs.show', $j->id),
                 'model' => $j,
             ]);
@@ -173,14 +171,13 @@ final class UnifiedAdminQueue extends Component
             ]);
 
         $jobList = InspectionJob::query()
-            ->whereNotNull('needs_attention_at')
-            ->whereNotIn('status', [JobStatus::Completed->value, JobStatus::Cancelled->value, JobStatus::Expired->value])
-            ->select(['id', 'needs_attention_at', 'created_at'])
+            ->requiresAdminAction()
+            ->select(['id', 'status', 'submitted_at', 'needs_attention_at', 'created_at'])
             ->get()
             ->map(fn (InspectionJob $j): array => [
                 'type' => 'job',
                 'id' => (string) $j->id,
-                'timestamp' => ($j->needs_attention_at ?? $j->created_at)->timestamp,
+                'timestamp' => ($j->submitted_at ?? $j->needs_attention_at ?? $j->created_at)->timestamp,
             ]);
 
         $merged = $listingList->concat($inspectorList)->concat($jobList)
@@ -258,12 +255,12 @@ final class UnifiedAdminQueue extends Component
             return [
                 'type' => 'job',
                 'id' => (string) $model->id,
-                'title' => 'Job Perlu Tindakan: '.$model->listing->title,
+                'title' => ($model->status === JobStatus::ResultSubmitted ? 'Konfirmasi hasil inspeksi: ' : 'Job Perlu Tindakan: ').$model->listing->title,
                 'subtitle' => 'Status: '.$model->status->label().' • Pemohon: '.$model->requester->name,
-                'time' => $model->needs_attention_at ?? $model->created_at,
-                'status_label' => 'Perlu Tindakan',
-                'status_variant' => 'danger',
-                'status_icon' => 'segitiga-peringatan',
+                'time' => $model->submitted_at ?? $model->needs_attention_at ?? $model->created_at,
+                'status_label' => $model->status === JobStatus::ResultSubmitted ? $model->status->label() : 'Perlu Tindakan',
+                'status_variant' => $model->status === JobStatus::ResultSubmitted ? 'warning' : 'danger',
+                'status_icon' => $model->status === JobStatus::ResultSubmitted ? 'jam' : 'segitiga-peringatan',
                 'url' => route('admin.jobs.show', $model->id),
                 'model' => $model,
             ];

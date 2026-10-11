@@ -61,8 +61,7 @@ final class JobMonitor extends Component
         }
 
         if ($this->filterAttentionOnly) {
-            $query->whereNotNull('needs_attention_at')
-                ->whereNotIn('status', [JobStatus::Completed->value, JobStatus::Cancelled->value, JobStatus::Expired->value]);
+            $query->requiresAdminAction();
         }
 
         if (trim($this->search) !== '') {

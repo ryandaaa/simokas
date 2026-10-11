@@ -71,6 +71,7 @@ final class AdminJobMonitorTest extends TestCase
         $admin = User::factory()->admin()->create();
         $listing1 = Listing::factory()->active()->create(['title' => 'Car One']);
         $listing2 = Listing::factory()->active()->create(['title' => 'Car Two']);
+        $listing3 = Listing::factory()->active()->create(['title' => 'Car Waiting Confirmation']);
 
         $job1 = InspectionJob::factory()->create([
             'listing_id' => $listing1->id,
@@ -80,6 +81,13 @@ final class AdminJobMonitorTest extends TestCase
         $job2 = InspectionJob::factory()->create([
             'listing_id' => $listing2->id,
             'status' => JobStatus::Completed,
+            'needs_attention_at' => null,
+        ]);
+
+        InspectionJob::factory()->create([
+            'listing_id' => $listing3->id,
+            'status' => JobStatus::ResultSubmitted,
+            'submitted_at' => now(),
             'needs_attention_at' => null,
         ]);
 
@@ -93,6 +101,8 @@ final class AdminJobMonitorTest extends TestCase
             ->assertDontSee('Car One')
             ->set('filterStatus', '')
             ->set('filterAttentionOnly', true)
+            ->assertSee('Car Waiting Confirmation')
+            ->assertDontSee('Car One')
             ->assertDontSee('Car Two');
     }
 

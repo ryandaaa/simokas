@@ -59,6 +59,31 @@ final class AdminUnifiedQueueTest extends TestCase
             ->assertSet('jobCount', 0);
     }
 
+    public function test_result_submitted_jobs_are_immediately_queued_without_an_attention_timestamp(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $inspector = User::factory()->inspector()->create();
+        $listing = Listing::factory()->active()->create(['title' => 'Toyota Fortuner Hasil Inspeksi']);
+        $job = InspectionJob::factory()->create([
+            'listing_id' => $listing->id,
+            'inspector_id' => $inspector->id,
+            'status' => JobStatus::ResultSubmitted,
+            'submitted_at' => now(),
+            'needs_attention_at' => null,
+        ]);
+
+        Livewire::actingAs($admin)
+            ->test(UnifiedAdminQueue::class)
+            ->assertSet('totalCount', 1)
+            ->assertSet('jobCount', 1)
+            ->assertSee('Toyota Fortuner Hasil Inspeksi')
+            ->assertSee(__('inspection.status.result_submitted'))
+            ->assertSee(route('admin.jobs.show', $job->id))
+            ->set('filterType', 'job')
+            ->assertSee('Toyota Fortuner Hasil Inspeksi')
+            ->assertSee(route('admin.jobs.show', $job->id));
+    }
+
     public function test_lists_items_from_all_three_sources_oldest_first(): void
     {
         $admin = User::factory()->admin()->create();
