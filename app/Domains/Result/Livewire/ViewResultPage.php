@@ -26,7 +26,7 @@ final class ViewResultPage extends Component
     {
         // Find the inspection result for this listing
         $result = InspectionResult::query()
-            ->with(['inspector', 'photos', 'items.templateItem'])
+            ->with(['inspector', 'photos', 'items.templateItem', 'items.photos'])
             ->whereHas('job', function ($query) use ($listing) {
                 $query->where('listing_id', $listing->id);
             })->first();
@@ -59,7 +59,7 @@ final class ViewResultPage extends Component
 
         $photoUrls = [];
         if ($hasAccess) {
-            $this->result->loadMissing(['photos', 'items.templateItem', 'inspector']);
+            $this->result->loadMissing(['photos', 'items.templateItem', 'items.photos', 'inspector']);
             $photoUrls = $this->result->photos->mapWithKeys(function (ResultPhoto $photo): array {
                 return [
                     $photo->id => URL::temporarySignedRoute(

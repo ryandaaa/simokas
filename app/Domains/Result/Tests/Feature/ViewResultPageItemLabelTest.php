@@ -12,6 +12,7 @@ use App\Domains\Result\Enums\ResultStatus;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\InspectionTemplate;
 use App\Domains\Result\Models\ResultItem;
+use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Models\TemplateItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -102,5 +103,86 @@ final class ViewResultPageItemLabelTest extends TestCase
 
         // Must NOT display raw UUID
         $response->assertDontSee($orphanUuid);
+    }
+
+    #[Test]
+    public function test_res_t25_result_page_places_each_photo_inside_its_matching_item_card(): void
+    {
+        $seller = User::factory()->user()->create(['status' => UserStatus::Active]);
+        $inspector = User::factory()->inspector()->create(['status' => UserStatus::Active]);
+        $job = InspectionJob::factory()->inProgress($inspector)->create();
+        $job->listing->update(['seller_id' => $seller->id]);
+
+        $template = InspectionTemplate::factory()->car()->create();
+        $stnkTemplateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'label' => 'STNK',
+        ]);
+        $bpkbTemplateItem = TemplateItem::factory()->create([
+            'template_id' => $template->id,
+            'label' => 'BPKB',
+        ]);
+
+        $result = InspectionResult::factory()->submitted()->create([
+            'job_id' => $job->id,
+            'listing_id' => $job->listing_id,
+            'inspector_id' => $inspector->id,
+            'template_id' => $template->id,
+            'status' => ResultStatus::Submitted,
+        ]);
+
+        $stnkItem = ResultItem::factory()->create([
+            'result_id' => $result->id,
+            'template_item_id' => $stnkTemplateItem->id,
+            'rating' => ItemRating::Good,
+        ]);
+        ResultItem::factory()->create([
+            'result_id' => $result->id,
+            'template_item_id' => $bpkbTemplateItem->id,
+            'rating' => ItemRating::Good,
+        ]);
+
+        ResultPhoto::factory()->create([
+            'result_id' => $result->id,
+            'result_item_id' => $stnkItem->id,
+            'storage_path' => "results/{$result->id}/photos/stnk.jpg",
+        ]);
+        ResultPhoto::factory()->create([
+            'result_id' => $result->id,
+            'result_item_id' => $stnkItem->id,
+            'storage_path' => "results/{$result->id}/photos/stnk-detail.jpg",
+        ]);
+
+        $response = $this->actingAs($seller)->get(route('results.show', ['listing' => $job->listing_id]));
+        $response->assertOk();
+
+        $document = new \DOMDocument;
+        $previousLibxmlSetting = libxml_use_internal_errors(true);
+        $document->loadHTML($response->getContent());
+        libxml_clear_errors();
+        libxml_use_internal_errors($previousLibxmlSetting);
+
+        $xpath = new \DOMXPath($document);
+        $stnkCard = $xpath->query('//article[contains(normalize-space(.), "STNK")]')->item(0);
+        $bpkbCard = $xpath->query('//article[contains(normalize-space(.), "BPKB")]')->item(0);
+
+        $this->assertNotNull($stnkCard);
+        $this->assertNotNull($bpkbCard);
+
+        // Kueri relatif terhadap kartu (konteks DOMNode) agar foto dihitung
+        // per kartu item, bukan seluruh dokumen.
+        $stnkImages = $xpath->query('.//img', $stnkCard);
+        $bpkbImages = $xpath->query('.//img', $bpkbCard);
+
+        $this->assertNotFalse($stnkImages);
+        $this->assertNotFalse($bpkbImages);
+        $this->assertSame(2, $stnkImages->length);
+        $this->assertSame(0, $bpkbImages->length);
+
+        $firstImage = $stnkImages->item(0);
+        $this->assertInstanceOf(\DOMElement::class, $firstImage);
+        $this->assertStringContainsString('signature=', $firstImage->getAttribute('src'));
+        $this->assertStringContainsString(__('result.inspection_photo_for_item', ['item' => 'STNK']), $firstImage->getAttribute('alt'));
+        $this->assertStringContainsString(__('result.item_photos_missing'), $bpkbCard->textContent);
     }
 }

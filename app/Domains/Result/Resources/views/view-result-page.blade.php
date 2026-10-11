@@ -79,59 +79,61 @@ use App\Domains\Result\Enums\InspectionRecommendation;
                     </div>
                 @endif
 
-                {{-- Items by category --}}
-                @forelse ($result->items->groupBy('template_item_id') as $groupedItems)
-                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-6">
-                        <div class="space-y-4">
-                            @foreach ($groupedItems as $item)
-                                <div class="flex items-start justify-between gap-4 border-b border-ds-line/60 pb-4 last:border-b-0">
-                                    <div>
-                                        <p class="font-bold text-ds-ink text-sm">{{ $item->templateItem?->label ?? __('result.unnamed_item') }}</p>
-                                        @if ($item->note)
-                                            <p class="text-xs text-ds-muted mt-1">{{ $item->note }}</p>
-                                        @endif
-                                    </div>
-                                    @php
-                                        $itemPill = match ($item->rating->value) {
-                                            'good' => 'bg-ds-green-soft text-ds-green-ink',
-                                            'okay' => 'bg-ds-amber-soft text-ds-amber-ink',
-                                            'bad' => 'bg-ds-red-soft text-ds-red-ink',
-                                            default => 'bg-ds-soft text-ds-muted',
-                                        };
-                                    @endphp
-                                    <span class="text-[10px] px-2 py-0.5 rounded-md font-bold shrink-0 {{ $itemPill }}">
+                {{-- Each inspection item stays with its own photo evidence. --}}
+                @forelse ($result->items as $item)
+                    @php
+                        $itemLabel = $item->templateItem?->label ?? __('result.unnamed_item');
+                        $itemPill = match ($item->rating->value) {
+                            'good' => 'bg-ds-green-soft text-ds-green-ink',
+                            'okay' => 'bg-ds-amber-soft text-ds-amber-ink',
+                            'bad' => 'bg-ds-red-soft text-ds-red-ink',
+                            default => 'bg-ds-soft text-ds-muted',
+                        };
+                    @endphp
+                    <article class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-4 sm:p-6">
+                        <div class="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:items-start">
+                            <div class="min-w-0">
+                                <div class="flex items-start justify-between gap-3">
+                                    <h2 class="font-bold text-ds-ink text-base">{{ $itemLabel }}</h2>
+                                    <span class="text-xs px-2.5 py-1 rounded-full font-bold shrink-0 {{ $itemPill }}">
                                         {{ $item->rating->label() }}
                                     </span>
                                 </div>
-                            @endforeach
+                                @if ($item->note)
+                                    <p class="text-sm text-ds-muted mt-2 whitespace-pre-wrap">{{ $item->note }}</p>
+                                @endif
+                            </div>
+
+                            <div class="min-w-0">
+                                @if ($item->photos->isNotEmpty())
+                                    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                                        @foreach ($item->photos as $photo)
+                                            <figure class="overflow-hidden rounded-xl border border-ds-line/60">
+                                                <img
+                                                    src="{{ $photoUrls[$photo->id] ?? '' }}"
+                                                    alt="{{ __('result.inspection_photo_for_item', ['item' => $itemLabel]) }}"
+                                                    class="block w-full aspect-4/3 object-cover"
+                                                    width="800"
+                                                    height="600"
+                                                    loading="lazy"
+                                                />
+                                                <figcaption class="px-3 py-2 text-xs text-ds-muted">
+                                                    {{ $photo->captured_at?->format(__('common.datetime_format')) ?? __('result.photo_not_timestamped') }}
+                                                </figcaption>
+                                            </figure>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="rounded-xl border border-ds-line/60 bg-ds-soft px-4 py-3 text-sm text-ds-muted">
+                                        {{ __('result.item_photos_missing') }}
+                                    </p>
+                                @endif
+                            </div>
                         </div>
-                    </div>
+                    </article>
                 @empty
                     <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center">
                         <p class="text-sm font-bold text-ds-ink">{{ __('result.no_items') }}</p>
-                    </div>
-                @endforelse
-
-                {{-- Photos --}}
-                @forelse ($result->photos as $photo)
-                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs overflow-hidden">
-                        <img
-                            src="{{ $photoUrls[$photo->id] ?? '' }}"
-                            alt="{{ __('result.inspection_photo') }}"
-                            class="w-full h-auto aspect-4/3 object-cover"
-                            width="800"
-                            height="600"
-                            loading="lazy"
-                        />
-                        <div class="p-4">
-                            <p class="text-xs text-ds-muted">
-                                {{ $photo->captured_at?->format(__('common.datetime_format')) ?? __('result.photo_not_timestamped') }}
-                            </p>
-                        </div>
-                    </div>
-                @empty
-                    <div class="bg-white rounded-2xl border border-ds-line/80 shadow-xs p-8 text-center">
-                        <p class="text-sm font-bold text-ds-ink">{{ __('result.no_photos') }}</p>
                     </div>
                 @endforelse
             </div>
