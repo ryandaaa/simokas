@@ -8,6 +8,7 @@ use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Database\factories\InspectionJobFactory;
 use App\Domains\Inspection\Enums\JobStatus;
 use App\Domains\Listing\Models\Listing;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,14 +38,13 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
+#[Fillable(['id', 'listing_id', 'requester_id', 'inspector_id', 'status', 'fee_amount', 'platform_fee_pct', 'expires_at', 'available_since', 'scheduled_at', 'taken_at', 'started_at', 'submitted_at', 'completed_at', 'needs_attention_at', 'cancel_reason', 'cancelled_by', 'active_listing_id', 'created_at', 'updated_at'])]
 final class InspectionJob extends Model
 {
     /** @use HasFactory<InspectionJobFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'inspection_jobs';
-
-    protected $guarded = [];
 
     protected static function newFactory(): InspectionJobFactory
     {
