@@ -41,19 +41,24 @@ jobs:
           VITE_PUSHER_APP_KEY: ${{ vars.VITE_PUSHER_APP_KEY }}
           VITE_PUSHER_APP_CLUSTER: ${{ vars.VITE_PUSHER_APP_CLUSTER }}
 
-      # Tarball WAJIB di dalam workspace ($GITHUB_WORKSPACE): step SCP jalan
-      # di container Docker yang /tmp-nya terisolasi — path /tmp tak terbaca.
+      # Kode dikirim sebagai tarball (server tak butuh git/auth GitHub).
+      - name: Arsipkan kode yang lolos CI
+        run: |
+          SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
+          git archive --format=tar.gz -o simokas-code.tar.gz "$SHA"
+          tar -tzf simokas-code.tar.gz | head -5
+
       - name: Paketkan build
         run: tar -czf simokas-build.tar.gz -C public build
 
-      - name: Kirim build ke server
+      - name: Kirim kode + build ke server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOSTINGER_HOST }}
           username: ${{ secrets.HOSTINGER_USER }}
           key: ${{ secrets.HOSTINGER_KEY }}
           port: ${{ secrets.HOSTINGER_PORT }}
-          source: "simokas-build.tar.gz"
+          source: "simokas-code.tar.gz,simokas-build.tar.gz"
           target: "/home/u784310550/domains/lavenderblush-squirrel-844025.hostingersite.com/simokas/"
 
       - name: Deploy over SSH
@@ -83,21 +88,17 @@ jobs:
             mysqldump -h "${DB_HOST:-localhost}" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$BACKUP_DIR/pre-deploy-$(date +%F-%H%M).sql"
             ls -t "$BACKUP_DIR"/pre-deploy-*.sql | tail -n +8 | xargs -r rm -f
 
-            # 2. Siapkan git bila server ini dulunya upload manual (tanpa .git)
-            if [ ! -d .git ]; then
-              git init
-              git remote add origin https://github.com/ryandaaa/simokas.git
-            fi
-
-            # 3. Lepas symlink public sementara agar git bisa menulis folder public/
+            # 2. Bersihkan sisa .git dari percobaan gagal (bila ada) dan lepas
+            #    symlink public sementara agar ekstrak kode menulis folder public/
             #    (rm -rf pada symlink hanya melepas tautan, tidak mengikuti isinya)
-            rm -rf public
+            rm -rf .git public
 
-            # 4. Tarik kode terbaru (untracked: .env, vendor, storage uploads, bootstrap cache — tidak tersentuh)
-            git fetch origin
-            git reset --hard origin/main
+            # 3. Ekstrak kode fresh dari runner. Tarball hanya berisi file
+            #    ter-track: .env, vendor, upload storage, dan cache bootstrap
+            #    tidak tersentuh.
+            tar -xzf simokas-code.tar.gz
 
-            # 5. Sinkronkan docroot (hapus build lama — diganti tarball fresh di langkah 7)
+            # 4. Sinkronkan docroot (hapus build lama — diganti tarball fresh di langkah 6)
             rm -rf "$DOCROOT/build"
             cp -r public/. "$DOCROOT/"
             rm -rf public
@@ -107,11 +108,11 @@ jobs:
             sed -i "s#__DIR__.'/../#__DIR__.'/../simokas/#g" "$DOCROOT/index.php"
             grep -c "simokas/vendor/autoload" "$DOCROOT/index.php"
 
-            # 7. Ekstrak build fresh dari runner, hapus tarball
+            # 6. Ekstrak build fresh dari runner, hapus kedua tarball
             tar -xzf simokas-build.tar.gz -C "$DOCROOT/"
-            rm -f simokas-build.tar.gz
+            rm -f simokas-code.tar.gz simokas-build.tar.gz
 
-            # 8. Dependensi + migrasi + cache (data aman: migrate biasa, bukan fresh)
+            # 7. Dependensi + migrasi + cache (data aman: migrate biasa, bukan fresh)
             composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
             $PHP_BIN artisan migrate --force
             $PHP_BIN artisan config:cache
@@ -120,7 +121,7 @@ jobs:
             $PHP_BIN artisan event:cache
             $PHP_BIN artisan queue:restart
 
-            # 9. Cek kesehatan: homepage + 1 aset build harus HTTP 200 (-f = gagal bila 4xx/5xx)
+            # 8. Cek kesehatan: homepage + 1 aset build harus HTTP 200 (-f = gagal bila 4xx/5xx)
             curl -fsS -o /dev/null https://lavenderblush-squirrel-844025.hostingersite.com/
             ASSET=$($PHP_BIN -r '$m=json_decode(file_get_contents("public/build/manifest.json"),true); foreach($m as $e){ if(isset($e["file"]) && str_ends_with($e["file"],".css")){ echo $e["file"]; break; }}')
             curl -fsS -o /dev/null "https://lavenderblush-squirrel-844025.hostingersite.com/build/$ASSET"

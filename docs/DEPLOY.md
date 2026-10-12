@@ -42,12 +42,13 @@ Jangan pernah menempel private key/password ke chat atau commit.
 ## 2. Alur otomatis (utama) vs paket manual (fallback)
 
 **Utama — otomatis:** cukup `git push origin main`. CI berjalan (±5 mnt);
-bila hijau, workflow deploy jalan sendiri: build aset di runner (server tidak
-punya Node) → SCP `public/build` → backup DB berstempel waktu (simpan 7
-terakhir di `domains/xxxx.hostingersite.com/backups/`, di luar docroot) →
-`git reset --hard origin/main` → salin `public/` ke docroot + ekstrak build →
-`composer install --no-dev` → `migrate --force` → `config/route/view/event:cache`
-→ `queue:restart` → health check homepage + 1 aset CSS (`curl -f`, gagal = merah).
+bila hijau, workflow deploy jalan sendiri: arsip kode (`git archive`, tanpa git
+di server) + build aset di runner (server tidak punya Node) → kirim keduanya
+via SCP → backup DB berstempel waktu (simpan 7 terakhir di
+`domains/xxxx.hostingersite.com/backups/`, di luar docroot) → ekstrak kode →
+salin `public/` ke docroot + ekstrak build → `composer install --no-dev` →
+`migrate --force` → `config/route/view/event:cache` → `queue:restart` →
+health check homepage + 1 aset CSS (`curl -f`, gagal = merah).
 
 **Fallback — paket manual (bila Actions down):**
 
