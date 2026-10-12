@@ -18,7 +18,7 @@ use function Pest\Laravel\artisan;
 
 uses(RefreshDatabase::class);
 
-it('registers all 4 inspection commands in the laravel scheduler with correct frequencies', function () {
+it('JOB-T09 JOB-T10 JOB-T11 JOB-T12 registers all 4 inspection commands in the laravel scheduler with correct frequencies', function () {
     /** @var Schedule $schedule */
     $schedule = app(Schedule::class);
 
@@ -41,7 +41,7 @@ it('registers all 4 inspection commands in the laravel scheduler with correct fr
         ->and($needsAttention->expression)->toBe('0 * * * *');
 });
 
-it('executes inspection:expire-requested-jobs via artisan command', function () {
+it('JOB-T09 executes inspection:expire-requested-jobs via artisan command', function () {
     $t0 = Carbon::parse('2026-10-06 10:00:00', Clock::TIMEZONE);
     Carbon::setTestNow($t0);
 
@@ -63,7 +63,7 @@ it('executes inspection:expire-requested-jobs via artisan command', function () 
     expect($job->fresh()->status)->toBe(JobStatus::Expired);
 });
 
-it('executes inspection:cancel-unclaimed-jobs via artisan command', function () {
+it('JOB-T10 executes inspection:cancel-unclaimed-jobs via artisan command', function () {
     $t0 = Carbon::parse('2026-10-06 10:00:00', Clock::TIMEZONE);
     Carbon::setTestNow($t0);
 
@@ -85,7 +85,7 @@ it('executes inspection:cancel-unclaimed-jobs via artisan command', function () 
     expect($job->fresh()->status)->toBe(JobStatus::Cancelled);
 });
 
-it('executes inspection:auto-complete-jobs via artisan command', function () {
+it('JOB-T11 executes inspection:auto-complete-jobs via artisan command', function () {
     $t0 = Carbon::parse('2026-10-06 10:00:00', Clock::TIMEZONE);
     Carbon::setTestNow($t0);
 
@@ -111,7 +111,7 @@ it('executes inspection:auto-complete-jobs via artisan command', function () {
     expect($job->fresh()->status)->toBe(JobStatus::Completed);
 });
 
-it('executes inspection:mark-needs-attention via artisan command', function () {
+it('JOB-T12 executes inspection:mark-needs-attention via artisan command', function () {
     $t0 = Carbon::parse('2026-10-06 10:00:00', Clock::TIMEZONE);
     Carbon::setTestNow($t0);
 
