@@ -54,7 +54,6 @@ return [
     ],
 
     'display' => [
-        'rating_summary' => ':avg (:count ulasan)',
         'rating_count' => ':count ulasan',
         'no_ratings' => 'Belum ada rating',
         'out_of_five' => ':score dari 5 bintang',

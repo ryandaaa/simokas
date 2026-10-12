@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 return [
     'title' => 'Jelajahi Kendaraan',
-    'nav_catalog' => 'Katalog',
     'heading' => 'Daftar Kendaraan',
     'subheading' => 'Mobil dan motor bekas pilihan dengan inspeksi terpercaya.',
     'filter_toggle' => 'Tampilkan atau sembunyikan filter pencarian',
