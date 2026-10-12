@@ -26,7 +26,7 @@ Route::middleware('web')->group(function () {
 
     // Request paid access to inspection result (called from UI with listing parameter)
     Route::post('/results/{listing}/request-access', RequestResultAccessController::class)
-        ->middleware(['auth', 'not_blocked'])
+        ->middleware(['auth', 'not_blocked', 'throttle:30,1'])
         ->whereUuid('listing')
         ->name('results.access');
 
@@ -43,6 +43,7 @@ Route::middleware('web')->group(function () {
             ->name('result.fill');
 
         Route::post('/jobs/{job}/result/photos', UploadResultPhotoController::class)
+            ->middleware('throttle:60,1')
             ->whereUuid('job')
             ->name('result.photos.upload');
 
