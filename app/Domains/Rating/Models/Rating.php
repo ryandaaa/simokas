@@ -7,6 +7,7 @@ namespace App\Domains\Rating\Models;
 use App\Domains\Identity\Models\User;
 use App\Domains\Rating\Database\factories\RatingFactory;
 use App\Domains\Transaction\Models\Transaction;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,14 +29,13 @@ use Illuminate\Support\Carbon;
  * @property-read User $inspector
  * @property-read User $buyer
  */
+#[Fillable(['id', 'transaction_id', 'inspector_id', 'buyer_id', 'score', 'comment', 'is_hidden', 'created_at', 'updated_at'])]
 final class Rating extends Model
 {
     /** @use HasFactory<RatingFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'ratings';
-
-    protected $guarded = [];
 
     protected static function newFactory(): RatingFactory
     {
