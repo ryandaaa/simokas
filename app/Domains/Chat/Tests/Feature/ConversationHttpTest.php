@@ -179,3 +179,24 @@ it('CHT-R2 authorizes or rejects roles on HTTP POST /conversations/start for job
     'listing: anonim' => ['listing', 'anonim', 302], // redirects to login
     'listing: pengguna terblokir' => ['listing', 'pengguna terblokir', 302], // redirects to /blocked
 ]);
+
+it('throttles conversation start after 30 attempts per minute', function () {
+    $user = User::factory()->create(['role' => UserRole::User, 'status' => UserStatus::Active]);
+
+    actingAs($user);
+
+    // Payload tak valid dialihkan kembali dengan error validasi (302 +
+    // session errors); throttle tetap menghitungnya, sehingga percobaan
+    // ke-31 harus 429 tanpa membanjiri DB dengan percakapan nyata.
+    for ($i = 0; $i < 30; $i++) {
+        post(route('conversations.start'), [
+            'context_type' => 'listing',
+            'context_id' => 'bukan-uuid',
+        ])->assertSessionHasErrors('context_id');
+    }
+
+    post(route('conversations.start'), [
+        'context_type' => 'listing',
+        'context_id' => 'bukan-uuid',
+    ])->assertStatus(429);
+});

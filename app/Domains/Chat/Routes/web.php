@@ -11,6 +11,6 @@ Route::middleware('web')->group(function (): void {
     Route::middleware(['auth', 'not_blocked'])->group(function (): void {
         Route::get('/conversations', ConversationList::class)->name('conversations.index');
         Route::get('/conversations/{conversation}', ConversationDetail::class)->name('conversations.show');
-        Route::post('/conversations/start', StartConversationController::class)->name('conversations.start');
+        Route::post('/conversations/start', StartConversationController::class)->middleware('throttle:30,1')->name('conversations.start');
     });
 });
