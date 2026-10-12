@@ -124,8 +124,9 @@ Binary PHP yang terbukti jalan di server ini: `/opt/alt/php83/usr/bin/php`
 
 | # | Jadwal | Perintah | Fungsi |
 | --- | --- | --- | --- |
-| 1 | Tiap menit `* * * * *` | `cd /home/<user>/domains/xxxx.hostingersite.com/simokas && /usr/bin/php artisan schedule:run >> /dev/null 2>&1` | 7 tugas terjadwal (expire tagihan 30 mnt, expire offered/accepted, cancel job 7 hari, auto-complete 3 hari, tandai perlu tindakan). Daftar: `php artisan schedule:list` |
-| 2 | Tiap menit `* * * * *` | `cd /home/<user>/domains/xxxx.hostingersite.com/simokas && /usr/bin/php artisan queue:work --stop-when-empty --tries=3 --timeout=60 >> /dev/null 2>&1` | Proses antrean broadcast Pusher (chat/notifikasi realtime). Tanpa ini antrean menumpuk dan realtime mati (UI fallback polling) |
+| 1 | Tiap menit `* * * * *` | `cd /home/<user>/domains/xxxx.hostingersite.com/simokas && /opt/alt/php83/usr/bin/php artisan schedule:run >> /dev/null 2>&1` | 7 tugas terjadwal (expire tagihan 30 mnt, expire offered/accepted, cancel job 7 hari, auto-complete 3 hari, tandai perlu tindakan). Daftar: `php artisan schedule:list` |
+| 2 | Tiap menit `* * * * *` | `cd /home/<user>/domains/xxxx.hostingersite.com/simokas && /opt/alt/php83/usr/bin/php artisan queue:work --stop-when-empty --tries=3 --timeout=60 >> /dev/null 2>&1` | Proses antrean broadcast Pusher (chat/notifikasi realtime). Tanpa ini antrean menumpuk dan realtime mati (UI fallback polling) |
+| 3 | Mingguan (mis. Senin 03:00 WIB = Minggu 20:00 UTC) | `cd /home/<user>/domains/xxxx.hostingersite.com/simokas && /opt/alt/php83/usr/bin/php artisan queue:prune-failed --hours=336 >> /dev/null 2>&1` | Pangkas `failed_jobs` lebih dari 14 hari. Sesi database sudah prune otomatis via lottery tiap request — tanpa cron. `cache:prune-stale-tags` hanya untuk Redis: untuk cache database, jalankan `cache:clear` manual sebulan sekali jam sepi (efek hanya cache dingin sesaat) |
 
 Jangan jalankan `queue:work` daemon persisten (tidak didukung hosting ini). Jangan sentuh cron milik website lain.
 
