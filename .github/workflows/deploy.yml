@@ -41,8 +41,10 @@ jobs:
           VITE_PUSHER_APP_KEY: ${{ vars.VITE_PUSHER_APP_KEY }}
           VITE_PUSHER_APP_CLUSTER: ${{ vars.VITE_PUSHER_APP_CLUSTER }}
 
+      # Tarball WAJIB di dalam workspace ($GITHUB_WORKSPACE): step SCP jalan
+      # di container Docker yang /tmp-nya terisolasi — path /tmp tak terbaca.
       - name: Paketkan build
-        run: tar -czf /tmp/simokas-build.tar.gz -C public build
+        run: tar -czf simokas-build.tar.gz -C public build
 
       - name: Kirim build ke server
         uses: appleboy/scp-action@v0.1.7
@@ -51,7 +53,7 @@ jobs:
           username: ${{ secrets.HOSTINGER_USER }}
           key: ${{ secrets.HOSTINGER_KEY }}
           port: ${{ secrets.HOSTINGER_PORT }}
-          source: "/tmp/simokas-build.tar.gz"
+          source: "simokas-build.tar.gz"
           target: "/home/u784310550/domains/lavenderblush-squirrel-844025.hostingersite.com/simokas/"
 
       - name: Deploy over SSH
