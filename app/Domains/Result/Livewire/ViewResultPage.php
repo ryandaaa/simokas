@@ -7,6 +7,7 @@ namespace App\Domains\Result\Livewire;
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Rating\Contracts\RatingReader;
+use App\Domains\Result\Actions\RequestPaidResultAccess;
 use App\Domains\Result\Models\InspectionResult;
 use App\Domains\Result\Models\ResultPhoto;
 use App\Domains\Result\Policies\ResultAccessPolicy;
@@ -38,14 +39,19 @@ final class ViewResultPage extends Component
         $this->result = $result;
     }
 
-    public function requestAccess(): mixed
+    public function requestAccess(RequestPaidResultAccess $requestAccess): mixed
     {
-        $policy = app(ResultAccessPolicy::class);
-        if (! $policy->canRequestPaidAccess(auth()->user(), $this->result)) {
+        /** @var User $user */
+        $user = auth()->user();
+
+        // Tidak boleh redirect ke rute POST results.access (GET -> 405): buat tagihan langsung lewat Action.
+        $paymentId = $requestAccess->handle($user, $this->result);
+
+        if ($paymentId === null) {
             return null;
         }
 
-        return redirect(route('results.access', ['listing' => $this->result->job->listing_id]));
+        return redirect()->route('payments.show', $paymentId);
     }
 
     public function render(): View

@@ -192,8 +192,11 @@ it('CAT-T09 shows result buttons only when their routes exist', function () {
     $other = User::factory()->user()->create();
     $listing = makeVisibleListing(['seller_id' => $owner->id, 'status' => 'active', 'is_inspected' => true, 'last_inspected_at' => now()]);
 
+    // "Buka Hasil Inspeksi" harus mengarah ke halaman hasil (GET), bukan rute POST results.access (405).
     actingAs($other)->get(detailUrl($listing))->assertOk()
-        ->assertSee(__('catalog.detail.action_open_result'), false);
+        ->assertSee(__('catalog.detail.action_open_result'), false)
+        ->assertSee(route('results.show', ['listing' => $listing->id]), false)
+        ->assertDontSee('request-access', false);
 
     actingAs($owner)->get(detailUrl($listing))->assertOk()
         ->assertSee(__('catalog.detail.action_view_result'), false);

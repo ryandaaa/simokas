@@ -6,21 +6,17 @@ namespace App\Domains\Result\Http\Controllers;
 
 use App\Domains\Identity\Models\User;
 use App\Domains\Listing\Models\Listing;
-use App\Domains\Payment\Contracts\Billing;
-use App\Domains\Payment\DTOs\CreateBillData;
-use App\Domains\Payment\Enums\PaymentPurpose;
+use App\Domains\Result\Actions\RequestPaidResultAccess;
 use App\Domains\Result\Models\InspectionResult;
-use App\Domains\Result\Policies\ResultAccessPolicy;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Str;
 
 final class RequestResultAccessController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __invoke(Listing $listing, Billing $billing): RedirectResponse
+    public function __invoke(Listing $listing, RequestPaidResultAccess $requestAccess): RedirectResponse
     {
         /** @var User $user */
         $user = auth()->user();
@@ -34,26 +30,13 @@ final class RequestResultAccessController extends Controller
             abort(404);
         }
 
-        // Check if user can request paid access
-        $policy = app(ResultAccessPolicy::class);
-        if (! $policy->canRequestPaidAccess($user, $result)) {
+        $paymentId = $requestAccess->handle($user, $result);
+
+        if ($paymentId === null) {
             return back()->with('error', __('result.access_not_available'));
         }
 
-        // Create bill for access using inspection fee amount
-        $accessFee = $result->job->fee_amount;
-
-        $billData = new CreateBillData(
-            payerId: $user->getKey(),
-            purpose: PaymentPurpose::Access,
-            refId: $result->getKey(),
-            amount: $accessFee,
-            idempotencyKey: (string) Str::uuid(),
-        );
-
-        $bill = $billing->createBill($billData);
-
         // Redirect to payment page
-        return redirect()->route('payments.show', $bill->id);
+        return redirect()->route('payments.show', $paymentId);
     }
 }
