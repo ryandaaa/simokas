@@ -1,7 +1,11 @@
 name: Deploy to Hostinger (staging demo)
 
+# Deploy HANYA jalan bila CI hijau (atau dipicu manual). Push ke main
+# menjalankan CI dulu; deploy menyusul otomatis setelah CI sukses.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -11,9 +15,45 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
+      - name: Checkout kode yang lolos CI
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Server tidak punya Node, jadi aset di-build di runner lalu dikirim via SCP.
+      # VITE_PUSHER_* dibaca saat build; isi via GitHub Variables agar realtime jalan.
+      # Tanpa variables, build tetap sukses dan UI fallback ke polling.
+      - name: Build assets
+        run: |
+          npm ci
+          npm run build
+        env:
+          VITE_PUSHER_APP_KEY: ${{ vars.VITE_PUSHER_APP_KEY }}
+          VITE_PUSHER_APP_CLUSTER: ${{ vars.VITE_PUSHER_APP_CLUSTER }}
+
+      - name: Paketkan build
+        run: tar -czf /tmp/simokas-build.tar.gz -C public build
+
+      - name: Kirim build ke server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          key: ${{ secrets.HOSTINGER_KEY }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          source: "/tmp/simokas-build.tar.gz"
+          target: "/home/u784310550/domains/lavenderblush-squirrel-844025.hostingersite.com/simokas/"
+
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1
         with:
@@ -28,29 +68,58 @@ jobs:
             PHP_BIN=/opt/alt/php83/usr/bin/php
             cd "$APP_DIR"
 
-            # 1. Lepas symlink public sementara agar git bisa menulis folder public/
-            rm -f public
+            # 0. Pengaman: APP_KEY harus ada (jangan print nilainya)
+            grep -q '^APP_KEY=base64:' .env
 
-            # 2. Tarik kode terbaru (untracked: .env, vendor, storage uploads, bootstrap cache — tidak tersentuh)
+            # 1. Backup DB otomatis sebelum migrate (simpan 7 terakhir)
+            BACKUP_DIR="$APP_DIR/../backups"
+            mkdir -p "$BACKUP_DIR"
+            DB_HOST=$(grep '^DB_HOST=' .env | cut -d= -f2)
+            DB_NAME=$(grep '^DB_DATABASE=' .env | cut -d= -f2)
+            DB_USER=$(grep '^DB_USERNAME=' .env | cut -d= -f2)
+            DB_PASS=$(grep '^DB_PASSWORD=' .env | cut -d= -f2-)
+            mysqldump -h "${DB_HOST:-localhost}" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" > "$BACKUP_DIR/pre-deploy-$(date +%F-%H%M).sql"
+            ls -t "$BACKUP_DIR"/pre-deploy-*.sql | tail -n +8 | xargs -r rm -f
+
+            # 2. Siapkan git bila server ini dulunya upload manual (tanpa .git)
+            if [ ! -d .git ]; then
+              git init
+              git remote add origin https://github.com/ryandaaa/simokas.git
+            fi
+
+            # 3. Lepas symlink public sementara agar git bisa menulis folder public/
+            #    (rm -rf pada symlink hanya melepas tautan, tidak mengikuti isinya)
+            rm -rf public
+
+            # 4. Tarik kode terbaru (untracked: .env, vendor, storage uploads, bootstrap cache — tidak tersentuh)
             git fetch origin
             git reset --hard origin/main
 
-            # 3. Sinkronkan docroot (hapus build lama, salin public/ baru, kembalikan symlink)
+            # 5. Sinkronkan docroot (hapus build lama — diganti tarball fresh di langkah 7)
             rm -rf "$DOCROOT/build"
             cp -r public/. "$DOCROOT/"
             rm -rf public
             ln -sfn ../public_html public
 
-            # 4. Patch index.php docroot (../ -> ../simokas/, idempoten karena file selalu fresh dari repo)
+            # 6. Patch index.php docroot (../ -> ../simokas/, idempoten karena file selalu fresh dari repo)
             sed -i "s#__DIR__.'/../#__DIR__.'/../simokas/#g" "$DOCROOT/index.php"
             grep -c "simokas/vendor/autoload" "$DOCROOT/index.php"
 
-            # 5. Dependensi + migrasi + cache (data aman: migrate biasa, bukan fresh)
+            # 7. Ekstrak build fresh dari runner, hapus tarball
+            tar -xzf simokas-build.tar.gz -C "$DOCROOT/"
+            rm -f simokas-build.tar.gz
+
+            # 8. Dependensi + migrasi + cache (data aman: migrate biasa, bukan fresh)
             composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
             $PHP_BIN artisan migrate --force
             $PHP_BIN artisan config:cache
             $PHP_BIN artisan route:cache
             $PHP_BIN artisan view:cache
+            $PHP_BIN artisan event:cache
+            $PHP_BIN artisan queue:restart
 
-            # 6. Cek kesehatan
-            curl -s -o /dev/null -w "homepage:%{http_code}\n" https://lavenderblush-squirrel-844025.hostingersite.com/
+            # 9. Cek kesehatan: homepage + 1 aset build harus HTTP 200 (-f = gagal bila 4xx/5xx)
+            curl -fsS -o /dev/null https://lavenderblush-squirrel-844025.hostingersite.com/
+            ASSET=$($PHP_BIN -r '$m=json_decode(file_get_contents("public/build/manifest.json"),true); foreach($m as $e){ if(isset($e["file"]) && str_ends_with($e["file"],".css")){ echo $e["file"]; break; }}')
+            curl -fsS -o /dev/null "https://lavenderblush-squirrel-844025.hostingersite.com/build/$ASSET"
+            echo "deploy-ok homepage+asset:$ASSET"

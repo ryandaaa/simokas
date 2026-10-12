@@ -2,6 +2,12 @@
 
 Panduan deploy produksi untuk lomba. Kartu: **F4**.
 
+> Deploy **otomatis** via GitHub Actions (`.github/workflows/deploy.yml`):
+> push ke `main` → CI hijau → build aset di runner → kirim via SCP →
+> backup DB → `git reset --hard` → migrate → cache → health check.
+> Bagian manual (§2 lama, ZIP + timpa file manager) **tidak dipakai lagi**,
+> disimpan sebagai fallback di akhir dokumen.
+
 ## 0. Batasan keras (jangan dilanggar)
 
 - Akun Hostinger ini menampung **banyak project produksi milik tim**. SIMOKAS dipasang sebagai **website baru terpisah** (subdomain temporer `*.hostingersite.com` untuk staging/demo).
@@ -18,7 +24,32 @@ Panduan deploy produksi untuk lomba. Kartu: **F4**.
 | Pusher | — | Koneksi keluar ke Pusher diizinkan (chat/notifikasi realtime). Tanpa ini, UI otomatis fallback ke polling |
 | Cron | Websites → Dashboard → Cron Jobs | Bisa tambah cron custom. Paket Cloud Startup = cron unlimited. **Jadwal cron memakai UTC+0** (WIB = UTC+7) |
 
-## 2. Siapkan paket upload (dikerjakan lokal)
+## 1b. GitHub Secrets & Variables (wajib sekali)
+
+Repo → Settings → Secrets and variables → Actions:
+
+| Nama | Jenis | Isi |
+| --- | --- | --- |
+| `HOSTINGER_HOST` | Secret | Host SSH dari hPanel → SSH Access |
+| `HOSTINGER_USER` | Secret | Username SSH (mis. `u784310550`) |
+| `HOSTINGER_PORT` | Secret | Port SSH (shared hosting umumnya `65002`) |
+| `HOSTINGER_KEY` | Secret | **Private key** ed25519 (termasuk baris `BEGIN/END`); public key-nya ditempel di hPanel → SSH Access |
+| `VITE_PUSHER_APP_KEY` | Variable | Key publik Pusher (dibakar ke JS saat build; tanpanya realtime mati, UI fallback polling) |
+| `VITE_PUSHER_APP_CLUSTER` | Variable | Cluster Pusher (mis. `ap1`) |
+
+Jangan pernah menempel private key/password ke chat atau commit.
+
+## 2. Alur otomatis (utama) vs paket manual (fallback)
+
+**Utama — otomatis:** cukup `git push origin main`. CI berjalan (±5 mnt);
+bila hijau, workflow deploy jalan sendiri: build aset di runner (server tidak
+punya Node) → SCP `public/build` → backup DB berstempel waktu (simpan 7
+terakhir di `domains/xxxx.hostingersite.com/backups/`, di luar docroot) →
+`git reset --hard origin/main` → salin `public/` ke docroot + ekstrak build →
+`composer install --no-dev` → `migrate --force` → `config/route/view/event:cache`
+→ `queue:restart` → health check homepage + 1 aset CSS (`curl -f`, gagal = merah).
+
+**Fallback — paket manual (bila Actions down):**
 
 1. `composer install --no-dev --prefer-dist --optimize-autoloader` sudah teruji lokal (CI hijau).
 2. `npm run build` lokal sampai `public/build/manifest.json` terbentuk. Hasil build **wajib diupload** (folder `public/build` gitignored).
@@ -87,7 +118,8 @@ Pastikan `public/hot` **tidak ada** di server (file itu hanya untuk Vite dev lok
 
 ## 5. Cron (hPanel → Cron Jobs, website SIMOKAS saja)
 
-Binary PHP sesuaikan hasil `which php` via SSH (umumnya `/usr/bin/php`).
+Binary PHP yang terbukti jalan di server ini: `/opt/alt/php83/usr/bin/php`
+(gunakan ini di cron, bukan `/usr/bin/php`).
 
 | # | Jadwal | Perintah | Fungsi |
 | --- | --- | --- | --- |
@@ -109,8 +141,8 @@ Jangan jalankan `queue:work` daemon persisten (tidak didukung hosting ini). Jang
 ## 7. Pindah ke domain final (bila lomba memakai domain sendiri)
 
 1. Tambahkan domain sebagai website baru (atau ganti domain website ini) — tetap folder/DB/cron terpisah.
-2. Update `APP_URL`, `npm run build` ulang bila `VITE_*` berubah, upload ulang `public/build`.
-3. `php artisan config:cache` ulang + uji §6 dari awal.
+2. Update `APP_URL` dan `VITE_*` (Variables GitHub bila berubah), push ke `main` — build + upload aset otomatis.
+3. Verifikasi §6 dari awal (health check workflow sudah mencakup homepage + aset).
 
 ## 8. Rollback darurat (opsional untuk demo, boleh skip)
 
