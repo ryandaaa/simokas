@@ -7,6 +7,7 @@ namespace App\Domains\Notification\Models;
 use App\Domains\Identity\Models\User;
 use App\Domains\Notification\Database\factories\NotificationFactory;
 use App\Domains\Notification\Enums\NotificationType;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,12 +29,11 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read User $user
  */
+#[Fillable(['id', 'user_id', 'type', 'title', 'body', 'link', 'dedupe_key', 'data', 'read_at', 'created_at', 'updated_at'])]
 final class Notification extends Model
 {
     /** @use HasFactory<NotificationFactory> */
     use HasFactory, HasUuids;
-
-    protected $guarded = [];
 
     protected static function newFactory(): NotificationFactory
     {
