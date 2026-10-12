@@ -17,7 +17,9 @@ return Application::configure(basePath: dirname(__DIR__))
         __DIR__.'/../routes/channels.php',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Hostinger meneruskan request lewat proxy: tanpa ini, skema HTTPS,
+        // signed URL, dan cookie secure salah terdeteksi sebagai HTTP.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
