@@ -314,12 +314,6 @@ export function cameraCapture(config = {}) {
                 this.uploadProgress = 0;
                 this.stopUploadGuard();
             }
-
-            this.$dispatch('photo-ready', {
-                file: this.capturedFile,
-                stampedAt: this.stampedAt,
-                itemId: this.itemId,
-            });
         },
     };
 }
