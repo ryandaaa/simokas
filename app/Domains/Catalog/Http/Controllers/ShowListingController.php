@@ -141,13 +141,14 @@ final class ShowListingController
                         'icon' => 'document-text',
                     ];
                 }
-            } elseif (Route::has('results.access')) {
+            } elseif (Route::has('results.show')) {
                 $actions[] = [
                     'key' => 'open-result',
                     'label' => __('catalog.detail.action_open_result'),
+                    // results.access hanya menerima POST; halaman hasil menampilkan konfirmasi bayar lalu membuat tagihan.
                     'url' => $detail->viewerRole === null
                         ? route('login')
-                        : route('results.access', ['listing' => $detail->id]),
+                        : route('results.show', ['listing' => $detail->id]),
                     'variant' => 'secondary',
                     'icon' => 'document-text',
                 ];
