@@ -17,7 +17,7 @@ use function Pest\Laravel\get;
 
 uses(RefreshDatabase::class);
 
-it('PRD-28.3-Item-13 displays Ajukan Inspeksi on active listing without active job and conceals it on non-active listings', function () {
+it('JOB-T02 (PRD-28.3-Item-13) displays Ajukan Inspeksi on active listing without active job and conceals it on non-active listings', function () {
     $seller = User::factory()->user()->create([
         'name' => 'Penjual Uji Penerimaan',
         'email' => 'penjual-terima-13@example.com',
@@ -73,7 +73,7 @@ it('PRD-28.3-Item-13 displays Ajukan Inspeksi on active listing without active j
         ->assertDontSee(__('catalog.detail.action_request_inspection'));
 });
 
-it('PRD-28.9-Item-46 displays unread badge on conversation list when participant receives new messages', function () {
+it('CHT-T06 (PRD-28.9-Item-46) displays unread badge on conversation list when participant receives new messages', function () {
     $buyer = User::factory()->user()->create([
         'name' => 'Pembeli Chat Penerimaan',
         'email' => 'pembeli-chat-46@example.com',

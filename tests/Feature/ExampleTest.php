@@ -20,5 +20,10 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
+        // Smoke lebih kuat dari sekadar status: beranda katalog harus
+        // me-render konten hero agar regresi konten kosong tertangkap
+        // (kunci yang sama dijaga CAT-T15 di CatalogHomeTest).
+        $response->assertSee(__('home.hero_title'));
+        $response->assertSee(__('home.step_1_title'));
     }
 }
