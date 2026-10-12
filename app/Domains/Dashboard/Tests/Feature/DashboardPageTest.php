@@ -362,3 +362,25 @@ it('redirects to dashboard by role from login', function (string $role) {
     $response = actingAs($user)->get(route('dashboard'));
     $response->assertOk();
 })->with(['user', 'inspector', 'admin']);
+
+it('DSH-T10 admin dashboard aggregates deny non-admin users at server', function (string $role) {
+    $user = match ($role) {
+        'user' => User::factory()->user()->create(),
+        'inspector' => createVerifiedInspector(),
+        default => throw new \UnexpectedValueException("Unknown role: {$role}"),
+    };
+
+    actingAs($user);
+
+    Livewire::test(AdminDashboard::class)
+        ->assertForbidden();
+})->with(['user', 'inspector']);
+
+it('DSH-T10 admin dashboard aggregates render for admin users', function () {
+    $admin = User::factory()->admin()->create();
+
+    actingAs($admin);
+
+    Livewire::test(AdminDashboard::class, ['user' => $admin])
+        ->assertOk();
+});

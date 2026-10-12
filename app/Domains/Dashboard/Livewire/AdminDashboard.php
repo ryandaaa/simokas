@@ -15,11 +15,25 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Enums\LedgerEntryType;
 use App\Domains\Payment\Models\LedgerEntry;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 final class AdminDashboard extends Component
 {
     public User $user;
+
+    public function mount(): void
+    {
+        // Defense-in-depth: agregat ini hanya untuk admin. Blade induk
+        // memang sudah switch by role, tetapi render/update susulan Livewire
+        // memanggil komponen ini langsung — tanpa cek server, datanya bocor.
+        /** @var User|null $viewer */
+        $viewer = Auth::user();
+
+        if ($viewer === null || ! $viewer->isAdmin()) {
+            abort(403);
+        }
+    }
 
     public function render(): View
     {

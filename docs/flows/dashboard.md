@@ -62,6 +62,7 @@ Satu akun `user` yang menjadi pembeli sekaligus penjual melihat kedua bagian dal
 - [x] `DSH-T07` Jumlah query tidak bertambah seiring data (DSH-E4)
 - [x] `DSH-T08` Kegagalan satu kartu tidak merusak halaman (DSH-E5)
 - [x] `DSH-T09` Respons tidak memuat data persis (DSH-R4)
+- [x] `DSH-T10` Agregat dashboard admin ditolak untuk non-admin di server (403)
 - [x] `HIST-T01` Pengguna hanya melihat riwayat miliknya (transaksi, hasil inspeksi, job)
 - [x] `HIST-T02` Hasil inspeksi yang pernah diakses atau dibayar tetap tampil walau listing berstatus sold
 - [x] `HIST-T03` Riwayat tidak membocorkan data persis (alamat lengkap, koordinat, nomor rangka, tempat inspeksi)
