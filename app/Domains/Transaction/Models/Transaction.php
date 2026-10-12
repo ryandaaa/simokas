@@ -9,6 +9,7 @@ use App\Domains\Listing\Models\Listing;
 use App\Domains\Payment\Models\Payment;
 use App\Domains\Transaction\Database\factories\TransactionFactory;
 use App\Domains\Transaction\Enums\TransactionStatus;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -41,14 +42,13 @@ use Illuminate\Support\Carbon;
  * @property-read User|null $inspector
  * @property-read Payment|null $payment
  */
+#[Fillable(['id', 'listing_id', 'buyer_id', 'status', 'price_amount', 'commission_pct', 'inspector_id', 'notes', 'expires_at', 'created_at', 'updated_at', 'active_listing_id', 'payment_id', 'inspector_commission', 'platform_commission', 'completed_at', 'cancelled_by', 'cancel_reason', 'cancel_requested_at', 'needs_attention_at'])]
 final class Transaction extends Model
 {
     /** @use HasFactory<TransactionFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'transactions';
-
-    protected $guarded = [];
 
     protected static function newFactory(): TransactionFactory
     {
