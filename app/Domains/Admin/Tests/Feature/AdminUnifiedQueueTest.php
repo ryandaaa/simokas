@@ -59,7 +59,7 @@ final class AdminUnifiedQueueTest extends TestCase
             ->assertSet('jobCount', 0);
     }
 
-    public function test_result_submitted_jobs_are_immediately_queued_without_an_attention_timestamp(): void
+    public function test_adm_t14_result_submitted_jobs_are_immediately_queued_without_an_attention_timestamp(): void
     {
         $admin = User::factory()->admin()->create();
         $inspector = User::factory()->inspector()->create();
