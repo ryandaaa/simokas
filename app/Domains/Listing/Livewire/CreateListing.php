@@ -10,6 +10,7 @@ use App\Domains\Listing\DTOs\CreateListingDTO;
 use App\Domains\Listing\Enums\FuelType;
 use App\Domains\Listing\Enums\Transmission;
 use App\Domains\Listing\Enums\VehicleType;
+use App\Domains\Listing\Exceptions\PhotoUploadException;
 use App\Domains\Listing\Models\Listing;
 use App\Domains\Listing\Rules\WithinPekanbaru;
 use App\Domains\Listing\ValueObjects\PekanbaruBoundary;
@@ -236,7 +237,16 @@ final class CreateListing extends Component
             cover_photo_index: $this->cover_index,
         );
 
-        $action->handle($user, $dto);
+        // Galat foto dari Action (lolos validasi Livewire tetapi gagal cek isi
+        // finfo, jumlah, atau cover) ditampilkan ramah di banner, bukan 500.
+        // DomainException lain tetap dibiarkan naik agar bug asli ketahuan.
+        try {
+            $action->handle($user, $dto);
+        } catch (PhotoUploadException $e) {
+            $this->addError('photos', $e->getMessage());
+
+            return null;
+        }
 
         session()->flash('success', __('listing.create.success'));
 

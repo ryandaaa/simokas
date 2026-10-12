@@ -237,3 +237,52 @@ it('tests step navigation, vehicle type change, slot and photo manipulation', fu
         ->call('removeSlot', 1)
         ->assertCount('inspection_slots', 1);
 });
+
+it('LST-T25 submit surfaces action photo errors as friendly form errors instead of failing', function () {
+    $seller = User::factory()->user()->create();
+
+    actingAs($seller);
+
+    $photos = [
+        fakeImage('car1.jpg'),
+        fakeImage('car2.jpg'),
+        fakeImage('car3.jpg'),
+    ];
+
+    $slots = [
+        [
+            'slot_start' => now()->addDays(3)->setHour(14)->setMinute(0)->format('Y-m-d\TH:i'),
+            'note' => 'Di garasi rumah',
+        ],
+    ];
+
+    // cover_index di luar jangkauan lolos validasi Livewire (min:0) tetapi
+    // ditolak Action (tak ada cover) — harus jadi pesan ramah, bukan 500.
+    Livewire::test(CreateListing::class)
+        ->set('vehicle_type', 'car')
+        ->set('title', 'Toyota Avanza 1.3 G Manual 2018')
+        ->set('brand', 'Toyota')
+        ->set('model', 'Avanza')
+        ->set('year', 2018)
+        ->set('price', 135_000_000)
+        ->set('negotiable', true)
+        ->set('odometer_km', 62000)
+        ->set('transmission', 'manual')
+        ->set('fuel', 'petrol')
+        ->set('color', 'Hitam Metalik')
+        ->set('chassis_number', 'MHKA1234567890123')
+        ->set('description', 'Kondisi mulus terawat, siap pakai.')
+        ->set('area_name', 'Tampan')
+        ->set('lat', 0.5071)
+        ->set('lng', 101.4478)
+        ->set('address_full', 'Jl. HR Soebrantas No. 10, Tampan, Pekanbaru')
+        ->set('inspection_place', 'Jl. HR Soebrantas No. 10, Tampan, Pekanbaru')
+        ->set('photos', $photos)
+        ->set('cover_index', 99)
+        ->set('inspection_slots', $slots)
+        ->call('submit')
+        ->assertHasErrors(['photos'])
+        ->assertNoRedirect();
+
+    expect(Listing::query()->count())->toBe(0);
+});

@@ -117,3 +117,4 @@ flowchart TD
 - [x] `LST-T22` Asset Vite peta tidak menggantikan root komponen Livewire pada render komponen
 - [x] `LST-T23` Root Livewire pada respons halaman buat iklan tetap elemen `<div>`
 - [x] `LST-T24` Root Livewire pada respons halaman edit iklan tetap elemen `<div>`
+- [x] `LST-T25` Galat foto dari Action tampil ramah di form buat iklan (bukan 500)
