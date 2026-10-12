@@ -3,6 +3,7 @@
 .env
 .env.backup
 .env.production
+.obsidian/
 .phpactor.json
 .phpunit.result.cache
 /.codex
@@ -22,6 +23,9 @@
 /storage/pail
 /vendor
 _ide_helper.php
+design_dashboard.html
+design_dashboard.md
 Homestead.json
 Homestead.yaml
+session_log.md
 Thumbs.db

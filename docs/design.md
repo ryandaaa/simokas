@@ -6,7 +6,7 @@
 
 ### Core Brand Attributes
 - **Trustworthy & Verified:** Clean typography, status indicators, and seller verification badges.
-- **Vibrant & Engaging:** Energetic electric blue and sunlight yellow accent colors that capture attention without causing visual fatigue.
+- **Vibrant & Engaging:** Energetic forest green and sunlight yellow accent colors that capture attention without causing visual fatigue.
 - **Symmetrical & Balanced:** Centered grid structures, consistent padding tokens, and smooth, responsive container alignment.
 
 ---
@@ -16,8 +16,8 @@
 ### Primary & Accent Colors
 | Role | Color Name | Hex Code | Tailwind Utility | Application |
 | :--- | :--- | :--- | :--- | :--- |
-| **Primary Brand** | Electric Blue | `#2563EB` | `bg-blue-600`, `text-blue-600` | Logos, primary CTA buttons, links, active state indicators |
-| **Secondary Brand** | Deep Indigo | `#4F46E5` | `from-blue-600 to-indigo-600` | Gradient backgrounds, mobile mockups, section highlights |
+| **Primary Brand** | Forest Green | `#16A34A` | `bg-green-600`, `text-green-600` | Logos, primary CTA buttons, links, active state indicators |
+| **Secondary Brand** | Emerald | `#059669` | `from-green-600 to-emerald-600` | Gradient backgrounds, mobile mockups, section highlights |
 | **Vibrant Accent** | Sunlight Yellow | `#FACC15` | `bg-yellow-400`, `hover:bg-yellow-500` | Search action buttons, promotional badges, highlight CTAs |
 | **Success / Verified** | Emerald Green | `#10B981` | `bg-emerald-500` | "Verified" badges, status dots, app store accents |
 
@@ -98,7 +98,7 @@ The platform adopts a centered **12-column responsive grid** bounded within a ma
 
 ### 2. Form Inputs & Interactive Controls
 - **Search Bar:** Pill-shaped compound input with integrated icon prefix and energetic yellow primary submission button.
-- **Dropdown Filters:** Clean white selects with soft slate borders and explicit hover focus rings (`focus:ring-2 focus:ring-blue-500/20`).
+- **Dropdown Filters:** Clean white selects with soft slate borders and explicit hover focus rings (`focus:ring-2 focus:ring-green-500/20`).
 - **Interactive Accordions (FAQ):** Expanding/collapsible card containers with dynamic icon rotation (`fa-plus` to `fa-minus rotate-180`).
 
 ### 3. Floating Phone Showcase Animation

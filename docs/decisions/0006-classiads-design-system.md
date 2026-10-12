@@ -29,3 +29,11 @@ dipakai halaman lain sampai migrasinya tuntas.
 - Test `LayoutTest` (menu akun) dan `ComponentRenderTest` (x-ui) tetap hijau.
 - Halaman non-dashboard untuk sementara campuran: font/kanvas baru,
   komponen lama.
+
+## Amandemen (2026-10-12, lihat ADR 0007)
+
+Palet brand ClassiAds (biru `#2563EB` / indigo `#4F46E5`) **diganti hijau**:
+primer Forest Green `#16A34A`, sekunder Emerald `#059669`, aksen kuning
+`#FACC15` tetap. `docs/design.md`, `docs/design.html`, dan token `ds-blue` /
+`ds-indigo` di `resources/css/app.css` sudah diselaraskan. Riwayat di atas
+dipertahankan apa adanya sebagai catatan keputusan saat itu.
