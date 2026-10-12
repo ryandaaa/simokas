@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Chat\Models;
 
 use App\Domains\Identity\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
@@ -18,11 +19,10 @@ use Illuminate\Support\Carbon;
  * @property-read Conversation $conversation
  * @property-read User $user
  */
+#[Fillable(['conversation_id', 'user_id', 'last_read_at', 'created_at', 'updated_at'])]
 final class ConversationMember extends Model
 {
     protected $table = 'conversation_members';
-
-    protected $guarded = [];
 
     public $incrementing = false;
 

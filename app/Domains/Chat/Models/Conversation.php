@@ -9,6 +9,7 @@ use App\Domains\Chat\Enums\ConversationContext;
 use App\Domains\Identity\Models\User;
 use App\Domains\Inspection\Models\InspectionJob;
 use App\Domains\Listing\Models\Listing;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,14 +30,13 @@ use Illuminate\Support\Carbon;
  * @property-read Collection<int, Message> $messages
  * @property-read Message|null $latestMessage
  */
+#[Fillable(['id', 'context_type', 'context_id', 'created_at', 'updated_at'])]
 final class Conversation extends Model
 {
     /** @use HasFactory<ConversationFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'conversations';
-
-    protected $guarded = [];
 
     protected static function newFactory(): ConversationFactory
     {

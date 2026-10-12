@@ -6,6 +6,7 @@ namespace App\Domains\Chat\Models;
 
 use App\Domains\Chat\Database\factories\MessageFactory;
 use App\Domains\Identity\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,14 +23,13 @@ use Illuminate\Support\Carbon;
  * @property-read Conversation $conversation
  * @property-read User $sender
  */
+#[Fillable(['id', 'conversation_id', 'sender_id', 'body', 'created_at', 'updated_at'])]
 final class Message extends Model
 {
     /** @use HasFactory<MessageFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'messages';
-
-    protected $guarded = [];
 
     protected static function newFactory(): MessageFactory
     {
