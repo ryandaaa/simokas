@@ -85,7 +85,3 @@ body:
         - label: Flow doc diperbarui bila perilaku berubah
         - label: Hanya menyentuh domain kartu ini (perubahan bersama dipisah, label `shared`)
         - label: PR memakai template, berisi `Closes #<nomor>`
-  - type: markdown
-    attributes:
-      value: |
-        Cara menyuruh agen mengerjakan kartu ini: lihat [docs/AGENT_TASK.md](../blob/main/docs/AGENT_TASK.md).

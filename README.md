@@ -4,7 +4,7 @@ Aplikasi web jual-beli mobil dan motor bekas dengan inspeksi independen oleh ins
 
 - Spesifikasi produk: [`PRD_SIMOKAS_v1_6.md`](PRD_SIMOKAS_v1_6.md)
 - Dokumentasi pengerjaan: [`docs/README.md`](docs/README.md)
-- Panduan developer dan AI: [`CLAUDE.md`](CLAUDE.md)
+- Panduan kontribusi: [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md)
 
 ## Prasyarat Lingkungan
 

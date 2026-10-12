@@ -1,6 +1,6 @@
 # Backlog Fitur
 
-Sumber daftar kartu untuk papan kanban GitHub. Satu baris = satu issue. Cara mengerjakan kartu: [AGENT_TASK.md](AGENT_TASK.md).
+Sumber daftar kartu untuk papan kanban GitHub. Satu baris = satu issue.
 
 ## Cara membaca
 
