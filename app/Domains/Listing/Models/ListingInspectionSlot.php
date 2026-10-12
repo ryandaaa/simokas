@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Listing\Models;
 
 use App\Domains\Listing\Database\factories\ListingInspectionSlotFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,14 +21,13 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Listing $listing
  */
+#[Fillable(['id', 'listing_id', 'slot_start', 'note', 'created_at', 'updated_at'])]
 class ListingInspectionSlot extends Model
 {
     /** @use HasFactory<ListingInspectionSlotFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'listing_inspection_slots';
-
-    protected $guarded = [];
 
     protected static function newFactory(): ListingInspectionSlotFactory
     {

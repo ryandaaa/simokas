@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domains\Listing\Models;
 
 use App\Domains\Listing\Database\factories\ListingPhotoFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,14 +22,13 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $updated_at
  * @property-read Listing $listing
  */
+#[Fillable(['id', 'listing_id', 'storage_path', 'sort_order', 'is_cover', 'created_at', 'updated_at'])]
 class ListingPhoto extends Model
 {
     /** @use HasFactory<ListingPhotoFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'listing_photos';
-
-    protected $guarded = [];
 
     protected static function newFactory(): ListingPhotoFactory
     {

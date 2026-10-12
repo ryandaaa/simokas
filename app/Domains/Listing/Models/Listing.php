@@ -11,6 +11,7 @@ use App\Domains\Listing\Enums\ListingStatus;
 use App\Domains\Listing\Enums\Transmission;
 use App\Domains\Listing\Enums\VehicleType;
 use App\Domains\Listing\ValueObjects\ApproximateLocation;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -56,14 +57,13 @@ use Illuminate\Support\Carbon;
  * @property-read ListingPhoto|null $coverPhoto
  * @property-read Collection<int, ListingInspectionSlot> $inspectionSlots
  */
+#[Fillable(['id', 'seller_id', 'vehicle_type', 'title', 'brand', 'model', 'year', 'price', 'negotiable', 'odometer_km', 'transmission', 'fuel', 'color', 'chassis_number', 'description', 'area_name', 'lat', 'lng', 'address_full', 'inspection_place', 'status', 'rejection_reason', 'is_inspected', 'last_inspected_at', 'validated_by', 'validated_at', 'created_at', 'updated_at'])]
 class Listing extends Model
 {
     /** @use HasFactory<ListingFactory> */
     use HasFactory, HasUuids;
 
     protected $table = 'listings';
-
-    protected $guarded = [];
 
     protected static function newFactory(): ListingFactory
     {
